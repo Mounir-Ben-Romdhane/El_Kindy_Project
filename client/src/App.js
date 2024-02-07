@@ -1,15 +1,12 @@
 import React, { useEffect } from 'react'
 import AboutPage from '../src/scenes/AboutPage'
-import BlogPage from '../src/scenes/BlogPage'
-import ContactPage from '../src/scenes/ContactPage'
 import HomePage from '../src/scenes/HomePage'
-import ServicesPage from '../src/scenes/ServicesPage'
-import ShopPage from '../src/scenes/ShopPage'
 import SignUp from '../src/scenes/SignUp'
 import SignIn from '../src/scenes/SignIn'
-import {BrowserRouter, Routes, Route } from "react-router-dom";
-import NavBar from './components/NavBar';
-import Footer from './components/Footer';
+import EventsPage from '../src/scenes/EventsPage'
+import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+
+import { useSelector } from "react-redux";
 
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -22,6 +19,8 @@ function loadScript(src) {
 }
 
 function App() {
+
+  const isAuth = Boolean(useSelector((state) => state.token));
   
 
   useEffect(() => {
@@ -60,12 +59,12 @@ function App() {
         <Routes>
           <Route path="/" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/home" element={<HomePage />}/>
+          <Route 
+              path="/home" 
+              element={isAuth ? <HomePage /> : <Navigate to="/" /> } 
+            />
           <Route path="/about" element={<AboutPage />}/>
-          <Route path="/blog" element={<BlogPage />}/>
-          <Route path="/contact" element={<ContactPage />}/>
-          <Route path="/services" element={<ServicesPage />}/>
-          <Route path="/shop" element={<ShopPage />}/>
+          <Route path="/event" element={<EventsPage />}/>
         </Routes>
       </div>
   )

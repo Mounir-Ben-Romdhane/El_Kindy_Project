@@ -3,19 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import * as yup from "yup";
 import {  } from "react-router-dom";
 
-const registerSchema = yup.object().shape({
-    firstName: yup.string().required("required"),
-    lastName: yup.string().required("required"),
-    email: yup.string().email("invalid email").required("required"),
-    password: yup.string().required("required")
-});
-
-const initialValuesRegister = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: ""
-};
 
 function Index() {
 
@@ -23,33 +10,14 @@ function Index() {
     //const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const register = async (values) => {
-        try {
-            console.log("values",values);
-            const response = await fetch('http://localhost:3001/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(values)
-            });
-            const savedUser = await response.json();
-
-            if (savedUser) {
-                console.log('User added!');
-                navigate('/');
-            } 
-        } catch (error) {
-            console.error('Error registering user:', error);
-        }
-    };
+    
 
     const handleFormSubmit =  async (values) => {
         values.preventDefault(); // Prevent default form submission behavior
         const formData = new FormData(values.target); // Create FormData object from form
         const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
         // register(values);
-        console.log("formValues", formValues);
+        //console.log("formValues", formValues);
         try {
             console.log("values",formValues);
             const response = await fetch('http://localhost:3001/auth/register', {
@@ -63,8 +31,9 @@ function Index() {
 
             if (savedUser) {
                 console.log('User added!');
-                //navigate('/');
-            } 
+                console.log("user", savedUser);
+                navigate('/');
+            }  
         } catch (error) {
             console.error('Error registering user:', error);
         }

@@ -1,7 +1,46 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { setLogin } from '../../state'
 
-function index() {
+function Index() {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const login = async (values, onSubmitProps) => {
+        
+        const loggedInResponse = await fetch(
+            "http://localhost:3001/auth/login",
+            {
+                method: "POST",
+                headers: { "Content-type": "application/json" },
+                body: JSON.stringify(values),
+            }
+        );
+        const loggedIn = await loggedInResponse.json();
+        //console.log("result", loggedIn);
+        if (loggedIn) {
+            console.log("logged succes!!");
+            dispatch(
+                setLogin({
+                    user: loggedIn.user,
+                    token: loggedIn.token,
+                })
+            );
+            navigate("/home");
+        }
+
+    };
+
+    const handleFormSubmit = async (values) => {
+        values.preventDefault();
+        const formData = new FormData(values.target); // Create FormData object from form
+        const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
+       //console.log("Values",formValues);
+       await login(formValues);
+    };
+
   return (
     <div>
 
@@ -20,13 +59,13 @@ function index() {
                     <h1 className="fs-2">Login into Eduport!</h1>
                     <p className="lead mb-4">Nice to see you! Please log in with your account.</p>
                     {/* Form START */}
-                    <form>
+                    <form onSubmit={handleFormSubmit}>
                         {/* Email */}
                         <div className="mb-4">
                         <label htmlFor="exampleInputEmail1" className="form-label">Email address *</label>
                         <div className="input-group input-group-lg">
                             <span className="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i className="bi bi-envelope-fill" /></span>
-                            <input type="email" className="form-control border-0 bg-light rounded-end ps-1" placeholder="E-mail" id="exampleInputEmail1" />
+                            <input type="email" name="email" className="form-control border-0 bg-light rounded-end ps-1" placeholder="E-mail" id="exampleInputEmail1" />
                         </div>
                         </div>
                         {/* Password */}
@@ -34,7 +73,7 @@ function index() {
                         <label htmlFor="inputPassword5" className="form-label">Password *</label>
                         <div className="input-group input-group-lg">
                             <span className="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i className="fas fa-lock" /></span>
-                            <input type="password" className="form-control border-0 bg-light rounded-end ps-1" placeholder="password" id="inputPassword5" />
+                            <input type="password" name="password" className="form-control border-0 bg-light rounded-end ps-1" placeholder="password" id="inputPassword5" />
                         </div>
                         <div id="passwordHelpBlock" className="form-text">
                             Your password must be 8 characters at least 
@@ -55,7 +94,7 @@ function index() {
                         {/* Button */}
                         <div className="align-items-center mt-0">
                         <div className="d-grid">
-                            <button className="btn btn-primary mb-0" type="button">Login</button>
+                            <button className="btn btn-primary mb-0" type="submit">Login</button>
                         </div>
                         </div>
                     </form>
@@ -128,4 +167,4 @@ function index() {
   )
 }
 
-export default index
+export default Index
