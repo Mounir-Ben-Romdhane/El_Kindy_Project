@@ -21,6 +21,7 @@ function loadScript(src) {
 function App() {
 
   const isAuth = Boolean(useSelector((state) => state.token));
+
   
 
   useEffect(() => {
