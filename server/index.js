@@ -11,7 +11,9 @@ import { fileURLToPath } from "url";
 
 
 import authRoutes from "./routes/auth.js";
+import eventRoutes from "./routes/Event.js";
 import { register } from "./controllers/auth.js";
+
 
 
 import User from './models/User.js';
@@ -32,6 +34,7 @@ app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname,'public/assets')));
 
+
 /* FILE STORAGE */
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -48,6 +51,8 @@ app.post("/auth/register",register);
 
 /* ROUTES */
 app.use("/auth",authRoutes);
+app.use('/event', eventRoutes);
+
 
 
 /* MONGOOSE SETUP */
