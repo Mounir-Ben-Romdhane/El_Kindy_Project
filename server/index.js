@@ -9,10 +9,18 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from "url";
 
+
+
+
+import authRoutes from "./routes/auth.js";
+import eventRoutes from "./routes/Event.js";
+
 import stageRouter  from "./routes/stageRoute.js";
 import authRoutes from "./routes/auth.js";
 import courseRoute from './routes/courseRoute.js'
+
 import { register } from "./controllers/auth.js";
+
 
 
 import User from './models/User.js';
@@ -33,6 +41,7 @@ app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname,'public/assets')));
 
+
 /* FILE STORAGE */
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -50,8 +59,13 @@ app.post("/auth/register",upload.single("picture"),register);
 
 /* ROUTES */
 app.use("/auth",authRoutes);
+
+app.use('/event', eventRoutes);
+
+
 app.use("/stage",stageRouter);
 app.use("/course",courseRoute);
+
 
 
 /* MONGOOSE SETUP */
