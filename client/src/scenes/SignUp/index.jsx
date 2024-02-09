@@ -2,7 +2,33 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import * as yup from "yup";
 import {  } from "react-router-dom";
+import Dropzone from "react-dropzone";
+import {
+    Box,
+    Button,
+    TextField,
+    useMediaQuery,
+    Typography,
+    useTheme,
+  } from "@mui/material";
+  import { Formik } from "formik";
+  import FlexBetween from "../../components/FlexBetween";
+  import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+  const registerSchema = yup.object().shape({
+    firstName: yup.string().required("required"),
+    lastName: yup.string().required("required"),
+    email: yup.string().email("invalid email").required("required"),
+    password: yup.string().required("required"),
+    picture: yup.string().required("required"),
+});
 
+const initialValuesRegister = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    picture: "",
+};
 
 function Index() {
 
@@ -10,33 +36,36 @@ function Index() {
     //const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    
+    const register = async (values, onSubmitProps) => {
+        console.log("values",values);
+        // this allow us to send form info with image
+        const formData = new FormData();
+        for (let value in values) {
+            formData.append(value, values[value]);
+        }
+        formData.append('picturePath', values.picture.name);
+        console.log("formData",formData);
+        
+        const savedUserResponse = await fetch(
+            "http://localhost:3001/auth/register",
+            {
+                method: "POST",
+                body: formData,
+            }
+        );
+        const savedUser = await savedUserResponse.json();
+        onSubmitProps.resetForm();
 
-    const handleFormSubmit =  async (values) => {
-        values.preventDefault(); // Prevent default form submission behavior
-        const formData = new FormData(values.target); // Create FormData object from form
-        const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
-        // register(values);
-        //console.log("formValues", formValues);
-        try {
-            console.log("values",formValues);
-            const response = await fetch('http://localhost:3001/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formValues)
-            });
-            const savedUser = await response.json();
-
-            if (savedUser) {
-                console.log('User added!');
+        if (savedUser) {
+            console.log('User added!');
                 console.log("user", savedUser);
                 navigate('/');
-            }  
-        } catch (error) {
-            console.error('Error registering user:', error);
-        }
+        } 
+    };
+    
+
+    const handleFormSubmit = async (values, onSubmitProps) => {
+        await register(values, onSubmitProps);
     };
 
     
@@ -79,21 +108,56 @@ function Index() {
                     <h2>Sign up for your account!</h2>
                     <p className="lead mb-4">Nice to see you! Please Sign up with your account.</p>
                     {/* Form START */}
-                    <form onSubmit={handleFormSubmit}>
+                    <Formik
+                        onSubmit={handleFormSubmit}
+                        initialValues={initialValuesRegister }
+                        validationSchema={registerSchema }
+                    >
+                        {({
+                            values,
+                            errors,
+                            touched,
+                            handleBlur,
+                            handleChange,
+                            handleSubmit,
+                            setFieldValue,
+                            resetForm,
+                        }) => (
+                    <form onSubmit={handleSubmit}>
                         {/* firstName */}
                         <div className="mb-4">
                             <label htmlFor="exampleInputEmail1" className="form-label">First Name *</label>
                             <div className="input-group input-group-lg">
                                 <span className="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i className="bi bi-envelope-fill" /></span>
-                                <input type="text" name="firstName" className="form-control border-0 bg-light rounded-end ps-1" placeholder="First Name" id="exampleInputEmail" required />
-                            </div>
+                                <TextField 
+                                    label="First Name"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    value={values.firstName}
+                                    name="firstName"
+                                    className="form-control border-0 bg-light rounded-end ps-1"
+                                    error={Boolean(touched.firstName) && Boolean(errors.firstName)}
+                                    helperText={touched.firstName && errors.firstName}
+                                    sx={{ gridColumn: "span 2" }}
+                                />                            
+                                </div>
                         </div>
                         {/* lastName */}
                         <div className="mb-4">
                             <label htmlFor="exampleInputEmail1" className="form-label">Last Name *</label>
                             <div className="input-group input-group-lg">
                                 <span className="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i className="bi bi-envelope-fill" /></span>
-                                <input type="text" name="lastName" className="form-control border-0 bg-light rounded-end ps-1" placeholder="Last Name" id="exampleInputFirstName" required />
+                                <TextField 
+                                    label="Last Name"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    value={values.lastName}
+                                    name="lastName"
+                                    className="form-control border-0 bg-light rounded-end ps-1"
+                                    error={Boolean(touched.lastName) && Boolean(errors.lastName)}
+                                    helperText={touched.lastName && errors.lastName}
+                                    sx={{ gridColumn: "span 2" }}
+                                />
                             </div>
                         </div>
                         {/* Email */}
@@ -101,15 +165,71 @@ function Index() {
                             <label htmlFor="exampleInputEmail1" className="form-label">Email address *</label>
                             <div className="input-group input-group-lg">
                                 <span className="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i className="bi bi-envelope-fill" /></span>
-                                <input type="email" name="email" className="form-control border-0 bg-light rounded-end ps-1" placeholder="E-mail" id="exampleInputLastname" required />
+                                <TextField 
+                                label="Email"
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                value={values.email}
+                                name="email"
+                                className="form-control border-0 bg-light rounded-end ps-1"
+                                error={Boolean(touched.email) && Boolean(errors.email)}
+                                helperText={touched.email && errors.email}
+                                sx={{ gridColumn: "span 4" }}
+                                />                            
                             </div>
+                        </div>
+                        <div className="mb-4">
+                            <Box
+                                gridColumn="span 4"
+                                border={`1px solid red`}
+                                borderRadius="5px"
+                                p="1rem"
+                            >
+                                <Dropzone
+                                    acceptedFiles=".jpg,.jpeg,.png"
+                                    multiple={false}
+                                    onDrop={(acceptedFiles) => 
+                                        setFieldValue("picture", acceptedFiles[0])
+                                        }
+                                >
+                                    {({ getRootProps, getInputProps }) => (
+                                        <Box
+                                            {...getRootProps()}
+                                            border={`2px dashed blue`}
+                                            p="1rem"
+                                            sx= {{ "&:hover" : { cursor: "pointer" } }}
+                                        >
+                                            <input {...getInputProps()} />
+                                            {!values.picture ? (
+                                                <p>Add Picture Here</p>
+                                            ) : (
+                                                <FlexBetween>
+                                                    <Typography>{values.picture.name}</Typography>
+                                                    <EditOutlinedIcon />
+                                                </FlexBetween>
+                                            )}
+                                        </Box>
+                                    )}
+                                </Dropzone>
+                            </Box>
                         </div>
                         {/* Password */}
                         <div className="mb-4">
                             <label htmlFor="inputPassword5" className="form-label">Password *</label>
                             <div className="input-group input-group-lg">
                                 <span className="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i className="fas fa-lock" /></span>
-                                <input type="password" name="password" className="form-control border-0 bg-light rounded-end ps-1" placeholder="*********" id="inputPassword5" required />
+                                <TextField 
+                                    label="Password"
+                                    type="password"
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    value={values.password}
+                                    name="password"
+                                    className="form-control border-0 bg-light rounded-end ps-1"
+                                    error={Boolean(touched.password) && Boolean(errors.password)}
+                                    helperText={touched.password && errors.password}
+                                    sx={{ gridColumn: "span 4" }}
+                                />
                             </div>
                         </div>
 
@@ -127,6 +247,8 @@ function Index() {
                             </div>
                         </div>
                     </form>
+                    )}
+                    </Formik>
                     {/* Form END */}
                     {/* Social buttons */}
                     <div className="row">
