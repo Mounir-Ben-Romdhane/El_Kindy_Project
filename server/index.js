@@ -11,6 +11,7 @@ import { fileURLToPath } from "url";
 
 import stageRouter  from "./routes/stageRoute.js";
 import authRoutes from "./routes/auth.js";
+import courseRoute from './routes/courseRoute.js'
 import { register } from "./controllers/auth.js";
 
 
@@ -44,11 +45,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ROUTES WITH FILES*/
-app.post("/auth/register",register);
+app.post("/auth/register",upload.single("picture"),register);
+
 
 /* ROUTES */
 app.use("/auth",authRoutes);
 app.use("/stage",stageRouter);
+app.use("/course",courseRoute);
 
 
 /* MONGOOSE SETUP */

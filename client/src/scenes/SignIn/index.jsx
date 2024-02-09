@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import { setLogin } from '../../state'
+import { useSelector } from "react-redux";
 
 function Index() {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const isAuth = Boolean(useSelector((state) => state.token));
+    useEffect(() => {
+        if(isAuth){
+            navigate('/home');
+        }
+    });
+    
 
     const login = async (values, onSubmitProps) => {
         
