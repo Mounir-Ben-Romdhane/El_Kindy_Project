@@ -3,6 +3,8 @@ import AboutPage from '../src/scenes/AboutPage'
 import HomePage from '../src/scenes/HomePage'
 import SignUp from '../src/scenes/SignUp'
 import SignIn from '../src/scenes/SignIn'
+import AdminHomePage from '../src/scenes/AdminHomePage'
+import ListCoursesPage from '../src/scenes/Courses/ListCoursesPage'
 import EventsPage from '../src/scenes/EventsPage'
 import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
@@ -64,6 +66,12 @@ function App() {
               path="/home" 
               element={isAuth ? <HomePage /> : <Navigate to="/" /> } 
             />
+          <Route  path="/dashboard-admin" 
+              element={isAuth ? <AdminHomePage /> : <Navigate to="/" /> } 
+          />
+          <Route  path="/listCourses" 
+              element={isAuth ? <ListCoursesPage /> : <Navigate to="/" /> } 
+          />
           <Route path="/about" element={<AboutPage />}/>
           <Route path="/event" element={<EventsPage />}/>
         </Routes>
