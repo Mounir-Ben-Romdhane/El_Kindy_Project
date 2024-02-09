@@ -1,4 +1,5 @@
 import Event from "../models/Event.js";
+import {upload} from "../utils/upload.js";
 
 // Create Event
 export async function create(req, res) {
@@ -88,6 +89,28 @@ export async function remove(req, res) {
       .json({
         error: "Internal Server Error",
         message: "Could not delete event",
+      });
+  }
+}
+
+
+// upload Event
+export async function upload(req, res) {
+  try {
+    upload(req,res,async(err)=>{
+      if(err){
+        res.status(500).send("Error uploading file");
+      }else{
+        res.status(200).send(req.file);
+      }
+    })
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({
+        error: "Internal Server Error",
+        message: "Could not upload file",
       });
   }
 }

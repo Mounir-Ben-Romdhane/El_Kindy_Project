@@ -10,6 +10,7 @@ import path from 'path';
 import { fileURLToPath } from "url";
 
 
+
 import authRoutes from "./routes/auth.js";
 import eventRoutes from "./routes/Event.js";
 import { register } from "./controllers/auth.js";
