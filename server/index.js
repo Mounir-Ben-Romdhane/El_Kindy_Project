@@ -9,7 +9,7 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from "url";
 
-
+import stageRouter  from "./routes/stageRoute.js";
 import authRoutes from "./routes/auth.js";
 import { register } from "./controllers/auth.js";
 
@@ -48,6 +48,7 @@ app.post("/auth/register",register);
 
 /* ROUTES */
 app.use("/auth",authRoutes);
+app.use("/stage",stageRouter);
 
 
 /* MONGOOSE SETUP */
