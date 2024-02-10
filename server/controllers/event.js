@@ -1,5 +1,4 @@
 import Event from "../models/Event.js";
-import {upload} from "../utils/upload.js";
 
 // Create Event
 export async function create(req, res) {

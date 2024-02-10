@@ -12,7 +12,6 @@ import { fileURLToPath } from "url";
 
 
 
-import authRoutes from "./routes/auth.js";
 import eventRoutes from "./routes/Event.js";
 
 import stageRouter  from "./routes/stageRoute.js";
@@ -22,6 +21,7 @@ import courseRoute from './routes/courseRoute.js'
 import { register } from "./controllers/auth.js";
 
 
+import categorieRoutes from "./routes/categorieRoutes.js"; // Import des routes de catégorie
 
 import User from './models/User.js';
 import { users } from "./data/index.js";
@@ -40,6 +40,7 @@ app.use(bodyParser.json({limit: "30mb", extended: true}));
 app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname,'public/assets')));
+app.use("/api/categories", categorieRoutes); // Utiliser les routes de catégorie
 
 
 /* FILE STORAGE */

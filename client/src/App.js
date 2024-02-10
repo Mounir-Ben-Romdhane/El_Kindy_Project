@@ -5,6 +5,10 @@ import SignUp from '../src/scenes/SignUp'
 import SignIn from '../src/scenes/SignIn'
 import AdminHomePage from '../src/scenes/AdminHomePage'
 import ListCoursesPage from '../src/scenes/Courses/ListCoursesPage'
+import ListCategoryPage from '../src/scenes/Category/ListCategoryPage'
+import AddCategoryPage from '../src/scenes/Category/AddCategoryPage'
+import EditCategoryPage from '../src/scenes/Category/EditCategoryPage'
+
 import EventsPage from '../src/scenes/EventsPage'
 import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
@@ -72,8 +76,18 @@ function App() {
           <Route  path="/listCourses" 
               element={isAuth ? <ListCoursesPage /> : <Navigate to="/" /> } 
           />
+            <Route  path="/listCategories" 
+              element={isAuth ? <ListCategoryPage /> : <Navigate to="/" /> } 
+          />
+             <Route  path="/add-category" 
+              element={isAuth ? <AddCategoryPage /> : <Navigate to="/" /> } 
+          />
+          <Route path="/edit-category/:id"
+              element={isAuth ? <EditCategoryPage /> : <Navigate to="/" /> } 
+          />
           <Route path="/about" element={<AboutPage />}/>
           <Route path="/event" element={<EventsPage />}/>
+
         </Routes>
       </div>
   )
