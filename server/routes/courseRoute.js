@@ -4,7 +4,6 @@ import { getAll, addNewCourse, updateCourse, removeCourse } from "../controllers
 const router = express.Router();
 
 router.get("/all", getAll);
-router.post("/add", addNewCourse);
 router.patch("/update/:id", updateCourse);
 router.delete("/delete/:id", removeCourse);
 
