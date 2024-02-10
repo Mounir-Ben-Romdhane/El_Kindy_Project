@@ -16,15 +16,23 @@ export const addNewCourse = async (req, res) => {
         console.log('Request Body:', req.body);
 
         const {
-            name,
+            title,
             description,
-            duration
+            picturePath,
+            courseCategory,
+            courseLevel,
+            courseTime,
+            coursePrice
         } = req.body;
 
         const newCourse = new Course({
-            name,
+            title,
             description,
-            duration
+            picturePath,
+            courseCategory,
+            courseLevel,
+            courseTime,
+            coursePrice
         });
 
         const savedCourse = await newCourse.save();

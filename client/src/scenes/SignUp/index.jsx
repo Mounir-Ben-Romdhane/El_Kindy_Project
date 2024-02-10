@@ -54,7 +54,7 @@ function Index() {
             }
         );
         const savedUser = await savedUserResponse.json();
-        onSubmitProps.resetForm();
+        //onSubmitProps.resetForm();
 
         if (savedUser) {
             console.log('User added!');
