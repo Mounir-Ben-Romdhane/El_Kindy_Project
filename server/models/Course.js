@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const CourseSchema = new mongoose.Schema(
     {
-        name: {
+        title: {
             type: String,
             required: true,
             min: 2,
@@ -12,15 +12,28 @@ const CourseSchema = new mongoose.Schema(
             type:String,
             required:true,
         },
-        duration:{
-            weeks: {
-                type: Number,
-                required: true,
-            },
-            days: {
-                type:Number
-            }  
+        picturePath: {
+            type: String,
+            default: "",
+        }, 
+        courseCategory: {
+            type:  String,
+            default: "",
         },
+        courseLevel: {
+            type: String,
+            default: "Beginner"
+        },
+        courseTime: {
+            type: Number,
+            default: "",
+            required: true
+        },
+        coursePrice: {
+            type: Number,
+            default: 0, 
+            required: true
+        }
     },
     { timestamps: true}
     );

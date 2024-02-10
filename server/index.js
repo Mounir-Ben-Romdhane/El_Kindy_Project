@@ -8,6 +8,8 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from "url";
+import { addNewCourse, updateCourse } from "./controllers/courseController.js";
+
 
 
 
@@ -54,6 +56,7 @@ const upload = multer({ storage });
 
 /* ROUTES WITH FILES*/
 app.post("/auth/register",upload.single("picture"),register);
+app.post("/course/add",upload.single("picture"),addNewCourse);
 
 
 /* ROUTES */
