@@ -40,6 +40,10 @@ function Index() {
     }
   };
 
+  const editEvents = async(id)=>{
+  
+  }
+
   return (
     <div>
       <main>
@@ -51,7 +55,7 @@ function Index() {
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
                 <h1 className="h3 mb-2 mb-sm-0">Events</h1>
                 {/* Adjust the href to your event creation route */}
-                <a href="/create-event" className="btn btn-sm btn-primary mb-0">
+                <a href="/addEvent" className="btn btn-sm btn-primary mb-0">
                   Create an Event
                 </a>
               </div>
@@ -97,8 +101,8 @@ function Index() {
                           <td>
                             {/* Actions */}
                             <a
-                              href={`/edit-event/${event._id}`}
-                              className="btn btn-sm btn-dark me-1"
+                              onClick={() => editEvents(event._id)}
+                              className="btn btn-sm btn-info"
                             >
                               Edit
                             </a>
