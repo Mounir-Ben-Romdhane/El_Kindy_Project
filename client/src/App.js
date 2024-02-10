@@ -5,6 +5,7 @@ import SignUp from '../src/scenes/SignUp'
 import SignIn from '../src/scenes/SignIn'
 import AdminHomePage from '../src/scenes/AdminHomePage'
 import ListCoursesPage from '../src/scenes/Courses/ListCoursesPage'
+import AddCoursePage from '../src/scenes/Courses/AddCoursePage'
 import EventsPage from '../src/scenes/EventsPage'
 import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
@@ -33,6 +34,10 @@ function App() {
       '/assets/vendor/glightbox/js/glightbox.js',
       '/assets/vendor/purecounterjs/dist/purecounter_vanilla.js',
       '/assets/js/functions.js',
+      '/assets/vendor/choices/js/choices.min.js',
+      '/assets/vendor/aos/aos.js',
+      '/assets/vendor/quill/js/quill.min.js',
+      '/assets/vendor/stepper/js/bs-stepper.min.js'
     ];
 
     async function loadAllScripts() {
@@ -71,6 +76,9 @@ function App() {
           />
           <Route  path="/listCourses" 
               element={isAuth ? <ListCoursesPage /> : <Navigate to="/" /> } 
+          />
+          <Route  path="/addCourse" 
+              element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } 
           />
           <Route path="/about" element={<AboutPage />}/>
           <Route path="/event" element={<EventsPage />}/>
