@@ -5,7 +5,8 @@ import SignUp from '../src/scenes/SignUp'
 import SignIn from '../src/scenes/SignIn'
 import AdminHomePage from '../src/scenes/AdminHomePage'
 import ListCoursesPage from '../src/scenes/Courses/ListCoursesPage'
-import EventsPage from '../src/scenes/EventsPage'
+import ListEventsPage from '../src/scenes/EventsPage/ListEventPage'
+import AddEventPage from '../src/scenes/EventsPage/AddEventPage'
 import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 import { useSelector } from "react-redux";
@@ -72,8 +73,13 @@ function App() {
           <Route  path="/listCourses" 
               element={isAuth ? <ListCoursesPage /> : <Navigate to="/" /> } 
           />
+          <Route  path="/listEvents" 
+              element={isAuth ? <ListEventsPage /> : <Navigate to="/" /> }   
+          />
+          <Route  path="/addEvent" 
+              element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   
+          />
           <Route path="/about" element={<AboutPage />}/>
-          <Route path="/event" element={<EventsPage />}/>
         </Routes>
       </div>
   )

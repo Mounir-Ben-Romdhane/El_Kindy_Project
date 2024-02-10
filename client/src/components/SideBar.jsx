@@ -35,8 +35,21 @@ function SideBar() {
                         <li className="nav-item"> <Link className="nav-link" to="/addCourse">Add Course</Link></li>
                     </ul>
                     </li>
+
                     {/* Menu item 3 */}
                     <li className="nav-item"> <a className="nav-link" href="admin-student-list.html"><i className="fas fa-user-graduate fa-fw me-2" />Students</a></li>
+                    {/* Event */} 
+                    <li className="nav-item">
+                    <a className="nav-link" data-bs-toggle="collapse" href="#event" role="button" aria-expanded="false" aria-controls="collapsepage">
+                        <i className="bi bi-basket fa-fw me-2" />Event
+                    </a>
+                    {/* Submenu */} 
+                    <ul className="nav collapse flex-column" id="event" data-bs-parent="#navbar-sidebar">
+                        <li className="nav-item"> <Link className="nav-link" to="/listEvents">List Events</Link></li>
+                        <li className="nav-item"> <a className="nav-link" href="admin-course-category.html">Add Event</a></li>
+                    </ul>
+                    </li>
+
                     {/* Menu item 4 */}
                     <li className="nav-item">
                     <a className="nav-link" data-bs-toggle="collapse" href="#collapseinstructors" role="button" aria-expanded="false" aria-controls="collapseinstructors">
