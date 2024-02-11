@@ -1,10 +1,22 @@
 import React, { useEffect } from "react";
-
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { setLogout } from '../state'
+import { useSelector } from "react-redux";
 
 
 function NavBar() {
 
-  
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const logoutHandler = () => {
+    dispatch(
+      setLogout()
+  );
+  navigate("/");
+  }
 
   
 
@@ -257,8 +269,10 @@ function NavBar() {
                 <img className="avatar-img rounded-circle shadow" src="assets/images/avatar/01.jpg" alt="avatar" />
               </div>
               <div>
-                <a className="h6" href="#">Lori Ferguson</a>
-                <p className="small m-0">example@gmail.com</p>
+                <a className="h6 mt-2 mt-sm-0" href="#">
+                  {user?.firstName} {user?.lastName}
+                </a>
+                <p className="small m-0">{user?.email}</p>
               </div>
             </div>
             <hr />
@@ -267,7 +281,13 @@ function NavBar() {
           <li><a className="dropdown-item" href="#"><i className="bi bi-person fa-fw me-2" />Edit Profile</a></li>
           <li><a className="dropdown-item" href="#"><i className="bi bi-gear fa-fw me-2" />Account Settings</a></li>
           <li><a className="dropdown-item" href="#"><i className="bi bi-info-circle fa-fw me-2" />Help</a></li>
-          <li><a className="dropdown-item bg-danger-soft-hover" href="#"><i className="bi bi-power fa-fw me-2" />Sign Out</a></li>
+          <li><a
+                className="dropdown-item bg-danger-soft-hover"
+                onClick={logoutHandler}
+              >
+                <i className="bi bi-power fa-fw me-2" />
+                Sign Out
+              </a></li>
           <li> <hr className="dropdown-divider" /></li>
           {/* Dark mode switch START */}
           <li>

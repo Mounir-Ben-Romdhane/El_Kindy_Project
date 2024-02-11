@@ -2,10 +2,12 @@ import SideBar from 'components/SideBar'
 import TopBarBack from 'components/TopBarBack'
 import React, {useEffect, useState} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from "react-redux";
 
 function Index() {
 
-
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.token);
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
 
@@ -15,8 +17,10 @@ function Index() {
     try {
       const response = await fetch("http://localhost:3001/course/all", {
         method: "GET",
+        
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` 
         },
       });
       const allCourses = await response.json();

@@ -7,8 +7,6 @@ function Index() {
 
   
   
-
-  
   return (
     <div>
       {/* **************** MAIN CONTENT START **************** */}

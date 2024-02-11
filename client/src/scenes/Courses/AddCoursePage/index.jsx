@@ -1,7 +1,7 @@
 import BannerStart from 'components/BannerStart'
 import SideBar from 'components/SideBar'
 import TopBarBack from 'components/TopBarBack'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-notifications/lib/notifications.css';
@@ -10,6 +10,14 @@ import { Link, useNavigate } from 'react-router-dom'
 
 
 function Index() {
+
+  const [dataTheme, setDataTheme] = useState('');
+
+  useEffect(() => {
+    // Retrieve the value of data-theme from localStorage
+    const themeValue = localStorage.getItem('data-theme');
+    setDataTheme(themeValue);
+  }, []); // Empty dependency array ensures this effect runs only once
 
   
 // State to hold the image name
@@ -121,7 +129,7 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   {/* Step Buttons START */}
                     {/* Step 1 */}
                       <div className="">
-                      <h2 className="p-2 " style={{color:"#1d3b53"}}>Course details</h2>
+                      <h2 className="p-2" style={{ color: dataTheme === 'dark' ? '#2B6DA2' : '#1d3b53' }}>Course details</h2>
                       </div>
               </div>
               <div>
