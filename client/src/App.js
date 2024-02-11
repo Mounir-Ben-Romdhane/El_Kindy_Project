@@ -89,7 +89,7 @@ function App() {
           />
           <Route path="/about" element={<AboutPage />}/>
 
-        </Routes>
+          </Routes>
       </div>
   )
 }

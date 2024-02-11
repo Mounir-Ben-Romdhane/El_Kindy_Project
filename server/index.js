@@ -8,7 +8,6 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from "url";
-import { addNewCourse } from "./controllers/courseController.js";
 
 import { addNewCourse, updateCourse } from "./controllers/courseController.js";
 
