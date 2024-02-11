@@ -8,4 +8,5 @@ router.get("/events", list);
 router.put("/events/:id",update);
 router.delete("/events/:id",remove);
 
+
 export default router;
