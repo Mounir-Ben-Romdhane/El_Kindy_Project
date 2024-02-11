@@ -12,8 +12,7 @@ export const register = async (req, res) => {
             firstName,
             lastName,
             email,
-            password,
-            picturePath
+            password
         } = req.body;
 
         const saltRounds = 10;
@@ -24,8 +23,7 @@ export const register = async (req, res) => {
             firstName,
             lastName,
             email,
-            password: passwordHash,
-            picturePath
+            password: passwordHash
         });
         const savedUser = await newUser.save();
         res.status(201).json({savedUser});

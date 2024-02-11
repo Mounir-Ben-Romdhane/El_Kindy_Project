@@ -8,24 +8,15 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from "url";
-import { addNewCourse, updateCourse } from "./controllers/courseController.js";
-
-
-
+import { addNewCourse } from "./controllers/courseController.js";
 
 
 import eventRoutes from "./routes/Event.js";
 
+
 import stageRouter  from "./routes/stageRoute.js";
 import authRoutes from "./routes/auth.js";
 import courseRoute from './routes/courseRoute.js'
-
-import { register } from "./controllers/auth.js";
-
-
-
-import User from './models/User.js';
-import { users } from "./data/index.js";
 
 
 /* CONFIGURATION */
@@ -55,7 +46,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ROUTES WITH FILES*/
-app.post("/auth/register",upload.single("picture"),register);
+//app.post("/auth/register",upload.single("picture"),register);
 app.post("/course/add",upload.single("picture"),addNewCourse);
 
 
