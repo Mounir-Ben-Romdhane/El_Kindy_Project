@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
 * Eduport- LMS, Education and Course Theme
 *
@@ -352,6 +353,7 @@ var e = {
                   sliderDirection = 'rtl';
               }
 
+              // eslint-disable-next-line no-undef
               var tnsSlider = tns({
                   container: slider,
                   mode: sliderMode,

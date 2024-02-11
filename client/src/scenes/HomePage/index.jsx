@@ -8,25 +8,25 @@ function Index() {
   const user = useSelector((state) => state.user);
   console.log("user", user);
 
-  const test = async () => {
-    try {
-      const response = await fetch("http://localhost:3001/auth/getAll", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const allUsers = await response.json();
+  
+    const test = async () => {
+      try {
+        const response = await fetch("http://localhost:3001/auth/getAll", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const allUsers = await response.json();
 
-      if (allUsers) {
-        console.log("users", allUsers);
+        if (allUsers) {
+          console.log("users", allUsers);
+        }
+      } catch (error) {
+        console.error("Error registering user:", error);
       }
-    } catch (error) {
-      console.error("Error registering user:", error);
-    }
-  };
-
-  test();
+    };
+    test();
 
   return (
     <>

@@ -1,8 +1,10 @@
 import SideBar from 'components/SideBar'
 import TopBarBack from 'components/TopBarBack'
 import React, {useEffect, useState} from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Index() {
+
 
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -32,6 +34,18 @@ function Index() {
 const handleEditClick = (course) => {
   setSelectedCourse(course);
 };
+
+const handleDelete = async (id) => {
+  try {
+    await fetch(`http://localhost:3001/course/delete/${id}`, {
+      method: 'DELETE',
+    });
+    // Filter out the deleted stage from the state
+    setCourses(prevStages => prevStages.filter(course => course._id !== id)); // Assuming `_id` is the unique identifier
+  } catch (error) {
+    console.error("Error deleting stage:", error);
+  }
+};
   
 
   return (
@@ -51,7 +65,7 @@ const handleEditClick = (course) => {
               <div className="row mb-3">
                 <div className="col-12 d-sm-flex justify-content-between align-items-center">
                   <h1 className="h3 mb-2 mb-sm-0">Courses</h1>
-                  <a href="instructor-create-course.html" className="btn btn-sm btn-primary mb-0">Create a Course</a>
+                  <Link to="/addCourse" className="btn btn-sm btn-primary mb-0">Create a Course</Link>
                 </div>
               </div>
 
@@ -110,7 +124,7 @@ const handleEditClick = (course) => {
                           {/* Table row */}
                           {courses.map(course => (
                             <tr key={course.id}>
-                              <td>{course.name}</td>
+                              <td>{course.title}</td>
                               <td>{course.description}</td>
                               <td>course.addedDate</td>
                               <td>course.type</td>
@@ -120,6 +134,7 @@ const handleEditClick = (course) => {
                                 <button href="#" className="btn btn-sm btn-dark me-1 mb-1 mb-md-0"
                                  onClick={() => handleEditClick(course)}
                                  >Edit</button>
+                                 <button onClick={() => handleDelete(course._id)} className="btn btn-sm btn-danger me-1 mb-1 mb-md-0">Delete</button>
                               </td> 
                             </tr>
                           ))}

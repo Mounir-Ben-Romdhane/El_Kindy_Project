@@ -1,5 +1,4 @@
 import Event from "../models/Event.js";
-import {upload} from "../utils/upload.js";
 
 // Create Event
 export async function create(req, res) {
@@ -95,9 +94,9 @@ export async function remove(req, res) {
 
 
 // upload Event
-export async function upload(req, res) {
+/*export async function uploadd(req, res) {
   try {
-    upload(req,res,async(err)=>{
+    uploadd(req,res,async(err)=>{
       if(err){
         res.status(500).send("Error uploading file");
       }else{
@@ -113,4 +112,4 @@ export async function upload(req, res) {
         message: "Could not upload file",
       });
   }
-}
+}*/

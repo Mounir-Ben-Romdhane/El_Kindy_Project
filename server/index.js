@@ -10,11 +10,6 @@ import path from 'path';
 import { fileURLToPath } from "url";
 import { addNewCourse, updateCourse } from "./controllers/courseController.js";
 
-
-
-
-
-import authRoutes from "./routes/auth.js";
 import eventRoutes from "./routes/Event.js";
 
 import stageRouter  from "./routes/stageRoute.js";

@@ -2,10 +2,16 @@ import BannerStart from 'components/BannerStart'
 import SideBar from 'components/SideBar'
 import TopBarBack from 'components/TopBarBack'
 import React, {useState} from 'react'
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import 'react-notifications/lib/notifications.css';
 import { Link, useNavigate } from 'react-router-dom'
 
+
+
 function Index() {
+
+  
 // State to hold the image name
 const [imageName, setImageName] = useState(null);
 // State to hold the image file
@@ -45,20 +51,28 @@ const addCourse = async (values, onSubmitProps) => {
     console.log("formData",formData);
     console.log("picture name", values.picture.name);
     
-    const savedUserResponse = await fetch(
+    const savedCourseResponse = await fetch(
         "http://localhost:3001/course/add",
         {
             method: "POST",
             body: formData,
         }
     );
-    const savedCourse = await savedUserResponse.json();
+    const savedCourse = await savedCourseResponse.json();
     //onSubmitProps.resetForm();
 
     if (savedCourse) {
         console.log('Course added!');
             console.log("Course", savedCourse);
-           // navigate('/');
+            // Show the toast notification with autoClose: false
+            toast.success("Course added successfully !!", { autoClose: 1500,
+              style: {
+                color: 'green' // Text color
+              }});
+            setTimeout(() => {
+              navigate('/listCourses');
+            }, 2000);
+            
     } 
 };
 
@@ -77,6 +91,10 @@ const handleFormSubmit = async (values, onSubmitProps) => {
   await addCourse(formValues, onSubmitProps);
 };
 
+
+
+
+
   return (
     <div>
       <SideBar />
@@ -84,6 +102,7 @@ const handleFormSubmit = async (values, onSubmitProps) => {
        {/* Page content START */}
        <div className="page-content">
           <TopBarBack />
+          <ToastContainer />
 
           {/* Page main content START */}
           <div className="page-content-wrapper border">
@@ -105,6 +124,9 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                       <h2 className="p-2 " style={{color:"#1d3b53"}}>Course details</h2>
                       </div>
               </div>
+              <div>
+        
+      </div>
 
             <form onSubmit={handleFormSubmit}>
               {/* Step 1 content START */}
@@ -116,12 +138,12 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   {/* Course title */}
                   <div className="col-12">
                     <label className="form-label">Course title</label>
-                    <input className="form-control" name="title" type="text" placeholder="Enter course title" />
+                    <input className="form-control" name="title" type="text" placeholder="Enter course title" required/>
                   </div>
                   {/* Short description */}
                   <div className="col-12">
                     <label className="form-label">Short description</label>
-                    <textarea className="form-control" name="description" rows={2} placeholder="Enter keywords" defaultValue={""} />
+                    <textarea className="form-control" name="description" rows={2} placeholder="Enter keywords" defaultValue={""} required />
                   </div>
                   {/* Upload image START */}
                   <div className="m-4">
@@ -136,6 +158,7 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                               alt="Uploaded image"
                               className="img-fluid mb-2"
                               style={{ maxWidth: '300px', maxHeight: '300px' }} // Limit image dimensions
+                              required
                             />
                             <p className="mb-0">Uploaded image</p>
                           </div>
@@ -174,7 +197,7 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   {/* Course category */}
                   <div className="col-md-6">
                     <label className="form-label">Course category</label>
-                    <select name="courseCategory" className="form-select  border-0 z-index-9 bg-transparent" aria-label=".form-select-sm" data-search-enabled="true">
+                    <select name="courseCategory" className="form-select  border-0 z-index-9 bg-transparent" aria-label=".form-select-sm" data-search-enabled="true" required>
                       <option value>Select category</option>
                       <option>Engineer</option>
                       <option>Medical</option>
@@ -186,7 +209,7 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   {/* Course level */}
                   <div className="col-md-6">
                     <label className="form-label">Course level</label>
-                    <select name="courseLevel" className="form-select border-0 z-index-9 bg-transparent" aria-label=".form-select-sm" data-search-enabled="false" data-remove-item-button="true">
+                    <select name="courseLevel" required className="form-select border-0 z-index-9 bg-transparent" aria-label=".form-select-sm" data-search-enabled="false" data-remove-item-button="true">
                       <option value>Select course level</option>
                       <option>All level</option>
                       <option>Beginner</option>
@@ -208,8 +231,9 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                     <label className="form-label">Course price</label>
                     <input name="coursePrice" type="text" className="form-control" placeholder="Enter course price" />
                   </div>
-                  
-                  
+
+
+                    
                   
                 </div>
                 
