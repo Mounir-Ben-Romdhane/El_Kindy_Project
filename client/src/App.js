@@ -5,13 +5,14 @@ import SignUp from '../src/scenes/SignUp'
 import SignIn from '../src/scenes/SignIn'
 import AdminHomePage from '../src/scenes/AdminHomePage'
 import ListCoursesPage from '../src/scenes/Courses/ListCoursesPage'
-<<<<<<< HEAD
+
 import ListEventsPage from '../src/scenes/EventsPage/ListEventPage'
 import AddEventPage from '../src/scenes/EventsPage/AddEventPage'
-=======
 import AddCoursePage from '../src/scenes/Courses/AddCoursePage'
-import EventsPage from '../src/scenes/EventsPage'
->>>>>>> master
+import ListCategoryPage from '../src/scenes/Category/ListCategoryPage'
+import AddCategoryPage from '../src/scenes/Category/AddCategoryPage'
+import EditCategoryPage from '../src/scenes/Category/EditCategoryPage'
+
 import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 import { useSelector } from "react-redux";
@@ -82,18 +83,27 @@ function App() {
           <Route  path="/listCourses" 
               element={isAuth ? <ListCoursesPage /> : <Navigate to="/" /> } 
           />
-<<<<<<< HEAD
+
           <Route  path="/listEvents" 
               element={isAuth ? <ListEventsPage /> : <Navigate to="/" /> }   
           />
           <Route  path="/addEvent" 
-              element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   
-=======
+              element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   />
           <Route  path="/addCourse" 
               element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } 
->>>>>>> master
           />
           <Route path="/about" element={<AboutPage />}/>
+            <Route  path="/listCategories" 
+              element={isAuth ? <ListCategoryPage /> : <Navigate to="/" /> } 
+          />
+             <Route  path="/add-category" 
+              element={isAuth ? <AddCategoryPage /> : <Navigate to="/" /> } 
+          />
+          <Route path="/edit-category/:id"
+              element={isAuth ? <EditCategoryPage /> : <Navigate to="/" /> } 
+          />
+          <Route path="/about" element={<AboutPage />}/>
+
         </Routes>
       </div>
   )

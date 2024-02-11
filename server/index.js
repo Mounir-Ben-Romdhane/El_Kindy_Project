@@ -10,6 +10,7 @@ import path from 'path';
 import { fileURLToPath } from "url";
 import { addNewCourse, updateCourse } from "./controllers/courseController.js";
 
+import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
 
 
 
@@ -23,6 +24,7 @@ import courseRoute from './routes/courseRoute.js'
 import { register } from "./controllers/auth.js";
 
 
+import categorieRoutes from "./routes/categorieRoutes.js"; // Import des routes de catégorie
 
 import User from './models/User.js';
 import { users } from "./data/index.js";
@@ -57,10 +59,13 @@ const upload = multer({ storage });
 /* ROUTES WITH FILES*/
 app.post("/auth/register",upload.single("picture"),register);
 app.post("/course/add",upload.single("picture"),addNewCourse);
+app.post("/api/categories", upload.single("picture"), createCategorie);
+app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
 
 
 /* ROUTES */
 app.use("/auth",authRoutes);
+app.use("/api/categories", categorieRoutes); 
 
 app.use('/event', eventRoutes);
 
