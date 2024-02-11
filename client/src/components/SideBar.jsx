@@ -46,7 +46,7 @@ function SideBar() {
                     {/* Submenu */} 
                     <ul className="nav collapse flex-column" id="event" data-bs-parent="#navbar-sidebar">
                         <li className="nav-item"> <Link className="nav-link" to="/listEvents">List Events</Link></li>
-                        <li className="nav-item"> <a className="nav-link" href="admin-course-category.html">Add Event</a></li>
+                        <li className="nav-item"> <a className="nav-link" href="/addEvent">Add Event</a></li>
                     </ul>
                     </li>
 

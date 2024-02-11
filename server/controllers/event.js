@@ -1,7 +1,7 @@
 import Event from "../models/Event.js";
-import {upload} from "../index.js";
 
-// Create Event
+
+/* // Create Event
 export async function create(req, res) {
   try {
     const { title, description, price, images, dateDebut, dateFin } = req.body;
@@ -29,7 +29,7 @@ export async function create(req, res) {
         message: "Could not create event",
       });
   }
-}
+} */
 
 // Get All Events
 export async function list(req, res) {
@@ -114,3 +114,38 @@ export async function uploadEvent(req, res) {
       });
   }
 }  */
+
+export const addNewEvent = async (req, res) => {
+  try {
+      console.log('Request Body:', req.body);
+      const {
+        title,
+        description,
+        price,
+        images,
+        dateDebut,
+        dateFin,
+      } = req.body;
+
+      const newEvent = new Event({
+        title,
+        description,
+        price,
+        images,
+        dateDebut,
+        dateFin,
+      });
+
+      const savedEvent = await newEvent.save();
+
+      return res.status(201).json({
+          success: true,
+          id: savedEvent._id,
+          message: "The Event has been created!"
+      });
+
+  }catch (err) {
+      console.log(err);
+      return res.status(500).json({ success: false, error: err.message });
+  }
+};

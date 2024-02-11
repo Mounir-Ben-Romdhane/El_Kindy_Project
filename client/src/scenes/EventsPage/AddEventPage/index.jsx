@@ -1,60 +1,80 @@
-import BannerStart from "components/BannerStart";
-import SideBar from "components/SideBar";
-import TopBarBack from "components/TopBarBack";
-import React, { useState } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
-import axios from "axios";
-import { redirect } from "react-router";
-import { useNavigate } from "react-router-dom";
+import BannerStart from 'components/BannerStart'
+import SideBar from 'components/SideBar'
+import TopBarBack from 'components/TopBarBack'
+import React, {useState} from 'react'
+
+import { Link, useNavigate } from 'react-router-dom'
 
 function AddEvent() {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    price: "",
-    images: "",
-    dateDebut: "",
-    dateFin: "",
-  });
 
-  const navigate = useNavigate();
+  // State to hold the image name
+const [imageName, setImageName] = useState(null);
+// State to hold the image file
+const [imageFile, setImageFile] = useState(null);
 
-  const handleChange = (e) => {
-    if (e.target.type === "file") {
-      // Handle file input
-      setFormData({ ...formData, [e.target.name]: e.target.files[0] });
-    } else {
-      // Handle all other inputs
-      setFormData({ ...formData, [e.target.name]: e.target.value });
-    }
-  };
 
-  const handleRemoveInput = (e) => {
-    setFormData({ ...formData, images: "" });
-    document.getElementById("image").value = "";
-  };
+// Function to handle selecting an image
+const handleImageSelect = (event) => {
+  // Get the selected file
+  const selectedFile = event.target.files[0];
+  // Set the image name
+  setImageName(selectedFile.name);
+  // Set the image file
+  setImageFile(selectedFile);
+};
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+// Function to handle removing the image
+const handleRemoveImage = () => {
+  // Reset the image name to null
+  setImageName(null);
+  // Reset the image file
+  setImageFile(null);
+  // Reset the input field value to allow selecting the same file again
+  document.getElementById('image').value = '';
+};
 
-    const data = new FormData();
-    Object.keys(formData).forEach((key) => {
-      data.append(key, formData[key]);
-    });
 
-    try {
-      await axios.post("http://localhost:3001/event/event/create", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      alert("Event added successfully");
-      navigate("/listEvents");
-    } catch (error) {
-      console.error("Error adding event:", error);
-      alert("Failed to add event");
-    }
-  };
+const navigate = useNavigate();
+
+
+
+const addEvent = async (values, onSubmitProps) => {
+  console.log("values",values);
+  // this allow us to send form info with image
+  const formData = new FormData();
+  for (let value in values) {
+      formData.append(value, values[value]);
+  }
+  formData.append('picturePath', values.picture.name);
+  console.log("formData",formData);
+  console.log("picture name", values.picture.name);
+  
+  const savedEventResponse = await fetch(
+      "http://localhost:3001/event/add",
+      {
+          method: "POST",
+          body: formData,
+      }
+  );
+  const savedEvent = await savedEventResponse.json();
+
+
+  if (savedEvent) {
+      console.log('Event added!');
+          console.log("Event", savedEvent);
+          alert("Event Added successfully");
+          navigate('/listEvents');
+          
+  } 
+};
+
+const handleFormSubmit = async (values, onSubmitProps) => {
+values.preventDefault();
+const formData = new FormData(values.target); // Create FormData object from form
+const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
+await addEvent(formValues, onSubmitProps);
+
+};
 
   return (
     <div>
@@ -73,7 +93,7 @@ function AddEvent() {
                   Event Details
                 </h2>
               </div>
-              <form onSubmit={handleSubmit} className="m-4">
+              <form onSubmit={handleFormSubmit} className="m-4">
                 <div className="row g-4">
                   <div className="col-12">
                     <label className="form-label">Event Title</label>
@@ -82,8 +102,6 @@ function AddEvent() {
                       type="text"
                       name="title"
                       placeholder="Enter Event title"
-                      value={formData.title}
-                      onChange={handleChange}
                       required
                     />
                   </div>
@@ -94,8 +112,6 @@ function AddEvent() {
                       name="description"
                       rows={2}
                       placeholder="Short description of the event"
-                      value={formData.description}
-                      onChange={handleChange}
                       required
                     />
                   </div>
@@ -105,8 +121,7 @@ function AddEvent() {
                       className="form-control"
                       type="date"
                       name="dateDebut"
-                      value={formData.dateDebut}
-                      onChange={handleChange}
+
                       required
                     />
                   </div>
@@ -116,8 +131,7 @@ function AddEvent() {
                       className="form-control"
                       type="date"
                       name="dateFin"
-                      value={formData.dateFin}
-                      onChange={handleChange}
+
                       required
                     />
                   </div>
@@ -128,57 +142,56 @@ function AddEvent() {
                       className="form-control"
                       name="price"
                       placeholder="Enter event price"
-                      value={formData.price}
-                      onChange={handleChange}
+
                     />
                   </div>
-                  {/* Upload image START */}
-                  <div className="col-12">
-                    <div className="text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3">
-                      {/* Image */}
-                      <img
-                        src="assets/images/element/gallery.svg"
-                        className="h-50px"
-                        alt
-                      />
-                      <div>
-                        <h6 className="my-2">
-                          Upload course image here, or
-                          <a href="#!" className="text-primary">
-                            {" "}
-                            Browse
-                          </a>
-                        </h6>
-                        <label style={{ cursor: "pointer" }}>
-                          <span>
-                            <input
-                              className="form-control stretched-link"
-                              type="file"
-                              name="images" 
-                              id="image"
-                              onChange={handleChange}
-                              accept="image/gif, image/jpeg, image/png"
+                 {/* Upload image START */}
+                 <div className="m-4">
+                    {/* Image */}
+                    <div className="col-12">
+                      <div className="text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3">
+                        {/* Display the image */}
+                        {imageFile && (
+                          <div>
+                            <img
+                              src={URL.createObjectURL(imageFile)}
+                              alt="Uploaded image"
+                              className="img-fluid mb-2"
+                              style={{ maxWidth: '300px', maxHeight: '300px' }} // Limit image dimensions
                             />
-                          </span>
-                        </label>
-                        <p className="small mb-0 mt-2">
-                          <b>Note:</b> Only JPG, JPEG and PNG. Our suggested
-                          dimensions are 600px * 450px. Larger image will be
-                          cropped to 4:3 to fit our thumbnails/previews.
-                        </p>
+                            <p className="mb-0">Uploaded image</p>
+                          </div>
+                        )}
+                    {/* Upload image button */}
+                    <div className="mb-3">
+                      <h6 className="my-2">Upload Event image here, or <span className="text-primary" style={{cursor: 'pointer'}}>Browse</span></h6>
+                      {/* File input */}
+                      <input
+                        className="form-control"
+                        type="file"
+                        name="picture"
+                        id="image"
+                        accept="image/gif, image/jpeg, image/png"
+                        onChange={handleImageSelect}
+                      />
+                      {/* Note */}
+                      <p className="small mb-0 mt-2"><b>Note:</b> Only JPG, JPEG, and PNG formats are supported. Our suggested dimensions are 600px * 450px. Larger images will be cropped to fit our thumbnails/previews.</p>
+                    </div>
+                    {/* Remove image button */}
+                    {imageName && (
+                      <div className="d-sm-flex justify-content-end mt-2">
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-danger-soft mb-3"
+                          onClick={handleRemoveImage}
+                        >
+                          Remove image
+                        </button>
                       </div>
-                    </div>
-                    {/* Button */}
-                    <div className="d-sm-flex justify-content-end mt-2">
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-danger-soft mb-3"
-                        onClick={handleRemoveInput}
-                      >
-                        Remove image
-                      </button>
-                    </div>
+                    )}
                   </div>
+                </div>
+              </div>
                   {/* Upload image END */}
                 </div>
                 <div className="d-md-flex justify-content-end align-items-start mt-4">
