@@ -8,8 +8,11 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from "url";
+import { addNewCourse } from "./controllers/courseController.js";
+import { addNewEvent } from "./controllers/event.js";
 
-import { addNewCourse, updateCourse } from "./controllers/courseController.js";
+
+
 
 import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
 
@@ -61,8 +64,12 @@ const upload = multer({ storage });
 /* ROUTES WITH FILES*/
 //app.post("/auth/register",upload.single("picture"),register);
 app.post("/course/add",upload.single("picture"),addNewCourse);
+
+app.post("/event/add",upload.single("picture"),addNewEvent);
+
 app.post("/api/categories", upload.single("picture"), createCategorie);
 app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
+
 
 
 /* ROUTES */

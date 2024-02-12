@@ -73,10 +73,13 @@ function App() {
               element={isAuth ? <ListEventsPage /> : <Navigate to="/" /> }   
           />
           <Route  path="/addEvent" 
-              element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   />
+              element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   
+              />
           <Route  path="/addCourse" 
               element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } 
-          />
+
+              element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   />
+          
           <Route path="/about" element={<AboutPage />}/>
             <Route  path="/listCategories" 
               element={isAuth ? <ListCategoryPage /> : <Navigate to="/" /> } 
@@ -86,6 +89,7 @@ function App() {
           />
           <Route path="/edit-category/:id"
               element={isAuth ? <EditCategoryPage /> : <Navigate to="/" /> } 
+
           />
           <Route path="/about" element={<AboutPage />}/>
         </Routes>
