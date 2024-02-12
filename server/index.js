@@ -12,7 +12,7 @@ import { fileURLToPath } from "url";
 
 import authRoutes from "./routes/auth.js";
 import { register } from "./controllers/auth.js";
-
+import salleRoutes from "./routes/salle.js";
 
 import User from './models/User.js';
 import { users } from "./data/index.js";
@@ -23,6 +23,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config();
 const app = express();
+
 app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin"}));
@@ -48,7 +49,7 @@ app.post("/auth/register",upload.single("picture"),register);
 
 /* ROUTES */
 app.use("/auth",authRoutes);
-
+app.use("/salle",salleRoutes);
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
