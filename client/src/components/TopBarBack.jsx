@@ -1,6 +1,22 @@
-import React from 'react'
+import React from 'react';
+import { useSelector } from "react-redux";
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { setLogout } from '../state'
 
 function TopBarBack() {
+
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const logoutHandler = () => {
+    dispatch(
+      setLogout()
+  );
+  navigate("/");
+  }
+
   return (
     <div>
         {/* Top bar START */}
@@ -278,9 +294,9 @@ function TopBarBack() {
                             </div>
                             <div>
                               <a className="h6 mt-2 mt-sm-0" href="#">
-                                Lori Ferguson
+                                {user?.firstName} {user?.lastName}
                               </a>
-                              <p className="small m-0">example@gmail.com</p>
+                              <p className="small m-0">{user?.email}</p>
                             </div>
                           </div>
                           <hr />
@@ -307,7 +323,7 @@ function TopBarBack() {
                         <li>
                           <a
                             className="dropdown-item bg-danger-soft-hover"
-                            href="#"
+                            onClick={logoutHandler}
                           >
                             <i className="bi bi-power fa-fw me-2" />
                             Sign Out

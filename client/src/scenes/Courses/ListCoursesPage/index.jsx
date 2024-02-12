@@ -1,9 +1,15 @@
 import SideBar from 'components/SideBar'
 import TopBarBack from 'components/TopBarBack'
 import React, {useEffect, useState} from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Index() {
 
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.token);
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
 
@@ -13,8 +19,10 @@ function Index() {
     try {
       const response = await fetch("http://localhost:3001/course/all", {
         method: "GET",
+        
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` 
         },
       });
       const allCourses = await response.json();
@@ -32,6 +40,24 @@ function Index() {
 const handleEditClick = (course) => {
   setSelectedCourse(course);
 };
+
+const handleDelete = async (id) => {
+  try {
+    await fetch(`http://localhost:3001/course/delete/${id}`, {
+      method: 'DELETE',
+    });
+    
+      toast.success("Course deleted successfully !!", { autoClose: 1500,
+        style: {
+          color: 'green' // Text color
+        }});
+        // Filter out the deleted stage from the state
+    setCourses(prevStages => prevStages.filter(course => course._id !== id)); // Assuming `_id` is the unique identifier
+    
+  } catch (error) {
+    console.error("Error deleting stage:", error);
+  }
+};
   
 
   return (
@@ -43,21 +69,28 @@ const handleEditClick = (course) => {
         {/* Page content START */}
         <div className="page-content">
           <TopBarBack />
+          
 
           {/* Page main content START */}
           <div className="page-content-wrapper border">
-            
+          <ToastContainer />
               {/* Title */}
               <div className="row mb-3">
                 <div className="col-12 d-sm-flex justify-content-between align-items-center">
                   <h1 className="h3 mb-2 mb-sm-0">Courses</h1>
-                  <a href="instructor-create-course.html" className="btn btn-sm btn-primary mb-0">Create a Course</a>
+                  <Link to="/addCourse" className="btn btn-sm btn-primary mb-0">Create a Course</Link>
                 </div>
               </div>
 
+               {/* Render text if courses array is empty */}
+                {courses.length === 0 &&
+                  <h2>No courses available.</h2>
+                }
+
 
               {/* Card START */}
-                <div className="card bg-transparent border">
+               {courses.length !=0 &&  <div className="card bg-transparent border">
+                  
                   {/* Card header START */}
                   <div className="card-header bg-light border-bottom">
                     {/* Search and select START */}
@@ -110,17 +143,17 @@ const handleEditClick = (course) => {
                           {/* Table row */}
                           {courses.map(course => (
                             <tr key={course.id}>
-                              <td>{course.name}</td>
+                              <td>{course.title}</td>
                               <td>{course.description}</td>
                               <td>course.addedDate</td>
                               <td>course.type</td>
                               <td>course.price</td>
                               <td>course.status</td>
                               <td>
-                                <button href="#" className="btn btn-sm btn-dark me-1 mb-1 mb-md-0"
-                                 onClick={() => handleEditClick(course)}
-                                 >Edit</button>
-                              </td> 
+                                <i className="fas fa-edit text-warning me-1 mb-1 mb-md-0" onClick={() => handleEditClick(course)} style={{cursor: 'pointer', fontSize: '1.4rem'}}></i>
+                                <i className="fas fa-trash-alt text-danger me-1 mb-1 mb-md-0" onClick={() => handleDelete(course._id)} style={{cursor: 'pointer', fontSize: '1.4rem'}}></i>
+                              </td>
+
                             </tr>
                           ))}
                           
@@ -152,7 +185,7 @@ const handleEditClick = (course) => {
                     {/* Pagination END */}
                   </div>
                   {/* Card footer END */}
-                </div>
+                </div> }
               {/* Card END */}
 
 
