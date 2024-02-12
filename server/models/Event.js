@@ -15,11 +15,11 @@ const eventSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    trim: true,
   },
-  images: {
-    type: Array,
-  },
+  picturePath: {
+    type: String,
+    default: "",
+  }, 
   dateDebut: {
     type: Date,
     required: true
