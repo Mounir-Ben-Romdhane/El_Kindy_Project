@@ -26,6 +26,7 @@ function SideBar() {
                     <a className="nav-link" data-bs-toggle="collapse" href="#collapsepage" role="button" aria-expanded="false" aria-controls="collapsepage">
                         <i className="bi bi-basket fa-fw me-2" />Courses
                     </a>
+                   
                     {/* Submenu */}
                     <ul className="nav collapse flex-column" id="collapsepage" data-bs-parent="#navbar-sidebar">
                         <li className="nav-item"> <Link className="nav-link" to="/listCourses">All Courses</Link></li>
@@ -36,6 +37,16 @@ function SideBar() {
                     </ul>
                     </li>
 
+                    <li className="nav-item">
+                    <a className="nav-link" data-bs-toggle="collapse" href="#collapsepagee" role="button" aria-expanded="false" aria-controls="collapsepage">
+                        <i className="bi bi-basket fa-fw me-2" />Category
+                    </a>
+                   
+                    {/* Submenu */}
+                    <ul className="nav collapse flex-column" id="collapsepagee" data-bs-parent="#navbar-sidebar">
+                        <li className="nav-item"> <Link className="nav-link" to="/listCategories">All Category</Link></li>
+                          </ul>
+                    </li>
                     {/* Menu item 3 */}
                     <li className="nav-item"> <a className="nav-link" href="admin-student-list.html"><i className="fas fa-user-graduate fa-fw me-2" />Students</a></li>
                     {/* Event */} 
@@ -46,7 +57,7 @@ function SideBar() {
                     {/* Submenu */} 
                     <ul className="nav collapse flex-column" id="event" data-bs-parent="#navbar-sidebar">
                         <li className="nav-item"> <Link className="nav-link" to="/listEvents">List Events</Link></li>
-                        <li className="nav-item"> <a className="nav-link" href="admin-course-category.html">Add Event</a></li>
+                        <li className="nav-item"> <a className="nav-link" href="/addEvent">Add Event</a></li>
                     </ul>
                     </li>
 

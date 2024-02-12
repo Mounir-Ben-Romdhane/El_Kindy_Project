@@ -9,6 +9,14 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from "url";
 import { addNewCourse } from "./controllers/courseController.js";
+import { addNewEvent } from "./controllers/event.js";
+
+
+
+
+import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
+
+
 
 
 import eventRoutes from "./routes/Event.js";
@@ -18,6 +26,14 @@ import stageRouter  from "./routes/stageRoute.js";
 import authRoutes from "./routes/auth.js";
 import courseRoute from './routes/courseRoute.js'
 
+
+import { register } from "./controllers/auth.js";
+
+
+import categorieRoutes from "./routes/categorieRoutes.js"; // Import des routes de catégorie
+
+import User from './models/User.js';
+import { users } from "./data/index.js";
 
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
@@ -49,9 +65,16 @@ const upload = multer({ storage });
 //app.post("/auth/register",upload.single("picture"),register);
 app.post("/course/add",upload.single("picture"),addNewCourse);
 
+app.post("/event/add",upload.single("picture"),addNewEvent);
+
+app.post("/api/categories", upload.single("picture"), createCategorie);
+app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
+
+
 
 /* ROUTES */
 app.use("/auth",authRoutes);
+app.use("/api/categories", categorieRoutes); 
 
 app.use('/event', eventRoutes);
 
