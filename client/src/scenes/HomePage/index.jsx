@@ -20,7 +20,7 @@ function Index() {
         const allUsers = await response.json();
 
         if (allUsers) {
-          console.log("users", allUsers);
+          console.log("users", allUsers.users);
         }
       } catch (error) {
         console.error("Error registering user:", error);

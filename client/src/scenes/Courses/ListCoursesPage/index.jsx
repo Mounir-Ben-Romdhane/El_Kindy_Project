@@ -3,6 +3,8 @@ import TopBarBack from 'components/TopBarBack'
 import React, {useEffect, useState} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Index() {
 
@@ -44,8 +46,14 @@ const handleDelete = async (id) => {
     await fetch(`http://localhost:3001/course/delete/${id}`, {
       method: 'DELETE',
     });
-    // Filter out the deleted stage from the state
+    
+      toast.success("Course deleted successfully !!", { autoClose: 1500,
+        style: {
+          color: 'green' // Text color
+        }});
+        // Filter out the deleted stage from the state
     setCourses(prevStages => prevStages.filter(course => course._id !== id)); // Assuming `_id` is the unique identifier
+    
   } catch (error) {
     console.error("Error deleting stage:", error);
   }
@@ -61,10 +69,11 @@ const handleDelete = async (id) => {
         {/* Page content START */}
         <div className="page-content">
           <TopBarBack />
+          
 
           {/* Page main content START */}
           <div className="page-content-wrapper border">
-            
+          <ToastContainer />
               {/* Title */}
               <div className="row mb-3">
                 <div className="col-12 d-sm-flex justify-content-between align-items-center">
@@ -73,9 +82,15 @@ const handleDelete = async (id) => {
                 </div>
               </div>
 
+               {/* Render text if courses array is empty */}
+                {courses.length === 0 &&
+                  <h2>No courses available.</h2>
+                }
+
 
               {/* Card START */}
-                <div className="card bg-transparent border">
+               {courses.length !=0 &&  <div className="card bg-transparent border">
+                  
                   {/* Card header START */}
                   <div className="card-header bg-light border-bottom">
                     {/* Search and select START */}
@@ -135,11 +150,10 @@ const handleDelete = async (id) => {
                               <td>course.price</td>
                               <td>course.status</td>
                               <td>
-                                <button href="#" className="btn btn-sm btn-dark me-1 mb-1 mb-md-0"
-                                 onClick={() => handleEditClick(course)}
-                                 >Edit</button>
-                                 <button onClick={() => handleDelete(course._id)} className="btn btn-sm btn-danger me-1 mb-1 mb-md-0">Delete</button>
-                              </td> 
+                                <i className="fas fa-edit text-warning me-1 mb-1 mb-md-0" onClick={() => handleEditClick(course)} style={{cursor: 'pointer', fontSize: '1.4rem'}}></i>
+                                <i className="fas fa-trash-alt text-danger me-1 mb-1 mb-md-0" onClick={() => handleDelete(course._id)} style={{cursor: 'pointer', fontSize: '1.4rem'}}></i>
+                              </td>
+
                             </tr>
                           ))}
                           
@@ -171,7 +185,7 @@ const handleDelete = async (id) => {
                     {/* Pagination END */}
                   </div>
                   {/* Card footer END */}
-                </div>
+                </div> }
               {/* Card END */}
 
 
