@@ -2,6 +2,9 @@ import BannerStart from 'components/BannerStart'
 import SideBar from 'components/SideBar'
 import TopBarBack from 'components/TopBarBack'
 import React, {useState} from 'react'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import 'react-notifications/lib/notifications.css';
 
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -62,9 +65,14 @@ const addEvent = async (values, onSubmitProps) => {
   if (savedEvent) {
       console.log('Event added!');
           console.log("Event", savedEvent);
-          alert("Event Added successfully");
-          navigate('/listEvents');
-          
+          // Show the toast notification with autoClose: false
+          toast.success("Event added successfully !!", { autoClose: 1500,
+            style: {
+              color: 'green' // Text color
+            }});
+          setTimeout(() => {
+            navigate('/listEvents');
+          }, 2000);
   } 
 };
 
@@ -82,6 +90,7 @@ await addEvent(formValues, onSubmitProps);
       <main>
         <div className="page-content">
           <TopBarBack />
+          <ToastContainer />
           <div className="page-content-wrapper border">
             <BannerStart
               title="Submit a New Event"
