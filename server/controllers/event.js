@@ -1,6 +1,7 @@
 import Event from "../models/Event.js";
 
 
+
 /* // Create Event
 export async function create(req, res) {
   try {
@@ -93,27 +94,6 @@ export async function remove(req, res) {
   }
 }
 
-
-/* // upload Event Image
-export async function uploadEvent(req, res) {
-  try {
-    upload(req,res,async(err)=>{
-      if(err){
-        res.status(500).send("Error uploading file");
-      }else{
-        res.status(200).send(req.file);
-      }
-    })
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({
-        error: "Internal Server Error",
-        message: "Could not upload file",
-      });
-  }
-}  */
 
 export const addNewEvent = async (req, res) => {
   try {

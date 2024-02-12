@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import AboutPage from '../src/scenes/AboutPage'
 import HomePage from '../src/scenes/HomePage'
 import SignUp from '../src/scenes/SignUp'
@@ -8,27 +8,23 @@ import ListCoursesPage from '../src/scenes/Courses/ListCoursesPage'
 
 import ListEventsPage from '../src/scenes/EventsPage/ListEventPage'
 import AddEventPage from '../src/scenes/EventsPage/AddEventPage'
-
 import AddCoursePage from '../src/scenes/Courses/AddCoursePage'
+import ListCategoryPage from '../src/scenes/Category/ListCategoryPage'
+import AddCategoryPage from '../src/scenes/Category/AddCategoryPage'
+import EditCategoryPage from '../src/scenes/Category/EditCategoryPage'
+
 import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 import { useSelector } from "react-redux";
+import { loadScripts } from './scriptLoader';
 
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = src;
-    script.onload = () => resolve(script);
-    script.onerror = () => reject(new Error("Script load error for ${src}"));
-    document.head.appendChild(script);
-  });
-}
+
 
 function App() {
 
   const isAuth = Boolean(useSelector((state) => state.token));
-
   
+  const scriptsLoaded = useRef(false);
 
   useEffect(() => {
     const scripts = [
@@ -40,27 +36,19 @@ function App() {
       '/assets/vendor/choices/js/choices.min.js',
       '/assets/vendor/aos/aos.js',
       '/assets/vendor/quill/js/quill.min.js',
-      '/assets/vendor/stepper/js/bs-stepper.min.js'
+      '/assets/vendor/stepper/js/bs-stepper.min.js',
     ];
 
-    async function loadAllScripts() {
-      try {
-        for (const script of scripts) {
-          await loadScript(script);
-        }
-        console.log('All scripts loaded');
-      } catch (error) {
-        console.error('Failed to load scripts', error);
-      }
+    if (!scriptsLoaded.current) {
+      loadScripts(scripts);
+      scriptsLoaded.current = true;
     }
 
-    loadAllScripts();
-
-    // Cleanup pour supprimer les scripts lors du démontage
     return () => {
-      scripts.forEach(src => {
-        const scriptTag = document.querySelector(scripts[src="${src}"]);
-        scriptTag?.remove();
+      // Remove all script tags
+      const scriptTags = document.querySelectorAll('script[src^="/assets"]');
+      scriptTags.forEach((scriptTag) => {
+        scriptTag.parentNode.removeChild(scriptTag);
       });
     };
   }, []);
@@ -89,6 +77,19 @@ function App() {
               />
           <Route  path="/addCourse" 
               element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } 
+
+              element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   />
+          
+          <Route path="/about" element={<AboutPage />}/>
+            <Route  path="/listCategories" 
+              element={isAuth ? <ListCategoryPage /> : <Navigate to="/" /> } 
+          />
+             <Route  path="/add-category" 
+              element={isAuth ? <AddCategoryPage /> : <Navigate to="/" /> } 
+          />
+          <Route path="/edit-category/:id"
+              element={isAuth ? <EditCategoryPage /> : <Navigate to="/" /> } 
+
           />
           <Route path="/about" element={<AboutPage />}/>
         </Routes>
