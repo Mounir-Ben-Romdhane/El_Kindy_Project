@@ -88,8 +88,7 @@ function App() {
               element={isAuth ? <EditCategoryPage /> : <Navigate to="/" /> } 
           />
           <Route path="/about" element={<AboutPage />}/>
-
-          </Routes>
+        </Routes>
       </div>
   )
 }
