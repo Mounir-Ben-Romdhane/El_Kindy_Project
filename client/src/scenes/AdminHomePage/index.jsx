@@ -1,8 +1,12 @@
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
-import React from "react";
+import React, {useEffect, useState} from "react";
 
-function index() {
+
+function Index() {
+
+  
+  
   return (
     <div>
       {/* **************** MAIN CONTENT START **************** */}
@@ -32,4 +36,4 @@ function index() {
   );
 }
 
-export default index;
+export default Index;
