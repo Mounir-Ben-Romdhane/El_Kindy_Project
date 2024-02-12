@@ -1,7 +1,6 @@
 import Footer from "components/Footer";
 import NavBar from "components/NavBar";
 import React from "react";
-
 import { useSelector } from "react-redux";
 
 function Index() {

@@ -35,6 +35,7 @@ function SideBar() {
                         <li className="nav-item"> <Link className="nav-link" to="/addCourse">Add Course</Link></li>
                     </ul>
                     </li>
+
                     {/* Menu item 3 */}
                     <li className="nav-item"> <a className="nav-link" href="admin-student-list.html"><i className="fas fa-user-graduate fa-fw me-2" />Students</a></li>
                     {/* Menu item 4 */}
@@ -51,6 +52,18 @@ function SideBar() {
                             <span className="badge bg-success text-white rounded-circle ms-2">2</span>
                         </a>
                         </li>
+                    </ul>
+                    </li>
+                    {/* menu item Stage */}
+                    <li className="nav-item">
+                    <a className="nav-link" data-bs-toggle="collapse" href="#collapsepage-event" role="button" aria-expanded="false" aria-controls="collapsepage">
+                        <i className="bi bi-basket fa-fw me-2" />Internship
+                    </a>
+                    {/* Submenu */}
+                    <ul className="nav collapse flex-column" id="collapsepage-event" data-bs-parent="#navbar-sidebar">
+                        <li className="nav-item"> <Link className="nav-link" to="/ListStage">All Internships</Link></li>
+                        <li className="nav-item"> <Link className="nav-link" to="/AddStage">Add Internship</Link></li>
+                        
                     </ul>
                     </li>
                     {/* Menu item 5 */}

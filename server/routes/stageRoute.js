@@ -9,7 +9,7 @@ import {
 } from "../controllers/stageController.js";
 
 router.post("/createStage", createStage);
-router.get("/", getStages);
+router.get("/getStages", getStages);
 router.get("/:id", getStage);
 router.put("/updateStage/:id", updateStage);
 router.delete("/deleteStage/:id", deleteStage);
