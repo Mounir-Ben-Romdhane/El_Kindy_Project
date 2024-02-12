@@ -150,12 +150,12 @@ function Index() {
                       </table>
                       {/* Table END */}
                     </div>
-                    {/* Course table END */}
+                    {/* Course table END  */}
                   </div>
                   {/* Card body END */}
                   {/* Card footer START */}
                   <div className="card-footer bg-transparent pt-0">
-                    {/* Pagination START */}
+                    {/* Pagination START  */}
                     <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                       {/* Content */}
                       <p className="mb-0 text-center text-sm-start">Showing 1 to 8 of 20 entries</p>
