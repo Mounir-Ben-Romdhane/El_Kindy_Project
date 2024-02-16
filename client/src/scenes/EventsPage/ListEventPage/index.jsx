@@ -48,7 +48,10 @@ function Index() {
 );
 
  const handleSearchChange = (e)=>{
+<<<<<<< HEAD
   e.preventDefault();
+=======
+>>>>>>> 49e87b9d43549e83fb1bae8334535b30f6fd0d66
   console.log("searchQuery :",e.target.value);
   setSearchQuery(e.target.value);
   setPagination({...pagination,currentPage:1});// Reset pagination to first page when search query changes
@@ -91,6 +94,10 @@ function Index() {
                       <div className="col-md-8">
                         <form className="rounded position-relative">
                           <input className="form-control bg-body" type="search" placeholder="Search" aria-label="Search"  onChange={handleSearchChange}/>
+<<<<<<< HEAD
+=======
+                          <button className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y" type="submit"><i className="fas fa-search fs-6 " /></button>
+>>>>>>> 49e87b9d43549e83fb1bae8334535b30f6fd0d66
                         </form>
                       </div>
                       {/* Select option */}

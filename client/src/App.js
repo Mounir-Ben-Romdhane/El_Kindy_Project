@@ -83,7 +83,13 @@ function App() {
               element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   
               />
           <Route  path="/addCourse" 
+<<<<<<< HEAD
               element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } />
+=======
+              element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } 
+
+              element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   />
+>>>>>>> 49e87b9d43549e83fb1bae8334535b30f6fd0d66
           
           <Route path="/about" element={<AboutPage />}/>
             <Route  path="/listCategories" 
