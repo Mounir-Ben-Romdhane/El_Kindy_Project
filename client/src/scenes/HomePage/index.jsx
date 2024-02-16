@@ -48,7 +48,7 @@ function Index() {
         const allUsers = await response.json();
 
         if (allUsers) {
-          console.log("users", allUsers);
+          console.log("users", allUsers.users);
         }
       } catch (error) {
         console.error("Error registering user:", error);
@@ -583,6 +583,7 @@ Trending courses START */}
             </div>
           </div>
         </section>
+        
         {/* =======================
 Trending courses END */}
       </div>

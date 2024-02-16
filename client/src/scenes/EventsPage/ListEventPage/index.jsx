@@ -2,19 +2,19 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import 'react-notifications/lib/notifications.css';
 function Index() {
   const [events, setEvents] = useState([]);
+  const [searchQuery,setSearchQuery] = useState("");
+  const [pagination,setPagination] = useState({
+    currentPage: 1,
+    entriesPerPage: 8
+  });
+
 
   useEffect(() => {
-    /*     const fetchEvents = async () => {
-      try {
-        const response = await axios.get("http://localhost:3001/event/events");
-        setEvents(response.data);
-      } catch (error) {
-        console.error("Error Fetching Events:", error);
-      }
-    }; */
     fetchEvents();
   }, []);
 
@@ -30,36 +30,91 @@ function Index() {
   const deleteEvents = async (id) => {
     try {
       await axios.delete(`http://localhost:3001/event/events/${id}`);
-      // Filter out the deleted event from the events array
       const updatedEvents = events.filter((event) => event._id !== id);
       setEvents(updatedEvents);
-      alert("Event deleted successfully");
+      toast.success("Event Deleted successfully !!", { autoClose: 1500, style: { color: 'green' }});
     } catch (error) {
       console.error("Error deleting event:", error);
       alert("Failed to delete event");
     }
   };
 
+  // Filter events based on search query
+  const filteredEvents = events.filter((event) =>
+  event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  event.dateDebut.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  event.dateFin.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  (event.price && event.price.toString().includes(searchQuery))
+);
+
+ const handleSearchChange = (e)=>{
+<<<<<<< HEAD
+  e.preventDefault();
+=======
+>>>>>>> 49e87b9d43549e83fb1bae8334535b30f6fd0d66
+  console.log("searchQuery :",e.target.value);
+  setSearchQuery(e.target.value);
+  setPagination({...pagination,currentPage:1});// Reset pagination to first page when search query changes
+ }
+ 
+ const indexOfLastEntry = pagination.currentPage * pagination.entriesPerPage;
+ const indexOfFirstEntry = indexOfLastEntry - pagination.entriesPerPage;
+ const currentEntries = filteredEvents.slice(indexOfFirstEntry, indexOfLastEntry);
+
+
+ const editEvents = (id) => {
+
+ }
+ 
   return (
     <div>
       <main>
         <SideBar />
         <div className="page-content">
           <TopBarBack />
+          <ToastContainer />
           <div className="page-content-wrapper border">
             <div className="row mb-3">
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
                 <h1 className="h3 mb-2 mb-sm-0">Events</h1>
                 {/* Adjust the href to your event creation route */}
-                <a href="/create-event" className="btn btn-sm btn-primary mb-0">
+                <a href="/addEvent" className="btn btn-sm btn-primary mb-0">
                   Create an Event
                 </a>
               </div>
             </div>
 
+
+
             <div className="card bg-transparent border">
               <div className="card-header bg-light border-bottom">
-                {/* UI components for search and sorting */}
+                  {/* Search and select START */}
+                  <div className="row g-3 align-items-center justify-content-between">
+                      {/* Search bar */}
+                      <div className="col-md-8">
+                        <form className="rounded position-relative">
+                          <input className="form-control bg-body" type="search" placeholder="Search" aria-label="Search"  onChange={handleSearchChange}/>
+<<<<<<< HEAD
+=======
+                          <button className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y" type="submit"><i className="fas fa-search fs-6 " /></button>
+>>>>>>> 49e87b9d43549e83fb1bae8334535b30f6fd0d66
+                        </form>
+                      </div>
+                      {/* Select option */}
+                      <div className="col-md-3">
+                        {/* Short by filter */}
+                        <form>
+                          <select className="form-select  border-0 z-index-9" aria-label=".form-select-sm">
+                            <option value>Sort by</option>
+                            <option>Newest</option>
+                            <option>Oldest</option>
+                            <option>Accepted</option>
+                            <option>Rejected</option>
+                          </select>
+                        </form>
+                      </div>
+                    </div>
+                    {/* Search and select END */}
               </div>
               <div className="card-body">
                 <div className="table-responsive border-0 rounded-3">
@@ -84,7 +139,7 @@ function Index() {
                       </tr>
                     </thead>
                     <tbody>
-                      {events.map((event, index) => (
+                      {filteredEvents.map((event, index) => (
                         <tr key={index}>
                           <td>{event.title}</td>
                           <td>
@@ -97,8 +152,8 @@ function Index() {
                           <td>
                             {/* Actions */}
                             <a
-                              href={`/edit-event/${event._id}`}
-                              className="btn btn-sm btn-dark me-1"
+                              onClick={() => editEvents(event._id)}
+                              className="btn btn-sm btn-info"
                             >
                               Edit
                             </a>
@@ -119,7 +174,7 @@ function Index() {
               <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                 {/* Content */}
                 <p className="mb-0 text-center text-sm-start">
-                  Showing 1 to 8 of 20 entries
+                  Showing {indexOfFirstEntry + 1} to {Math.min(indexOfLastEntry, filteredEvents.length)} of {filteredEvents.length} entries
                 </p>
                 {/* Pagination */}
                 <nav

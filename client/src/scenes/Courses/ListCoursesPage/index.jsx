@@ -3,6 +3,8 @@ import TopBarBack from 'components/TopBarBack'
 import React, {useEffect, useState} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Index() {
 
@@ -10,6 +12,12 @@ function Index() {
   const token = useSelector((state) => state.token);
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
+
+  const [searchQuery,setSearchQuery] = useState("");
+  const [pagination,setPagination] = useState({
+    currentPage: 1,
+    entriesPerPage: 8
+  });
 
 
   useEffect(() => {
@@ -44,13 +52,36 @@ const handleDelete = async (id) => {
     await fetch(`http://localhost:3001/course/delete/${id}`, {
       method: 'DELETE',
     });
-    // Filter out the deleted stage from the state
+    
+      toast.success("Course deleted successfully !!", { autoClose: 1500,
+        style: {
+          color: 'green' // Text color
+        }});
+        // Filter out the deleted stage from the state
     setCourses(prevStages => prevStages.filter(course => course._id !== id)); // Assuming `_id` is the unique identifier
+    
   } catch (error) {
     console.error("Error deleting stage:", error);
   }
 };
   
+
+// Filter courses based on search query
+const filteredCourses = courses.filter((course) =>
+course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+course.description.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
+const handleSearchChange = (e)=>{
+  e.preventDefault();
+console.log("searchQuery :",e.target.value);
+setSearchQuery(e.target.value);
+setPagination({...pagination,currentPage:1});// Reset pagination to first page when search query changes
+}
+
+const indexOfLastEntry = pagination.currentPage * pagination.entriesPerPage;
+const indexOfFirstEntry = indexOfLastEntry - pagination.entriesPerPage;
+const currentEntries = filteredCourses.slice(indexOfFirstEntry, indexOfLastEntry);
 
   return (
     <div>
@@ -61,10 +92,11 @@ const handleDelete = async (id) => {
         {/* Page content START */}
         <div className="page-content">
           <TopBarBack />
+          
 
           {/* Page main content START */}
           <div className="page-content-wrapper border">
-            
+          <ToastContainer />
               {/* Title */}
               <div className="row mb-3">
                 <div className="col-12 d-sm-flex justify-content-between align-items-center">
@@ -73,9 +105,15 @@ const handleDelete = async (id) => {
                 </div>
               </div>
 
+               {/* Render text if courses array is empty */}
+                {courses.length === 0 &&
+                  <h2>No courses available.</h2>
+                }
+
 
               {/* Card START */}
-                <div className="card bg-transparent border">
+               {courses.length !=0 &&  <div className="card bg-transparent border">
+                  
                   {/* Card header START */}
                   <div className="card-header bg-light border-bottom">
                     {/* Search and select START */}
@@ -83,8 +121,7 @@ const handleDelete = async (id) => {
                       {/* Search bar */}
                       <div className="col-md-8">
                         <form className="rounded position-relative">
-                          <input className="form-control bg-body" type="search" placeholder="Search" aria-label="Search" />
-                          <button className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y" type="submit"><i className="fas fa-search fs-6 " /></button>
+                          <input className="form-control bg-body" type="search" placeholder="Search" aria-label="Search" onChange={handleSearchChange}/>
                         </form>
                       </div>
                       {/* Select option */}
@@ -126,7 +163,7 @@ const handleDelete = async (id) => {
                         <tbody>
                           
                           {/* Table row */}
-                          {courses.map(course => (
+                          {filteredCourses.map(course => (
                             <tr key={course.id}>
                               <td>{course.title}</td>
                               <td>{course.description}</td>
@@ -135,11 +172,10 @@ const handleDelete = async (id) => {
                               <td>course.price</td>
                               <td>course.status</td>
                               <td>
-                                <button href="#" className="btn btn-sm btn-dark me-1 mb-1 mb-md-0"
-                                 onClick={() => handleEditClick(course)}
-                                 >Edit</button>
-                                 <button onClick={() => handleDelete(course._id)} className="btn btn-sm btn-danger me-1 mb-1 mb-md-0">Delete</button>
-                              </td> 
+                                <i className="fas fa-edit text-warning me-1 mb-1 mb-md-0" onClick={() => handleEditClick(course)} style={{cursor: 'pointer', fontSize: '1.4rem'}}></i>
+                                <i className="fas fa-trash-alt text-danger me-1 mb-1 mb-md-0" onClick={() => handleDelete(course._id)} style={{cursor: 'pointer', fontSize: '1.4rem'}}></i>
+                              </td>
+
                             </tr>
                           ))}
                           
@@ -153,25 +189,50 @@ const handleDelete = async (id) => {
                   {/* Card body END */}
                   {/* Card footer START */}
                   <div className="card-footer bg-transparent pt-0">
-                    {/* Pagination START */}
+                   {/* Pagination START */}
                     <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                       {/* Content */}
-                      <p className="mb-0 text-center text-sm-start">Showing 1 to 8 of 20 entries</p>
+                      <p className="mb-0 text-center text-sm-start">
+                        Showing {indexOfFirstEntry + 1} to {Math.min(indexOfLastEntry, filteredCourses.length)} of {filteredCourses.length} entries
+                      </p>
                       {/* Pagination */}
-                      <nav className="d-flex justify-content-center mb-0" aria-label="navigation">
+                      <nav
+                        className="d-flex justify-content-center mb-0"
+                        aria-label="navigation"
+                      >
                         <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
-                          <li className="page-item mb-0"><a className="page-link" href="#" tabIndex={-1}><i className="fas fa-angle-left" /></a></li>
-                          <li className="page-item mb-0"><a className="page-link" href="#">1</a></li>
-                          <li className="page-item mb-0 active"><a className="page-link" href="#">2</a></li>
-                          <li className="page-item mb-0"><a className="page-link" href="#">3</a></li>
-                          <li className="page-item mb-0"><a className="page-link" href="#"><i className="fas fa-angle-right" /></a></li>
+                          <li className="page-item mb-0">
+                            <a className="page-link" href="#" tabIndex={-1}>
+                              <i className="fas fa-angle-left" />
+                            </a>
+                          </li>
+                          <li className="page-item mb-0">
+                            <a className="page-link" href="#">
+                              1
+                            </a>
+                          </li>
+                          <li className="page-item mb-0 active">
+                            <a className="page-link" href="#">
+                              2
+                            </a>
+                          </li>
+                          <li className="page-item mb-0">
+                            <a className="page-link" href="#">
+                              3
+                            </a>
+                          </li>
+                          <li className="page-item mb-0">
+                            <a className="page-link" href="#">
+                              <i className="fas fa-angle-right" />
+                            </a>
+                          </li>
                         </ul>
                       </nav>
                     </div>
                     {/* Pagination END */}
                   </div>
                   {/* Card footer END */}
-                </div>
+                </div> }
               {/* Card END */}
 
 
