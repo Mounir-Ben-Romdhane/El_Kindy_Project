@@ -10,7 +10,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { Formik } from 'formik';
-import FlexBetween from '../../components/FlexBetween';
+import FlexBetween from '../../../components/FlexBetween';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 const registerSchema = yup.object().shape({

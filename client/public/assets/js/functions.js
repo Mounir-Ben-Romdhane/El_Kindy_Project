@@ -353,7 +353,6 @@ var e = {
                   sliderDirection = 'rtl';
               }
 
-              // eslint-disable-next-line no-undef
               var tnsSlider = tns({
                   container: slider,
                   mode: sliderMode,

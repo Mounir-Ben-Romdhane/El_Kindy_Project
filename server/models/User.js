@@ -28,7 +28,11 @@ const UserSchema = new mongoose.Schema(
         picturePath: {
             type: String,
             default: "",
-        }, 
+        },
+        verified: {
+            type: Boolean,
+            default: false
+        } 
     },
     { timestamps: true}
     );

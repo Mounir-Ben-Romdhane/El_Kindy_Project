@@ -565,6 +565,7 @@ Trending courses START */}
             </div>
           </div>
         </section>
+        
         {/* =======================
 Trending courses END */}
       </div>

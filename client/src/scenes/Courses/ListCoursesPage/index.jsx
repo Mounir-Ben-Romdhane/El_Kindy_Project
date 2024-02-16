@@ -13,6 +13,12 @@ function Index() {
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
 
+  const [searchQuery,setSearchQuery] = useState("");
+  const [pagination,setPagination] = useState({
+    currentPage: 1,
+    entriesPerPage: 8
+  });
+
 
   useEffect(() => {
   const test = async () => {
@@ -60,6 +66,23 @@ const handleDelete = async (id) => {
 };
   
 
+// Filter courses based on search query
+const filteredCourses = courses.filter((course) =>
+course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+course.description.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
+const handleSearchChange = (e)=>{
+  e.preventDefault();
+console.log("searchQuery :",e.target.value);
+setSearchQuery(e.target.value);
+setPagination({...pagination,currentPage:1});// Reset pagination to first page when search query changes
+}
+
+const indexOfLastEntry = pagination.currentPage * pagination.entriesPerPage;
+const indexOfFirstEntry = indexOfLastEntry - pagination.entriesPerPage;
+const currentEntries = filteredCourses.slice(indexOfFirstEntry, indexOfLastEntry);
+
   return (
     <div>
       {/* **************** MAIN CONTENT START **************** */}
@@ -98,8 +121,7 @@ const handleDelete = async (id) => {
                       {/* Search bar */}
                       <div className="col-md-8">
                         <form className="rounded position-relative">
-                          <input className="form-control bg-body" type="search" placeholder="Search" aria-label="Search" />
-                          <button className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y" type="submit"><i className="fas fa-search fs-6 " /></button>
+                          <input className="form-control bg-body" type="search" placeholder="Search" aria-label="Search" onChange={handleSearchChange}/>
                         </form>
                       </div>
                       {/* Select option */}
@@ -141,7 +163,7 @@ const handleDelete = async (id) => {
                         <tbody>
                           
                           {/* Table row */}
-                          {courses.map(course => (
+                          {filteredCourses.map(course => (
                             <tr key={course.id}>
                               <td>{course.title}</td>
                               <td>{course.description}</td>
@@ -167,18 +189,43 @@ const handleDelete = async (id) => {
                   {/* Card body END */}
                   {/* Card footer START */}
                   <div className="card-footer bg-transparent pt-0">
-                    {/* Pagination START */}
+                   {/* Pagination START */}
                     <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                       {/* Content */}
-                      <p className="mb-0 text-center text-sm-start">Showing 1 to 8 of 20 entries</p>
+                      <p className="mb-0 text-center text-sm-start">
+                        Showing {indexOfFirstEntry + 1} to {Math.min(indexOfLastEntry, filteredCourses.length)} of {filteredCourses.length} entries
+                      </p>
                       {/* Pagination */}
-                      <nav className="d-flex justify-content-center mb-0" aria-label="navigation">
+                      <nav
+                        className="d-flex justify-content-center mb-0"
+                        aria-label="navigation"
+                      >
                         <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
-                          <li className="page-item mb-0"><a className="page-link" href="#" tabIndex={-1}><i className="fas fa-angle-left" /></a></li>
-                          <li className="page-item mb-0"><a className="page-link" href="#">1</a></li>
-                          <li className="page-item mb-0 active"><a className="page-link" href="#">2</a></li>
-                          <li className="page-item mb-0"><a className="page-link" href="#">3</a></li>
-                          <li className="page-item mb-0"><a className="page-link" href="#"><i className="fas fa-angle-right" /></a></li>
+                          <li className="page-item mb-0">
+                            <a className="page-link" href="#" tabIndex={-1}>
+                              <i className="fas fa-angle-left" />
+                            </a>
+                          </li>
+                          <li className="page-item mb-0">
+                            <a className="page-link" href="#">
+                              1
+                            </a>
+                          </li>
+                          <li className="page-item mb-0 active">
+                            <a className="page-link" href="#">
+                              2
+                            </a>
+                          </li>
+                          <li className="page-item mb-0">
+                            <a className="page-link" href="#">
+                              3
+                            </a>
+                          </li>
+                          <li className="page-item mb-0">
+                            <a className="page-link" href="#">
+                              <i className="fas fa-angle-right" />
+                            </a>
+                          </li>
                         </ul>
                       </nav>
                     </div>

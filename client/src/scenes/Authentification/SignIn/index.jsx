@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
-import { setLogin } from '../../state'
+import { setLogin } from '../../../state'
 import { useSelector } from "react-redux";
 
 function Index() {
@@ -27,8 +27,8 @@ function Index() {
             }
         );
         const loggedIn = await loggedInResponse.json();
-        //console.log("result", loggedIn);
-        if (loggedIn) {
+        console.log("result", loggedIn);
+        /*if (loggedIn) {
             console.log("logged succes!!");
             dispatch(
                 setLogin({
@@ -37,7 +37,7 @@ function Index() {
                 })
             );
             navigate("/home");
-        }
+        } */
 
     };
 
@@ -94,9 +94,9 @@ function Index() {
                             <label className="form-check-label" htmlFor="exampleCheck1">Remember me</label>
                         </div>
                         <div className="text-primary-hover">
-                            <a href="forgot-password.html" className="text-secondary">
-                            <u>Forgot password?</u>
-                            </a>
+                            <Link to="/forgot-password" className="text-secondary">
+                                <u>Forgot password?</u>
+                            </Link>
                         </div>
                         </div>
                         {/* Button */}
