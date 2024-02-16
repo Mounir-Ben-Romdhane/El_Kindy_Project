@@ -16,7 +16,7 @@ import EditCategoryPage from '../src/scenes/Category/EditCategoryPage'
 import  ListClassPage from '../src/scenes/Classe/ListClassPage'
 import  EditClassPage from '../src/scenes/Classe/EditClassPage'
 import  AddClassPage from '../src/scenes/Classe/AddClassPage'
-import '../src/assets/css/style.css'
+import './assetss/css/style.css'
 
 
 
