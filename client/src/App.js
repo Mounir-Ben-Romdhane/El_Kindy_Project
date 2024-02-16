@@ -78,7 +78,7 @@ function App() {
           <Route  path="/addCourse" 
               element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } 
 
-              element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   />
+                />
           
           <Route path="/about" element={<AboutPage />}/>
             <Route  path="/listCategories" 
