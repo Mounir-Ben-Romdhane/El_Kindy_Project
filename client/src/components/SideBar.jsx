@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import 'assets/css/style.css'
 
 function SideBar() {
   return (
@@ -9,7 +10,7 @@ function SideBar() {
             {/* Navbar brand for xl START */}
             <div className="d-flex align-items-center">
                 <a className="navbar-brand" href="index.html">
-                <img className="navbar-brand-item" src="assets/images/logo-light.svg" alt />
+                <img className="navbar-brand-item" src="/assets/images/logo-light.svg" alt />
                 </a>
             </div>
             {/* Navbar brand for xl END */}

@@ -6,6 +6,7 @@ import TopBarBack from "components/TopBarBack";
 import BannerStart from "components/BannerStart"; // If you have this component
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 function CategoryForm() {
   const [formState, setFormState] = useState({
     name: "",
@@ -183,6 +184,7 @@ function CategoryForm() {
           </form>
         </div>
       </div>
+      
     </main>
   );
 }
