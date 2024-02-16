@@ -12,6 +12,11 @@ import AddCoursePage from '../src/scenes/Courses/AddCoursePage'
 import ListCategoryPage from '../src/scenes/Category/ListCategoryPage'
 import AddCategoryPage from '../src/scenes/Category/AddCategoryPage'
 import EditCategoryPage from '../src/scenes/Category/EditCategoryPage'
+import  ListClassPage from '../src/scenes/Classe/ListClassPage'
+import  EditClassPage from '../src/scenes/Classe/EditClassPage'
+import  AddClassPage from '../src/scenes/Classe/AddClassPage'
+
+
 
 import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
@@ -79,6 +84,21 @@ function App() {
               element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } 
 
                 />
+
+<Route  path="/listClasse" 
+              element={isAuth ? <ListClassPage /> : <Navigate to="/" /> } 
+          />
+             <Route  path="/add-classe" 
+              element={isAuth ? <AddClassPage /> : <Navigate to="/" /> } 
+          />
+          <Route path="/edit-classe/:id"
+              element={isAuth ? <EditClassPage /> : <Navigate to="/" /> } 
+
+          />
+
+
+
+            
           
           <Route path="/about" element={<AboutPage />}/>
             <Route  path="/listCategories" 

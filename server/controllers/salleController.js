@@ -43,7 +43,7 @@ export async function list(req, res) {
 }
 
 // Edit salle
-export async function update(req, res) {
+/*export async function update(req, res) {
   const salleId = req.params.id;
   try {
     const updatedSalle = await Salle.findByIdAndUpdate(salleId, req.body, {
@@ -64,7 +64,27 @@ export async function update(req, res) {
         message: "Could not update salle",
       });
   }
-}
+}*/
+
+export const update = async (req, res) => {
+  try {
+      const { id } = req.params;
+      let updateData = req.body; // Assuming req.body contains the fields to update
+
+
+      // Update the category with the given ID
+      const updatedClasse = await Salle.findByIdAndUpdate(id, updateData, { new: true });
+     
+      if (!updatedClasse) {
+          return res.status(404).json({ success: false, error: "Class not found." });
+      }
+
+      return res.status(200).json({ success: true, data: updatedClasse });
+  } catch (err) {
+      console.log(err);
+      return res.status(500).json({ success: false, error: err.message });
+  }
+};
 
 // Delete salle
 export async function remove(req, res) {
@@ -87,3 +107,17 @@ export async function remove(req, res) {
       });
   }
 }
+
+export const getClasseById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      const salle = await Salle.findById(id);
+      if (!salle) {
+          return res.status(404).json({ message: "Class not found" });
+      }
+      res.status(200).json(salle);
+  } catch (error) {
+      res.status(400).json({ message: error.message });
+  }
+};
