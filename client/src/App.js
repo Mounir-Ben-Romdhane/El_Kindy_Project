@@ -30,22 +30,33 @@ function App() {
   
   const scriptsLoaded = useRef(false);
 
-
   useEffect(() => {
     const scripts = [
       '/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js',
       '/assets/vendor/tiny-slider/tiny-slider.js',
       '/assets/vendor/glightbox/js/glightbox.js',
       '/assets/vendor/purecounterjs/dist/purecounter_vanilla.js',
-      '/assets/js/functions.js',
       '/assets/vendor/choices/js/choices.min.js',
       '/assets/vendor/aos/aos.js',
       '/assets/vendor/quill/js/quill.min.js',
       '/assets/vendor/stepper/js/bs-stepper.min.js',
+      '/assets/js/functions.js',
     ];
 
+    if (!scriptsLoaded.current) {
+      loadScripts(scripts);
+      scriptsLoaded.current = true;
+    }
 
-  
+    return () => {
+      // Remove all script tags
+      const scriptTags = document.querySelectorAll('script[src^="/assets"]');
+      scriptTags.forEach((scriptTag) => {
+        scriptTag.parentNode.removeChild(scriptTag);
+      });
+    };
+  }, []);
+
 
   return (
     <>
@@ -78,11 +89,9 @@ function App() {
 
               element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } 
 
-<<<<<<< HEAD
+
            />
-=======
-              element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   />
->>>>>>> 2e8eb970bb4d97cb7003044c79779ba08b1de9b6
+
           
           <Route path="/about" element={<AboutPage />}/>
             <Route  path="/listCategories" 
