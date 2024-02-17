@@ -10,7 +10,7 @@ const MySwal = withReactContent(Swal);
 
 function Index() {
   const [classes, setClasses] = useState([]);
-
+  const [sortOption, setSortOption] = useState("");
   useEffect(() => {
     // Fonction pour récupérer les catégories
     const fetchClasses = async () => {
@@ -82,6 +82,22 @@ function Index() {
     }
   };
 
+  useEffect(() => {
+    // Appeler la fonction de tri lorsque sortOption change
+    handleSort();
+  }, [sortOption]);
+
+    // Fonction pour trier les classes
+  const handleSort = () => {
+    const sortedClasses = [...classes];
+    if (sortOption === "asc") {
+      sortedClasses.sort((a, b) => a.numero - b.numero);
+    } else if (sortOption === "desc") {
+      sortedClasses.sort((a, b) => b.numero - a.numero);
+    }
+    setClasses(sortedClasses);
+  };
+
   return (
     <div>
       {/* **************** MAIN CONTENT START **************** */}
@@ -127,20 +143,19 @@ function Index() {
                   </div>
                   {/* Select option */}
                   <div className="col-md-3">
-                    {/* Short by filter */}
-                    <form>
-                      <select
-                        className="form-select  border-0 z-index-9"
-                        aria-label=".form-select-sm"
-                      >
-                        <option value>Sort by</option>
-                        <option>Newest</option>
-                        <option>Oldest</option>
-                        <option>Accepted</option>
-                        <option>Rejected</option>
-                      </select>
-                    </form>
-                  </div>
+        <form>
+          <select
+            className="form-select  border-0 z-index-9"
+            aria-label=".form-select-sm"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+          >
+            <option value="">Sort by</option>
+            <option value="asc">Ascendant</option>
+            <option value="desc">Descendant</option>
+          </select>
+        </form>
+      </div>
                 </div>
                 {/* Search and select END */}
               </div>
