@@ -18,6 +18,8 @@ import  EditClassPage from '../src/scenes/Classe/EditClassPage'
 import  AddClassPage from '../src/scenes/Classe/AddClassPage'
 import '../src/assets/css/style.css'
 
+
+
 import Category from '../src/scenes/CategoryHome'
 
 import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
