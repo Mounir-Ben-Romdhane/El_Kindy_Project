@@ -32,8 +32,8 @@ export const register = async (req, res) => {
     
         const url = `http://localhost:3000/verify-account/${savedUser._id}/verify/${token}`;
         await sendEmail(email,"Verify your email", url); // sends verification link to user's email
-        console.log("Email send Successfully !");
-        res.status(201).json({status: false, message: "An email sent to your account please verify !", data:savedUser});
+       // console.log("Email send Successfully !");
+        res.status(201).json({status: true, message: `Account created successfully !An email sent to your account please verify !`, data:savedUser});
     }catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -44,18 +44,19 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email: email });
-        if(!user) return res.status(400).json({ msg: "User does not exist." });
-
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ msg: "Invalid credentials." });
 
-        const token = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName }, process.env.JWT_SECRET, {expiresIn:"7d"});
+        if(!user || !isMatch) return res.status(400).json({ message: "Email or password not match !" });
+
+        
+        //if (!isMatch) return res.status(400).json({ msg: "Invalid credentials." });
+
+        const token = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName }, process.env.JWT_SECRET, {expiresIn:"30m"});
         if(!user.verified) {
             const url = `http://localhost:3000/verify-account/${user._id}/verify/${token}`;
             await sendEmail(email,"Verify your email", url); // sends verification link to user's email
             console.log("Email send Successfullyyyyyyyy !");
-            return res.status(401).json({status: false, message: "An email sent to your account please verify !"});
-            
+            return res.status(401).json({status: false, message: "An email sent to your account ! please verify !"});
         }
         delete user.password;
         res.status(200).json({ token, user });
@@ -71,8 +72,15 @@ export const verifyAccount = async (req, res) => {
         if(!user) {
             return res.status(404).json({status: false, message: "User not existed !"});
         }
-        await User.updateOne({ _id: user._id, verified: true });
-        res.status(200).send('The account has been verified');
+        if(user.verified) {
+            return res.status(400).json({status: false, message: "This account has already been verified!"})
+        }
+        const updatedUser = await User.findByIdAndUpdate({_id: id}, {verified: true});
+        if(!updatedUser)  {
+            res.status(400).json({status : "Failed", msg :"Failed To verify account"})  
+        } 
+        res.status(200).json({status : "Success",message: "The account has been verified" })
+        
     }catch(err) {
         res.status(500).json({ error: err.message });
     }
@@ -90,11 +98,11 @@ export const forgetPassord = async (req, res) => {
     }
     else{
     console.log("email : ", email)
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {expiresIn:"1d"});
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {expiresIn:"5m"});
     
     const url = `http://localhost:3000/reset-password/${user._id}/${token}`;
     await sendEmail(email, "Reset your password", url);
-    
+    res.status(200).json({status : "Success" })
     }     
 }
 
@@ -108,9 +116,9 @@ export const resetPassord = async (req, res) => {
             
         const updatedUser = await User.findByIdAndUpdate({_id: id}, {password: passwordHash});
         if(!updatedUser)  {
-            res.status(400).json({status : "Failed", msg :"Failed To Update Password"})  
+           return res.status(400).json({status : "Failed", message :"Failed To Update Password"})  
         } 
-        res.status(200).json({status : "Success", data : updatedUser })
+        res.status(200).json({status : "Success" })
 
     }
                 

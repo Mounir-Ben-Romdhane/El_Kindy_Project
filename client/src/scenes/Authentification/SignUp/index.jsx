@@ -1,55 +1,78 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import * as yup from 'yup';
-import {
-  Box,
-  Button,
-  TextField,
-  useMediaQuery,
-  Typography,
-  useTheme,
-} from '@mui/material';
-import { Formik } from 'formik';
-import FlexBetween from '../../../components/FlexBetween';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import React, { useState } from "react";
+import Backdrop from "@mui/material/Backdrop";
+import { Link, useNavigate } from "react-router-dom";
+import * as yup from "yup";
+import { ToastContainer, toast } from "react-toastify";
+import { Formik } from "formik";
+import GridLoader from "react-spinners/GridLoader";
 
 const registerSchema = yup.object().shape({
-  firstName: yup.string().required('required'),
-  lastName: yup.string().required('required'),
-  email: yup.string().email('invalid email').required('required'),
-  password: yup.string().required('required'),
+  firstName: yup.string().required("required"),
+  lastName: yup.string().required("required"),
+  email: yup.string().email("invalid email").required("required"),
+  password: yup.string().required("required"),
   confirmPassword: yup
     .string()
-    .oneOf([yup.ref('password'), null], 'Passwords must match')
-    .required('required')
+    .oneOf([yup.ref("password"), null], "Passwords must match")
+    .required("required"),
 });
 
 const initialValuesRegister = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  password: '',
-  confirmPassword: ''
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
 };
 
 function Index() {
-  const [error, setError] = useState('');
+  let [loading, setLoading] = useState(true);
+  let [color, setColor] = useState("#399ebf");
   const navigate = useNavigate();
 
-  const register = async (values) => {
-    console.log('values', values);
+  const [open, setOpen] = useState(false);
 
-    const savedUserResponse = await fetch('http://localhost:3001/auth/register', {
-      method: 'POST',
-      headers: { 'Content-type': 'application/json' },
-      body: JSON.stringify(values),
+  const toastShowError = (msg) => {
+    toast.error(msg, {
+      autoClose: 2000,
+      style: {
+        color: "red", // Text color
+      },
     });
-    const savedUser = await savedUserResponse.json();
+  };
 
-    if (savedUser) {
-      console.log('User added!');
-      console.log('user', savedUser);
-      navigate('/');
+  const toastShowSeccus = (msg) => {
+    toast.success(msg, {
+      autoClose: 2500,
+      style: {
+        color: "green", // Text color
+      },
+    });
+    setTimeout(() => {
+      navigate("/");
+    }, 3000);
+  };
+
+  const register = async (values) => {
+    setOpen(true);
+    console.log("values", values);
+
+    const savedUserResponse = await fetch(
+      "http://localhost:3001/auth/register",
+      {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify(values),
+      }
+    );
+    if (savedUserResponse.status === 500) {
+      toastShowError("Account already exist !");
+      setOpen(false);
+    } else if (savedUserResponse.status === 201) {
+      const savedUser = await savedUserResponse.json();
+      //console.log('user', savedUser);
+      setOpen(false);
+      toastShowSeccus(savedUser.message);
     }
   };
 
@@ -57,12 +80,20 @@ function Index() {
     try {
       await register(values);
     } catch (error) {
-      setError(error.message);
+      setOpen(false);
+      toastShowError(error.message);
     }
   };
 
   return (
     <div>
+      <ToastContainer />
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <GridLoader color={color} loading={loading} size={20} />
+      </Backdrop>
       {/* **************** MAIN CONTENT START **************** */}
       <main>
         <section className="p-0 d-flex align-items-center position-relative overflow-hidden">
@@ -73,29 +104,55 @@ function Index() {
                 <div className="p-3 p-lg-5">
                   {/* Title */}
                   <div className="text-center">
-                    <h2 className="fw-bold">Welcome to our largest community</h2>
-                    <p className="mb-0 h6 fw-light">Let's learn something new today!</p>
+                    <h2 className="fw-bold">
+                      Welcome to our largest community
+                    </h2>
+                    <p className="mb-0 h6 fw-light">
+                      Let's learn something new today!
+                    </p>
                   </div>
                   {/* SVG Image */}
-                  <img src="assets/images/element/02.svg" className="mt-5" alt="" />
+                  <img
+                    src="assets/images/element/02.svg"
+                    className="mt-5"
+                    alt=""
+                  />
                   {/* Info */}
                   <div className="d-sm-flex mt-5 align-items-center justify-content-center">
                     <ul className="avatar-group mb-2 mb-sm-0">
                       <li className="avatar avatar-sm">
-                        <img className="avatar-img rounded-circle" src="assets/images/avatar/01.jpg" alt="avatar" />
+                        <img
+                          className="avatar-img rounded-circle"
+                          src="assets/images/avatar/01.jpg"
+                          alt="avatar"
+                        />
                       </li>
                       <li className="avatar avatar-sm">
-                        <img className="avatar-img rounded-circle" src="assets/images/avatar/02.jpg" alt="avatar" />
+                        <img
+                          className="avatar-img rounded-circle"
+                          src="assets/images/avatar/02.jpg"
+                          alt="avatar"
+                        />
                       </li>
                       <li className="avatar avatar-sm">
-                        <img className="avatar-img rounded-circle" src="assets/images/avatar/03.jpg" alt="avatar" />
+                        <img
+                          className="avatar-img rounded-circle"
+                          src="assets/images/avatar/03.jpg"
+                          alt="avatar"
+                        />
                       </li>
                       <li className="avatar avatar-sm">
-                        <img className="avatar-img rounded-circle" src="assets/images/avatar/04.jpg" alt="avatar" />
+                        <img
+                          className="avatar-img rounded-circle"
+                          src="assets/images/avatar/04.jpg"
+                          alt="avatar"
+                        />
                       </li>
                     </ul>
                     {/* Content */}
-                    <p className="mb-0 h6 fw-light ms-0 ms-sm-3">4k+ Students joined us, now it's your turn.</p>
+                    <p className="mb-0 h6 fw-light ms-0 ms-sm-3">
+                      4k+ Students joined us, now it's your turn.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -104,9 +161,15 @@ function Index() {
                 <div className="row my-5">
                   <div className="col-sm-10 col-xl-8 m-auto">
                     {/* Title */}
-                    <img src="assets/images/element/03.svg" className="h-40px mb-2" alt="" />
+                    <img
+                      src="assets/images/element/03.svg"
+                      className="h-40px mb-2"
+                      alt=""
+                    />
                     <h2>Sign up for your account!</h2>
-                    <p className="lead mb-4">Nice to see you! Please Sign up with your account.</p>
+                    <p className="lead mb-4">
+                      Nice to see you! Please Sign up with your account.
+                    </p>
 
                     <Formik
                       initialValues={initialValuesRegister}
@@ -124,31 +187,43 @@ function Index() {
                         <form onSubmit={handleSubmit}>
                           {/* firstName */}
                           <div className="mb-4">
-                            <label htmlFor="exampleInputEmail1" className="form-label">
-                                First Name *
+                            <label
+                              htmlFor="exampleInputEmail1"
+                              className="form-label"
+                            >
+                              First Name *
                             </label>
                             <div className="input-group input-group-lg">
-                                <span className="input-group-text bg-light rounded-start border-0 text-secondary px-3">
+                              <span className="input-group-text bg-light rounded-start border-0 text-secondary px-3">
                                 <i className="bi bi-envelope-fill" />
-                                </span>
-                                <input
+                              </span>
+                              <input
                                 type="text"
                                 name="firstName"
-                                className={`form-control border-0 bg-light rounded-end ps-1 ${errors.firstName && touched.firstName ? 'border-danger' : ''}`}
+                                className={`form-control border-0 bg-light rounded-end ps-1 ${
+                                  errors.firstName && touched.firstName
+                                    ? "border-danger"
+                                    : ""
+                                }`}
                                 placeholder="First Name"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 value={values.firstName}
-                                />
+                              />
                             </div>
                             {errors.firstName && touched.firstName && (
-                                <div className="text-danger">{errors.firstName}</div>
+                              <div className="text-danger">
+                                {errors.firstName}
+                              </div>
                             )}
-                            </div>
+                          </div>
 
                           {/* lastName */}
                           <div className="mb-4">
-                            <label htmlFor="exampleInputEmail1" className="form-label">
+                            <label
+                              htmlFor="exampleInputEmail1"
+                              className="form-label"
+                            >
                               Last Name *
                             </label>
                             <div className="input-group input-group-lg">
@@ -166,12 +241,17 @@ function Index() {
                               />
                             </div>
                             {errors.lastName && touched.lastName && (
-                              <div className="text-danger">{errors.lastName}</div>
+                              <div className="text-danger">
+                                {errors.lastName}
+                              </div>
                             )}
                           </div>
                           {/* Email */}
                           <div className="mb-4">
-                            <label htmlFor="exampleInputEmail1" className="form-label">
+                            <label
+                              htmlFor="exampleInputEmail1"
+                              className="form-label"
+                            >
                               Email address *
                             </label>
                             <div className="input-group input-group-lg">
@@ -195,7 +275,10 @@ function Index() {
                           <div>
                             {/* Password */}
                             <div className="mb-4">
-                              <label htmlFor="inputPassword5" className="form-label">
+                              <label
+                                htmlFor="inputPassword5"
+                                className="form-label"
+                              >
                                 Password *
                               </label>
                               <div className="input-group input-group-lg">
@@ -213,12 +296,17 @@ function Index() {
                                 />
                               </div>
                               {errors.password && touched.password && (
-                                <div className="text-danger">{errors.password}</div>
+                                <div className="text-danger">
+                                  {errors.password}
+                                </div>
                               )}
                             </div>
                             {/* Confirm Password */}
                             <div className="mb-4">
-                              <label htmlFor="inputPassword6" className="form-label">
+                              <label
+                                htmlFor="inputPassword6"
+                                className="form-label"
+                              >
                                 Confirm Password *
                               </label>
                               <div className="input-group input-group-lg">
@@ -235,17 +323,27 @@ function Index() {
                                   value={values.confirmPassword}
                                 />
                               </div>
-                              {errors.confirmPassword && touched.confirmPassword && (
-                                <div className="text-danger">{errors.confirmPassword}</div>
-                              )}
+                              {errors.confirmPassword &&
+                                touched.confirmPassword && (
+                                  <div className="text-danger">
+                                    {errors.confirmPassword}
+                                  </div>
+                                )}
                             </div>
                           </div>
 
                           {/* Check box */}
                           <div className="mb-4">
                             <div className="form-check">
-                              <input type="checkbox" className="form-check-input" id="checkbox-1" />
-                              <label className="form-check-label" htmlFor="checkbox-1">
+                              <input
+                                type="checkbox"
+                                className="form-check-input"
+                                id="checkbox-1"
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="checkbox-1"
+                              >
                                 By signing up, you agree to the
                                 <a href="#"> terms of service</a>
                               </label>
@@ -254,7 +352,10 @@ function Index() {
                           {/* Button */}
                           <div className="align-items-center mt-0">
                             <div className="d-grid">
-                              <button className="btn btn-primary mb-0" type="submit">
+                              <button
+                                className="btn btn-primary mb-0"
+                                type="submit"
+                              >
                                 Sign Up
                               </button>
                             </div>
@@ -274,20 +375,23 @@ function Index() {
                       {/* Social btn */}
                       <div className="col-xxl-6 d-grid">
                         <a href="#" className="btn bg-google mb-2 mb-xxl-0">
-                          <i className="fab fa-fw fa-google text-white me-2" />Signup with Google
+                          <i className="fab fa-fw fa-google text-white me-2" />
+                          Signup with Google
                         </a>
                       </div>
                       {/* Social btn */}
                       <div className="col-xxl-6 d-grid">
                         <a href="#" className="btn bg-facebook mb-0">
-                          <i className="fab fa-fw fa-facebook-f me-2" />Signup with Facebook
+                          <i className="fab fa-fw fa-facebook-f me-2" />
+                          Signup with Facebook
                         </a>
                       </div>
                     </div>
                     {/* Sign up link */}
                     <div className="mt-4 text-center">
                       <span>
-                        Already have an account?<Link to="/"> Sign in here</Link>
+                        Already have an account?
+                        <Link to="/"> Sign in here</Link>
                       </span>
                     </div>
                   </div>

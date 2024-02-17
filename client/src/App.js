@@ -5,6 +5,7 @@ import SignUp from './scenes/Authentification/SignUp'
 import SignIn from './scenes/Authentification/SignIn'
 import ForgetPassword from './scenes/Authentification/ForgetPassword'
 import ResetPassword from './scenes/Authentification/ResetPassword'
+import EmailVerify from './scenes/Authentification/EmailVerify'
 import NotFound from './scenes/NotFound'
 import AdminHomePage from '../src/scenes/AdminHomePage'
 import ListCoursesPage from '../src/scenes/Courses/ListCoursesPage'
@@ -31,15 +32,15 @@ function App() {
 
   useEffect(() => {
     const scripts = [
-      'assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js',
-      'assets/vendor/tiny-slider/tiny-slider.js',
-      'assets/vendor/glightbox/js/glightbox.js',
-      'assets/vendor/purecounterjs/dist/purecounter_vanilla.js',
-      'assets/js/functions.js',
-      'assets/vendor/choices/js/choices.min.js',
-      'assets/vendor/aos/aos.js',
-      'assets/vendor/quill/js/quill.min.js',
-      'assets/vendor/stepper/js/bs-stepper.min.js',
+      '/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js',
+      '/assets/vendor/tiny-slider/tiny-slider.js',
+      '/assets/vendor/glightbox/js/glightbox.js',
+      '/assets/vendor/purecounterjs/dist/purecounter_vanilla.js',
+      '/assets/js/functions.js',
+      '/assets/vendor/choices/js/choices.min.js',
+      '/assets/vendor/aos/aos.js',
+      '/assets/vendor/quill/js/quill.min.js',
+      '/assets/vendor/stepper/js/bs-stepper.min.js',
     ];
 
     if (!scriptsLoaded.current) {
@@ -56,6 +57,8 @@ function App() {
     };
   }, []);
 
+  
+
   return (
     <>
     
@@ -64,7 +67,8 @@ function App() {
           <Route path="/" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgetPassword />} />
-          <Route path="/reset-password/:id?/:token?" element={<ResetPassword />} />
+          <Route path="/reset-password/:id/:token" element={<ResetPassword />} />
+          <Route path="/verify-account/:id/verify/:token" element={<EmailVerify />} />
           <Route 
               path="/home" 
               element={isAuth ? <HomePage /> : <Navigate to="/" /> } 
@@ -83,13 +87,10 @@ function App() {
               element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   
               />
           <Route  path="/addCourse" 
-<<<<<<< HEAD
-              element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } />
-=======
+
               element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } 
 
-              element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   />
->>>>>>> 49e87b9d43549e83fb1bae8334535b30f6fd0d66
+           />
           
           <Route path="/about" element={<AboutPage />}/>
             <Route  path="/listCategories" 
@@ -106,17 +107,6 @@ function App() {
           <Route path="/*" element={<NotFound />}/>
         </Routes>
       </div>
-      
-      {/* Bootstrap JS */}
-      <script strategy="beforeInteractive" src="/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
-      {/* Vendors */}
-      <script strategy="beforeInteractive" src="/assets/vendor/tiny-slider/tiny-slider.js"></script>
-      <script strategy="beforeInteractive" src="/assets/vendor/glightbox/js/glightbox.js"></script>
-      <script strategy="beforeInteractive" src="/assets/vendor/purecounterjs/dist/purecounter_vanilla.js"></script>
-
-      {/* Template Functions */}
-      <script strategy="beforeInteractive" src="/assets/js/functions.js"></script>
 
       </>
   )

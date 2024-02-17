@@ -3,6 +3,11 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
+//toast
+import GridLoader from "react-spinners/GridLoader";
+import { ToastContainer, toast } from "react-toastify";
+import Backdrop from "@mui/material/Backdrop";
+
 const resetPassSchema = yup.object().shape({
   password: yup.string().required("required"),
   confirmPassword: yup
@@ -20,11 +25,39 @@ function Index() {
   const [error, setError] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  //toast
+  let [loading, setLoading] = useState(true);
+  let [color, setColor] = useState("#399ebf");
+
+  const [open, setOpen] = useState(false);
+
+  const toastShowError = (msg) => {
+    toast.error(msg, {
+      autoClose: 2000,
+      style: {
+        color: "red", // Text color
+      },
+    });
+  };
+
+  const toastShowSeccus = (msg) => {
+    toast.success(msg, {
+      autoClose: 2200,
+      style: {
+        color: "green", // Text color
+      },
+    });
+    setTimeout(() => {
+      navigate("/");
+    }, 3000);
+  };
+
   const { id, token } = useParams();
 
   const resetPassword = async (values) => {
-    console.log("values", values);
-
+    //console.log("values", values);
+    setOpen(true);
     const resetPasswordResponse = await fetch(
       `http://localhost:3001/auth/reset-password/${id}`,
       {
@@ -37,14 +70,31 @@ function Index() {
       }
     );
     const savedReset = await resetPasswordResponse.json();
-
-    if (savedReset.status == "Success") {
+      
+    if (savedReset.status === "Success") {
       console.log("Password changed successfully!!");
       console.log("Res", savedReset);
+      setOpen(false);
       navigate("/");
     } else {
       console.log("Res", savedReset.message);
     }
+
+    /*
+     if (resetPasswordResponse.status === 403) {
+      toastShowError("Access denied !");
+      setOpen(false);
+    } else if (resetPasswordResponse.status === 401) {
+      toastShowWarning("Token expired !");
+      setOpen(false);
+    } else if (resetPasswordResponse.status === 400) {
+      toastShowError(savedReset.message);
+      setOpen(false);
+    } else if (resetPasswordResponse.status === 200) {
+      setOpen(false);
+      toastShowSeccus("Password changed successfully !");
+    }
+    */
   };
 
   const handleFormSubmit = async (values) => {

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /**
 * Eduport- LMS, Education and Course Theme
 *
