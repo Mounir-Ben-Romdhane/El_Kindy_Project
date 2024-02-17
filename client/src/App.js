@@ -30,6 +30,7 @@ function App() {
   
   const scriptsLoaded = useRef(false);
 
+
   useEffect(() => {
     const scripts = [
       '/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js',
@@ -43,19 +44,6 @@ function App() {
       '/assets/vendor/stepper/js/bs-stepper.min.js',
     ];
 
-    if (!scriptsLoaded.current) {
-      loadScripts(scripts);
-      scriptsLoaded.current = true;
-    }
-
-    return () => {
-      // Remove all script tags
-      const scriptTags = document.querySelectorAll('script[src^="/assets"]');
-      scriptTags.forEach((scriptTag) => {
-        scriptTag.parentNode.removeChild(scriptTag);
-      });
-    };
-  }, []);
 
   
 
@@ -90,7 +78,11 @@ function App() {
 
               element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } 
 
+<<<<<<< HEAD
            />
+=======
+              element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   />
+>>>>>>> 2e8eb970bb4d97cb7003044c79779ba08b1de9b6
           
           <Route path="/about" element={<AboutPage />}/>
             <Route  path="/listCategories" 

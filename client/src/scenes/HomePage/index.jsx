@@ -1,20 +1,30 @@
 import Footer from "components/Footer";
 import NavBar from "components/NavBar";
 import React, { useEffect, useRef } from 'react'
+<<<<<<< HEAD
 //import { loadScripts } from '../../scriptLoader';
+=======
+>>>>>>> 2e8eb970bb4d97cb7003044c79779ba08b1de9b6
 
 import { useSelector } from "react-redux";
+import { loadScripts } from '../../scriptLoader';
 
 function Index() {
   const user = useSelector((state) => state.user);
+<<<<<<< HEAD
   console.log("user", user);
   /*
   const scriptsLoaded = useRef(false);
 
+=======
+  const scriptsLoaded = useRef(false);
+ 
+>>>>>>> 2e8eb970bb4d97cb7003044c79779ba08b1de9b6
   useEffect(() => {
     const scripts = [
       '/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js',
       '/assets/vendor/bootstrap/dist/js/bootstrap.bundle.js',
+<<<<<<< HEAD
 
       '/assets/vendor/tiny-slider/tiny-slider.js',
       '/assets/vendor/glightbox/js/glightbox.js',
@@ -39,8 +49,32 @@ function Index() {
       });
     };
   }, []); */
+=======
+>>>>>>> 2e8eb970bb4d97cb7003044c79779ba08b1de9b6
 
-  
+      '/assets/vendor/tiny-slider/tiny-slider.js',
+      '/assets/vendor/glightbox/js/glightbox.js',
+      '/assets/vendor/purecounterjs/dist/purecounter_vanilla.js',
+      '/assets/js/functions.js',
+      '/assets/vendor/choices/js/choices.min.js',
+      '/assets/vendor/aos/aos.js',
+      '/assets/vendor/quill/js/quill.min.js',
+      '/assets/vendor/stepper/js/bs-stepper.min.js',
+    ];
+
+    if (!scriptsLoaded.current) {
+      loadScripts(scripts);
+      scriptsLoaded.current = true;
+    }
+
+    return () => {
+      // Remove all script tags
+      const scriptTags = document.querySelectorAll('script[src^="/assets"]');
+      scriptTags.forEach((scriptTag) => {
+        scriptTag.parentNode.removeChild(scriptTag);
+      });
+    };
+  }, []);
     const test = async () => {
       try {
         const response = await fetch("http://localhost:3001/auth/getAll", {
@@ -200,9 +234,7 @@ Trending courses START */}
                       {/* Image */}
                       <img
                         src="assets/images/courses/4by3/14.jpg"
-                        className="card-img-top"
-                        alt="course image"
-                      />
+                        className="card-img-top" alt={true.toString()}              />
                       {/* Ribbon */}
                       <div className="ribbon mt-3">
                         <span>Free</span>
@@ -270,8 +302,7 @@ Trending courses START */}
                               <img
                                 className="avatar-img rounded-1"
                                 src="assets/images/avatar/10.jpg"
-                                alt="avatar"
-                              />
+                                alt={true.toString()}                />
                             </div>
                             <p className="mb-0 ms-2">
                               <a href="#" className="h6 fw-light mb-0">
@@ -304,8 +335,7 @@ Trending courses START */}
                       <img
                         src="assets/images/courses/4by3/15.jpg"
                         className="card-img-top"
-                        alt="course image"
-                      />
+                        alt={true.toString()}                />
                       {/* Card body */}
                       <div className="card-body pb-0">
                         {/* Badge and favorite */}
@@ -368,8 +398,7 @@ Trending courses START */}
                               <img
                                 className="avatar-img rounded-1"
                                 src="assets/images/avatar/04.jpg"
-                                alt="avatar"
-                              />
+                                alt={true.toString()}                           />
                             </div>
                             <p className="mb-0 ms-2">
                               <a href="#" className="h6 fw-light mb-0">
@@ -402,8 +431,7 @@ Trending courses START */}
                       <img
                         src="assets/images/courses/4by3/17.jpg"
                         className="card-img-top"
-                        alt="course image"
-                      />
+                        alt={true.toString()}              />
                       {/* Card body */}
                       <div className="card-body pb-0">
                         {/* Badge and favorite */}
@@ -466,8 +494,7 @@ Trending courses START */}
                               <img
                                 className="avatar-img rounded-1"
                                 src="assets/images/avatar/09.jpg"
-                                alt="avatar"
-                              />
+                                alt={true.toString()}                          />
                             </div>
                             <p className="mb-0 ms-2">
                               <a href="#" className="h6 fw-light mb-0">
@@ -499,9 +526,7 @@ Trending courses START */}
                       {/* Image */}
                       <img
                         src="assets/images/courses/4by3/16.jpg"
-                        className="card-img-top"
-                        alt="course image"
-                      />
+                        className="card-img-top" alt={true.toString()}                   />
                       {/* Card body */}
                       <div className="card-body pb-0">
                         {/* Badge and favorite */}
@@ -564,8 +589,7 @@ Trending courses START */}
                               <img
                                 className="avatar-img rounded-1"
                                 src="assets/images/avatar/01.jpg"
-                                alt="avatar"
-                              />
+                                alt={true.toString()}                        />
                             </div>
                             <p className="mb-0 ms-2">
                               <a href="#" className="h6 fw-light mb-0">

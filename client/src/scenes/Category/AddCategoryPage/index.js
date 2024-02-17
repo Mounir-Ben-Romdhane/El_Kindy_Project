@@ -98,7 +98,7 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                 />
               {/* =======================
               Page Banner END */}
-              <div class="card bg-transparent border rounded-3 mt-4">
+              <div className="card bg-transparent border rounded-3 mt-4">
                       {/* Card header */}
                 <div className="card-header bg-light border-bottom px-lg-3">
                   {/* Step Buttons START */}
