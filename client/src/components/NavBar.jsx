@@ -1,49 +1,24 @@
 import React, { useEffect } from "react";
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { setLogout } from '../state'
+import { useSelector } from "react-redux";
 
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = src;
-    script.onload = () => resolve(script);
-    script.onerror = () => reject(new Error("Script load error for ${src}"));
-    document.head.appendChild(script);
-  });
-}
 
 function NavBar() {
 
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const logoutHandler = () => {
+    dispatch(
+      setLogout()
+  );
+  navigate("/");
+  }
+
   
-
-  useEffect(() => {
-    const scripts = [
-      '/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js',
-      '/assets/vendor/tiny-slider/tiny-slider.js',
-      '/assets/vendor/glightbox/js/glightbox.js',
-      '/assets/vendor/purecounterjs/dist/purecounter_vanilla.js',
-      '/assets/js/functions.js',
-    ];
-
-    async function loadAllScripts() {
-      try {
-        for (const script of scripts) {
-          await loadScript(script);
-        }
-        console.log('All scripts loaded');
-      } catch (error) {
-        console.error('Failed to load scripts', error);
-      }
-    }
-
-    loadAllScripts();
-
-    // Cleanup pour supprimer les scripts lors du démontage
-    return () => {
-      scripts.forEach(src => {
-        const scriptTag = document.querySelector(scripts[src="${src}"]);
-        scriptTag?.remove();
-      });
-    };
-  }, []);
 
   return (
 
@@ -57,8 +32,8 @@ function NavBar() {
     <div className="container">
       {/* Logo START */}
       <a className="navbar-brand" href="index.html">
-        <img className="light-mode-item navbar-brand-item" src="assets/images/logo.svg" alt="logo" />
-        <img className="dark-mode-item navbar-brand-item" src="assets/images/logo-light.svg" alt="logo" />
+        <img className="light-mode-item navbar-brand-item" src="/assets/images/logo.svg" alt="logo" />
+        <img className="dark-mode-item navbar-brand-item" src="/assets/images/logo-light.svg" alt="logo" />
       </a>
       {/* Logo END */}
       {/* Responsive navbar toggler */}
@@ -283,7 +258,7 @@ function NavBar() {
       {/* Profile START */}
       <div className="dropdown ms-1 ms-lg-0">
         <a className="avatar avatar-sm p-0" href="#" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" aria-expanded="false">
-          <img className="avatar-img rounded-circle" src="assets/images/avatar/01.jpg" alt="avatar" />
+          <img className="avatar-img rounded-circle" src="/assets/images/avatar/01.jpg" alt="avatar" />
         </a>
         <ul className="dropdown-menu dropdown-animation dropdown-menu-end shadow pt-3" aria-labelledby="profileDropdown">
           {/* Profile info */}
@@ -291,11 +266,13 @@ function NavBar() {
             <div className="d-flex align-items-center">
               {/* Avatar */}
               <div className="avatar me-3">
-                <img className="avatar-img rounded-circle shadow" src="assets/images/avatar/01.jpg" alt="avatar" />
+                <img className="avatar-img rounded-circle shadow" src="/assets/images/avatar/01.jpg" alt="avatar" />
               </div>
               <div>
-                <a className="h6" href="#">Lori Ferguson</a>
-                <p className="small m-0">example@gmail.com</p>
+                <a className="h6 mt-2 mt-sm-0" href="#">
+                  {user?.firstName} {user?.lastName}
+                </a>
+                <p className="small m-0">{user?.email}</p>
               </div>
             </div>
             <hr />
@@ -304,7 +281,13 @@ function NavBar() {
           <li><a className="dropdown-item" href="#"><i className="bi bi-person fa-fw me-2" />Edit Profile</a></li>
           <li><a className="dropdown-item" href="#"><i className="bi bi-gear fa-fw me-2" />Account Settings</a></li>
           <li><a className="dropdown-item" href="#"><i className="bi bi-info-circle fa-fw me-2" />Help</a></li>
-          <li><a className="dropdown-item bg-danger-soft-hover" href="#"><i className="bi bi-power fa-fw me-2" />Sign Out</a></li>
+          <li><a
+                className="dropdown-item bg-danger-soft-hover"
+                onClick={logoutHandler}
+              >
+                <i className="bi bi-power fa-fw me-2" />
+                Sign Out
+              </a></li>
           <li> <hr className="dropdown-divider" /></li>
           {/* Dark mode switch START */}
           <li>
