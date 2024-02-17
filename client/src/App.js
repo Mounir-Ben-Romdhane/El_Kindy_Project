@@ -19,6 +19,7 @@ import  AddClassPage from '../src/scenes/Classe/AddClassPage'
 import './assetss/css/style.css'
 
 
+import Category from '../src/scenes/CategoryHome'
 
 import Category from '../src/scenes/CategoryHome'
 
