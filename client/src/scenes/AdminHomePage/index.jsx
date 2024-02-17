@@ -3,7 +3,9 @@ import TopBarBack from "components/TopBarBack";
 import React, {useEffect, useRef, useState} from "react";
 
 import { loadScripts } from '../../scriptLoader';
+
 import 'assetss/css/style.css'
+
 
 function Index() {
   const scriptsLoaded = useRef(false);

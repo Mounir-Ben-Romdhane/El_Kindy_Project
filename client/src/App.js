@@ -16,12 +16,13 @@ import EditCategoryPage from '../src/scenes/Category/EditCategoryPage'
 import  ListClassPage from '../src/scenes/Classe/ListClassPage'
 import  EditClassPage from '../src/scenes/Classe/EditClassPage'
 import  AddClassPage from '../src/scenes/Classe/AddClassPage'
+
 import './assetss/css/style.css'
 
 
-import Category from '../src/scenes/CategoryHome'
 
 import Category from '../src/scenes/CategoryHome'
+
 
 import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
