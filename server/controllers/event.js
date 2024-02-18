@@ -1,35 +1,23 @@
 import Event from "../models/Event.js";
 
 
-/* // Create Event
-export async function create(req, res) {
+// Get Event by ID
+export async function getById(req, res) {
+  const eventId = req.params.id;
   try {
-    const { title, description, price, images, dateDebut, dateFin } = req.body;
-    const newEvent = new Event({
-      title,
-      description,
-      price,
-      images,
-      dateDebut,
-      dateFin,
-    });
-    const savedEvent = await newEvent.save();
-    res.status(201).json({ savedEvent });
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ error: "Not Found", message: "Event not found" });
+    }
+    res.json(event);
   } catch (err) {
     console.error(err);
-    if (err.name === "ValidationError") {
-      return res
-        .status(400)
-        .json({ error: "Validation Error", message: err.message });
-    }
-    res
-      .status(500)
-      .json({
-        error: "Internal Server Error",
-        message: "Could not create event",
-      });
+    res.status(500).json({
+      error: "Internal Server Error",
+      message: "Could not retrieve event",
+    });
   }
-} */
+}
 
 // Get All Events
 export async function list(req, res) {

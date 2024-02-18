@@ -8,11 +8,13 @@ import ListCoursesPage from '../src/scenes/Courses/ListCoursesPage'
 
 import ListEventsPage from '../src/scenes/EventsPage/ListEventPage'
 import AddEventPage from '../src/scenes/EventsPage/AddEventPage'
+import EditEventPage from '../src/scenes/EventsPage/EditEventPage'
 
 import AddCoursePage from '../src/scenes/Courses/AddCoursePage'
 import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 import { useSelector } from "react-redux";
+
 
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -87,6 +89,8 @@ function App() {
           <Route  path="/addEvent" 
               element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   
               />
+         <Route path="/editEvent/:id" element={isAuth ? <EditEventPage /> : <Navigate to="/" />} />
+
           <Route  path="/addCourse" 
               element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } 
           />

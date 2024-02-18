@@ -1,178 +1,196 @@
-import React, { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from "react-redux";
-import { setLogin } from '../../state'
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setLogin } from "../../state";
+import QRCode from "qrcode.react";
 
 function Index() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [qrCodeUrl, setQRCodeUrl] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isAuth = useSelector((state) => Boolean(state.token));
+  const [twoFactorCode, setTwoFactorCode] = useState("");
 
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const isAuth = Boolean(useSelector((state) => state.token));
-    useEffect(() => {
-        if(isAuth){
-            navigate('/home');
+  useEffect(() => {
+    if (isAuth) {
+      navigate("/home");
+    }
+  }, [isAuth, navigate]);
+
+  const login = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/auth/login", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ email, password, twoFactorCode }),
+      });
+      const data = await response.json();
+      console.log(data); // Log to see the actual response
+      if (response.ok) {
+        if (data.token) {
+          dispatch(
+            setLogin({
+              user: data.user,
+              token: data.token,
+            })
+          );
+          navigate("/home");
         }
-    });
-    
+      } else if (data.twoFactorRequired) {
+        // 2FA is required, display QR code and input field for 2FA code
+        setQRCodeUrl(data.qrCodeUrl);
+        setLoginError("");
+      } else {
+        setLoginError("Login failed: " + data.message);
+      }
+    } catch (error) {
+      console.error("Error occurred during login:", error);
+      setLoginError("An error occurred, please try again.");
+    }
+  };
 
-    const login = async (values, onSubmitProps) => {
-        
-        const loggedInResponse = await fetch(
-            "http://localhost:3001/auth/login",
-            {
-                method: "POST",
-                headers: { "Content-type": "application/json" },
-                body: JSON.stringify(values),
-            }
-        );
-        const loggedIn = await loggedInResponse.json();
-        //console.log("result", loggedIn);
-        if (loggedIn) {
-            console.log("logged succes!!");
-            dispatch(
-                setLogin({
-                    user: loggedIn.user,
-                    token: loggedIn.token,
-                })
-            );
-            navigate("/home");
-        }
-
-    };
-
-    const handleFormSubmit = async (values) => {
-        values.preventDefault();
-        const formData = new FormData(values.target); // Create FormData object from form
-        const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
-       //console.log("Values",formValues);
-       await login(formValues);
-    };
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    if (!qrCodeUrl) {
+      // If no QR code is present, perform regular login
+      await login();
+    } else if (twoFactorCode) {
+      // If 2FA is enabled and a code is provided, attempt login with 2FA code
+      await login();
+    } else {
+      setLoginError("Please enter the 2FA code.");
+    }
+  };
 
   return (
     <div>
-
-        {/* **************** MAIN CONTENT START **************** */}
-        <main>
+      {/* Main Content Start */}
+      <main>
         <section className="p-0 d-flex align-items-center position-relative overflow-hidden">
-            <div className="container-fluid">
+          <div className="container-fluid">
             <div className="row">
-                {/* left */}
-                
-                <div className="col-12 col-lg-6 m-auto">
+              {/* Left Section */}
+              <div className="col-12 col-lg-6 m-auto">
                 <div className="row my-5">
-                    <div className="col-sm-10 col-xl-8 m-auto">
-                    {/* Title */}
+                  <div className="col-sm-10 col-xl-8 m-auto">
+                    {/* Title and Introduction */}
                     <span className="mb-0 fs-1">👋</span>
                     <h1 className="fs-2">Login into Eduport!</h1>
-                    <p className="lead mb-4">Nice to see you! Please log in with your account.</p>
-                    {/* Form START */}
+                    <p className="lead mb-4">
+                      Nice to see you! Please log in with your account.
+                    </p>
+  
+                    {/* Login Form */}
                     <form onSubmit={handleFormSubmit}>
-                        {/* Email */}
-                        <div className="mb-4">
-                        <label htmlFor="exampleInputEmail1" className="form-label">Email address *</label>
+                      {/* Email Input */}
+                      <div className="mb-4">
+                        <label
+                          htmlFor="exampleInputEmail1"
+                          className="form-label"
+                        >
+                          Email address *
+                        </label>
                         <div className="input-group input-group-lg">
-                            <span className="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i className="bi bi-envelope-fill" /></span>
-                            <input type="email" name="email" className="form-control border-0 bg-light rounded-end ps-1" placeholder="E-mail" id="exampleInputEmail1" />
+                          <span className="input-group-text bg-light rounded-start border-0 text-secondary px-3">
+                            <i className="bi bi-envelope-fill"></i>
+                          </span>
+                          <input
+                            type="email"
+                            className="form-control border-0 bg-light rounded-end ps-1"
+                            placeholder="E-mail"
+                            id="exampleInputEmail1"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                          />
                         </div>
-                        </div>
-                        {/* Password */}
-                        <div className="mb-4">
-                        <label htmlFor="inputPassword5" className="form-label">Password *</label>
+                      </div>
+                      {/* Password Input */}
+                      <div className="mb-4">
+                        <label htmlFor="inputPassword5" className="form-label">
+                          Password *
+                        </label>
                         <div className="input-group input-group-lg">
-                            <span className="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i className="fas fa-lock" /></span>
-                            <input type="password" name="password" className="form-control border-0 bg-light rounded-end ps-1" placeholder="password" id="inputPassword5" />
+                          <span className="input-group-text bg-light rounded-start border-0 text-secondary px-3">
+                            <i className="fas fa-lock"></i>
+                          </span>
+                          <input
+                            type="password"
+                            className="form-control border-0 bg-light rounded-end ps-1"
+                            placeholder="Password"
+                            id="inputPassword5"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                          />
                         </div>
-                        <div id="passwordHelpBlock" className="form-text">
-                            Your password must be 8 characters at least 
+                      </div>
+                      {/* 2FA Code Input */}
+                      {qrCodeUrl && (
+                        <div className="mb-3">
+                          <label htmlFor="twoFactorCode" className="form-label">
+                            Enter 2FA Code
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="twoFactorCode"
+                            value={twoFactorCode}
+                            onChange={(e) => setTwoFactorCode(e.target.value)}
+                          />
                         </div>
+                      )}
+                      {/* QR Code Display for 2FA */}
+                      {qrCodeUrl && (
+                        <div className="mb-3">
+                          <p>Scan the QR code with your authenticator app:</p>
+                          <QRCode value={qrCodeUrl} />
                         </div>
-                        {/* Check box */}
-                        <div className="mb-4 d-flex justify-content-between mb-4">
-                        <div className="form-check">
-                            <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                            <label className="form-check-label" htmlFor="exampleCheck1">Remember me</label>
+                      )}
+                      {/* Login Error Message */}
+                      {loginError && (
+                        <div className="alert alert-danger" role="alert">
+                          {loginError}
                         </div>
-                        <div className="text-primary-hover">
-                            <a href="forgot-password.html" className="text-secondary">
-                            <u>Forgot password?</u>
-                            </a>
-                        </div>
-                        </div>
-                        {/* Button */}
-                        <div className="align-items-center mt-0">
-                        <div className="d-grid">
-                            <button className="btn btn-primary mb-0" type="submit">Login</button>
-                        </div>
-                        </div>
+                      )}
+                      {/* Submit Button */}
+                      <div className="d-grid">
+                        <button className="btn btn-primary mb-0" type="submit">
+                          Login
+                        </button>
+                      </div>
                     </form>
-                    {/* Form END */}
-                    {/* Social buttons and divider */}
-                    <div className="row">
-                        {/* Divider with text */}
-                        <div className="position-relative my-4">
-                        <hr />
-                        <p className="small position-absolute top-50 start-50 translate-middle bg-body px-5">Or</p>
-                        </div>
-                        {/* Social btn */}
-                        <div className="col-xxl-6 d-grid">
-                        <a href="#" className="btn bg-google mb-2 mb-xxl-0"><i className="fab fa-fw fa-google text-white me-2" />Login with Google</a>
-                        </div>
-                        {/* Social btn */}
-                        <div className="col-xxl-6 d-grid">
-                        <a href="#" className="btn bg-facebook mb-0"><i className="fab fa-fw fa-facebook-f me-2" />Login with Facebook</a>
-                        </div>
-                    </div>
-                    {/* Sign up link */}
+                    {/* Additional Links */}
                     <div className="mt-4 text-center">
-                        <span>Don't have an account? <Link to="signup">Signup here</Link></span>
+                      <span>
+                        Don't have an account?{" "}
+                        <Link to="/signup">Sign up here</Link>
+                      </span>
                     </div>
-                    </div>
-                </div> {/* Row END */}
+                  </div>
                 </div>
-                
-                {/* Right */}
-                
-                <div className="col-12 col-lg-6 d-md-flex align-items-center justify-content-center bg-primary bg-opacity-10 vh-lg-100">
+              </div>
+              {/* Right Section - Static Content */}
+              <div className="col-12 col-lg-6 d-md-flex align-items-center justify-content-center bg-primary bg-opacity-10 vh-lg-100">
                 <div className="p-3 p-lg-5">
-                    {/* Title */}
-                    <div className="text-center">
-                    <h2 className="fw-bold">Welcome to our largest community</h2>
-                    <p className="mb-0 h6 fw-light">Let's learn something new today!</p>
-                    </div>
-                    {/* SVG Image */}
-                    <img src="assets/images/element/02.svg" className="mt-5" alt />
-                    {/* Info */}
-                    <div className="d-sm-flex mt-5 align-items-center justify-content-center">
-                    {/* Avatar group */}
-                    <ul className="avatar-group mb-2 mb-sm-0">
-                        <li className="avatar avatar-sm">
-                        <img className="avatar-img rounded-circle" src="assets/images/avatar/01.jpg" alt="avatar" />
-                        </li>
-                        <li className="avatar avatar-sm">
-                        <img className="avatar-img rounded-circle" src="assets/images/avatar/02.jpg" alt="avatar" />
-                        </li>
-                        <li className="avatar avatar-sm">
-                        <img className="avatar-img rounded-circle" src="assets/images/avatar/03.jpg" alt="avatar" />
-                        </li>
-                        <li className="avatar avatar-sm">
-                        <img className="avatar-img rounded-circle" src="assets/images/avatar/04.jpg" alt="avatar" />
-                        </li>
-                    </ul>
-                    {/* Content */}
-                    <p className="mb-0 h6 fw-light ms-0 ms-sm-3">4k+ Students joined us, now it's your turn.</p>
-                    </div>
+                  <h2 className="fw-bold">Welcome to our largest community</h2>
+                  <p className="mb-0 h6 fw-light">
+                    Let's learn something new today!
+                  </p>
+                  <img
+                    src="assets/images/element/02.svg"
+                    className="mt-5"
+                    alt="community visual"
+                  />
                 </div>
-                </div>
-            </div> {/* Row END */}
+              </div>
             </div>
+          </div>
         </section>
-        </main>
-        {/* **************** MAIN CONTENT END **************** */}
-
-
+      </main>
+      {/* Main Content End */}
     </div>
-  )
-}
-
-export default Index
+  );
+                      }
+export default Index;
