@@ -4,11 +4,12 @@ import React, {useEffect, useRef, useState} from "react";
 
 import { loadScripts } from '../../scriptLoader';
 
+import 'assetss/css/style.css'
+
 
 function Index() {
-  
   const scriptsLoaded = useRef(false);
-
+ 
   useEffect(() => {
     const scripts = [
       '/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js',
@@ -37,6 +38,7 @@ function Index() {
       });
     };
   }, []);
+  
   
   return (
     <div>

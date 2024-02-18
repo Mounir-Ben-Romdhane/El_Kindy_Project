@@ -7,9 +7,8 @@ import { loadScripts } from '../../scriptLoader';
 
 function Index() {
   const user = useSelector((state) => state.user);
-  console.log("user", user);
   const scriptsLoaded = useRef(false);
-
+ 
   useEffect(() => {
     const scripts = [
       '/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js',
@@ -38,7 +37,6 @@ function Index() {
       });
     };
   }, []);
-  
     const test = async () => {
       try {
         const response = await fetch("http://localhost:3001/auth/getAll", {
@@ -198,9 +196,7 @@ Trending courses START */}
                       {/* Image */}
                       <img
                         src="assets/images/courses/4by3/14.jpg"
-                        className="card-img-top"
-                        alt="course image"
-                      />
+                        className="card-img-top" alt={true.toString()}              />
                       {/* Ribbon */}
                       <div className="ribbon mt-3">
                         <span>Free</span>
@@ -268,8 +264,7 @@ Trending courses START */}
                               <img
                                 className="avatar-img rounded-1"
                                 src="assets/images/avatar/10.jpg"
-                                alt="avatar"
-                              />
+                                alt={true.toString()}                />
                             </div>
                             <p className="mb-0 ms-2">
                               <a href="#" className="h6 fw-light mb-0">
@@ -302,8 +297,7 @@ Trending courses START */}
                       <img
                         src="assets/images/courses/4by3/15.jpg"
                         className="card-img-top"
-                        alt="course image"
-                      />
+                        alt={true.toString()}                />
                       {/* Card body */}
                       <div className="card-body pb-0">
                         {/* Badge and favorite */}
@@ -366,8 +360,7 @@ Trending courses START */}
                               <img
                                 className="avatar-img rounded-1"
                                 src="assets/images/avatar/04.jpg"
-                                alt="avatar"
-                              />
+                                alt={true.toString()}                           />
                             </div>
                             <p className="mb-0 ms-2">
                               <a href="#" className="h6 fw-light mb-0">
@@ -400,8 +393,7 @@ Trending courses START */}
                       <img
                         src="assets/images/courses/4by3/17.jpg"
                         className="card-img-top"
-                        alt="course image"
-                      />
+                        alt={true.toString()}              />
                       {/* Card body */}
                       <div className="card-body pb-0">
                         {/* Badge and favorite */}
@@ -464,8 +456,7 @@ Trending courses START */}
                               <img
                                 className="avatar-img rounded-1"
                                 src="assets/images/avatar/09.jpg"
-                                alt="avatar"
-                              />
+                                alt={true.toString()}                          />
                             </div>
                             <p className="mb-0 ms-2">
                               <a href="#" className="h6 fw-light mb-0">
@@ -497,9 +488,7 @@ Trending courses START */}
                       {/* Image */}
                       <img
                         src="assets/images/courses/4by3/16.jpg"
-                        className="card-img-top"
-                        alt="course image"
-                      />
+                        className="card-img-top" alt={true.toString()}                   />
                       {/* Card body */}
                       <div className="card-body pb-0">
                         {/* Badge and favorite */}
@@ -562,8 +551,7 @@ Trending courses START */}
                               <img
                                 className="avatar-img rounded-1"
                                 src="assets/images/avatar/01.jpg"
-                                alt="avatar"
-                              />
+                                alt={true.toString()}                        />
                             </div>
                             <p className="mb-0 ms-2">
                               <a href="#" className="h6 fw-light mb-0">

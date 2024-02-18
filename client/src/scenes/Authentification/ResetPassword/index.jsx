@@ -240,7 +240,7 @@ function Index() {
                   </div>
                   {/* SVG Image */}
                   <img
-                    src="assets/images/element/02.svg"
+                    src="/assets/images/element/02.svg"
                     className="mt-5"
                     alt=""
                   />
@@ -250,28 +250,28 @@ function Index() {
                       <li className="avatar avatar-sm">
                         <img
                           className="avatar-img rounded-circle"
-                          src="assets/images/avatar/01.jpg"
+                          src="/assets/images/avatar/01.jpg"
                           alt="avatar"
                         />
                       </li>
                       <li className="avatar avatar-sm">
                         <img
                           className="avatar-img rounded-circle"
-                          src="assets/images/avatar/02.jpg"
+                          src="/assets/images/avatar/02.jpg"
                           alt="avatar"
                         />
                       </li>
                       <li className="avatar avatar-sm">
                         <img
                           className="avatar-img rounded-circle"
-                          src="assets/images/avatar/03.jpg"
+                          src="/assets/images/avatar/03.jpg"
                           alt="avatar"
                         />
                       </li>
                       <li className="avatar avatar-sm">
                         <img
                           className="avatar-img rounded-circle"
-                          src="assets/images/avatar/04.jpg"
+                          src="/assets/images/avatar/04.jpg"
                           alt="avatar"
                         />
                       </li>

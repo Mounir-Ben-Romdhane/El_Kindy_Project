@@ -29,7 +29,6 @@
     "nodemon": "^3.0.3"
   },
   "description": "",
-
   "description": {
     "mongodb": "^6.3.0",
     "mongoose": "^8.1.1",

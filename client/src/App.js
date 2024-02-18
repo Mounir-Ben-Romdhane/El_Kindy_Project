@@ -17,7 +17,18 @@ import ListCategoryPage from '../src/scenes/Category/ListCategoryPage'
 import AddCategoryPage from '../src/scenes/Category/AddCategoryPage'
 import EditCategoryPage from '../src/scenes/Category/EditCategoryPage'
 
-import { Navigate, Routes, Route } from "react-router-dom";
+import  ListClassPage from '../src/scenes/Classe/ListClassPage'
+import  EditClassPage from '../src/scenes/Classe/EditClassPage'
+import  AddClassPage from '../src/scenes/Classe/AddClassPage'
+
+import './assetss/css/style.css'
+
+
+
+import Category from '../src/scenes/CategoryHome'
+
+
+import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 import { useSelector } from "react-redux";
 import { loadScripts } from './scriptLoader';
@@ -28,12 +39,12 @@ function App() {
 
   const isAuth = Boolean(useSelector((state) => state.token));
   
+  const scriptsLoaded = useRef(false);
+
 
 
   return (
-    <>
-    
-      <div className="App">
+      <div>
         <Routes>
           <Route path="/" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
@@ -43,6 +54,10 @@ function App() {
           <Route 
               path="/home" 
               element={isAuth ? <HomePage /> : <Navigate to="/" /> } 
+            />
+             <Route 
+              path="/category" 
+              element={isAuth ? <Category /> : <Navigate to="/" /> } 
             />
           <Route  path="/dashboard-admin" 
               element={isAuth ? <AdminHomePage /> : <Navigate to="/" /> } 
@@ -58,12 +73,25 @@ function App() {
               element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   
               />
           <Route  path="/addCourse" 
-
               element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } 
 
+                />
 
-           />
 
+          <Route  path="/listClasse" 
+              element={isAuth ? <ListClassPage /> : <Navigate to="/" /> } 
+          />
+             <Route  path="/add-classe" 
+              element={isAuth ? <AddClassPage /> : <Navigate to="/" /> } 
+          />
+          <Route path="/edit-classe/:id"
+              element={isAuth ? <EditClassPage /> : <Navigate to="/" /> } 
+
+          />
+
+
+
+            
           
           <Route path="/about" element={<AboutPage />}/>
             <Route  path="/listCategories" 
@@ -76,12 +104,9 @@ function App() {
               element={isAuth ? <EditCategoryPage /> : <Navigate to="/" /> } 
 
           />
-          <Route path="/about" element={<AboutPage />}/>
           <Route path="/*" element={<NotFound />}/>
         </Routes>
       </div>
-
-      </>
   )
 }
 

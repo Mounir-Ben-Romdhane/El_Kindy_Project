@@ -1,7 +1,45 @@
+/**
+* Eduport- LMS, Education and Course Theme
+*
+* @author Webestica (https://www.webestica.com/)
+* @version 1.2.0
+**/
+
+
+/* ===================
+Table Of Content
+======================
+01 PRELOADER
+02 MEGA MENU
+03 STICKY HEADER
+04 TINY SLIDER
+05 STICKY BAR
+06 TOOLTIP
+07 POPOVER
+08 BACK TO TOP
+10 GLIGHTBOX
+11 ISOTOPE
+12 CHOICES
+13 AOS ANIMATION
+14 DASHBOARD CHART
+15 EARNING CHART
+16 EARNING CHART 2
+17 TRAFFIC CHART
+18 ACTIVE STUDENT CHART
+19 ACTIVE STUDENT CHART 2
+20 REVIEW CHART
+21 QUILL EDITOR
+22 STEPPER
+23 VIDEO PLAYER
+24 DARK MODE
+25 PRICING
+26 STICKY ELEMENT
+27 OVERLAY SCROLLBARS
+====================== */
 
 "use strict";
+!function () {
 
-(function () {
     window.Element.prototype.removeClass = function () {
         let className = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "",
             selectors = this;
@@ -12,9 +50,7 @@
             selectors.classList.remove(className);
         }
         return this;
-    };
-
-    window.Element.prototype.addClass = function () {
+    }, window.Element.prototype.addClass = function () {
         let className = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "",
             selectors = this;
         if (!(selectors instanceof HTMLElement) && selectors !== null) {
@@ -24,9 +60,7 @@
             selectors.classList.add(className);
         }
         return this;
-    };
-
-    window.Element.prototype.toggleClass = function () {
+    }, window.Element.prototype.toggleClass = function () {
         let className = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "",
             selectors = this;
         if (!(selectors instanceof HTMLElement) && selectors !== null) {
@@ -36,12 +70,10 @@
             selectors.classList.toggle(className);
         }
         return this;
-    };
-
-    window.Element.prototype.isVariableDefined = function () {
+    }, window.Element.prototype.isVariableDefined = function () {
         return !!this && typeof (this) != 'undefined' && this != null;
-    };
-})();
+    }
+}();
 
 // Get CSS var value
 var ThemeColor = function () {
@@ -57,7 +89,6 @@ var e = {
     init: function () {
         e.preLoader(),
         e.megaMenu(),
-        e.stickyHeader(),
         e.tinySlider(),
         e.stickyBar(),
         e.toolTipFunc(),
@@ -250,32 +281,8 @@ var e = {
             }
         });
     },
-    // END: Mega Menu
-
-    // START: 03 Sticky Header
-    stickyHeader: function () {
-        var stickyNav = e.select('.navbar-sticky');
-        if (e.isVariableDefined(stickyNav)) {
-            var stickyHeight = stickyNav.offsetHeight;
-            stickyNav.insertAdjacentHTML('afterend', '<div id="sticky-space"></div>');
-            var stickySpace = e.select('#sticky-space');
-            if (e.isVariableDefined(stickySpace)) {
-                document.addEventListener('scroll', function (event) {
-                    var scTop = window.pageYOffset || document.documentElement.scrollTop;
-                    if (scTop >= 400) {
-                        stickySpace.addClass('active');
-                        e.select("#sticky-space.active").style.height = stickyHeight + 'px';
-                        stickyNav.addClass('navbar-sticky-on');
-                    } else {
-                        stickySpace.removeClass('active');
-                        stickySpace.style.height = '0px';
-                        stickyNav.removeClass("navbar-sticky-on");
-                    }
-                });
-            }
-        }
-    },
-    // END: Sticky Header
+  
+  
 
     // START: 04 Tiny Slider
     tinySlider: function () {
