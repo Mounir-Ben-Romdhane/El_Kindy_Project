@@ -14,7 +14,6 @@ function Index() {
     const scripts = [
       '/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js',
       '/assets/vendor/bootstrap/dist/js/bootstrap.bundle.js',
-
       '/assets/vendor/tiny-slider/tiny-slider.js',
       '/assets/vendor/glightbox/js/glightbox.js',
       '/assets/vendor/purecounterjs/dist/purecounter_vanilla.js',
