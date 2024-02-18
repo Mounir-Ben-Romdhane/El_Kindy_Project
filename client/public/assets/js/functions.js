@@ -1,45 +1,7 @@
-/**
-* Eduport- LMS, Education and Course Theme
-*
-* @author Webestica (https://www.webestica.com/)
-* @version 1.2.0
-**/
-
-
-/* ===================
-Table Of Content
-======================
-01 PRELOADER
-02 MEGA MENU
-03 STICKY HEADER
-04 TINY SLIDER
-05 STICKY BAR
-06 TOOLTIP
-07 POPOVER
-08 BACK TO TOP
-10 GLIGHTBOX
-11 ISOTOPE
-12 CHOICES
-13 AOS ANIMATION
-14 DASHBOARD CHART
-15 EARNING CHART
-16 EARNING CHART 2
-17 TRAFFIC CHART
-18 ACTIVE STUDENT CHART
-19 ACTIVE STUDENT CHART 2
-20 REVIEW CHART
-21 QUILL EDITOR
-22 STEPPER
-23 VIDEO PLAYER
-24 DARK MODE
-25 PRICING
-26 STICKY ELEMENT
-27 OVERLAY SCROLLBARS
-====================== */
 
 "use strict";
-!function () {
 
+(function () {
     window.Element.prototype.removeClass = function () {
         let className = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "",
             selectors = this;
@@ -50,7 +12,9 @@ Table Of Content
             selectors.classList.remove(className);
         }
         return this;
-    }, window.Element.prototype.addClass = function () {
+    };
+
+    window.Element.prototype.addClass = function () {
         let className = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "",
             selectors = this;
         if (!(selectors instanceof HTMLElement) && selectors !== null) {
@@ -60,7 +24,9 @@ Table Of Content
             selectors.classList.add(className);
         }
         return this;
-    }, window.Element.prototype.toggleClass = function () {
+    };
+
+    window.Element.prototype.toggleClass = function () {
         let className = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "",
             selectors = this;
         if (!(selectors instanceof HTMLElement) && selectors !== null) {
@@ -70,10 +36,12 @@ Table Of Content
             selectors.classList.toggle(className);
         }
         return this;
-    }, window.Element.prototype.isVariableDefined = function () {
+    };
+
+    window.Element.prototype.isVariableDefined = function () {
         return !!this && typeof (this) != 'undefined' && this != null;
-    }
-}();
+    };
+})();
 
 // Get CSS var value
 var ThemeColor = function () {

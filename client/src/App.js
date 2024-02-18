@@ -1,8 +1,12 @@
 import React, { useEffect, useRef } from 'react'
 import AboutPage from '../src/scenes/AboutPage'
 import HomePage from '../src/scenes/HomePage'
-import SignUp from '../src/scenes/SignUp'
-import SignIn from '../src/scenes/SignIn'
+import SignUp from './scenes/Authentification/SignUp'
+import SignIn from './scenes/Authentification/SignIn'
+import ForgetPassword from './scenes/Authentification/ForgetPassword'
+import ResetPassword from './scenes/Authentification/ResetPassword'
+import EmailVerify from './scenes/Authentification/EmailVerify'
+import NotFound from './scenes/NotFound'
 import AdminHomePage from '../src/scenes/AdminHomePage'
 import ListCoursesPage from '../src/scenes/Courses/ListCoursesPage'
 
@@ -44,6 +48,9 @@ function App() {
         <Routes>
           <Route path="/" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgetPassword />} />
+          <Route path="/reset-password/:id?/:token?" element={<ResetPassword />} />
+          <Route path="/verify-account/:id/verify/:token" element={<EmailVerify />} />
           <Route 
               path="/home" 
               element={isAuth ? <HomePage /> : <Navigate to="/" /> } 
@@ -70,7 +77,7 @@ function App() {
 
                 />
 
-<Route  path="/listClasse" 
+          <Route  path="/listClasse" 
               element={isAuth ? <ListClassPage /> : <Navigate to="/" /> } 
           />
              <Route  path="/add-classe" 
@@ -96,7 +103,7 @@ function App() {
               element={isAuth ? <EditCategoryPage /> : <Navigate to="/" /> } 
 
           />
-          <Route path="/about" element={<AboutPage />}/>
+          <Route path="/*" element={<NotFound />}/>
         </Routes>
       </div>
   )
