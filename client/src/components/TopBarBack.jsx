@@ -28,12 +28,12 @@ function TopBarBack() {
                   <a className="navbar-brand" href="index.html">
                     <img
                       className="light-mode-item navbar-brand-item h-30px"
-                      src="assets/images/logo-mobile.svg"
+                      src="/assets/images/logo-mobile.svg"
                       alt
                     />
                     <img
                       className="dark-mode-item navbar-brand-item h-30px"
-                      src="assets/images/logo-mobile-light.svg"
+                      src="/assets/images/logo-mobile-light.svg"
                       alt
                     />
                   </a>
@@ -152,7 +152,7 @@ function TopBarBack() {
                                     <div className="avatar avatar-md">
                                       <img
                                         className="avatar-img rounded-circle"
-                                        src="assets/images/avatar/08.jpg"
+                                        src="/assets/images/avatar/08.jpg"
                                         alt="avatar"
                                       />
                                     </div>
@@ -177,7 +177,7 @@ function TopBarBack() {
                                     <div className="avatar avatar-md">
                                       <img
                                         className="avatar-img rounded-circle"
-                                        src="assets/images/avatar/02.jpg"
+                                        src="/assets/images/avatar/02.jpg"
                                         alt="avatar"
                                       />
                                     </div>
@@ -203,7 +203,7 @@ function TopBarBack() {
                                     <div className="avatar avatar-md">
                                       <img
                                         className="avatar-img rounded-circle"
-                                        src="assets/images/avatar/05.jpg"
+                                        src="/assets/images/avatar/05.jpg"
                                         alt="avatar"
                                       />
                                     </div>
@@ -226,7 +226,7 @@ function TopBarBack() {
                                     <div className="avatar avatar-md">
                                       <img
                                         className="avatar-img rounded-circle"
-                                        src="assets/images/avatar/03.jpg"
+                                        src="/assets/images/avatar/03.jpg"
                                         alt="avatar"
                                       />
                                     </div>
@@ -272,7 +272,7 @@ function TopBarBack() {
                       >
                         <img
                           className="avatar-img rounded-circle"
-                          src="assets/images/avatar/01.jpg"
+                          src="/assets/images/avatar/01.jpg"
                           alt="avatar"
                         />
                       </a>
@@ -288,7 +288,7 @@ function TopBarBack() {
                             <div className="avatar me-3">
                               <img
                                 className="avatar-img rounded-circle shadow"
-                                src="assets/images/avatar/01.jpg"
+                                src="/assets/images/avatar/01.jpg"
                                 alt="avatar"
                               />
                             </div>

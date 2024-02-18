@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /**
 * Eduport- LMS, Education and Course Theme
 *
@@ -90,7 +89,6 @@ var e = {
     init: function () {
         e.preLoader(),
         e.megaMenu(),
-        e.stickyHeader(),
         e.tinySlider(),
         e.stickyBar(),
         e.toolTipFunc(),
@@ -283,32 +281,8 @@ var e = {
             }
         });
     },
-    // END: Mega Menu
-
-    // START: 03 Sticky Header
-    stickyHeader: function () {
-        var stickyNav = e.select('.navbar-sticky');
-        if (e.isVariableDefined(stickyNav)) {
-            var stickyHeight = stickyNav.offsetHeight;
-            stickyNav.insertAdjacentHTML('afterend', '<div id="sticky-space"></div>');
-            var stickySpace = e.select('#sticky-space');
-            if (e.isVariableDefined(stickySpace)) {
-                document.addEventListener('scroll', function (event) {
-                    var scTop = window.pageYOffset || document.documentElement.scrollTop;
-                    if (scTop >= 400) {
-                        stickySpace.addClass('active');
-                        e.select("#sticky-space.active").style.height = stickyHeight + 'px';
-                        stickyNav.addClass('navbar-sticky-on');
-                    } else {
-                        stickySpace.removeClass('active');
-                        stickySpace.style.height = '0px';
-                        stickyNav.removeClass("navbar-sticky-on");
-                    }
-                });
-            }
-        }
-    },
-    // END: Sticky Header
+  
+  
 
     // START: 04 Tiny Slider
     tinySlider: function () {
@@ -353,7 +327,6 @@ var e = {
                   sliderDirection = 'rtl';
               }
 
-              // eslint-disable-next-line no-undef
               var tnsSlider = tns({
                   container: slider,
                   mode: sliderMode,

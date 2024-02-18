@@ -28,7 +28,15 @@ const UserSchema = new mongoose.Schema(
         picturePath: {
             type: String,
             default: "",
-        }, 
+        },
+        verified: {
+            type: Boolean,
+            default: false
+        },
+        refreshToken: {
+            type: String,
+            default: ""
+        }
     },
     { timestamps: true}
     );
