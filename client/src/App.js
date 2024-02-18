@@ -77,6 +77,7 @@ function App() {
 
                 />
 
+
           <Route  path="/listClasse" 
               element={isAuth ? <ListClassPage /> : <Navigate to="/" /> } 
           />

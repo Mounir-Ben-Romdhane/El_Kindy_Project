@@ -28,7 +28,10 @@
   "devDependencies": {
     "nodemon": "^3.0.3"
   },
+<<<<<<< HEAD
   "description": "",
+=======
+>>>>>>> 3b2deab7d0d58f09919f2af2b65d92df6eb8f807
   "description": {
     "mongodb": "^6.3.0",
     "mongoose": "^8.1.1",

@@ -1,6 +1,10 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import 'assetss/css/style.css'
+=======
+import 'assets/css/style.css'
+>>>>>>> 3b2deab7d0d58f09919f2af2b65d92df6eb8f807
 
 function SideBar() {
   return (
