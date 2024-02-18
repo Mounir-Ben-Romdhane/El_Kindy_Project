@@ -22,8 +22,6 @@ import  { createCategorie, updateCategorie }  from "./controllers/categorieContr
 import eventRoutes from "./routes/Event.js";
 import salleRoutes from "./routes/salle.js";
 
-import salleRoutes from "./routes/salle.js";
-
 
 
 
