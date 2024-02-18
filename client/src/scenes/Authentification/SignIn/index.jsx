@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setLogin } from "../../../state";
+import { setLogin, setLogout } from "../../../state";
 import { useSelector } from "react-redux";
+import refreshToken from "../TokenService/tokenService";
 import * as yup from "yup";
 
 //toast
@@ -13,7 +14,7 @@ import Backdrop from "@mui/material/Backdrop";
 function Index() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isAuth = Boolean(useSelector((state) => state.token));
+  const isAuth = Boolean(useSelector((state) => state.accessToken));
   useEffect(() => {
     if (isAuth) {
       navigate("/home");
@@ -54,36 +55,41 @@ function Index() {
       navigate("/");
     }, 2500);
   };
-
   const login = async (values, onSubmitProps) => {
     setOpen(true);
-    const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
-      method: "POST",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify(values),
-    });
-    const loggedIn = await loggedInResponse.json();
-    if (loggedInResponse.status === 500) {
-      toastShowError("Server error, please try again later.");
-      setOpen(false);
-    } else if (loggedInResponse.status === 400) {
-      toastShowError(loggedIn.message);
-      setOpen(false);
-    } else if (loggedInResponse.status === 401) {
-      toastShowWarning(loggedIn.message);
-      setOpen(false);
-    } else if (loggedInResponse.status === 200) {
-      console.log("logged succes!!");
-      setOpen(false);
-      dispatch(
-        setLogin({
-          user: loggedIn.user,
-          token: loggedIn.token,
-        })
-      );
-      navigate("/home");
+    try {
+        const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
+            method: "POST",
+            headers: { "Content-type": "application/json" },
+            body: JSON.stringify(values),
+        });
+        const loggedIn = await loggedInResponse.json();
+        if (loggedInResponse.status === 500) {
+            toastShowError("Server error, please try again later.");
+            setOpen(false);
+        } else if (loggedInResponse.status === 400) {
+            toastShowError(loggedIn.message);
+            setOpen(false);
+        } else if (loggedInResponse.status === 401) {
+            toastShowWarning(loggedIn.message);
+            setOpen(false);
+            dispatch(setLogout()); // Logout on refresh token error
+        } else if (loggedInResponse.status === 200) {
+            console.log("logged successfully!!");
+            setOpen(false);
+            dispatch(
+                setLogin({
+                    user: loggedIn.user,
+                    accessToken: loggedIn.accessToken,
+                    refreshToken: loggedIn.refreshToken,
+                })
+            );
+            navigate("/home");
+        }
+    } catch (error) {
+        console.error("Error logging in:", error);
     }
-  };
+};
 
   const handleFormSubmit = async (values) => {
     values.preventDefault();
