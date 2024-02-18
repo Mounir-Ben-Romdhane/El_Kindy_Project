@@ -1,8 +1,13 @@
 import express from "express";
-import { login, getAllUsers,verify2FA } from "../controllers/auth.js"
+
+import { login, getAllUsers,verify2FA,register } from "../controllers/auth.js"
+
 
 
 const router = express.Router();
+
+router.post("/register",register);
+
 
 
 router.post("/login", login);

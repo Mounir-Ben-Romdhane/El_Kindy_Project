@@ -1,23 +1,36 @@
 import Event from "../models/Event.js";
 
 
-// Get Event by ID
-export async function getById(req, res) {
-  const eventId = req.params.id;
+
+/* // Create Event
+export async function create(req, res) {
   try {
-    const event = await Event.findById(eventId);
-    if (!event) {
-      return res.status(404).json({ error: "Not Found", message: "Event not found" });
-    }
-    res.json(event);
+    const { title, description, price, images, dateDebut, dateFin } = req.body;
+    const newEvent = new Event({
+      title,
+      description,
+      price,
+      images,
+      dateDebut,
+      dateFin,
+    });
+    const savedEvent = await newEvent.save();
+    res.status(201).json({ savedEvent });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
-      error: "Internal Server Error",
-      message: "Could not retrieve event",
-    });
+    if (err.name === "ValidationError") {
+      return res
+        .status(400)
+        .json({ error: "Validation Error", message: err.message });
+    }
+    res
+      .status(500)
+      .json({
+        error: "Internal Server Error",
+        message: "Could not create event",
+      });
   }
-}
+} */
 
 // Get All Events
 export async function list(req, res) {
@@ -81,27 +94,6 @@ export async function remove(req, res) {
   }
 }
 
-
-/* // upload Event Image
-export async function uploadEvent(req, res) {
-  try {
-    upload(req,res,async(err)=>{
-      if(err){
-        res.status(500).send("Error uploading file");
-      }else{
-        res.status(200).send(req.file);
-      }
-    })
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({
-        error: "Internal Server Error",
-        message: "Could not upload file",
-      });
-  }
-}  */
 
 export const addNewEvent = async (req, res) => {
   try {

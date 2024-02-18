@@ -15,8 +15,7 @@ import e from "express";
             firstName,
             lastName,
             email,
-            password,
-            picturePath
+            password
         } = req.body;
 
         const saltRounds = 10;
@@ -27,8 +26,7 @@ import e from "express";
             firstName,
             lastName,
             email,
-            password: passwordHash,
-            picturePath
+            password: passwordHash
         });
         const savedUser = await newUser.save();
         res.status(201).json({savedUser});
