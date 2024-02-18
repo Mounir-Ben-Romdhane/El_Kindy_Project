@@ -5,7 +5,7 @@ export const verifyToken = async (req, res, next) => {
         let token = req.header("Authorization");
 
         if (!token) {
-            console.log("Access denied !");
+           // console.log("Access denied !");
             return res.status(403).send("Access denied !");
         }
 
@@ -18,8 +18,8 @@ export const verifyToken = async (req, res, next) => {
 
         // Check if the token is expired
         if (decodedToken && decodedToken.exp && Date.now() >= decodedToken.exp * 1000) {
-            console.log("Token expired!");
-            return res.status(401).send("Token expired!");
+            //console.log("Token expired!");
+            return res.status(401).send("Token expired !");
         }
 
         const verified = jwt.verify(token, process.env.JWT_SECRET);
