@@ -5,18 +5,16 @@ import SignUp from '../src/scenes/SignUp'
 import SignIn from '../src/scenes/SignIn'
 import AdminHomePage from '../src/scenes/AdminHomePage'
 import ListCoursesPage from '../src/scenes/Courses/ListCoursesPage'
-import EventsPage from '../src/scenes/EventsPage'
 import ListStage from '../src/scenes/Stage/ListStage'
 import AddStage from '../src/scenes/Stage/AddStage'
-
-
+import EditStage from '../src/scenes/Stage/EditStage'
+import UpdateStage from '../src/scenes/Stage/UpdateStage'
 import ListEventsPage from '../src/scenes/EventsPage/ListEventPage'
 import AddEventPage from '../src/scenes/EventsPage/AddEventPage'
 import AddCoursePage from '../src/scenes/Courses/AddCoursePage'
 import ListCategoryPage from '../src/scenes/Category/ListCategoryPage'
 import AddCategoryPage from '../src/scenes/Category/AddCategoryPage'
 import EditCategoryPage from '../src/scenes/Category/EditCategoryPage'
-
 import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 import { useSelector } from "react-redux";
@@ -77,7 +75,6 @@ function App() {
           <Route  path="/listCourses" 
               element={isAuth ? <ListCoursesPage /> : <Navigate to="/" /> } 
           />
- 
           
           <Route  path="/ListStage" 
               element={isAuth ? <ListStage /> : <Navigate to="/" /> } 
@@ -85,10 +82,14 @@ function App() {
           <Route  path="/AddStage" 
               element={isAuth ? <AddStage /> : <Navigate to="/" /> } 
           />
-
-
-
-          <Route  path="/listEvents" 
+           <Route  path="/EditStage/:id" 
+              element={isAuth ? <EditStage /> : <Navigate to="/" /> } 
+          />
+          
+          <Route  path="/UpdateStage/:id"  
+               element={isAuth ? <UpdateStage /> : <Navigate to="/" /> } 
+          />
+                    <Route  path="/listEvents" 
               element={isAuth ? <ListEventsPage /> : <Navigate to="/" /> }   
           />
           <Route  path="/addEvent" 

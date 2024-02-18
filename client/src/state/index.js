@@ -21,6 +21,9 @@ export const authSlice = createSlice({
         
     }
 })
-
+export const setError = (error) => {
+    // Your error handling logic here
+    console.error(error);
+};
 export const { setLogin, setLogout } = authSlice.actions;
 export default authSlice.reducer;

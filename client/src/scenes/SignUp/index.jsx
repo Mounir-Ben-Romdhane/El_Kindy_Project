@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 import {
   Box,
   Button,
@@ -52,14 +54,27 @@ function Index() {
       navigate('/');
     }
   };
-
   const handleFormSubmit = async (values) => {
     try {
-      await register(values);
+      const googleUser = JSON.parse(localStorage.getItem('googleUser'));
+      if (googleUser) {
+        const googleUserValues = {
+          firstName: googleUser.given_name,
+          lastName: googleUser.family_name,
+          email: googleUser.email,
+          password: '', // No password for Google login
+          confirmPassword: '', // No password for Google login
+        };
+        await register(googleUserValues); // Register the Google user
+      } else {
+        await register(values); // Register the user using the form values
+      }
     } catch (error) {
       setError(error.message);
     }
   };
+  
+  
 
   return (
     <div>
@@ -125,13 +140,13 @@ function Index() {
                           {/* firstName */}
                           <div className="mb-4">
                             <label htmlFor="exampleInputEmail1" className="form-label">
-                                First Name *
+                              First Name *
                             </label>
                             <div className="input-group input-group-lg">
-                                <span className="input-group-text bg-light rounded-start border-0 text-secondary px-3">
+                              <span className="input-group-text bg-light rounded-start border-0 text-secondary px-3">
                                 <i className="bi bi-envelope-fill" />
-                                </span>
-                                <input
+                              </span>
+                              <input
                                 type="text"
                                 name="firstName"
                                 className={`form-control border-0 bg-light rounded-end ps-1 ${errors.firstName && touched.firstName ? 'border-danger' : ''}`}
@@ -139,12 +154,12 @@ function Index() {
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 value={values.firstName}
-                                />
+                              />
                             </div>
                             {errors.firstName && touched.firstName && (
-                                <div className="text-danger">{errors.firstName}</div>
+                              <div className="text-danger">{errors.firstName}</div>
                             )}
-                            </div>
+                          </div>
 
                           {/* lastName */}
                           <div className="mb-4">
@@ -273,9 +288,23 @@ function Index() {
                       </div>
                       {/* Social btn */}
                       <div className="col-xxl-6 d-grid">
-                        <a href="#" className="btn bg-google mb-2 mb-xxl-0">
-                          <i className="fab fa-fw fa-google text-white me-2" />Signup with Google
-                        </a>
+                      <GoogleLogin
+  clientId="96761309582-mtdj5s9a4n8jscpq0p2v8ju87ltvhpho.apps.googleusercontent.com"
+  onSuccess={async (credentialResponse) => {
+    try {
+      const credentialResponseDecoded = jwtDecode(credentialResponse.credential);
+      localStorage.setItem('googleUser', JSON.stringify(credentialResponseDecoded));
+      await handleFormSubmit(); // Call handleFormSubmit to register the Google user
+    } catch (error) {
+      console.error('Error processing Google OAuth response:', error);
+    }
+  }}
+  onError={(error) => {
+    console.error('Login Failed:', error);
+  }}
+/>
+
+
                       </div>
                       {/* Social btn */}
                       <div className="col-xxl-6 d-grid">
