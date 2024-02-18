@@ -27,7 +27,11 @@ export const register = async (req, res) => {
             email,
             password: passwordHash
         });
+        
+        
+
         const savedUser = await newUser.save();
+
         const token = jwt.sign({ id: savedUser._id }, process.env.JWT_SECRET, {expiresIn:"1d"});
     
         const url = `http://localhost:3000/verify-account/${savedUser._id}/verify/${token}`;
@@ -50,20 +54,53 @@ export const login = async (req, res) => {
 
         
         //if (!isMatch) return res.status(400).json({ msg: "Invalid credentials." });
+        // Generate refresh token
+        const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
+        user.refreshToken = refreshToken;
+        await user.save();
 
-        const token = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName }, process.env.JWT_SECRET, {expiresIn:"30m"});
+        const accessToken  = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName }, process.env.JWT_SECRET, {expiresIn:"2m"});
+        
         if(!user.verified) {
-            const url = `http://localhost:3000/verify-account/${user._id}/verify/${token}`;
+            const url = `http://localhost:3000/verify-account/${user._id}/verify/${accessToken}`;
             await sendEmail(email,"Verify your email", url); // sends verification link to user's email
             console.log("Email send Successfullyyyyyyyy !");
             return res.status(401).json({status: false, message: "An email sent to your account ! please verify !"});
         }
+
         delete user.password;
-        res.status(200).json({ token, user });
+        res.status(200).json({ accessToken, refreshToken: user.refreshToken, user });
     }catch (err) {
         res.status(500).json({ error: err.message });
     }
 }
+export const refreshToken = async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
+        if (!refreshToken) return res.status(401).json({ message: "Refresh token is required" });
+        
+        const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+        const user = await User.findById(decoded.id);
+        
+
+        if (!user || user.refreshToken !== refreshToken) {
+            return res.status(403).json({ message: "Invalid refresh token" });
+        }
+
+        // Check expiration date of refresh token
+        const decodedRefreshToken = jwt.decode(refreshToken);
+        if (decodedRefreshToken && decodedRefreshToken.exp && Date.now() >= decodedRefreshToken.exp * 1000) {
+            //console.log("Token expired!");
+            return res.status(401).json({ message: "Refresh token has expired" });
+        }
+
+        const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName }, process.env.JWT_SECRET, { expiresIn: "30s" });
+        res.json({ accessToken });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
 
 export const verifyAccount = async (req, res) => {
     try{

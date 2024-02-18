@@ -37,7 +37,7 @@ import { loadScripts } from './scriptLoader';
 
 function App() {
 
-  const isAuth = Boolean(useSelector((state) => state.token));
+  const isAuth = Boolean(useSelector((state) => state.accessToken));
   
   const scriptsLoaded = useRef(false);
 
