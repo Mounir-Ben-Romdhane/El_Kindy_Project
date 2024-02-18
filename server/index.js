@@ -20,6 +20,9 @@ import  { createCategorie, updateCategorie }  from "./controllers/categorieContr
 
 
 import eventRoutes from "./routes/Event.js";
+import salleRoutes from "./routes/salle.js";
+
+
 
 
 import stageRouter  from "./routes/stageRoute.js";
@@ -81,6 +84,10 @@ app.use('/event', eventRoutes);
 
 app.use("/stage",stageRouter);
 app.use("/course",courseRoute);
+app.use("/salle",salleRoutes);
+
+app.use("/salle",salleRoutes);
+
 
 
 
