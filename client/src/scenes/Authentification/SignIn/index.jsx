@@ -5,11 +5,16 @@ import { setLogin, setLogout } from "../../../state";
 import { useSelector } from "react-redux";
 import refreshToken from "../TokenService/tokenService";
 import * as yup from "yup";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+
+
 
 //toast
 import GridLoader from "react-spinners/GridLoader";
 import { ToastContainer, toast } from "react-toastify";
 import Backdrop from "@mui/material/Backdrop";
+import axios from "axios";
+import GoogleAuth from "components/GoogleAuth";
 
 function Index() {
   const dispatch = useDispatch();
@@ -96,8 +101,16 @@ function Index() {
     const formData = new FormData(values.target); // Create FormData object from form
     const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
     //console.log("Values",formValues);
-    await login(formValues);
+      
   };
+
+
+  //goooooogle
+  /*const loginWithGoogle = async (userToken) => {
+    const response =await axios.post("http://localhost:3001/auth/google/callback",  userToken);
+    return response.data;};
+*/
+
 
   return (
     <div>
@@ -216,10 +229,7 @@ function Index() {
                       </div>
                       {/* Social btn */}
                       <div className="col-xxl-6 d-grid">
-                        <a href="#" className="btn bg-google mb-2 mb-xxl-0">
-                          <i className="fab fa-fw fa-google text-white me-2" />
-                          Login with Google
-                        </a>
+                        <GoogleAuth />
                       </div>
                       {/* Social btn */}
                       <div className="col-xxl-6 d-grid">

@@ -14,7 +14,7 @@ function Index() {
   useEffect(() => {
     const fetchStages = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/stage/getStages");
+        const response = await fetch("http://localhost:3001/stage");
         const { stages } = await response.json();
         setStages(stages);
         setTotalEntries(stages.length); // Update the totalEntries state

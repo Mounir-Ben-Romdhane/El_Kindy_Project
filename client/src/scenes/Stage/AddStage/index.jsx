@@ -60,7 +60,7 @@ const addCourse = async (values, onSubmitProps) => {
     console.log("picture name", values.picture.name);
     
     const savedCourseResponse = await fetch(
-        "http://localhost:3001/api/stage/add",
+        "http://localhost:3001/api/stage",
         {
             method: "POST",
             body: formData,
@@ -125,7 +125,7 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   {/* Step Buttons START */}
                     {/* Step 1 */}
                       <div className="">
-                      <h2 className="p-2" style={{ color: dataTheme === 'dark' ? '#2B6DA2' : '#1d3b53' }}>Course details</h2>
+                      <h2 className="p-2" style={{ color: dataTheme === 'dark' ? '#2B6DA2' : '#1d3b53' }}>Internship details</h2>
                       </div>
               </div>
               <div>

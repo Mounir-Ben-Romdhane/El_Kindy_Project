@@ -2,9 +2,6 @@ import express from 'express';
 import Stage from '../models/Stage.js';
 
 const router = express.Router();
-
-
-
 // Route handler to create a new stage
 export const createStage = async (req, res) => {
     try {

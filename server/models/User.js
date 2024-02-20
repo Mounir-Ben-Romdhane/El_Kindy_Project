@@ -36,7 +36,11 @@ const UserSchema = new mongoose.Schema(
         refreshToken: {
             type: String,
             default: ""
-        }
+        },
+        authSource: {
+            type: String,
+            default: "local"
+        },
     },
     { timestamps: true}
     );

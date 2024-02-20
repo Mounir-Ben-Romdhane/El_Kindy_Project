@@ -9,10 +9,11 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function StageForm() {
   const [formState, setFormState] = useState({
-    Title: "",
+    title: "",
     description: "",
-    startDate: "",
-    finishDate: ""
+    startDate:"",
+    finishDate:"",
+    picturePath:"",
   });
   const [imageName, setImageName] = useState("");
   const [imageFile, setImageFile] = useState(null);
@@ -21,25 +22,27 @@ function StageForm() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchStageData = async () => {
+    const fetchCategoryData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3001/api/stage/${id}`
+          `http://localhost:3001/stage/${id}`
         );
         setFormState({
-          Title: response.data.Title,
+          name: response.data.name,
           description: response.data.description,
-          startDate: response.data.startDate,
-          finishDate: response.data.finishDate
+          startDate: new Date(response.data.startDate),
+          finishDate: new Date(response.data.finishDate),
+          picturePath: response.data.picturePath,
         });
+        // Assuming response.data has a imagePath attribute
         setImageName(response.data.imagePath);
       } catch (error) {
-        console.error("Failed to fetch stage data:", error);
-        setMessage("Failed to load stage data.");
+        console.error("Failed to fetch Internship data:", error);
+        setMessage("Failed to load Internship data.");
       }
     };
 
-    if (id) fetchStageData();
+    if (id) fetchCategoryData();
   }, [id]);
 
   const handleChange = (event) => {
@@ -49,10 +52,12 @@ function StageForm() {
       [name]: value,
     }));
   };
-
   const handleImageSelect = (event) => {
+    // Get the selected file
     const selectedFile = event.target.files[0];
+    // Set the image name
     setImageName(selectedFile.name);
+    // Set the image file
     setImageFile(selectedFile);
   };
 
@@ -68,29 +73,28 @@ function StageForm() {
       formData.append(key, formState[key]);
     }
     if (imageFile) {
-      formData.append("image", imageFile);
+      formData.append("picture", imageFile); // Ensure the file is appended with the key "picture"
     }
-
+  
     try {
       await axios.put(`http://localhost:3001/api/stage/${id}`, formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "multipart/form-data", // Set the Content-Type header
         },
       });
-      toast.success("Stage edited successfully !!", {
-        autoClose: 1500,
+      toast.success("Internship edited successfully !!", { autoClose: 1500,
         style: {
-          color: 'green'
-        }
-      });
+          color: 'green' // Text color
+        }});
       setTimeout(() => {
-        navigate('/ListStage');
+        navigate('/listStage');
       }, 2000);
     } catch (error) {
-      console.error("Failed to update stage:", error);
-      setMessage("Failed to update stage. Please try again.");
+      console.error("Failed to update Internship:", error);
+      setMessage("Failed to update Internship. Please try again.");
     }
   };
+  
 
   return (
     <main>
@@ -101,31 +105,32 @@ function StageForm() {
 
         {/* Add your banner component if you have one */}
         <BannerStart
-          title="Update Stage"
-          description="Make changes to your Stage details below."
+          title="Update Internship"
+          description="Make changes to your Internship details below."
         />
         <div className="container mt-4">
           <h2>Update Stage</h2>
           {message && (
             <div
-              className={`alert ${message.startsWith("Failed") ? "alert-danger" : "alert-success"
-                }`}
+              className={`alert ${
+                message.startsWith("Failed") ? "alert-danger" : "alert-success"
+              }`}
             >
               {message}
             </div>
           )}
           <form onSubmit={handleSubmit}>
-            {/* Stage Title */}
+            {/* title  */}
             <div className="mb-3">
-              <label htmlFor="name" className="form-label">
-                Stage Title 
+              <label htmlFor="title" className="form-label">
+                title
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="Title"
-                name="Title"
-                value={formState.Title}
+                id="title"
+                name="title"
+                value={formState.title}
                 onChange={handleChange}
               />
             </div>
@@ -146,35 +151,35 @@ function StageForm() {
             {/* StartDate */}
             <div className="mb-3">
               <label htmlFor="startDate" className="form-label">
-                Start Date
+              startDate
               </label>
-              <input
-                type="date"
+              <textarea
                 className="form-control"
                 id="startDate"
                 name="startDate"
+                rows="3"
                 value={formState.startDate}
                 onChange={handleChange}
-              />
+              ></textarea>
             </div>
-            {/* FinishDate */}
+            {/* finishDate */}
             <div className="mb-3">
               <label htmlFor="finishDate" className="form-label">
-                Finish Date
+              finishDate
               </label>
-              <input
-                type="date"
+              <textarea
                 className="form-control"
                 id="finishDate"
                 name="finishDate"
+                rows="3"
                 value={formState.finishDate}
                 onChange={handleChange}
-              />
+              ></textarea>
             </div>
             {/* Image Upload */}
             <div className="mb-3">
               <label htmlFor="image" className="form-label">
-                Category Image
+              Internship Image
               </label>
               {imageName && (
                 <div>
@@ -195,7 +200,6 @@ function StageForm() {
                     Remove image
                   </button>
                 </div>
-
               )}
 
               <input
@@ -205,15 +209,16 @@ function StageForm() {
                 name="picture"
                 accept="image/*"
                 onChange={handleImageSelect} // Ensure this line is correct
-              />
+                />
             </div>
             {/* Submit Button */}
             <button type="submit" className="btn btn-primary">
-              Update Internship
+              Update Stage
             </button>
           </form>
         </div>
       </div>
+      
     </main>
   );
 }
