@@ -34,7 +34,7 @@ function Index() {
         if (response.ok) {
           const data = await response.json();
           setCourses(data.data);
-        } else if (response.status === 401 ) {
+        } else if (response.status === 401 || response.status === 403 ) {
           // Refresh access token
           const newAccessToken = await refreshToken(refreshTokenState, dispatch);
           if (newAccessToken) {
@@ -48,7 +48,7 @@ function Index() {
           }
         } else {
           const errorMessage = await response.text();
-          dispatch(setLogout()); // Log out user if token refresh fails
+          //dispatch(setLogout()); // Log out user if token refresh fails
           throw new Error(errorMessage);
         }
       } catch (error) {
@@ -60,9 +60,7 @@ function Index() {
     fetchData();
   }, [accessToken, dispatch]);
 
-  const handleEditClick = (course) => {
-    setSelectedCourse(course);
-  };
+  
 
   const handleDelete = async (id) => {
     try {
@@ -214,14 +212,9 @@ function Index() {
                             <td>course.price</td>
                             <td>course.status</td>
                             <td>
-                              <i
-                                className="fas fa-edit text-warning me-1 mb-1 mb-md-0"
-                                onClick={() => handleEditClick(course)}
-                                style={{
-                                  cursor: "pointer",
-                                  fontSize: "1.4rem",
-                                }}
-                              ></i>
+                            <Link to={`/edit-course/${course._id}`} className="btn btn-sm btn-dark me-1 mb-1 mb-md-0">
+                              Edit
+                            </Link>
                               <i
                                 className="fas fa-trash-alt text-danger me-1 mb-1 mb-md-0"
                                 onClick={() => handleDelete(course._id)}

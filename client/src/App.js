@@ -32,6 +32,7 @@ import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 import { useSelector } from "react-redux";
 import { loadScripts } from './scriptLoader';
+import EditCourse from 'scenes/Courses/EditCoursePage'
 
 
 
@@ -64,6 +65,10 @@ function App() {
           />
           <Route  path="/listCourses" 
               element={isAuth ? <ListCoursesPage /> : <Navigate to="/" /> } 
+          />
+          <Route path="/edit-course/:id"
+              element={isAuth ? <EditCourse /> : <Navigate to="/" /> } 
+
           />
 
           <Route  path="/listEvents" 
