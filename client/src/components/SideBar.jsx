@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import 'assetss/css/style.css'
+
+
 function SideBar() {
   return (
     <div>
@@ -9,7 +12,7 @@ function SideBar() {
             {/* Navbar brand for xl START */}
             <div className="d-flex align-items-center">
                 <a className="navbar-brand" href="index.html">
-                <img className="navbar-brand-item" src="assets/images/logo-light.svg" alt />
+                <img className="navbar-brand-item" src="/assets/images/logo-light.svg" alt />
                 </a>
             </div>
             {/* Navbar brand for xl END */}
@@ -37,6 +40,8 @@ function SideBar() {
                     </ul>
                     </li>
 
+                    
+
                     <li className="nav-item">
                     <a className="nav-link" data-bs-toggle="collapse" href="#collapsepagee" role="button" aria-expanded="false" aria-controls="collapsepage">
                         <i className="bi bi-basket fa-fw me-2" />Category
@@ -47,6 +52,11 @@ function SideBar() {
                         <li className="nav-item"> <Link className="nav-link" to="/listCategories">All Category</Link></li>
                           </ul>
                     </li>
+
+
+                   
+
+                    
                     {/* Menu item 3 */}
                     <li className="nav-item"> <a className="nav-link" href="admin-student-list.html"><i className="fas fa-user-graduate fa-fw me-2" />Students</a></li>
                     {/* Event */} 
@@ -59,6 +69,18 @@ function SideBar() {
                         <li className="nav-item"> <Link className="nav-link" to="/listEvents">List Events</Link></li>
                         <li className="nav-item"> <a className="nav-link" href="/addEvent">Add Event</a></li>
                     </ul>
+                    </li>
+
+
+                    {/* classe */}
+                    <li className="nav-item">
+                    <a className="nav-link" data-bs-toggle="collapse" href="#classe" role="button" aria-expanded="false" aria-controls="collapsepage">
+                        <i className="bi bi-basket fa-fw me-2" />Class
+                    </a>
+                    {/* Submenu */}
+                    <ul className="nav collapse flex-column" id="classe" data-bs-parent="#navbar-sidebar">
+                        <li className="nav-item"> <Link className="nav-link" to="/listClasse">All Class</Link></li>
+                          </ul>
                     </li>
 
                     {/* Menu item 4 */}

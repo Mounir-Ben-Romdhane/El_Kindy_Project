@@ -10,81 +10,74 @@ import path from 'path';
 import { fileURLToPath } from "url";
 import { addNewCourse } from "./controllers/courseController.js";
 import { addNewEvent } from "./controllers/event.js";
-
-
-
-
-import { createCategorie, updateCategorie } from "./controllers/categorieController.js"; // Import des routes de catégorie
-
-import { createStage, updateStage } from "./controllers/stageController.js"; // Import des routes de catégorie
-
-
-
+import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
 import eventRoutes from "./routes/Event.js";
-
-
-import stageRouter from "./routes/stageRoute.js";
+import salleRoutes from "./routes/salle.js";
+import stageRouter  from "./routes/stageRoute.js";
 import authRoutes from "./routes/auth.js";
 import courseRoute from './routes/courseRoute.js'
-
-
 import { register } from "./controllers/auth.js";
-
-
 import categorieRoutes from "./routes/categorieRoutes.js"; // Import des routes de catégorie
-
 import User from './models/User.js';
 import { users } from "./data/index.js";
+import { createStage, updateStage } from "./controllers/stageController.js";
+import router from "./routes/Event.js";
+import googleAuth from "./controllers/googleAuth.js";
+import { OAuth2Client } from 'google-auth-library'; // Use import instead of require
+import jwt from "jsonwebtoken";
 
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config();
 const app = express();
+const client = new OAuth2Client();
 app.use(express.json());
 app.use(helmet());
-app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin"}));
 app.use(morgan("common"));
-app.use(bodyParser.json({ limit: "30mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
+app.use(bodyParser.json({limit: "30mb", extended: true}));
+app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
 app.use(cors());
-app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
-
+app.use("/assets", express.static(path.join(__dirname,'public/assets')));
 
 /* FILE STORAGE */
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, "public/assets");
+    destination: function(req, file, cb) {
+        cb(null,"public/assets");
     },
-    filename: function (req, file, cb) {
-        cb(null, file.originalname);
+    filename: function(req, file, cb) {
+        cb(null,file.originalname);
     }
 });
 const upload = multer({ storage });
 
 /* ROUTES WITH FILES*/
 //app.post("/auth/register",upload.single("picture"),register);
-app.post("/course/add", upload.single("picture"), addNewCourse);
+app.post("/course/add",upload.single("picture"),addNewCourse);
 
-app.post("/event/add", upload.single("picture"), addNewEvent);
+app.post("/event/add",upload.single("picture"),addNewEvent);
 
 app.post("/api/categories", upload.single("picture"), createCategorie);
 app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
 
-app.post("/api/stage/add", upload.single("picture"), createStage);
-app.put("/api/stage/:id", upload.single("picture"), updateStage);
+app.post("/api/stage", upload.single("picture"), createStage);
+app.put("/api/stage/:id", upload.single("picture"),updateStage );
+
 
 
 /* ROUTES */
-app.use("/auth", authRoutes);
-app.use("/api/categories", categorieRoutes);
+app.use("/auth",authRoutes);
+app.use("/api/categories", categorieRoutes); 
+app.use("/stage",stageRouter);
 
 app.use('/event', eventRoutes);
 
 
-app.use("/api/stage", stageRouter);
-app.use("/course", courseRoute);
+app.use("/course",courseRoute);
+app.use("/salle",salleRoutes);
 
+app.use("/salle",salleRoutes);
 
 
 /* MONGOOSE SETUP */
@@ -98,5 +91,5 @@ mongoose.connect(process.env.MONGO_URL, {
     /* ADD DATA ONE TIME*/
     // User.insertMany(users);
     //Post.insertMany(posts);
-
+    
 }).catch((error) => console.log(`${error} did not connect`));
