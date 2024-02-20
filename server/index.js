@@ -12,7 +12,14 @@ import { addNewCourse, updateCourse } from "./controllers/courseController.js";
 import { addNewEvent } from "./controllers/event.js";
 import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
 import eventRoutes from "./routes/Event.js";
-import salleRoutes from "./routes/salle.js";import stageRouter  from "./routes/stageRoute.js";
+
+
+import salleRoutes from "./routes/salle.js";
+
+
+
+import stageRouter  from "./routes/stageRoute.js";
+
 import authRoutes from "./routes/auth.js";
 import courseRoute from './routes/courseRoute.js'
 import categorieRoutes from "./routes/categorieRoutes.js"; // Import des routes de catégorie
@@ -63,6 +70,7 @@ app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
 
 /* ROUTES */
 app.use("/auth",authRoutes);
+
 app.use("/api/categories", categorieRoutes); 
 
 app.use('/event', eventRoutes);
@@ -70,7 +78,6 @@ app.use('/event', eventRoutes);
 
 app.use("/stage",stageRouter);
 app.use("/course",courseRoute);
-app.use("/salle",salleRoutes);
 
 app.use("/salle",salleRoutes);
 
