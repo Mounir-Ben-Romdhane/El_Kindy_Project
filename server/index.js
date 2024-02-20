@@ -8,7 +8,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from "url";
-import { addNewCourse } from "./controllers/courseController.js";
+import { addNewCourse, updateCourse } from "./controllers/courseController.js";
 import { addNewEvent } from "./controllers/event.js";
 import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
 import eventRoutes from "./routes/Event.js";
@@ -17,7 +17,6 @@ import stageRouter  from "./routes/stageRoute.js";
 import authRoutes from "./routes/auth.js";
 import courseRoute from './routes/courseRoute.js'
 import { register } from "./controllers/auth.js";
-import categorieRoutes from "./routes/categorieRoutes.js"; // Import des routes de catégorie
 import User from './models/User.js';
 import { users } from "./data/index.js";
 import { createStage, updateStage } from "./controllers/stageController.js";
@@ -25,6 +24,8 @@ import router from "./routes/Event.js";
 import googleAuth from "./controllers/googleAuth.js";
 import { OAuth2Client } from 'google-auth-library'; // Use import instead of require
 import jwt from "jsonwebtoken";
+import categorieRoutes from "./routes/categorieRoutes.js"; // Import des routes de catégorie
+import { verifyToken } from "./middleware/auth.js";
 
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
@@ -38,7 +39,11 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin"}));
 app.use(morgan("common"));
 app.use(bodyParser.json({limit: "30mb", extended: true}));
 app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
-app.use(cors());
+// Configure CORS to allow requests from http://localhost:3000
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true // Include credentials in CORS request
+  }));
 app.use("/assets", express.static(path.join(__dirname,'public/assets')));
 
 /* FILE STORAGE */
@@ -55,6 +60,7 @@ const upload = multer({ storage });
 /* ROUTES WITH FILES*/
 //app.post("/auth/register",upload.single("picture"),register);
 app.post("/course/add",upload.single("picture"),addNewCourse);
+app.patch("/course/update/:id",upload.single("picture"),verifyToken, updateCourse);
 
 app.post("/event/add",upload.single("picture"),addNewEvent);
 
@@ -68,6 +74,7 @@ app.put("/api/stage/:id", upload.single("picture"),updateStage );
 
 /* ROUTES */
 app.use("/auth",authRoutes);
+
 app.use("/api/categories", categorieRoutes); 
 app.use("/stage",stageRouter);
 
@@ -75,7 +82,6 @@ app.use('/event', eventRoutes);
 
 
 app.use("/course",courseRoute);
-app.use("/salle",salleRoutes);
 
 app.use("/salle",salleRoutes);
 
