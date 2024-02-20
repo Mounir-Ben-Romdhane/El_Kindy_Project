@@ -230,6 +230,10 @@ function Index() {
                       {/* Social btn */}
                       <div className="col-xxl-6 d-grid">
                         <GoogleAuth />
+
+
+
+                        
                       </div>
                       {/* Social btn */}
                       <div className="col-xxl-6 d-grid">
