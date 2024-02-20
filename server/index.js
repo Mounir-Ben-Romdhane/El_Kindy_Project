@@ -68,7 +68,7 @@ app.post("/api/categories", upload.single("picture"), createCategorie);
 app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
 
 app.post("/api/stage", upload.single("picture"), createStage);
-app.put("/api/stage/:id", upload.single("picture"),updateStage );
+app.patch("/api/stage/:id", upload.single("picture"),updateStage );
 
 
 

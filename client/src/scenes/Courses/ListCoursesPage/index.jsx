@@ -234,7 +234,7 @@ function Index() {
                   {/* Course table END */}
                 </div>
                 {/* Card body END */}
-                {/* Card footer START */}
+                {/* Card ffooter START */}
                 <div className="card-footer bg-transparent pt-0">
                   {/* Pagination START */}
                   <div className="d-sm-flex justify-content-sm-between align-items-sm-center">

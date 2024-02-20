@@ -201,13 +201,23 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   {/* Course category */}
                   <div className="col-md-6">
                     <label className="form-label">startDate</label>
-                    <input className="form-control" name="startDate" type="text" placeholder="Enter startDate " required/>
-                  </div>
+                    <input
+                      className="form-control"
+                      type="date"
+                      name="startDate"
+
+                      required
+                    />                  </div>
                   {/* Course level */}
                   <div className="col-md-6">
                     <label className="form-label">finishDate</label>
-                    <input className="form-control" name="finishDate" type="text" placeholder="Enter finishDate " required/>
+                    <input
+                      className="form-control"
+                      type="date"
+                      name="finishDate"
 
+                      required
+                    />
                   </div>
                   
               
