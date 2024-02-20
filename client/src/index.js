@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { BrowserRouter } from "react-router-dom";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 import {
   persistStore,
   persistReducer,
@@ -38,7 +40,10 @@ root.render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistStore(store)}>
         <BrowserRouter>
+        <GoogleOAuthProvider clientId="96761309582-mtdj5s9a4n8jscpq0p2v8ju87ltvhpho.apps.googleusercontent.com">
+
           <App />
+          </GoogleOAuthProvider>
         </BrowserRouter>
       </PersistGate>
     </Provider>

@@ -12,16 +12,19 @@ import { addNewCourse, updateCourse } from "./controllers/courseController.js";
 import { addNewEvent } from "./controllers/event.js";
 import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
 import eventRoutes from "./routes/Event.js";
-
-
 import salleRoutes from "./routes/salle.js";
-
-
-
 import stageRouter  from "./routes/stageRoute.js";
-
 import authRoutes from "./routes/auth.js";
 import courseRoute from './routes/courseRoute.js'
+import { register } from "./controllers/auth.js";
+import categorieRoutes from "./routes/categorieRoutes.js"; // Import des routes de catégorie
+import User from './models/User.js';
+import { users } from "./data/index.js";
+import { createStage, updateStage } from "./controllers/stageController.js";
+import router from "./routes/Event.js";
+import googleAuth from "./controllers/googleAuth.js";
+import { OAuth2Client } from 'google-auth-library'; // Use import instead of require
+import jwt from "jsonwebtoken";
 import categorieRoutes from "./routes/categorieRoutes.js"; // Import des routes de catégorie
 import { verifyToken } from "./middleware/auth.js";
 
@@ -30,6 +33,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config();
 const app = express();
+const client = new OAuth2Client();
 app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin"}));
@@ -42,8 +46,6 @@ app.use(cors({
     credentials: true // Include credentials in CORS request
   }));
 app.use("/assets", express.static(path.join(__dirname,'public/assets')));
-
-
 
 /* FILE STORAGE */
 const storage = multer.diskStorage({
@@ -66,22 +68,23 @@ app.post("/event/add",upload.single("picture"),addNewEvent);
 app.post("/api/categories", upload.single("picture"), createCategorie);
 app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
 
+app.post("/api/stage", upload.single("picture"), createStage);
+app.put("/api/stage/:id", upload.single("picture"),updateStage );
+
 
 
 /* ROUTES */
 app.use("/auth",authRoutes);
 
 app.use("/api/categories", categorieRoutes); 
+app.use("/stage",stageRouter);
 
 app.use('/event', eventRoutes);
 
 
-app.use("/stage",stageRouter);
 app.use("/course",courseRoute);
 
 app.use("/salle",salleRoutes);
-
-
 
 
 /* MONGOOSE SETUP */
