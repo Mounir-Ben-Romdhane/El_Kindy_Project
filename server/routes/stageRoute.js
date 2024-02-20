@@ -10,7 +10,7 @@ import {
 
 router.get("/", getStages);
 router.get("/:id", getStage);
-router.put("/:id", updateStage);
+router.patch("/:id", updateStage);
 router.delete("/:id", deleteStage);
 
 export default router;
