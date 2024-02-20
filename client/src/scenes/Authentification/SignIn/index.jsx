@@ -5,14 +5,18 @@ import { setLogin, setLogout } from "../../../state";
 import { useSelector } from "react-redux";
 import refreshToken from "../TokenService/tokenService";
 import * as yup from "yup";
+import axios from 'axios';
+import { navigate } from '@reach/router';
 
 //toast
 import GridLoader from "react-spinners/GridLoader";
 import { ToastContainer, toast } from "react-toastify";
 import Backdrop from "@mui/material/Backdrop";
+import FacebookLogin from "components/FacebookLogin";
 
 function Index() {
   const dispatch = useDispatch();
+  
   const navigate = useNavigate();
   const isAuth = Boolean(useSelector((state) => state.accessToken));
   useEffect(() => {
@@ -89,6 +93,7 @@ function Index() {
     } catch (error) {
         console.error("Error logging in:", error);
     }
+    
 };
 
   const handleFormSubmit = async (values) => {
@@ -99,6 +104,29 @@ function Index() {
     await login(formValues);
   };
 
+  /*const responseFacebook = async (response) => {
+    try {
+        console.log(response);
+        console.log("hhhhh");
+
+        const facebookLoginResponse = await axios.post("http://localhost:3001/auth/facebooklogin", {
+            token: response.accessToken,
+            userID: response.userID
+        });
+
+        console.log("facebook login success", facebookLoginResponse);
+
+        // Utilisez la fonction navigate pour rediriger vers la route "/home"
+        navigate("/home");
+    } catch (error) {
+        console.error("Error in Facebook login request:", error);
+        // Gérer l'erreur ici (peut-être afficher un message d'erreur)
+    }
+}*/
+
+
+  
+  
   return (
     <div>
       <ToastContainer />
@@ -223,10 +251,7 @@ function Index() {
                       </div>
                       {/* Social btn */}
                       <div className="col-xxl-6 d-grid">
-                        <a href="#" className="btn bg-facebook mb-0">
-                          <i className="fab fa-fw fa-facebook-f me-2" />
-                          Login with Facebook
-                        </a>
+                        <FacebookLogin />
                       </div>
                     </div>
                     {/* Sign up link */}

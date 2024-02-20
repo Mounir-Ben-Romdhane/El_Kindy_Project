@@ -89,6 +89,11 @@ function App() {
 
           />
 
+           <Route 
+              path="/home" 
+              element={isAuth ? <HomePage /> : <Navigate to="/" /> } 
+            />
+
 
 
             
