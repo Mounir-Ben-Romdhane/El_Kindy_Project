@@ -99,6 +99,18 @@ function SideBar() {
                         </li>
                     </ul>
                     </li>
+                    {/* menu item Stage */}
+                    <li className="nav-item">
+                    <a className="nav-link" data-bs-toggle="collapse" href="#collapsepage-event" role="button" aria-expanded="false" aria-controls="collapsepage">
+                        <i className="bi bi-basket fa-fw me-2" />Internship
+                    </a>
+                    {/* Submenu */}
+                    <ul className="nav collapse flex-column" id="collapsepage-event" data-bs-parent="#navbar-sidebar">
+                        <li className="nav-item"> <Link className="nav-link" to="/ListStage">All Internships</Link></li>
+                        <li className="nav-item"> <Link className="nav-link" to="/AddStage">Add Internship</Link></li>
+                        
+                    </ul>
+                    </li>
                     {/* Menu item 5 */}
                     <li className="nav-item"> <a className="nav-link" href="admin-review.html"><i className="far fa-comment-dots fa-fw me-2" />Reviews</a></li>
                     {/* Menu item 6 */}
