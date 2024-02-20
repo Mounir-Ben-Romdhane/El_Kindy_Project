@@ -108,7 +108,7 @@ function Index() {
     //console.log("Values",formValues);
       await login(formValues);
   };
-    
+
   return (
     <div>
       <ToastContainer />
@@ -233,9 +233,7 @@ function Index() {
                         
                       </div>
                       {/* Social btn */}
-                      <div className="col-xxl-6 d-grid">
                         <FacebookLogin />
-                      </div>
                     </div>
                     {/* Sign up link */}
                     <div className="mt-4 text-center">
