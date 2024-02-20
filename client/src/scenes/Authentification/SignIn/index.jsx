@@ -106,7 +106,7 @@ function Index() {
     const formData = new FormData(values.target); // Create FormData object from form
     const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
     //console.log("Values",formValues);
-      
+      await login(formValues);
   };
 
   return (
@@ -227,6 +227,10 @@ function Index() {
                       {/* Social btn */}
                       <div className="col-xxl-6 d-grid">
                         <GoogleAuth />
+
+
+
+                        
                       </div>
                       {/* Social btn */}
                         <FacebookLogin />

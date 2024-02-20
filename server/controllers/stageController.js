@@ -45,7 +45,7 @@ export const getStages = async (req,res)=>{
 export const getStage = async (req,res)=>{
     try{
         const stage = await Stage.findById(req.params.id);
-        res.status(200).json({stage});
+        res.status(200).json(stage);
     }catch (err) {
         res.status(500).json({ error: err.message });
     }

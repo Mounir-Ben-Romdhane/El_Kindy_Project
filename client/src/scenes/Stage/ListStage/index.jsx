@@ -33,7 +33,7 @@ function Index() {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:3001/api/stage/deleteStage/${id}`, {
+      await fetch(`http://localhost:3001/stage/${id}`, {
         method: 'DELETE',
       });
       // Filter out the deleted stage from the state
