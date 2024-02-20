@@ -4,25 +4,25 @@ const UserSchema = new mongoose.Schema(
     {
         firstName: {
             type: String,
-           // required: true,
+            required: true,
             min: 2,
             max:50,
         }, 
         lastName: {
             type: String,
-          //  required: true,
+            required: true,
             min: 2,
             max:50,
         }, 
         email: {
             type: String,
-           // required: true,
+            required: true,
             max:50,
             unique: true,
         }, 
         password: {
             type: String,
-           // required: true,
+            required: true,
             min:5,
         },
         picturePath: {
@@ -36,7 +36,11 @@ const UserSchema = new mongoose.Schema(
         refreshToken: {
             type: String,
             default: ""
-        }
+        },
+        authSource: {
+            type: String,
+            default: "local"
+        },
     },
     { timestamps: true}
     );

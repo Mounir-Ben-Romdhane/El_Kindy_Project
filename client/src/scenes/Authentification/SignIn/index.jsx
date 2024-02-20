@@ -104,26 +104,6 @@ function Index() {
     await login(formValues);
   };
 
-  /*const responseFacebook = async (response) => {
-    try {
-        console.log(response);
-        console.log("hhhhh");
-
-        const facebookLoginResponse = await axios.post("http://localhost:3001/auth/facebooklogin", {
-            token: response.accessToken,
-            userID: response.userID
-        });
-
-        console.log("facebook login success", facebookLoginResponse);
-
-        // Utilisez la fonction navigate pour rediriger vers la route "/home"
-        navigate("/home");
-    } catch (error) {
-        console.error("Error in Facebook login request:", error);
-        // Gérer l'erreur ici (peut-être afficher un message d'erreur)
-    }
-}*/
-
 
   
   
@@ -250,9 +230,8 @@ function Index() {
                         </a>
                       </div>
                       {/* Social btn */}
-                      <div className="col-xxl-6 d-grid">
                         <FacebookLogin />
-                      </div>
+                      
                     </div>
                     {/* Sign up link */}
                     <div className="mt-4 text-center">
