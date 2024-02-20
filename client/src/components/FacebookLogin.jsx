@@ -54,12 +54,14 @@ const loggedIn = await loggedInResponse.json();
   };
 
   return (
-    <FacebookLoginButton
-      onSuccess={responseFacebook}
-      appId="923840302571080"
-      autoLoad={false}
-      callback={responseFacebook}
-    />
+    <div className="col-xxl-6 d-grid">    
+      <FacebookLoginButton
+        cssClass="btn bg-facebook mb-2 mb-xxl-0 w-100"
+        appId="923840302571080"
+        callback={responseFacebook}
+      >
+      </FacebookLoginButton>
+  </div>
   );
 };
 

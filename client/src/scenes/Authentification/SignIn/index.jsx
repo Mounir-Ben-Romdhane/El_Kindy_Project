@@ -250,9 +250,7 @@ function Index() {
                         </a>
                       </div>
                       {/* Social btn */}
-                      <div className="col-xxl-6 d-grid">
                         <FacebookLogin />
-                      </div>
                     </div>
                     {/* Sign up link */}
                     <div className="mt-4 text-center">
