@@ -17,7 +17,6 @@ import stageRouter  from "./routes/stageRoute.js";
 import authRoutes from "./routes/auth.js";
 import courseRoute from './routes/courseRoute.js'
 import { register } from "./controllers/auth.js";
-import categorieRoutes from "./routes/categorieRoutes.js"; // Import des routes de catégorie
 import User from './models/User.js';
 import { users } from "./data/index.js";
 import { createStage, updateStage } from "./controllers/stageController.js";
