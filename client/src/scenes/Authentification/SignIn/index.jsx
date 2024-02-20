@@ -9,15 +9,19 @@ import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
 
 
+import axios from 'axios';
+import { navigate } from '@reach/router';
+
 //toast
 import GridLoader from "react-spinners/GridLoader";
 import { ToastContainer, toast } from "react-toastify";
 import Backdrop from "@mui/material/Backdrop";
-import axios from "axios";
 import GoogleAuth from "components/GoogleAuth";
+import FacebookLogin from "components/FacebookLogin";
 
 function Index() {
   const dispatch = useDispatch();
+  
   const navigate = useNavigate();
   const isAuth = Boolean(useSelector((state) => state.accessToken));
   useEffect(() => {
@@ -94,6 +98,7 @@ function Index() {
     } catch (error) {
         console.error("Error logging in:", error);
     }
+    
 };
 
   const handleFormSubmit = async (values) => {
@@ -103,15 +108,7 @@ function Index() {
     //console.log("Values",formValues);
       
   };
-
-
-  //goooooogle
-  /*const loginWithGoogle = async (userToken) => {
-    const response =await axios.post("http://localhost:3001/auth/google/callback",  userToken);
-    return response.data;};
-*/
-
-
+    
   return (
     <div>
       <ToastContainer />
@@ -233,10 +230,7 @@ function Index() {
                       </div>
                       {/* Social btn */}
                       <div className="col-xxl-6 d-grid">
-                        <a href="#" className="btn bg-facebook mb-0">
-                          <i className="fab fa-fw fa-facebook-f me-2" />
-                          Login with Facebook
-                        </a>
+                        <FacebookLogin />
                       </div>
                     </div>
                     {/* Sign up link */}
