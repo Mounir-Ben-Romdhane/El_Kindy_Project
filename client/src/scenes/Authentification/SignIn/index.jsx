@@ -230,7 +230,6 @@ function Index() {
                       </div>
                       {/* Social btn */}
                         <FacebookLogin />
-                      
                     </div>
                     {/* Sign up link */}
                     <div className="mt-4 text-center">
