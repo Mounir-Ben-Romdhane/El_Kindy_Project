@@ -14,43 +14,41 @@ const facebooklogin = async (req, res) => {
         });
 
         const data = await response.json();
+        console.log("data ",data)
         const { email, name, id } = data;
 
         const user = await User.findOne({ email }).exec();
-
+        const spaceIndex = name.indexOf(" ");
+        const firstName = name.substring(0, spaceIndex);
+        const lastName = name.substring(spaceIndex + 1);
         if (user) {
-            const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
-            const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName }, process.env.JWT_SECRET, { expiresIn: "2m" });
+            const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName }, process.env.JWT_SECRET, { expiresIn: "30s" });
 
-            const { _id, name, email } = user;
-
-            res.json({
-                refreshToken,
-                accessToken,
-                user: { _id, name, email }
-            });
+          return res.status(200).json({ accessToken, refreshToken: user.refreshToken, user });
+        
         } else {
             // Nouvel utilisateur, créer un compte
+
             const newUser = new User({
-                firstName: name,
-                lastName: "",
-                email,
-                password: "", // Vous pouvez générer un mot de passe aléatoire si nécessaire
-                facebookId: id // Ajouter le champ facebookId
+                firstName: firstName,
+                lastName: lastName,
+                email:email,
+                password: "facebook",
+                verified: true,
+                authSource:"facebook"
+                 
             });
 
             const savedUser = await newUser.save();
 
             // Générer un nouveau token à chaque connexion
-            const newAccessToken = jwt.sign({ id: savedUser._id, fullName: savedUser.firstName }, process.env.JWT_SECRET, { expiresIn: "7d" });
+            const newAccessToken = jwt.sign({ id: savedUser._id, fullName: savedUser.firstName }, process.env.JWT_SECRET, { expiresIn: "2m" });
             const newRefreshToken = jwt.sign({ id: savedUser._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
 
             savedUser.refreshToken = newRefreshToken;
-            savedUser.accessToken = newAccessToken;
-
             await savedUser.save();
 
-            res.json({ accessToken: newAccessToken, refreshToken: newRefreshToken, user: savedUser });
+          return  res.status(200).json({ accessToken: newAccessToken, refreshToken: newRefreshToken, user: savedUser });
         }
     } catch (err) {
         console.error('Error fetching Facebook data:', err);

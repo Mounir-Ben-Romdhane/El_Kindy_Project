@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema(
         }, 
         lastName: {
             type: String,
-           required: true,
+            required: true,
             min: 2,
             max:50,
         }, 
@@ -36,7 +36,11 @@ const UserSchema = new mongoose.Schema(
         refreshToken: {
             type: String,
             default: ""
-        }
+        },
+        authSource: {
+            type: String,
+            default: "local"
+        },
     },
     { timestamps: true}
     );
