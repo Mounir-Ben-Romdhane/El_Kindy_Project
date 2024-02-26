@@ -171,7 +171,7 @@ function Index() {
         <img
         src={`http://localhost:3001/assets/${category.picturePath}`}
         alt="Category"
-        style={{ width: '30px', height: 'auto' }} // Adjust size as needed
+        style={{ width: '100px', height: 'auto' }} // Adjust size as needed
       />
       
         ) : (

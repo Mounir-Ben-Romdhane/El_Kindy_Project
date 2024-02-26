@@ -31,3 +31,20 @@ export const verifyToken = async (req, res, next) => {
     }
 }
 
+
+export const verifyRoles = (requiredRoles) => (req, res, next) => {
+    if (!requiredRoles || !Array.isArray(requiredRoles)) {
+        return res.status(500).json({ error: "Invalid roles provided." });
+    }
+
+    // Extract user roles from the token
+    const userRoles = req.user.roles || [];
+
+    // Check if user has any of the required roles
+    const hasRequiredRole = requiredRoles.some(role => userRoles.includes(role));
+    if (!hasRequiredRole) {
+        return res.status(403).send(`Access denied! Required roles: ${requiredRoles.join(', ')}`);
+    }
+
+    next();
+};

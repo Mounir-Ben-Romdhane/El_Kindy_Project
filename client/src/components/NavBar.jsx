@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import { setLogout } from '../state'
 import { useSelector } from "react-redux";
-
+import { loadScripts } from '../scriptLoader';
 
 function NavBar() {
 
@@ -18,7 +18,26 @@ function NavBar() {
   navigate("/");
   }
 
-  
+  const scriptsLoaded = useRef(false);
+
+  useEffect(() => {
+    const scripts = [
+      //'/assets/js/functions.js',
+    ];
+
+    if (!scriptsLoaded.current) {
+      loadScripts(scripts);
+      scriptsLoaded.current = true;
+    }
+
+    return () => {
+      // Remove all script tags
+      const scriptTags = document.querySelectorAll('script[src^="/assets"]');
+      scriptTags.forEach((scriptTag) => {
+        scriptTag.parentNode.removeChild(scriptTag);
+      });
+    };
+  }, []); // Empty dependency array ensures this effect runs only once
 
   return (
 
@@ -32,8 +51,8 @@ function NavBar() {
     <div className="container">
       {/* Logo START */}
       <a className="navbar-brand" href="index.html">
-        <img className="light-mode-item navbar-brand-item" src="/assets/images/logo.svg" alt="logo" />
-        <img className="dark-mode-item navbar-brand-item" src="/assets/images/logo-light.svg" alt="logo" />
+        <img className="light-mode-item navbar-brand-item" src="/assets/images/logo/logo.png" style={{ width: '150px', height: '60px' }} alt="logo" />
+        <img className="dark-mode-item navbar-brand-item" src="/assets/images/logo/logo.png" style={{ width: '150px', height: '60px' }} alt="logo" />
       </a>
       {/* Logo END */}
       {/* Responsive navbar toggler */}
@@ -258,7 +277,7 @@ function NavBar() {
       {/* Profile START */}
       <div className="dropdown ms-1 ms-lg-0">
         <a className="avatar avatar-sm p-0" href="#" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" aria-expanded="false">
-          <img className="avatar-img rounded-circle" src="/assets/images/avatar/01.jpg" alt="avatar" />
+          <img className="avatar-img rounded-circle" src={user?.picturePath} alt="avatar" />
         </a>
         <ul className="dropdown-menu dropdown-animation dropdown-menu-end shadow pt-3" aria-labelledby="profileDropdown">
           {/* Profile info */}
@@ -266,7 +285,7 @@ function NavBar() {
             <div className="d-flex align-items-center">
               {/* Avatar */}
               <div className="avatar me-3">
-                <img className="avatar-img rounded-circle shadow" src="/assets/images/avatar/01.jpg" alt="avatar" />
+                <img className="avatar-img rounded-circle shadow" src={user?.picturePath} alt="avatar" />
               </div>
               <div>
                 <a className="h6 mt-2 mt-sm-0" href="#">

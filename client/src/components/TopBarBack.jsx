@@ -272,7 +272,7 @@ function TopBarBack() {
                       >
                         <img
                           className="avatar-img rounded-circle"
-                          src="/assets/images/avatar/01.jpg"
+                          src={user.picturePath}
                           alt="avatar"
                         />
                       </a>
@@ -288,7 +288,7 @@ function TopBarBack() {
                             <div className="avatar me-3">
                               <img
                                 className="avatar-img rounded-circle shadow"
-                                src="/assets/images/avatar/01.jpg"
+                                src={user?.picturePath}
                                 alt="avatar"
                               />
                             </div>
