@@ -54,7 +54,7 @@ Main Banner START */}
               {/* Title */}
               <h1 className="mb-3">
                 {" "}
-                Our Internships We will help you Grow your Knowledge and Skills
+                El Kindy Internships We will help you Grow your Skills
               </h1>
               <h6 className="mb-3">
                 10+ professional Internships for Your Career
@@ -152,8 +152,8 @@ Page content START */}
                 <a href="#" className="badge bg-success text-white">
                   Student Event
                 </a>
-                {/* Reservation Button */}
-                <button className="btn btn-warning ml-5 ms-5">Reservation</button>
+                {/* Reservation Button 
+                <button className="btn btn-warning ml-5 ms-5">Reservation</button>*/}
               </div>
             </div>
             {/* Card body */}

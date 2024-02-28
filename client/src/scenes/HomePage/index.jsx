@@ -167,7 +167,7 @@ function Index() {
       Counter END */}
 
         {/* =======================
-Trending courses START */}
+        Trending courses START */}
         <section className="pb-5 pt-0 pt-lg-5">
           <div className="container">
             {/* Title */}

@@ -22,7 +22,7 @@ import EditStage from '../src/scenes/Stage/EditStage'
 import ListClassPage from '../src/scenes/Classe/ListClassPage'
 import EditClassPage from '../src/scenes/Classe/EditClassPage'
 import AddClassPage from '../src/scenes/Classe/AddClassPage'
-
+import Chat from '../src/scenes/Chat/Chat'
 import './assetss/css/style.css'
 
 
@@ -39,6 +39,7 @@ import EditCourse from 'scenes/Courses/EditCoursePage'
 
 
 function App() {
+
 
     const isAuth = Boolean(useSelector((state) => state.accessToken));
 
@@ -115,7 +116,10 @@ function App() {
             />
 
 
-
+<Route
+          path="/chat"
+          element={isAuth ? <Chat /> : <Navigate to="../auth" />}
+        />
             
           
           <Route path="/about" element={<AboutPage />}/>
