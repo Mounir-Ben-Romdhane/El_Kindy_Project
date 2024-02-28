@@ -14,10 +14,13 @@ const categorieSchema = mongoose.Schema({
         type: String,
         default: "",
     }, 
-    courses: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course',
-    }],
+    courses: {
+        type: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Course',
+        }],
+        default: []
+    }
 }, { timestamps: true }); 
 
 const Categorie = mongoose.model("Categorie", categorieSchema);

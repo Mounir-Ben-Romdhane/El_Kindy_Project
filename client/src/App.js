@@ -23,6 +23,7 @@ import ListClassPage from "../src/scenes/Classe/ListClassPage";
 import EditClassPage from "../src/scenes/Classe/EditClassPage";
 import AddClassPage from "../src/scenes/Classe/AddClassPage";
 import Category from "../src/scenes/CategoryHome";
+import InscriptionPage from "./scenes/InscriptionPage";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 import { useSelector } from "react-redux";
@@ -88,6 +89,11 @@ function App() {
           path="/category"
           element={isAuth ? <Category /> : <Navigate to="/" />}
         />
+
+        <Route
+          path="/inscription/:id?"
+          element={<InscriptionPage />}
+          />
 
         <Route
           path="/dashboard-admin"

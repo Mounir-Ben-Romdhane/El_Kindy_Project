@@ -9,6 +9,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { setAccessToken, setLogout } from "../../../state";
 import refreshToken from "scenes/Authentification/TokenService/tokenService";
+import axios from 'axios';
 
 function EditCourse() {
 
@@ -26,8 +27,18 @@ function EditCourse() {
     const { id } = useParams();
     const accessToken = useSelector((state) => state.accessToken);
   const refreshTokenState = useSelector((state) => state.refreshToken);
+  const [categories, setCategories] = useState([]);
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/api/categories");
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
     useEffect(() => {
+      fetchCategories();
         const fetchData = async () => {
           try {
             const response = await fetch(`http://localhost:3001/course/${id}`, {
@@ -270,12 +281,10 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   <div className="col-md-6">
                     <label className="form-label">Course category</label>
                     <select name="courseCategory" onChange={handleChange} value={course.courseCategory} className="form-select  border-0 z-index-9 bg-transparent" aria-label=".form-select-sm" data-search-enabled="true" required>
-                      <option value>Select category</option>
-                      <option>Engineer</option>
-                      <option>Medical</option>
-                      <option>Information technology</option>
-                      <option>Finance</option>
-                      <option>Marketing</option>
+                    <option value="">Select category</option>
+                        {categories.map(category => (
+                          <option key={category._id} value={category._id}>{category.name}</option>
+                        ))}
                     </select>
                   </div>
                   {/* Course level */}

@@ -34,9 +34,12 @@ function Index() {
         if (response.ok) {
           const data = await response.json();
           setCourses(data.data);
-        } else if (response.status === 401 || response.status === 403 ) {
+        } else if (response.status === 401 || response.status === 403) {
           // Refresh access token
-          const newAccessToken = await refreshToken(refreshTokenState, dispatch);
+          const newAccessToken = await refreshToken(
+            refreshTokenState,
+            dispatch
+          );
           if (newAccessToken) {
             // Retry fetching courses with the new access token
             dispatch(setAccessToken({ accessToken: newAccessToken }));
@@ -59,8 +62,6 @@ function Index() {
 
     fetchData();
   }, [accessToken, dispatch]);
-
-  
 
   const handleDelete = async (id) => {
     try {
@@ -212,17 +213,18 @@ function Index() {
                             <td>course.price</td>
                             <td>course.status</td>
                             <td>
-                            <Link to={`/edit-course/${course._id}`} className="btn btn-sm btn-dark me-1 mb-1 mb-md-0">
-                              Edit
-                            </Link>
-                              <i
-                                className="fas fa-trash-alt text-danger me-1 mb-1 mb-md-0"
+                              <Link
+                                to={`/edit-course/${course._id}`}
+                                className="btn btn-sm btn-dark me-1 mb-1 mb-md-0"
+                              >
+                                Edit
+                              </Link>
+                              <button
                                 onClick={() => handleDelete(course._id)}
-                                style={{
-                                  cursor: "pointer",
-                                  fontSize: "1.4rem",
-                                }}
-                              ></i>
+                                className="btn btn-sm btn-danger me-1 mb-1 mb-md-0"
+                              >
+                                Delete
+                              </button>
                             </td>
                           </tr>
                         ))}
