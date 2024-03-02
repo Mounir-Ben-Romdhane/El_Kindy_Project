@@ -29,6 +29,8 @@ function SideBar() {
                     <li className="nav-item"> <a className="nav-link" href="admin-student-list.html"><i className="fas fa-user-graduate fa-fw me-2" />Students</a></li>
                     {/* Menu item 3 */}
                     <li className="nav-item"> <a className="nav-link" href="admin-student-list.html"><i className="fas fa-user-graduate fa-fw me-2" />Parents</a></li>
+                    {/* Menu item 3 */}
+                    <li className="nav-item"> <Link className="nav-link" to="/inscriptionsList"><i className="fas fa-user fa-fw me-2" />Inscriptions</Link></li>
                     {/* menu item 3 */}
                     <li className="nav-item">
                     <a className="nav-link" data-bs-toggle="collapse" href="#collapsepage" role="button" aria-expanded="false" aria-controls="collapsepage">

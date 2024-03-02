@@ -1,120 +1,84 @@
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import withReactContent from "sweetalert2-react-content";
+import "react-confirm-alert/src/react-confirm-alert.css"; // Importez les styles CSS
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { setAccessToken, setLogout } from "../../../state";
-import refreshToken from "scenes/Authentification/TokenService/tokenService";
-import axios from "axios";
+import Swal from "sweetalert2"; // Importez SweetAlert2
+const MySwal = withReactContent(Swal);
 
 function Index() {
-  const dispatch = useDispatch();
-  const accessToken = useSelector((state) => state.accessToken);
-  const refreshTokenState = useSelector((state) => state.refreshToken);
-  const [courses, setCourses] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [inscription, setInscription] = useState([]);
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    entriesPerPage: 8,
-  });
-  const [categories, setCategories] = useState([]);
-  const fetchCategories = async () => {
+  const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/categories");
-      setCategories(response.data);
+      const response = await fetch("http://localhost:3001/inscription/all", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setInscription(data.data);
+      } else {
+        const errorMessage = await response.text();
+        //dispatch(setLogout()); // Log out user if token refresh fails
+        throw new Error(errorMessage);
+      }
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      console.error("Error fetching courses:", error);
+      // Handle error
     }
   };
 
   useEffect(() => {
-    fetchCategories();
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:3001/course/all", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setCourses(data.data);
-        } else if (response.status === 401 || response.status === 403) {
-          // Refresh access token
-          const newAccessToken = await refreshToken(
-            refreshTokenState,
-            dispatch
-          );
-          if (newAccessToken) {
-            // Retry fetching courses with the new access token
-            dispatch(setAccessToken({ accessToken: newAccessToken }));
-            //fetchData();
-            console.log("newAccessToken : ", newAccessToken);
-          } else {
-            console.error("Failed to refresh access token.");
-            dispatch(setLogout()); // Log out user if token refresh fails
-          }
-        } else {
-          const errorMessage = await response.text();
-          //dispatch(setLogout()); // Log out user if token refresh fails
-          throw new Error(errorMessage);
-        }
-      } catch (error) {
-        console.error("Error fetching courses:", error);
-        // Handle error
-      }
-    };
-
     fetchData();
-  }, [accessToken, dispatch]);
+  }, []);
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:3001/course/delete/${id}`, {
+      await fetch(`http://localhost:3001/inscription/delete/${id}`, {
         method: "DELETE",
       });
 
-      toast.success("Course deleted successfully !!", {
+      toast.success("Inscription deleted successfully !!", {
         autoClose: 1500,
         style: {
           color: "green", // Text color
         },
       });
-      // Filter out the deleted stage from the state
-      setCourses((prevStages) =>
-        prevStages.filter((course) => course._id !== id)
+      setInscription((prevStages) =>
+        prevStages.filter((inscription) => inscription._id !== id)
       ); // Assuming `_id` is the unique identifier
     } catch (error) {
       console.error("Error deleting stage:", error);
     }
   };
 
-  // Filter courses based on search query
-  const filteredCourses = courses.filter(
-    (course) =>
-      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleSearchChange = (e) => {
-    e.preventDefault();
-    console.log("searchQuery :", e.target.value);
-    setSearchQuery(e.target.value);
-    setPagination({ ...pagination, currentPage: 1 }); // Reset pagination to first page when search query changes
+  const approveInscription = async (id) => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:3001/inscription/${id}/approve`
+      );
+      fetchData();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const indexOfLastEntry = pagination.currentPage * pagination.entriesPerPage;
-  const indexOfFirstEntry = indexOfLastEntry - pagination.entriesPerPage;
-  const currentEntries = filteredCourses.slice(
-    indexOfFirstEntry,
-    indexOfLastEntry
-  );
+  const rejectInscription = async (id) => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:3001/inscription/${id}/reject`
+      );
+      fetchData();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div>
@@ -131,18 +95,15 @@ function Index() {
             {/* Title */}
             <div className="row mb-3">
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
-                <h1 className="h3 mb-2 mb-sm-0">Courses</h1>
-                <Link to="/addCourse" className="btn btn-sm btn-primary mb-0">
-                  Create a Course
-                </Link>
+                <h1 className="h3 mb-2 mb-sm-0">Inscriptions</h1>
               </div>
             </div>
 
             {/* Render text if courses array is empty */}
-            {courses.length === 0 && <h2>No courses available.</h2>}
+            {inscription.length === 0 && <h2>No isncriptions available.</h2>}
 
             {/* Card START */}
-            {courses.length != 0 && (
+            {inscription.length != 0 && (
               <div className="card bg-transparent border">
                 {/* Card header START */}
                 <div className="card-header bg-light border-bottom">
@@ -156,7 +117,6 @@ function Index() {
                           type="search"
                           placeholder="Search"
                           aria-label="Search"
-                          onChange={handleSearchChange}
                         />
                       </form>
                     </div>
@@ -187,85 +147,116 @@ function Index() {
                     {/* Table START */}
                     <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
                       {/* Table head */}
-                      <thead>
+                      <thead style={{ whiteSpace: "nowrap" }}>
                         <tr>
                           <th scope="col" className="border-0 rounded-start">
-                            Title
+                            Full Name
                           </th>
                           <th scope="col" className="border-0">
-                            Description
+                            Gender
                           </th>
                           <th scope="col" className="border-0">
-                            Image
+                            Date of birth
                           </th>
                           <th scope="col" className="border-0">
-                            Level
+                            Email
                           </th>
                           <th scope="col" className="border-0">
-                            Category
+                            City
                           </th>
-                          
                           <th scope="col" className="border-0">
+                            Level of study
+                          </th>
+                          <th scope="col" className="border-0">
+                            Parent name
+                          </th>
+                          <th scope="col" className="border-0">
+                            Parent profession
+                          </th>
+                          <th scope="col" className="border-0">
+                            Phone number N°1
+                          </th>
+                          <th scope="col" className="border-0">
+                            Phone number N°2
+                          </th>
+                          <th scope="col" className="border-0">
+                            Liked courses
+                          </th>
+                          <th scope="col" className="border-0">
+                            Status
+                          </th>
+                          <th scope="col" className="border-0 rounded-end">
                             Action
                           </th>
                         </tr>
                       </thead>
                       {/* Table body START */}
-                      <tbody>
+                      <tbody style={{ whiteSpace: "nowrap" }}>
                         {/* Table row */}
-                        {filteredCourses.map((course) => (
-                          <tr key={course.id}>
-                            <td>{course.title}</td>
-                            <td>{course.description}</td>
+                        {inscription.map((inscription) => (
+                          <tr key={inscription.id}>
                             <td>
-                              {/* Affichage de l'image */}
-                              {course.picturePath ? (
-                                <img
-                                  src={`http://localhost:3001/assets/${course.picturePath}`}
-                                  alt="Course"
-                                  style={{
-                                    width: "100px",
-                                    height: "auto",
-                                    borderRadius: "10%",
-                                  }} // Adjust size as needed
-                                />
-                              ) : (
-                                <span>No Image</span>
+                              {inscription.firstName} {inscription.lastName}
+                            </td>
+                            <td>{inscription.gender}</td>
+                            <td>{inscription.dateOfBirth}</td>
+                            <td>{inscription.email}</td>
+                            <td>{inscription.city}</td>
+                            <td>{inscription.niveauEtude}</td>
+                            <td>{inscription.parentName}</td>
+                            <td>{inscription.parentProfession}</td>
+                            <td>{inscription.phoneNumber1}</td>
+                            <td>{inscription.phoneNumber2}</td>
+                            {/* 
+                          <td>
+                            <select >
+                              {inscription.likedCourses.map(course => (
+                                <option key={course.id}>{course.title}</option>
+                              ))}
+                            </select>
+                          </td>*/}
+                            <td>
+                              <ul>
+                                {inscription.likedCourses.map((course) => (
+                                  <li key={course.id}>{course.title}</li>
+                                ))}
+                              </ul>
+                            </td>
+
+                            <td>
+                              {inscription.status === "pending" && (
+                                <span className="badge bg-warning bg-opacity-15 text-warning">
+                                  Pending
+                                </span>
+                              )}
+                              {inscription.status === "accepted" && (
+                                <span className="badge bg-success bg-opacity-15 text-success">
+                                  Accepted
+                                </span>
+                              )}
+                              {inscription.status === "refused" && (
+                                <span className="badge bg-danger bg-opacity-15 text-danger">
+                                  Refused
+                                </span>
                               )}
                             </td>
-                            
+
                             <td>
-                              {course.courseLevel === "Beginner" && (
-                                <span className="badge bg-primary text-white">
-                                  Beginner
-                                </span>
-                              )}
-                              {course.courseLevel === "Intermediate" && (
-                                <span className="badge bg-purple text-white">
-                                  Intermediate
-                                </span>
-                              )}
-                              {course.courseLevel === "All level" && (
-                                <span className="badge bg-orange text-white">
-                                  All level
-                                </span>
-                              )}
-                              {course.courseLevel === "Advance" && (
-                                <span className="badge bg-warning text-white">
-                                  Advance
-                                </span>
-                              )}
-                            </td>
-                            <td>{course.courseCategory.name}</td>
-                            <td>
-                              <Link
-                                to={`/edit-course/${course._id}`}
-                                className="btn btn-sm btn-dark me-1 mb-1 mb-md-0"
-                              >
-                                Edit
-                              </Link>
                               <button
-                                onClick={() => handleDelete(course._id)}
+                                className="btn btn-sm btn-success-soft me-1 mb-1 mb-md-0"
+                                onClick={() => approveInscription(inscription._id)}
+                              >
+                                Approve
+                              </button>
+                              <button
+                                className="btn btn-sm btn-danger-soft me-1 mb-1 mb-md-0"
+                                onClick={() => rejectInscription(inscription._id)}
+                              >
+                                Reject
+                              </button>
+
+                              <button
+                                onClick={() => handleDelete(inscription._id)}
                                 className="btn btn-sm btn-danger me-1 mb-1 mb-md-0"
                               >
                                 Delete
@@ -286,11 +277,7 @@ function Index() {
                   {/* Pagination START */}
                   <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                     {/* Content */}
-                    <p className="mb-0 text-center text-sm-start">
-                      Showing {indexOfFirstEntry + 1} to{" "}
-                      {Math.min(indexOfLastEntry, filteredCourses.length)} of{" "}
-                      {filteredCourses.length} entries
-                    </p>
+
                     {/* Pagination */}
                     <nav
                       className="d-flex justify-content-center mb-0"

@@ -34,6 +34,7 @@ function Index() {
     }
   };
   useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to the top when component mounts
     //Get all category
     fetchCoursesByCategories();
 
@@ -1508,9 +1509,9 @@ Course START */}
                             <i className="bi bi-patch-check-fill text-success me-2" />
                             Evaluation tests to simulate exam conditions
                           </li>
-                          <div className="mt-5" style={{ marginLeft: "120px" }}>
+                          <div className=" mt-5" style={{ marginLeft: "120px" }}>
                             <Link
-                                to={"/inscription/7th grade is a diploma class"}
+                                to="/inscription/7th grade is a diploma class"
                                 className="btn btn-sm btn-primary-soft mb-0 rounded-pill py-2 px-4"
                               >
                                 Subscribe !

@@ -23,7 +23,8 @@ import ListClassPage from "../src/scenes/Classe/ListClassPage";
 import EditClassPage from "../src/scenes/Classe/EditClassPage";
 import AddClassPage from "../src/scenes/Classe/AddClassPage";
 import Category from "../src/scenes/CategoryHome";
-import InscriptionPage from "./scenes/InscriptionPage";
+import InscriptionPage from "./scenes/Inscriptions/InscriptionPage";
+import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 import { useSelector } from "react-redux";
@@ -84,6 +85,10 @@ function App() {
         <Route
           path="/home"
           element={isAuth ? <HomePage /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/inscriptionsList"
+          element={isAuth ? <InscriptionList /> : <Navigate to="/" />}
         />
         <Route
           path="/category"

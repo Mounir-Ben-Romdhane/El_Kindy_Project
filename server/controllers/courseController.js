@@ -3,7 +3,7 @@ import Categorie from './../models/Categorie.js';
 
 export const getAll = async (req, res) => {
     try {
-        let data = await Course.find();
+        let data = await Course.find().populate('courseCategory');
         if (!data || !data.length) throw 'No courses found!';
         return res.status(200).json({success: true, data });
     } catch (err) {
