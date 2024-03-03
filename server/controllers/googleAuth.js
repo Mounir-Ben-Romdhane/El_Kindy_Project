@@ -23,12 +23,12 @@ const googleAuth = async (req, res) => {
         email,
         password: "google",
         picturePath: picture,
-        verified: email_verified
+        verified: email_verified,
+        authSource: "google"
       });
 
       // Save the new user to the database
       user = await user.save();
-      
       console.log("New User:", user);
     }
 
@@ -36,10 +36,10 @@ const googleAuth = async (req, res) => {
     const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
     user.refreshToken = refreshToken;
     await user.save();
-    const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName }, process.env.JWT_SECRET, { expiresIn: "2m" });
+    const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName, roles: user.roles ,  email : user.email}, process.env.JWT_SECRET, { expiresIn: "10s" });
     
     // Return the tokens and user data
-    return res.status(200).json({ accessToken, refreshToken: user.refreshToken, user, message: "Logged in successfully" });
+    return res.status(200).json({ accessToken, refreshToken: user.refreshToken, message: "Logged in successfully" });
   } catch (err) {
     res.status(400).json({ err });
   }

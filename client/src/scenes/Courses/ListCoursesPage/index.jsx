@@ -7,12 +7,18 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { setAccessToken, setLogout } from "../../../state";
 import refreshToken from "scenes/Authentification/TokenService/tokenService";
+import axios from "axios";
+//refreshToken
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 function Index() {
   const dispatch = useDispatch();
   const accessToken = useSelector((state) => state.accessToken);
   const refreshTokenState = useSelector((state) => state.refreshToken);
   const [courses, setCourses] = useState([]);
+  
+  //refresh token
+  const axiosPrivate = useAxiosPrivate();
   const [selectedCourse, setSelectedCourse] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,8 +26,20 @@ function Index() {
     currentPage: 1,
     entriesPerPage: 8,
   });
+  const [categories, setCategories] = useState([]);
+  const fetchCategories = async () => {
+    try {
+      const response = await axiosPrivate.get("http://localhost:3001/api/categories");
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   useEffect(() => {
+    fetchCategories();
+
+    /*
     const fetchData = async () => {
       try {
         const response = await fetch("http://localhost:3001/course/all", {
@@ -34,9 +52,12 @@ function Index() {
         if (response.ok) {
           const data = await response.json();
           setCourses(data.data);
-        } else if (response.status === 401 || response.status === 403 ) {
+        } else if (response.status === 403 ) {
           // Refresh access token
-          const newAccessToken = await refreshToken(refreshTokenState, dispatch);
+          const newAccessToken = await refreshToken(
+            refreshTokenState,
+            dispatch
+          );
           if (newAccessToken) {
             // Retry fetching courses with the new access token
             dispatch(setAccessToken({ accessToken: newAccessToken }));
@@ -58,9 +79,30 @@ function Index() {
     };
 
     fetchData();
-  }, [accessToken, dispatch]);
 
-  
+    */
+
+    const controller = new AbortController();
+
+        const getCourses = async () => {
+            try {
+                const response = await axiosPrivate.get('/course/all', {
+                    signal: controller.signal
+                });
+                console.log(response.data);
+                setCourses(response.data.data);
+            } catch (err) {
+                console.error(err);
+                //navigate('/login', { state: { from: location }, replace: true });
+            }
+        }
+
+        getCourses();
+
+        return () => {
+            controller.abort();
+        }
+  }, [accessToken, dispatch]);
 
   const handleDelete = async (id) => {
     try {
@@ -178,24 +220,22 @@ function Index() {
                       <thead>
                         <tr>
                           <th scope="col" className="border-0 rounded-start">
-                            Course Name
+                            Title
                           </th>
                           <th scope="col" className="border-0">
-                            Instructor
+                            Description
                           </th>
                           <th scope="col" className="border-0">
-                            Added Date
+                            Image
                           </th>
                           <th scope="col" className="border-0">
-                            Type
+                            Level
                           </th>
                           <th scope="col" className="border-0">
-                            Price
+                            Category
                           </th>
+                          
                           <th scope="col" className="border-0">
-                            Status
-                          </th>
-                          <th scope="col" className="border-0 rounded-end">
                             Action
                           </th>
                         </tr>
@@ -207,22 +247,59 @@ function Index() {
                           <tr key={course.id}>
                             <td>{course.title}</td>
                             <td>{course.description}</td>
-                            <td>course.addedDate</td>
-                            <td>course.type</td>
-                            <td>course.price</td>
-                            <td>course.status</td>
                             <td>
-                            <Link to={`/edit-course/${course._id}`} className="btn btn-sm btn-dark me-1 mb-1 mb-md-0">
-                              Edit
-                            </Link>
-                              <i
-                                className="fas fa-trash-alt text-danger me-1 mb-1 mb-md-0"
+                              {/* Affichage de l'image */}
+                              {course.picturePath ? (
+                                <img
+                                  src={`http://localhost:3001/assets/${course.picturePath}`}
+                                  alt="Course"
+                                  style={{
+                                    width: "100px",
+                                    height: "auto",
+                                    borderRadius: "10%",
+                                  }} // Adjust size as needed
+                                />
+                              ) : (
+                                <span>No Image</span>
+                              )}
+                            </td>
+                            
+                            <td>
+                              {course.courseLevel === "Beginner" && (
+                                <span className="badge bg-primary text-white">
+                                  Beginner
+                                </span>
+                              )}
+                              {course.courseLevel === "Intermediate" && (
+                                <span className="badge bg-purple text-white">
+                                  Intermediate
+                                </span>
+                              )}
+                              {course.courseLevel === "All level" && (
+                                <span className="badge bg-orange text-white">
+                                  All level
+                                </span>
+                              )}
+                              {course.courseLevel === "Advance" && (
+                                <span className="badge bg-warning text-white">
+                                  Advance
+                                </span>
+                              )}
+                            </td>
+                            <td>{course.courseCategory.name}</td>
+                            <td>
+                              <Link
+                                to={`/edit-course/${course._id}`}
+                                className="btn btn-sm btn-dark me-1 mb-1 mb-md-0"
+                              >
+                                Edit
+                              </Link>
+                              <button
                                 onClick={() => handleDelete(course._id)}
-                                style={{
-                                  cursor: "pointer",
-                                  fontSize: "1.4rem",
-                                }}
-                              ></i>
+                                className="btn btn-sm btn-danger me-1 mb-1 mb-md-0"
+                              >
+                                Delete
+                              </button>
                             </td>
                           </tr>
                         ))}

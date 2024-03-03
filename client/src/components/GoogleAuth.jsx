@@ -37,12 +37,21 @@ const GoogleAuth = () => {
 
         dispatch(
           setLogin({
-            user: loggedIn.user,
+            //user: loggedIn.user,
             accessToken: loggedIn.accessToken,
             refreshToken: loggedIn.refreshToken,
           })
         );
-        navigate("/home");
+        const accessTokenn = loggedIn.accessToken;
+        const userRoles = accessTokenn ? jwtDecode(accessTokenn).roles : []; 
+        
+        if (userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('superAdmin')) {
+          navigate("/dashboard-admin");
+          //console.log("userRole 1: ",userRoles);
+        } else if(userRoles.includes('parent') || userRoles.includes('student')){
+          //console.log("userRole 2: ",userRoles);
+            navigate("/home");
+        }
       }
     } catch (error) {
       console.error("Error logging in:", error);

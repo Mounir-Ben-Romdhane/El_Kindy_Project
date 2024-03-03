@@ -15,10 +15,10 @@ const CourseSchema = new mongoose.Schema(
         picturePath: {
             type: String,
             default: "",
-        }, 
+        },
         courseCategory: {
-            type:  String,
-            default: "",
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Categorie',
         },
         courseLevel: {
             type: String,

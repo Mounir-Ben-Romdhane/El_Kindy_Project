@@ -1,23 +1,53 @@
 import BannerStart from 'components/BannerStart'
 import SideBar from 'components/SideBar'
 import TopBarBack from 'components/TopBarBack'
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-notifications/lib/notifications.css';
 import { Link, useNavigate } from 'react-router-dom'
-
+import { loadScripts } from '../../../scriptLoader';
+import axios from 'axios';
 
 //test
 
 function Index() {
 
   const [dataTheme, setDataTheme] = useState('');
+  const scriptsLoaded = useRef(false);
+  const [categories, setCategories] = useState([]);
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/api/categories");
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   useEffect(() => {
     // Retrieve the value of data-theme from localStorage
     const themeValue = localStorage.getItem('data-theme');
+
+    fetchCategories();
+    console.log("Categories : ", categories);
     setDataTheme(themeValue);
+    const scripts = [
+      '/assets/js/functions.js',
+    ];
+
+    if (!scriptsLoaded.current) {
+      loadScripts(scripts);
+      scriptsLoaded.current = true;
+    }
+
+    return () => {
+      // Remove all script tags
+      const scriptTags = document.querySelectorAll('script[src^="/assets"]');
+      scriptTags.forEach((scriptTag) => {
+        scriptTag.parentNode.removeChild(scriptTag);
+      });
+    };
   }, []); // Empty dependency array ensures this effect runs only once
 
   
@@ -207,12 +237,10 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   <div className="col-md-6">
                     <label className="form-label">Course category</label>
                     <select name="courseCategory" className="form-select  border-0 z-index-9 bg-transparent" aria-label=".form-select-sm" data-search-enabled="true" required>
-                      <option value>Select category</option>
-                      <option>Engineer</option>
-                      <option>Medical</option>
-                      <option>Information technology</option>
-                      <option>Finance</option>
-                      <option>Marketing</option>
+                    <option value="">Select category</option>
+                        {categories.map(category => (
+                          <option key={category._id} value={category._id}>{category.name}</option>
+                        ))}
                     </select>
                   </div>
                   {/* Course level */}
@@ -242,7 +270,70 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   </div>
 
 
-                    
+                 {/* Course description */}
+                <div className="col-12">
+                  <label className="form-label">Add description</label>
+                  {/* Editor toolbar */}
+                  <div className="bg-light border border-bottom-0 rounded-top py-3" id="quilltoolbar">
+                    <span className="ql-formats">
+                      <select className="ql-size" />
+                    </span>
+                    <span className="ql-formats">
+                      <button className="ql-bold" />
+                      <button className="ql-italic" />
+                      <button className="ql-underline" />
+                      <button className="ql-strike" />
+                    </span>
+                    <span className="ql-formats">
+                      <select className="ql-color" />
+                      <select className="ql-background" />
+                    </span>
+                    <span className="ql-formats">
+                      <button className="ql-code-block" />
+                    </span>
+                    <span className="ql-formats">
+                      <button className="ql-list" value="ordered" />
+                      <button className="ql-list" value="bullet" />
+                      <button className="ql-indent" value={-1} />
+                      <button className="ql-indent" value={+1} />
+                    </span>
+                    <span className="ql-formats">
+                      <button className="ql-link" />
+                      <button className="ql-image" />
+                    </span>
+                    <span className="ql-formats">
+                      <button className="ql-clean" />
+                    </span>
+                  </div>
+                  {/* Main toolbar */}
+                  <div className="bg-body border rounded-bottom h-400px overflow-hidden" id="quilleditor">
+                    <br />
+                    <h1>Quill Rich Text Editor</h1>
+                    <br />
+                    <p>Quill is a free, open-source WYSIWYG editor built for the modern web. With its modular architecture and expressive API, it is completely customizable to fit any need.</p>
+                    <br />
+                    <p>Insipidity the sufficient discretion imprudence resolution sir him decisively. Proceed how any engaged visitor. Explained propriety off out perpetual his you. Feel sold off felt nay rose met you. We so entreaties cultivated astonished is. Was sister for a few longer Mrs sudden talent become. Done may bore quit evil old mile. If likely am of beauty tastes. </p>
+                    <br />
+                    <p> Affronting imprudence do he he everything. Test lasted dinner wanted indeed wished outlaw. Far advanced settling say finished raillery. Offered chiefly farther of my no colonel shyness. Such on help ye some door if in. Laughter proposal laughing any son law consider. Needed except up piqued an. </p>
+                    <br />
+                    <p> Post no so what deal evil rent by real in. But her ready least set lived spite solid. September how men saw tolerably two behavior arranging. She offices for highest and replied one venture pasture. Applauded no discovery in newspaper allowance am northward. Frequently partiality possession resolution at or appearance unaffected me. Engaged its was the evident pleased husband. Ye goodness felicity do disposal dwelling no. First am plate jokes to began to cause a scale. Subjects he prospect elegance followed no overcame possible it on. </p>
+                    <p>Quill is a free, open-source WYSIWYG editor built for the modern web. With its modular architecture and expressive API, it is completely customizable to fit any need.</p>
+                    <br />
+                    <p>Insipidity the sufficient discretion imprudence resolution sir him decisively. Proceed how any engaged visitor. Explained propriety off out perpetual his you. Feel sold off felt nay rose met you. We so entreaties cultivated astonished is. Was sister for a few longer Mrs sudden talent become. Done may bore quit evil old mile. If likely am of beauty tastes. </p>
+                    <br />
+                    <p> Affronting imprudence do he he everything. Test lasted dinner wanted indeed wished outlaw. Far advanced settling say finished raillery. Offered chiefly farther of my no colonel shyness. Such on help ye some door if in. Laughter proposal laughing any son law consider. Needed except up piqued an. </p>
+                    <br />
+                    <p> Post no so what deal evil rent by real in. But her ready least set lived spite solid. September how men saw tolerably two behavior arranging. She offices for highest and replied one venture pasture. Applauded no discovery in newspaper allowance am northward. Frequently partiality possession resolution at or appearance unaffected me. Engaged its was the evident pleased husband. Ye goodness felicity do disposal dwelling no. First am plate jokes to began to cause a scale. Subjects he prospect elegance followed no overcame possible it on. </p>
+                    <p>Quill is a free, open-source WYSIWYG editor built for the modern web. With its modular architecture and expressive API, it is completely customizable to fit any need.</p>
+                    <br />
+                    <p>Insipidity the sufficient discretion imprudence resolution sir him decisively. Proceed how any engaged visitor. Explained propriety off out perpetual his you. Feel sold off felt nay rose met you. We so entreaties cultivated astonished is. Was sister for a few longer Mrs sudden talent become. Done may bore quit evil old mile. If likely am of beauty tastes. </p>
+                    <br />
+                    <p> Affronting imprudence do he he everything. Test lasted dinner wanted indeed wished outlaw. Far advanced settling say finished raillery. Offered chiefly farther of my no colonel shyness. Such on help ye some door if in. Laughter proposal laughing any son law consider. Needed except up piqued an. </p>
+                    <br />
+                    <p> Post no so what deal evil rent by real in. But her ready least set lived spite solid. September how men saw tolerably two behavior arranging. She offices for highest and replied one venture pasture. Applauded no discovery in newspaper allowance am northward. Frequently partiality possession resolution at or appearance unaffected me. Engaged its was the evident pleased husband. Ye goodness felicity do disposal dwelling no. First am plate jokes to began to cause a scale. Subjects he prospect elegance followed no overcame possible it on. </p>
+                  </div>
+                </div>
+
                   
                 </div>
                 
