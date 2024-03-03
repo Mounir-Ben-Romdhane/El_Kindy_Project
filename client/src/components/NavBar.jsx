@@ -41,6 +41,8 @@ function NavBar() {
 
   return (
 
+    
+
     <div>
      {/* Header START */}
 <header className="navbar-light bg-light navbar-sticky header-static">

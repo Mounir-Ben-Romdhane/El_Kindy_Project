@@ -13,6 +13,7 @@ import { addNewEvent } from "./controllers/event.js";
 import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
 import eventRoutes from "./routes/Event.js";
 import salleRoutes from "./routes/salle.js";
+import inscriptionRoutes from "./routes/inscriptionRoutes.js";
 import stageRouter  from "./routes/stageRoute.js";
 import authRoutes from "./routes/auth.js";
 import courseRoute from './routes/courseRoute.js'
@@ -80,16 +81,12 @@ app.post("/addMessage", upload.single("picture"), addMessage);
 
 /* ROUTES */
 app.use("/auth",authRoutes);
-
 app.use("/api/categories", categorieRoutes); 
 app.use("/stage",stageRouter);
-
 app.use('/event', eventRoutes);
-
-
 app.use("/course",courseRoute);
-
 app.use("/salle",salleRoutes);
+app.use("/inscription", inscriptionRoutes);
 
 app.use('/chat', ChatRoute)
 app.use('/message', MessageRoute)
