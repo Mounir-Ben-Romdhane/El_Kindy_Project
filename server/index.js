@@ -18,6 +18,8 @@ import stageRouter  from "./routes/stageRoute.js";
 import authRoutes from "./routes/auth.js";
 import courseRoute from './routes/courseRoute.js'
 import { register } from "./controllers/auth.js";
+import { addMessage } from './controllers/MessageController.js';
+
 import User from './models/User.js';
 import { users } from "./data/index.js";
 import { createStage, updateStage } from "./controllers/stageController.js";
@@ -27,7 +29,8 @@ import { OAuth2Client } from 'google-auth-library'; // Use import instead of req
 import jwt from "jsonwebtoken";
 import categorieRoutes from "./routes/categorieRoutes.js"; // Import des routes de catégorie
 import { verifyToken } from "./middleware/auth.js";
-
+import ChatRoute from './routes/ChatRoute.js'
+import MessageRoute from './routes/MessageRoute.js'
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -71,6 +74,8 @@ app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
 app.post("/api/stage", upload.single("picture"), createStage);
 app.patch("/api/stage/:id", upload.single("picture"),updateStage );
 
+app.post("/addMessage", upload.single("picture"), addMessage);
+
 
 
 /* ROUTES */
@@ -82,6 +87,8 @@ app.use("/course",courseRoute);
 app.use("/salle",salleRoutes);
 app.use("/inscription", inscriptionRoutes);
 
+app.use('/chat', ChatRoute)
+app.use('/message', MessageRoute)
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;

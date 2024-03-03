@@ -25,6 +25,9 @@ import AddClassPage from "../src/scenes/Classe/AddClassPage";
 import Category from "../src/scenes/CategoryHome";
 import InscriptionPage from "./scenes/Inscriptions/InscriptionPage";
 import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
+
+import Chat from '../src/scenes/Chat/Chat'
+
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -37,6 +40,7 @@ function App() {
   const isAuth = Boolean(useSelector((state) => state.accessToken));
   
 
+
   const scriptsLoaded = useRef(false);
   /*'/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js',
       '/assets/vendor/bootstrap/dist/js/bootstrap.bundle.js',
@@ -47,6 +51,8 @@ function App() {
       '/assets/vendor/aos/aos.js',
       '/assets/vendor/quill/js/quill.min.js',
       '/assets/vendor/stepper/js/bs-stepper.min.js', */
+
+
 
   useEffect(() => {
     const scripts = [
@@ -152,6 +158,7 @@ function App() {
           element={isAuth ? <Stage /> : <Navigate to="/" />}
         />
 
+
         <Route
           path="/listEvents"
           element={isAuth ? <ListEventsPage /> : <Navigate to="/" />}
@@ -179,24 +186,23 @@ function App() {
         />
 
         <Route
-          path="/home"
-          element={isAuth ? <HomePage /> : <Navigate to="/" />}
+          path="/chat"
+          element={isAuth ? <Chat /> : <Navigate to="../auth" />}
         />
+            
+          
+          <Route path="/about" element={<AboutPage />}/>
+            <Route  path="/listCategories" 
+              element={isAuth ? <ListCategoryPage /> : <Navigate to="/" /> } 
+          />
+             <Route  path="/add-category" 
+              element={isAuth ? <AddCategoryPage /> : <Navigate to="/" /> } 
+          />
+          <Route path="/edit-category/:id"
+              element={isAuth ? <EditCategoryPage /> : <Navigate to="/" /> } />
 
-        <Route path="/about" element={<AboutPage />} />
-        <Route
-          path="/listCategories"
-          element={isAuth ? <ListCategoryPage /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/add-category"
-          element={isAuth ? <AddCategoryPage /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/edit-category/:id"
-          element={isAuth ? <EditCategoryPage /> : <Navigate to="/" />}
-        />
         <Route path="/*" element={<NotFound />} />
+
       </Routes>
     </div>
   );
