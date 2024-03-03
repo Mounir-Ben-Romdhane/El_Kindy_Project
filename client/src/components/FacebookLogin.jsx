@@ -59,20 +59,16 @@ const handleClick = ()=>{
   console.log("hh")
 }
   return (
-    <div className="col-xxl-6 d-grid">
-    <FacebookLoginButton
-    className="btn bg-facebook mb-2 mb-xxl-0"
-    cssClass="btn bg-facebook mb-2 mb-xxl-0"
+    <div className="col-xxl-6 d-grid">    
+      <FacebookLoginButton
+        className="btn bg-facebook mb-2 mb-xxl-0"
+        cssClass="btn bg-facebook mb-2 mb-xxl-0 w-100"
+        appId="902291134956476"
+        callback={responseFacebook}
+      >
+      </FacebookLoginButton>
 
-     // onSuccess={responseFacebook}
-      appId="923840302571080"
-     // autoLoad={false}
-      callback={responseFacebook}
-      
-    >
-     <i className="fab fa-fw fa-google text-white me-2" />
-   </FacebookLoginButton>
-    </div>
+  </div>
   );
 };
 

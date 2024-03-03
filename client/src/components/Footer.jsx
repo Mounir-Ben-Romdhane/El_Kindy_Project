@@ -14,12 +14,12 @@ function Footer() {
                 <a className="me-0" href="index.html">
                   <img
                     className="light-mode-item h-40px"
-                    src="assets/images/logo.svg"
+                    src="/assets/images/logo.svg"
                     alt="logo"
                   />
                   <img
                     className="dark-mode-item h-40px"
-                    src="assets/images/logo-light.svg"
+                    src="/assets/images/logo-light.svg"
                     alt="logo"
                   />
                 </a>
@@ -171,7 +171,7 @@ function Footer() {
                     <a href="#">
                       {" "}
                       <img
-                        src="assets/images/client/google-play.svg"
+                        src="/assets/images/client/google-play.svg"
                         alt=""
                       />{" "}
                     </a>
@@ -181,7 +181,7 @@ function Footer() {
                     <a href="#">
                       {" "}
                       <img
-                        src="assets/images/client/app-store.svg"
+                        src="/assets/images/client/app-store.svg"
                         alt="app-store"
                       />{" "}
                     </a>
@@ -232,7 +232,7 @@ function Footer() {
                               <a className="dropdown-item me-4" href="#">
                                 <img
                                   className="fa-fw me-2"
-                                  src="assets/images/flags/uk.svg"
+                                  src="/assets/images/flags/uk.svg"
                                   alt=""
                                 />
                                 English
@@ -242,7 +242,7 @@ function Footer() {
                               <a className="dropdown-item me-4" href="#">
                                 <img
                                   className="fa-fw me-2"
-                                  src="assets/images/flags/gr.svg"
+                                  src="/assets/images/flags/gr.svg"
                                   alt=""
                                 />
                                 German{" "}
@@ -252,7 +252,7 @@ function Footer() {
                               <a className="dropdown-item me-4" href="#">
                                 <img
                                   className="fa-fw me-2"
-                                  src="assets/images/flags/sp.svg"
+                                  src="/assets/images/flags/sp.svg"
                                   alt=""
                                 />
                                 French

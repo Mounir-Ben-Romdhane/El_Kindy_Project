@@ -9,18 +9,20 @@ import EmailVerify from './scenes/Authentification/EmailVerify'
 import NotFound from './scenes/NotFound'
 import AdminHomePage from '../src/scenes/AdminHomePage'
 import ListCoursesPage from '../src/scenes/Courses/ListCoursesPage'
-
 import ListEventsPage from '../src/scenes/EventsPage/ListEventPage'
 import AddEventPage from '../src/scenes/EventsPage/AddEventPage'
 import AddCoursePage from '../src/scenes/Courses/AddCoursePage'
 import ListCategoryPage from '../src/scenes/Category/ListCategoryPage'
 import AddCategoryPage from '../src/scenes/Category/AddCategoryPage'
 import EditCategoryPage from '../src/scenes/Category/EditCategoryPage'
-
+import DashbordTeacher from './scenes/PlatformTeacher/DashbordTeacher'
+import HomePagee from '../src/scenes/PlatformTeacher/HomePagee';
+import DashbordStudent from './scenes/PlatformStudent/DashbordStudent'
+import Room from '../src/scenes/PlatformTeacher/Room';
 import  ListClassPage from '../src/scenes/Classe/ListClassPage'
 import  EditClassPage from '../src/scenes/Classe/EditClassPage'
 import  AddClassPage from '../src/scenes/Classe/AddClassPage'
-
+import MeetingHomeStudent from './scenes/PlatformStudent/MeetingHomeStudent';
 import './assetss/css/style.css'
 
 
@@ -46,6 +48,7 @@ function App() {
   return (
       <div>
         <Routes>
+
           <Route path="/" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgetPassword />} />
@@ -59,6 +62,29 @@ function App() {
               path="/category" 
               element={isAuth ? <Category /> : <Navigate to="/" /> } 
             />
+            <Route 
+              path="/homeMeet" 
+              element={isAuth ? <HomePagee /> : <Navigate to="/" /> } 
+            />
+             <Route path="/room/:roomId"
+              element={isAuth ? <Room /> : <Navigate to="/" /> } 
+          />
+           
+           <Route 
+              path="/dashbordTeacher" 
+              element={isAuth ? <DashbordTeacher/> : <Navigate to="/" /> } 
+            />
+
+<Route 
+              path="/meetingHomeS" 
+              element={isAuth ? <MeetingHomeStudent/> : <Navigate to="/" /> } 
+            />
+
+<Route 
+              path="/dashbordStudent" 
+              element={isAuth ? <DashbordStudent/> : <Navigate to="/" /> } 
+            />
+             
           <Route  path="/dashboard-admin" 
               element={isAuth ? <AdminHomePage /> : <Navigate to="/" /> } 
           />
@@ -86,7 +112,6 @@ function App() {
           />
           <Route path="/edit-classe/:id"
               element={isAuth ? <EditClassPage /> : <Navigate to="/" /> } 
-
           />
 
            <Route 

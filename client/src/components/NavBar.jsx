@@ -31,9 +31,9 @@ function NavBar() {
   <nav className="navbar navbar-expand-xl">
     <div className="container">
       {/* Logo START */}
-      <a className="navbar-brand" href="index.html">
-        <img className="light-mode-item navbar-brand-item" src="/assets/images/logo.svg" alt="logo" />
-        <img className="dark-mode-item navbar-brand-item" src="/assets/images/logo-light.svg" alt="logo" />
+      <a className="navbar-brand"  href="index.html">
+        <img className="light-mode-item navbar-brand-item" style={{ width: '150px', height: 'auto' }}  src="/assets/images/elkindy-logo.png" alt="logo" />
+        <img className="dark-mode-item navbar-brand-item"style={{ width: '150px', height: 'auto' }} src="/assets/images/elkindy-logo.png" alt="logo" />
       </a>
       {/* Logo END */}
       {/* Responsive navbar toggler */}
@@ -153,8 +153,8 @@ function NavBar() {
               <li className="dropdown-submenu dropend">
                 <a className="dropdown-item dropdown-toggle" href="#"><i className="fas fa-user-tie fa-fw me-1" />Instructor</a>
                 <ul className="dropdown-menu dropdown-menu-start" data-bs-popper="none">
-                  <li> <a className="dropdown-item" href="instructor-dashboard.html"><i className="bi bi-grid-fill fa-fw me-1" />Dashboard</a> </li>
-                  <li> <a className="dropdown-item" href="instructor-manage-course.html"><i className="bi bi-basket-fill fa-fw me-1" />Courses</a> </li>
+                  <li> <a className="dropdown-item" href="/dashbordTeacher"><i className="bi bi-grid-fill fa-fw me-1" />Dashboard</a> </li>
+                  <li> <a className="dropdown-item" href="instructor-create-course.html"><i className="bi bi-basket-fill fa-fw me-1" />Courses</a> </li>
                   <li> <a className="dropdown-item" href="instructor-create-course.html"><i className="bi bi-file-earmark-plus-fill fa-fw me-1" />Create Course</a> </li>
                   <li> <a className="dropdown-item" href="course-added.html"><i className="bi bi-file-check-fill fa-fw me-1" />Course Added</a> </li>
                   <li> <a className="dropdown-item" href="instructor-quiz.html"><i className="bi bi-question-diamond fa-fw me-1" />Quiz <span className="badge bg-success ms-2 smaller">New</span></a> </li>
@@ -169,7 +169,7 @@ function NavBar() {
               <li className="dropdown-submenu dropend">
                 <a className="dropdown-item dropdown-toggle" href="#"><i className="fas fa-user-graduate fa-fw me-1" />Student</a>
                 <ul className="dropdown-menu dropdown-menu-start" data-bs-popper="none">
-                  <li> <a className="dropdown-item" href="student-dashboard.html"><i className="bi bi-grid-fill fa-fw me-1" />Dashboard</a> </li>
+                  <li> <a className="dropdown-item" href="/dashbordStudent"><i className="bi bi-grid-fill fa-fw me-1" />Dashboard</a> </li>
                   <li> <a className="dropdown-item" href="student-subscription.html"><i className="bi bi-card-checklist fa-fw me-1" />My Subscriptions</a> </li>
                   <li> <a className="dropdown-item" href="student-course-list.html"><i className="bi bi-basket-fill fa-fw me-1" />Courses</a> </li>
                   <li> <a className="dropdown-item" href="student-course-resume.html"><i className="far fa-fw fa-file-alt me-1" />Course Resume <span className="badge bg-success ms-2 smaller">New</span></a> </li>
