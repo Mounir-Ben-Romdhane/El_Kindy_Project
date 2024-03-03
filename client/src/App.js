@@ -1,3 +1,15 @@
+
+
+
+
+
+
+import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+
+import { useSelector } from "react-redux";
+import { loadScripts } from './scriptLoader';
+
+
 import React, { useEffect, useRef } from "react";
 import AboutPage from "../src/scenes/AboutPage";
 import HomePage from "../src/scenes/HomePage";
@@ -25,13 +37,16 @@ import AddClassPage from "../src/scenes/Classe/AddClassPage";
 import Category from "../src/scenes/CategoryHome";
 import InscriptionPage from "./scenes/Inscriptions/InscriptionPage";
 import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
+import MeetingHomeStudent from './scenes/PlatformStudent/MeetingHomeStudent';
+import DashbordTeacher from './scenes/PlatformTeacher/DashbordTeacher'
+import HomePagee from '../src/scenes/PlatformTeacher/HomePagee';
+import DashbordStudent from './scenes/PlatformStudent/DashbordStudent'
+import Room from '../src/scenes/PlatformTeacher/Room';
 
 import Chat from '../src/scenes/Chat/Chat'
 
-import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
-import { loadScripts } from "./scriptLoader";
 import EditCourse from "scenes/Courses/EditCoursePage";
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
@@ -77,6 +92,8 @@ function App() {
   }, []);
 
   return (
+
+     
     <div>
       <Routes>
         <Route path="/" element={<SignIn />} />
@@ -111,6 +128,7 @@ function App() {
             <PrivateRoute
               element={<AdminHomePage />}
               requiredRoles={["superAdmin", "admin"]}
+
             />
           }
         />
@@ -134,7 +152,28 @@ function App() {
             />
           }
         />
-        
+           <Route 
+              path="/dashbordTeacher" 
+              element={isAuth ? <DashbordTeacher/> : <Navigate to="/" /> } 
+            />
+
+<Route 
+              path="/meetingHomeS" 
+              element={isAuth ? <MeetingHomeStudent/> : <Navigate to="/" /> } 
+            />
+
+<Route 
+              path="/dashbordStudent" 
+              element={isAuth ? <DashbordStudent/> : <Navigate to="/" /> } 
+            />
+                
+                <Route 
+              path="/homeMeet" 
+              element={isAuth ? <HomePagee /> : <Navigate to="/" /> } 
+            />
+             <Route path="/room/:roomId"
+              element={isAuth ? <Room /> : <Navigate to="/" /> } 
+          />
         
         <Route
           path="/edit-course/:id"
