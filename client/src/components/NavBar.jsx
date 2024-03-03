@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import { setLogout } from '../state'
 import { useSelector } from "react-redux";
-
+import { loadScripts } from '../scriptLoader';
 
 function NavBar() {
 
@@ -18,7 +18,26 @@ function NavBar() {
   navigate("/");
   }
 
-  
+  const scriptsLoaded = useRef(false);
+
+  useEffect(() => {
+    const scripts = [
+      //'/assets/js/functions.js',
+    ];
+
+    if (!scriptsLoaded.current) {
+      loadScripts(scripts);
+      scriptsLoaded.current = true;
+    }
+
+    return () => {
+      // Remove all script tags
+      const scriptTags = document.querySelectorAll('script[src^="/assets"]');
+      scriptTags.forEach((scriptTag) => {
+        scriptTag.parentNode.removeChild(scriptTag);
+      });
+    };
+  }, []); // Empty dependency array ensures this effect runs only once
 
   return (
 
@@ -26,14 +45,16 @@ function NavBar() {
 
     <div>
      {/* Header START */}
-<header className="navbar-light navbar-sticky header-static">
+<header className="navbar-light bg-light navbar-sticky header-static">
   {/* Logo Nav START */}
   <nav className="navbar navbar-expand-xl">
     <div className="container">
       {/* Logo START */}
-      <a className="navbar-brand"  href="index.html">
-        <img className="light-mode-item navbar-brand-item" style={{ width: '150px', height: 'auto' }}  src="/assets/images/elkindy-logo.png" alt="logo" />
-        <img className="dark-mode-item navbar-brand-item"style={{ width: '150px', height: 'auto' }} src="/assets/images/elkindy-logo.png" alt="logo" />
+
+      <a className="navbar-brand" href="index.html">
+        <img className="light-mode-item navbar-brand-item" src="/assets/images/logo/logo.png" style={{ width: '150px', height: '60px' }} alt="logo" />
+        <img className="dark-mode-item navbar-brand-item" src="/assets/images/logo/logo.png" style={{ width: '150px', height: '60px' }} alt="logo" />
+
       </a>
       {/* Logo END */}
       {/* Responsive navbar toggler */}
@@ -48,9 +69,11 @@ function NavBar() {
       <div className="navbar-collapse w-100 collapse" id="navbarCollapse">
         {/* Nav Main menu START */}
         <ul className="navbar-nav navbar-nav-scroll mx-auto">
+          {/* Nav item 4 Component*/}
+          <li className="nav-item "><a className="nav-link active" href="docs/alerts.html">Home</a></li>
           {/* Nav item 1 Demos */}
           <li className="nav-item dropdown">
-            <a className="nav-link dropdown-toggle active" href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Demos</a>
+            <a className="nav-link dropdown-toggle " href="#" id="demoMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Corsus</a>
             <ul className="dropdown-menu" aria-labelledby="demoMenu">
               <li> <a className="dropdown-item" href="index.html">Home Default</a></li>
               <li> <a className="dropdown-item" href="index-2.html">Home Education</a></li>
@@ -145,6 +168,7 @@ function NavBar() {
               <li> <a className="dropdown-item" href="wishlist.html">Wishlist</a></li>
             </ul>
           </li>
+
           {/* Nav item 3 Account */}
           <li className="nav-item dropdown">
             <a className="nav-link dropdown-toggle" href="#" id="accounntMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Accounts</a>
@@ -210,37 +234,12 @@ function NavBar() {
               </li>
             </ul>
           </li>
+
           {/* Nav item 4 Component*/}
-          <li className="nav-item"><a className="nav-link" href="docs/alerts.html">Components</a></li>
-          {/* Nav item 5 link*/}
-          <li className="nav-item dropdown">
-            <a className="nav-link" href="#" id="advanceMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i className="fas fa-ellipsis-h" />
-            </a>
-            <ul className="dropdown-menu dropdown-menu-end min-w-auto" data-bs-popper="none">
-              <li> 
-                <a className="dropdown-item" href="https://support.webestica.com/" target="_blank">
-                  <i className="text-warning fa-fw bi bi-life-preserver me-2" />Support
-                </a> 
-              </li>
-              <li> 
-                <a className="dropdown-item" href="docs/index.html" target="_blank">
-                  <i className="text-danger fa-fw bi bi-card-text me-2" />Documentation
-                </a> 
-              </li>
-              <li> <hr className="dropdown-divider" /></li>
-              <li> 
-                <a className="dropdown-item" href="https://eduport.webestica.com/rtl/" target="_blank">
-                  <i className="text-info fa-fw bi bi-toggle-off me-2" />RTL demo
-                </a> 
-              </li>
-              <li> 
-                <a className="dropdown-item" href="https://themes.getbootstrap.com/store/webestica/" target="_blank">
-                  <i className="text-success fa-fw bi bi-cloud-download-fill me-2" />Buy Eduport!
-                </a> 
-              </li>
-            </ul>
-          </li>
+          <li className="nav-item "><a className="nav-link" href="docs/alerts.html">Témoignags</a></li>
+          {/* Nav item 4 Component*/}
+          <li className="nav-item "><a className="nav-link" href="docs/alerts.html">Contact</a></li>
+          
         </ul>
         {/* Nav Main menu END */}
         {/* Nav Search START */}
@@ -258,7 +257,7 @@ function NavBar() {
       {/* Profile START */}
       <div className="dropdown ms-1 ms-lg-0">
         <a className="avatar avatar-sm p-0" href="#" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" aria-expanded="false">
-          <img className="avatar-img rounded-circle" src="/assets/images/avatar/01.jpg" alt="avatar" />
+          <img className="avatar-img rounded-circle" src={user?.picturePath} alt="avatar" />
         </a>
         <ul className="dropdown-menu dropdown-animation dropdown-menu-end shadow pt-3" aria-labelledby="profileDropdown">
           {/* Profile info */}
@@ -266,7 +265,7 @@ function NavBar() {
             <div className="d-flex align-items-center">
               {/* Avatar */}
               <div className="avatar me-3">
-                <img className="avatar-img rounded-circle shadow" src="/assets/images/avatar/01.jpg" alt="avatar" />
+                <img className="avatar-img rounded-circle shadow" src={user?.picturePath} alt="avatar" />
               </div>
               <div>
                 <a className="h6 mt-2 mt-sm-0" href="#">

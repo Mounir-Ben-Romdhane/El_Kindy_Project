@@ -4,7 +4,6 @@ const categorieSchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
-      
     }, 
     description: {
         type: String,
@@ -15,6 +14,13 @@ const categorieSchema = mongoose.Schema({
         type: String,
         default: "",
     }, 
+    courses: {
+        type: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Course',
+        }],
+        default: []
+    }
 }, { timestamps: true }); 
 
 const Categorie = mongoose.model("Categorie", categorieSchema);

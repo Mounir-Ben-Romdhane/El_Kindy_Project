@@ -4,7 +4,7 @@ const UserSchema = new mongoose.Schema(
     {
         firstName: {
             type: String,
-            required: true,
+           required: true,
             min: 2,
             max:50,
         }, 
@@ -41,6 +41,11 @@ const UserSchema = new mongoose.Schema(
             type: String,
             default: "local"
         },
+        roles: {
+            type: [String], // Allow multiple roles for a user
+            enum: ["superAdmin", "admin", "teacher", "student", "parent"],
+            default: ["student"] // Assuming default role is student
+        }
     },
     { timestamps: true}
     );

@@ -29,7 +29,6 @@ export const register = async (req, res) => {
         });
         
         
-
         const savedUser = await newUser.save();
 
         const token = jwt.sign({ id: savedUser._id }, process.env.JWT_SECRET, {expiresIn:"1d"});
@@ -59,7 +58,8 @@ export const login = async (req, res) => {
         user.refreshToken = refreshToken;
         await user.save();
 
-        const accessToken  = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName }, process.env.JWT_SECRET, {expiresIn:"2m"});
+        const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
+         roles: user.roles,  email : user.email }, process.env.JWT_SECRET, {expiresIn:"2m"});
         
         if(!user.verified) {
             const url = `http://localhost:3000/verify-account/${user._id}/verify/${accessToken}`;
@@ -69,7 +69,7 @@ export const login = async (req, res) => {
         }
 
         delete user.password;
-        res.status(200).json({ accessToken, refreshToken: user.refreshToken, user });
+        res.status(200).json({ accessToken, refreshToken: user.refreshToken });
     }catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -94,7 +94,8 @@ export const refreshToken = async (req, res) => {
             return res.status(401).json({ message: "Refresh token has expired" });
         }
 
-        const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName }, process.env.JWT_SECRET, { expiresIn: "30s" });
+        const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
+        roles: user.roles,  email : user.email  }, process.env.JWT_SECRET, { expiresIn: "30s" });
         res.json({ accessToken });
     } catch (error) {
         console.error(error);
@@ -171,4 +172,20 @@ export const resetPassord = async (req, res) => {
     }
  
 }
-
+// Get a User
+export const getUser = async (req, res) => {
+    const id = req.params.id;
+  
+    try {
+      const user = await User.findById(id);
+      if (user) {
+        const { password, ...otherDetails } = user._doc;
+  
+        res.status(200).json(otherDetails);
+      } else {
+        res.status(404).json("No such User");
+      }
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  };

@@ -4,25 +4,21 @@ function Footer() {
   return (
     <div>
         {/* =======================Footer START */}
-        <footer className="pt-5">
+        <footer className="pt-5 bg-light">
           <div className="container">
             {/* Row START */}
             <div className="row g-4">
               {/* Widget 1 START */}
               <div className="col-lg-3">
                 {/* logo */}
-                <a className="me-0" href="index.html">
-                  <img
-                    className="light-mode-item h-40px"
-                    src="/assets/images/logo.svg"
-                    alt="logo"
-                  />
-                  <img
-                    className="dark-mode-item h-40px"
-                    src="/assets/images/logo-light.svg"
-                    alt="logo"
-                  />
-                </a>
+
+                {/* Logo START */}
+                  <a className="navbar-brand" href="index.html">
+                    <img className="light-mode-item navbar-brand-item" src="/assets/images/logo/logo.png" style={{ width: '150px', height: '60px' }} alt="logo" />
+                    <img className="dark-mode-item navbar-brand-item" src="/assets/images/logo/logo.png" style={{ width: '150px', height: '60px' }} alt="logo" />
+                  </a>
+                  {/* Logo END */}
+
                 <p className="my-3">
                   Eduport education theme, built specifically for the education
                   centers which is dedicated to teaching and involve learners.

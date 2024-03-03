@@ -8,10 +8,9 @@ import {
   deleteStage,
 } from "../controllers/stageController.js";
 
-router.post("/createStage", createStage);
 router.get("/", getStages);
 router.get("/:id", getStage);
-router.put("/updateStage/:id", updateStage);
-router.delete("/deleteStage/:id", deleteStage);
+router.patch("/:id", updateStage);
+router.delete("/:id", deleteStage);
 
 export default router;
