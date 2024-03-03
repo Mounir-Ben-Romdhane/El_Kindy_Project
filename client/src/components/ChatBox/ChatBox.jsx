@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { addMessage, getMessages } from "../../api/MessageRequests";
 import { getUser } from "../../api/UserRequests";
 import "./ChatBox.css";
 import { format } from "timeago.js";
-import InputEmoji from 'react-input-emoji'
+import InputEmoji from 'react-input-emoji';
 
 const ChatBox = ({ chat, currentUser, setSendMessage, receivedMessage }) => {
   const [userData, setUserData] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [selectedImage, setSelectedImage] = useState(null); // State to store selected image
+  const [picturePath, setPicturePath] = useState(null); // State to store selected image
 
   const handleChange = (newMessage) => {
     setNewMessage(newMessage)
@@ -59,25 +58,33 @@ const ChatBox = ({ chat, currentUser, setSendMessage, receivedMessage }) => {
 
   // Send Message
   const handleSend = async () => {
-    const message = {
-      senderId: currentUser,
-      text: newMessage,
-      chatId: chat._id,
-      image: selectedImage // Include selected image in the message
+
+    // Si une image a été sélectionnée
+    let imagePath = null;
+    if (picturePath) {
+      imagePath = URL.createObjectURL(picturePath); // Obtenir le chemin de l'image
     }
+
+    const formData = new FormData();
+    formData.append("chatId", chat._id);
+    formData.append("senderId", currentUser);
+    formData.append("text", newMessage);
+    formData.append("picturePath", imagePath); // Utiliser le chemin de l'image
+
     const receiverId = chat.members.find((id) => id !== currentUser);
-    // send message to socket server
-    setSendMessage({ ...message, receiverId })
-    // send message to database
+
+    setSendMessage({ senderId: currentUser, text: newMessage, chatId: chat._id, image: picturePath, receiverId });
+
     try {
-      const { data } = await addMessage(message);
+      const { data } = await addMessage(formData);
       setMessages([...messages, data]);
       setNewMessage("");
-      setSelectedImage(null); // Reset selected image after sending
+      setPicturePath(null);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
+
 
   // Receive Message from parent component
   useEffect(() => {
@@ -92,9 +99,8 @@ const ChatBox = ({ chat, currentUser, setSendMessage, receivedMessage }) => {
   // Function to handle file input change
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setSelectedImage(file); // Store selected image in state
+    setPicturePath(file); // Store selected image in state
   }
-
   return (
     <div className="ChatBox-container">
       {chat ? (
@@ -131,7 +137,10 @@ const ChatBox = ({ chat, currentUser, setSendMessage, receivedMessage }) => {
                   className={`message ${message.senderId === currentUser ? "own" : "received"}`}
                 >
                   <span>{message.text}</span>
-                  {message.image && <img src={URL.createObjectURL(message.image)} alt="Uploaded" />}
+                  
+                  {message.picturePath && !message.text && ( // Ajoutez cette condition
+        <img src={message.picturePath} alt="Uploaded" />
+      )}
                   <span>{format(message.createdAt)}</span>
                 </div>
               ))
@@ -146,21 +155,32 @@ const ChatBox = ({ chat, currentUser, setSendMessage, receivedMessage }) => {
             <InputEmoji
               value={newMessage}
               onChange={handleChange}
-              onKeyDown={handleKeyDown} // Call handleKeyDown when a key is pressed
+              onKeyDown={handleKeyDown}
             />
-            <div className="send-button2" onClick={handleSend}>Send</div>
+            {picturePath && (
+              <img
+                src={URL.createObjectURL(picturePath)}
+                alt="Selected"
+                style={{ width: "50px", height: "50px" }} // Définissez la taille de l'image comme vous le souhaitez
+              />
+            )}
+            <div className="send-button2" onClick={handleSend}>
+              Send
+            </div>
             <input
               type="file"
               style={{ display: "none" }}
               ref={imageRef}
-              onChange={handleImageChange} // Call handleImageChange when file input changes
+              onChange={handleImageChange}
             />
           </div>
+
         </>
       ) : (
         <span className="chatbox-empty-message">Tap on a chat to start conversation...</span>
       )}
     </div>
+
   );
 };
 

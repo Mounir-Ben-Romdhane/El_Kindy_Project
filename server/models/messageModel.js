@@ -13,7 +13,6 @@ const MessageSchema = new mongoose.Schema(
     },
     picturePath: {
       type: String,
-      default: "",
     }
   },
   {
