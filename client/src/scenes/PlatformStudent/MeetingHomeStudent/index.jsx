@@ -8,7 +8,7 @@ function index ({ meetingLink, showLinkInterface }) {
     
     return (
         <div>
-            {/* **************** MAIN CONTENT START *jfgfgjbhfbg*************** */}
+            {/* **************** MAIN CONTENT START **************** */}
             <main>
 
                 <NavBar />
