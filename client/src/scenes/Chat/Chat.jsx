@@ -83,7 +83,7 @@ const Chat = () => {
         <div className="Left-side-chat  p-3">
           <div className="Chat-container22">
             <div style={{ display: "flex", alignItems: "center" }}>
-              <h3>Chats</h3>
+              <h4>Chats </h4>
               <LogoSearch onSearch={handleSearch} />
             </div>
             <div className="Chat-list" style={{ maxHeight: "calc(100vh - 150px)", overflowY: "auto" }}>

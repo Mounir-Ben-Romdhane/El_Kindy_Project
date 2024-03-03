@@ -12,7 +12,7 @@ function SideBar() {
             {/* Navbar brand for xl START */}
             <div className="d-flex align-items-center">
                 <a className="navbar-brand" href="index.html">
-                <img className="navbar-brand-item" src="/assets/images/logo-light.svg" alt />
+                <img className="navbar-brand-item" src="/assets/images/logo/logo.png" style={{ width: '130px', height: '70px' }} alt />
                 </a>
             </div>
             {/* Navbar brand for xl END */}

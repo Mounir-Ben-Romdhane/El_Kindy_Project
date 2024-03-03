@@ -30,6 +30,7 @@ import categorieRoutes from "./routes/categorieRoutes.js"; // Import des routes 
 import { verifyToken } from "./middleware/auth.js";
 import ChatRoute from './routes/ChatRoute.js'
 import MessageRoute from './routes/MessageRoute.js'
+
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
