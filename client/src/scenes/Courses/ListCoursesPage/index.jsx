@@ -8,12 +8,17 @@ import "react-toastify/dist/ReactToastify.css";
 import { setAccessToken, setLogout } from "../../../state";
 import refreshToken from "scenes/Authentification/TokenService/tokenService";
 import axios from "axios";
+//refreshToken
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 function Index() {
   const dispatch = useDispatch();
   const accessToken = useSelector((state) => state.accessToken);
   const refreshTokenState = useSelector((state) => state.refreshToken);
   const [courses, setCourses] = useState([]);
+  
+  //refresh token
+  const axiosPrivate = useAxiosPrivate();
   const [selectedCourse, setSelectedCourse] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,7 +29,7 @@ function Index() {
   const [categories, setCategories] = useState([]);
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/categories");
+      const response = await axiosPrivate.get("http://localhost:3001/api/categories");
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -33,6 +38,8 @@ function Index() {
 
   useEffect(() => {
     fetchCategories();
+
+    /*
     const fetchData = async () => {
       try {
         const response = await fetch("http://localhost:3001/course/all", {
@@ -45,7 +52,7 @@ function Index() {
         if (response.ok) {
           const data = await response.json();
           setCourses(data.data);
-        } else if (response.status === 401 || response.status === 403) {
+        } else if (response.status === 403 ) {
           // Refresh access token
           const newAccessToken = await refreshToken(
             refreshTokenState,
@@ -72,6 +79,29 @@ function Index() {
     };
 
     fetchData();
+
+    */
+
+    const controller = new AbortController();
+
+        const getCourses = async () => {
+            try {
+                const response = await axiosPrivate.get('/course/all', {
+                    signal: controller.signal
+                });
+                console.log(response.data);
+                setCourses(response.data.data);
+            } catch (err) {
+                console.error(err);
+                //navigate('/login', { state: { from: location }, replace: true });
+            }
+        }
+
+        getCourses();
+
+        return () => {
+            controller.abort();
+        }
   }, [accessToken, dispatch]);
 
   const handleDelete = async (id) => {

@@ -27,13 +27,15 @@ import InscriptionPage from "./scenes/Inscriptions/InscriptionPage";
 import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loadScripts } from "./scriptLoader";
 import EditCourse from "scenes/Courses/EditCoursePage";
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
+import { setLogout } from "../src/state";
 
 function App() {
   const isAuth = Boolean(useSelector((state) => state.accessToken));
+  
 
   const scriptsLoaded = useRef(false);
   /*'/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js',
@@ -87,10 +89,6 @@ function App() {
           element={isAuth ? <HomePage /> : <Navigate to="/" />}
         />
         <Route
-          path="/inscriptionsList"
-          element={isAuth ? <InscriptionList /> : <Navigate to="/" />}
-        />
-        <Route
           path="/category"
           element={isAuth ? <Category /> : <Navigate to="/" />}
         />
@@ -100,20 +98,38 @@ function App() {
           element={<InscriptionPage />}
           />
 
+        {/* PRIVATE ROUTE */}
         <Route
           path="/dashboard-admin"
           element={
             <PrivateRoute
               element={<AdminHomePage />}
-              requiredRoles={["superAdmin", "admin", "teacher"]}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/inscriptionsList"
+          element={
+            <PrivateRoute
+              element={<InscriptionList />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/listCourses"
+          element={
+            <PrivateRoute
+              element={<ListCoursesPage />}
+              requiredRoles={["superAdmin", "admin"]}
             />
           }
         />
         
-        <Route
-          path="/listCourses"
-          element={isAuth ? <ListCoursesPage /> : <Navigate to="/" />}
-        />
+        
         <Route
           path="/edit-course/:id"
           element={isAuth ? <EditCourse /> : <Navigate to="/" />}
@@ -188,12 +204,15 @@ function App() {
 
 // PrivateRoute component to check authentication and required roles
 function PrivateRoute({ element, requiredRoles }) {
+  const dispatch = useDispatch();
   const accessToken = useSelector((state) => state.accessToken);
   const userRoles = accessToken ? jwtDecode(accessToken).roles : [];
 
   // If user is authenticated and has required roles, render the element
   if (accessToken && userRoles.some((role) => requiredRoles.includes(role))) {
     return element;
+  } else {
+    dispatch(setLogout());
   }
 
   // If user is not authenticated, redirect to login

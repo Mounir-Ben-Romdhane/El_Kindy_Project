@@ -89,17 +89,17 @@ function Index() {
         setOpen(false);
         dispatch(
           setLogin({
-            user: loggedIn.user,
+            //user: loggedIn.user,
             accessToken: loggedIn.accessToken,
             refreshToken: loggedIn.refreshToken,
           })
         );
         const accessTokenn = loggedIn.accessToken;
         const userRoles = accessTokenn ? jwtDecode(accessTokenn).roles : []; 
-        console.log("userRole ",userRoles);
-        if (userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('parent')) {
+        //console.log("userRole ",userRoles);
+        if (userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('superAdmin')) {
           navigate("/dashboard-admin");
-        } else {
+        } else if (userRoles.includes('student') || userRoles.includes('parent')) {
             navigate("/home");
         }
       }

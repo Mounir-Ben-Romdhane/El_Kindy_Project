@@ -6,11 +6,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import { loadScripts } from "../../scriptLoader";
 import axios from "axios";
+import useAuth from "hooks/useAuth";
+
 
 function Index() {
   const user = useSelector((state) => state.user);
   const scriptsLoaded = useRef(false);
   const [coursesByCategories, setCoursesByCategories] = useState([]);
+  
 
   const [currentImage, setCurrentImage] = useState(0);
   const [nextImage, setNextImage] = useState(1);
@@ -55,7 +58,7 @@ function Index() {
       });
     };
   }, []); // Empty dependency array ensures this effect runs only once
-  console.log("coursesByCategories : ", coursesByCategories);
+  
 
   useEffect(() => {
     const interval = setInterval(() => {

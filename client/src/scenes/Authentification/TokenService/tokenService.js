@@ -12,7 +12,13 @@ const refreshToken = async (refreshToken, dispatch) => {
       });
       if (refreshedTokenResponse.ok) {
         const { accessToken } = await refreshedTokenResponse.json();
-        return accessToken;
+          if(accessToken){
+            return accessToken;
+          }
+          else{
+            console.error("Failed to refresh access token.");
+            dispatch(setLogout()); // Log out user if token refresh fails
+          }
       } else {
         // Handle refresh token expiration or invalidity
         dispatch(setLogout()); // Log out user if token refresh fails

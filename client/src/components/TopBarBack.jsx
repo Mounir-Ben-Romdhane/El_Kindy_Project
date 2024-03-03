@@ -2,13 +2,17 @@ import React from 'react';
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
-import { setLogout } from '../state'
+import { setLogout } from '../state';
+import { jwtDecode } from "jwt-decode";
 
 function TopBarBack() {
 
-  const user = useSelector((state) => state.user);
+  //const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const accessToken = useSelector((state) => state.accessToken);
+  const user = accessToken ? jwtDecode(accessToken) : "";
 
   const logoutHandler = () => {
     dispatch(
@@ -272,7 +276,7 @@ function TopBarBack() {
                       >
                         <img
                           className="avatar-img rounded-circle"
-                          src={user.picturePath}
+                          src={user?.picturePath}
                           alt="avatar"
                         />
                       </a>
@@ -294,7 +298,7 @@ function TopBarBack() {
                             </div>
                             <div>
                               <a className="h6 mt-2 mt-sm-0" href="#">
-                                {user?.firstName} {user?.lastName}
+                                {user?.fullName}
                               </a>
                               <p className="small m-0">{user?.email}</p>
                             </div>

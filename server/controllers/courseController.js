@@ -11,6 +11,7 @@ export const getAll = async (req, res) => {
         return res.status(500).json({ success: false, error: err.message });
     }
 };
+
 export const getAllCoursesGroupedByCategory = async (req, res) => {
     try {
         // Aggregate courses by courseCategory field
