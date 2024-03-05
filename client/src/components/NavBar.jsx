@@ -7,7 +7,7 @@ import { loadScripts } from '../scriptLoader';
 
 function NavBar() {
 
-  const user = useSelector((state) => state.user);
+  const accessToken = useSelector((state) => state.accessToken);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -15,8 +15,14 @@ function NavBar() {
     dispatch(
       setLogout()
   );
-  navigate("/");
+  navigate("/home");
   }
+
+  const handleSignIn = () => {
+  
+  navigate("/sign-in")
+  }
+
 
   const scriptsLoaded = useRef(false);
 
@@ -186,9 +192,9 @@ function NavBar() {
       </div>
       {/* Main navbar END */}
       {/* Profile START */}
-      <div className="dropdown ms-1 ms-lg-0">
+      {accessToken ? <div className="dropdown ms-1 ms-lg-0">
         <a className="avatar avatar-sm p-0" href="#" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" aria-expanded="false">
-          <img className="avatar-img rounded-circle" src={user?.picturePath} alt="avatar" />
+          <img className="avatar-img rounded-circle" src={accessToken?.picturePath} alt="avatar" />
         </a>
         <ul className="dropdown-menu dropdown-animation dropdown-menu-end shadow pt-3" aria-labelledby="profileDropdown">
           {/* Profile info */}
@@ -196,13 +202,13 @@ function NavBar() {
             <div className="d-flex align-items-center">
               {/* Avatar */}
               <div className="avatar me-3">
-                <img className="avatar-img rounded-circle shadow" src={user?.picturePath} alt="avatar" />
+                <img className="avatar-img rounded-circle shadow" src={accessToken?.picturePath} alt="avatar" />
               </div>
               <div>
                 <a className="h6 mt-2 mt-sm-0" href="#">
-                  {user?.firstName} {user?.lastName}
+                  {accessToken?.firstName} {accessToken?.lastName}
                 </a>
-                <p className="small m-0">{user?.email}</p>
+                <p className="small m-0">{accessToken?.email}</p>
               </div>
             </div>
             <hr />
@@ -230,7 +236,12 @@ function NavBar() {
           </li> 
           {/* Dark mode switch END */}
         </ul>
-      </div>
+      </div> :
+			<div class="navbar-nav">
+				<button class="btn btn-sm btn-primary mb-0" onClick={handleSignIn}><i class="bi bi-power me-2"></i>Sign In</button>
+			</div>
+      }
+      
       {/* Profile START */}
     </div>
   </nav>
