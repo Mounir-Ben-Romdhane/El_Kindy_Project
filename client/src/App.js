@@ -3,31 +3,16 @@
 import ListEventsPage from '../src/scenes/EventsPage/ListEventPage'
 import AdminReservation from '../src/scenes/EventsPage/AdminReservation'
 import AddEventPage from '../src/scenes/EventsPage/AddEventPage'
-
 import ListEventUser from '../src/scenes/EventsPage/EventFront'
 import DetailEvents from '../src/scenes/EventsPage/DetailEventPage'
-
 import EditEventPage from '../src/scenes/EventsPage/EditEventPage'
-
-
 import AddCoursePage from '../src/scenes/Courses/AddCoursePage'
 import ListCategoryPage from '../src/scenes/Category/ListCategoryPage'
 import AddCategoryPage from '../src/scenes/Category/AddCategoryPage'
 import EditCategoryPage from '../src/scenes/Category/EditCategoryPage'
-
-
-
-
-
-
 import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
-
 import { useSelector } from "react-redux";
 import { loadScripts } from './scriptLoader';
-
-
-
-
 import React, { useEffect, useRef } from "react";
 import AboutPage from "../src/scenes/AboutPage";
 import HomePage from "../src/scenes/HomePage";
@@ -38,10 +23,10 @@ import ResetPassword from "./scenes/Authentification/ResetPassword";
 import EmailVerify from "./scenes/Authentification/EmailVerify";
 import NotFound from "./scenes/NotFound";
 import AdminHomePage from "../src/scenes/AdminHomePage";
+
 import ListCoursesPage from "../src/scenes/Courses/ListCoursesPage";
 import Stage from "../src/scenes/Stage/StageHome";
 import ListEventsPage from "../src/scenes/EventsPage/ListEventPage";
-import AddEventPage from "../src/scenes/EventsPage/AddEventPage";
 import AddCoursePage from "../src/scenes/Courses/AddCoursePage";
 import ListCategoryPage from "../src/scenes/Category/ListCategoryPage";
 import AddCategoryPage from "../src/scenes/Category/AddCategoryPage";
@@ -55,6 +40,13 @@ import AddClassPage from "../src/scenes/Classe/AddClassPage";
 import Category from "../src/scenes/CategoryHome";
 import InscriptionPage from "./scenes/Inscriptions/InscriptionPage";
 import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
+
+import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
+
+import Chat from '../src/scenes/Chat/Chat'
+
+import { BrowserRouter, Navigate, Routes, Route  } from "react-router-dom";
+
 import MeetingHomeStudent from './scenes/PlatformStudent/MeetingHomeStudent';
 import DashbordTeacher from './scenes/PlatformTeacher/DashbordTeacher'
 import HomePagee from '../src/scenes/PlatformTeacher/HomePagee';
@@ -62,6 +54,7 @@ import DashbordStudent from './scenes/PlatformStudent/DashbordStudent'
 import Room from '../src/scenes/PlatformTeacher/Room';
 
 import Chat from '../src/scenes/Chat/Chat'
+
 
 
 import { useDispatch, useSelector } from "react-redux";
@@ -115,8 +108,9 @@ function App() {
      
     <div>
       <Routes>
-        <Route path="/" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
+        {/* auth routes */}
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route
           path="/reset-password/:id?/:token?"
@@ -126,10 +120,15 @@ function App() {
           path="/verify-account/:id/verify/:token"
           element={<EmailVerify />}
         />
+
+        {/* public routes */}
+        <Route path="/" element={<Navigate to="/home" />} />
         <Route
           path="/home"
-          element={isAuth ? <HomePage /> : <Navigate to="/" />}
+          element={<HomePage /> }
         />
+
+        {/* we want to protect these routes */}
         <Route
           path="/category"
           element={isAuth ? <Category /> : <Navigate to="/" />}
@@ -148,12 +147,6 @@ function App() {
               element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   
               />
          <Route path="/editEvent/:id" element={isAuth ? <EditEventPage /> : <Navigate to="/" />} />
-
-          <Route  path="/addCourse" 
-              element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } 
-
-
-               />
 
               
 
@@ -176,6 +169,16 @@ function App() {
           element={
             <PrivateRoute
               element={<InscriptionList />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/inscriptionDetails/:id"
+          element={
+            <PrivateRoute
+              element={<InscriptionDetails />}
               requiredRoles={["superAdmin", "admin"]}
             />
           }

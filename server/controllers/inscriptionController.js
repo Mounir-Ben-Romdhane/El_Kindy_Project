@@ -81,7 +81,7 @@ export const getInscriptionById = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const inscription = await Inscription.findById(id);
+        const inscription = await Inscription.findById(id).populate("likedCourses");
         if (!inscription) {
             return res.status(404).json({ message: "Inscription not found" });
         }
