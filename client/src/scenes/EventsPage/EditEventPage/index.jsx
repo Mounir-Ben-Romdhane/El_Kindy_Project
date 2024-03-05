@@ -19,6 +19,7 @@ function EditEvent() {
   });
 
   const [imageName, setImageName] = useState(null);
+  const [previewImageUrl, setPreviewImageUrl] = useState("");
   const [imageFile, setImageFile] = useState(null);
 
   const { id } = useParams();
@@ -26,9 +27,13 @@ function EditEvent() {
 
   const handleImageSelect = (event) => {
     const selectedFile = event.target.files[0];
-    setImageName(selectedFile.name);
-    setImageFile(selectedFile);
-  };
+    if (selectedFile) {
+        setImageName(selectedFile.name);
+        setImageFile(selectedFile);
+        const tempUrl = URL.createObjectURL(selectedFile);
+        setPreviewImageUrl(tempUrl); 
+    }
+};
 
   const handleRemoveImage = () => {
     setImageName(null);
@@ -48,11 +53,12 @@ function EditEvent() {
           title: eventData.title,
           description: eventData.description,
           price: eventData.price,
-          dateDebut: eventData.dateDebut,
-          dateFin: eventData.dateFin,
+          dateDebut: formatDate(eventData.dateDebut),
+        dateFin: formatDate(eventData.dateFin),
         });
-        console.log(formState.dateDebut);
-        setImageName(eventData.imagePath);
+        if (eventData.imagePath) {
+          setPreviewImageUrl(`http://localhost:3001/assets/${eventData.imagePath}`);
+        }
       } catch (error) {
         console.error("Error Fetching Event:", error);
       }
@@ -63,10 +69,10 @@ function EditEvent() {
   const handleEventChange = (event) => {
     const { name, value } = event.target;
     setFormState((prevState) => ({
-      ...prevState,
-      [name]: value,
+        ...prevState,
+        [name]: value,
     }));
-  };
+};
 
   // Function to format date to "yyyy-MM-dd"
   const formatDate = (dateString) => {
@@ -85,7 +91,6 @@ function EditEvent() {
     formData.append("price", formState.price);
     formData.append("dateDebut", formatDate(formState.dateDebut));
     formData.append("dateFin", formatDate(formState.dateFin));
-  
     if (imageFile) {
       formData.append("picture", imageFile);
     }
@@ -198,19 +203,15 @@ function EditEvent() {
                     <div className="col-12">
                       <div className="text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3">
                         {/* Display the image */}
-                        {imageName && (
-                          <div>
-                            <img
-                              src={
-                                imageName
-                                  ? `http://localhost:3001/assets/${imageName}`
-                                  : ""
-                              }
-                              alt="image Event"
-                              style={{ maxWidth: "300px", maxHeight: "300px" }}
-                            />
-                          </div>
-                        )}
+                        {previewImageUrl && (
+  <div>
+    <img
+      src={previewImageUrl}
+      alt="Event Preview"
+      style={{ maxWidth: "300px", maxHeight: "300px" }}
+    />
+  </div>
+)}
                         {/* Upload image button */}
                         <div className="mb-3">
                           <h6 className="my-2">

@@ -14,7 +14,7 @@ function Footer() {
                 <a className="me-0" href="index.html">
                   <img
                     className="light-mode-item h-40px"
-                    src="assets/images/logo.svg"
+                    src="/assets/images/logo.svg"
                     alt="logo"
                   />
                   <img

@@ -10,8 +10,23 @@ import path from 'path';
 import { fileURLToPath } from "url";
 import { addNewCourse } from "./controllers/courseController.js";
 import { addNewEvent } from "./controllers/event.js";
+import twilio from "twilio";
 
 
+dotenv.config();
+export const sendSms = (toPhoneNumber) => {
+    const formattedPhoneNumber = `+216${toPhoneNumber}`; // E.164 format
+    const client = new twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+
+    return client.messages
+        .create({
+            body: 'Thank you, Your Event Participation has been Accepted !',
+            from: process.env.TWILIO_PHONE_NUMBER,
+            to: formattedPhoneNumber // Format to +216 ( tunisian Number)
+        })
+        .then(message => console.log("Message sent:", message.sid))
+        .catch(err => console.error("Error sending message:", err));
+};
 
 
 import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
@@ -21,7 +36,7 @@ import  { createCategorie, updateCategorie }  from "./controllers/categorieContr
 
 import eventRoutes from "./routes/Event.js";
 import salleRoutes from "./routes/salle.js";
-
+import reservationRoutes  from "./routes/Reservation.js";
 
 
 
@@ -87,6 +102,8 @@ app.use("/course",courseRoute);
 app.use("/salle",salleRoutes);
 
 app.use("/salle",salleRoutes);
+
+app.use("/events",reservationRoutes);
 
 
 

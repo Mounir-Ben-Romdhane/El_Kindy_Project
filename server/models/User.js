@@ -28,7 +28,7 @@ const UserSchema = new mongoose.Schema(
         picturePath: {
             type: String,
             default: "",
-<<<<<<< HEAD
+
         }, 
         twoFactorSecret:{
             type:String,
@@ -36,17 +36,15 @@ const UserSchema = new mongoose.Schema(
         },
         isTwoFactorEnabled:{
             type:Boolean,
-            default: false,
-=======
+            default: true,
         },
         verified: {
             type: Boolean,
-            default: false
+            default: true
         },
         refreshToken: {
             type: String,
             default: ""
->>>>>>> 5d882dbe2a269be60624427c7385029a22973cc6
         }
     },
     { timestamps: true}

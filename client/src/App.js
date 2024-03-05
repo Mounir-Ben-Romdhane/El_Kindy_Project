@@ -11,7 +11,11 @@ import AdminHomePage from '../src/scenes/AdminHomePage'
 import ListCoursesPage from '../src/scenes/Courses/ListCoursesPage'
 
 import ListEventsPage from '../src/scenes/EventsPage/ListEventPage'
+import AdminReservation from '../src/scenes/EventsPage/AdminReservation'
 import AddEventPage from '../src/scenes/EventsPage/AddEventPage'
+
+import ListEventUser from '../src/scenes/EventsPage/EventFront'
+import DetailEvents from '../src/scenes/EventsPage/DetailEventPage'
 
 import EditEventPage from '../src/scenes/EventsPage/EditEventPage'
 
@@ -72,6 +76,10 @@ function App() {
           <Route  path="/listEvents" 
               element={isAuth ? <ListEventsPage /> : <Navigate to="/" /> }   
           />
+
+          <Route  path="/listReservation" 
+              element={isAuth ? <AdminReservation /> : <Navigate to="/" /> }   
+          />
           <Route  path="/addEvent" 
               element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   
               />
@@ -97,7 +105,11 @@ function App() {
 
           />
 
+          <Route path="/listEventUser"
+               element={isAuth ? <ListEventUser /> : <Navigate to="/" />} />
 
+          <Route path="/detailEvent/:id"
+               element={isAuth ? <DetailEvents /> : <Navigate to="/" />} />
           
           <Route path="/about" element={<AboutPage />}/>
             <Route  path="/listCategories" 
