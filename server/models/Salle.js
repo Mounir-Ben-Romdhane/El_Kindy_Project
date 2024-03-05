@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const salleSchema = new mongoose.Schema(
     {
-        numero: {
-            type: Number,
+        name: {
+            type: String,
             required: true,
             max:50,
         }, 
@@ -23,5 +23,5 @@ const salleSchema = new mongoose.Schema(
     { timestamps: true}
     );
 
-    const Salle = mongoose.model("Salle",salleSchema);
-    export default Salle;
+const Salle = mongoose.model("Salle",salleSchema);
+export default Salle;

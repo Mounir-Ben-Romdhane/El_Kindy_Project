@@ -16,19 +16,21 @@
     flex-direction: column;
     gap: 0.5rem;
     padding: 1.5rem;
-    overflow-y: auto; /* Use overflow-y instead of overflow to enable vertical scrollbar */
-    overflow-x: hidden; /* Hide horizontal scrollbar */
+    overflow-y: auto;
+    overflow-x: hidden;
 }
+
 .message {
     background: var(--buttonBg);
     color: white;
     padding: 0.7rem;
     border-radius: 1rem 1rem 1rem 0;
-    max-width: 28rem;
+    max-width: 28rem; /* Adjust max-width as needed */
     width: fit-content;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    position: relative; /* Add position relative for positioning images */
 }
 
 .message > span:nth-child(2) {
@@ -46,8 +48,13 @@
 .received {
     align-self: flex-start;
     border-radius: 1rem 1rem 1rem 0;
-    background-color: lightorange;
-    color: black;
+    background-color: rgb(226, 224, 221); /* Adjusted background color */
+    color: black; /* Adjust text color as needed */
+}
+
+.message img {
+    max-width: 100%; /* Ensure images don't exceed container width */
+    border-radius: 0.5rem; /* Add border radius if needed */
 }
 
 .chat-sender {
@@ -82,18 +89,19 @@
     font-weight: bold;
     cursor: pointer;
 }
-.received {
-    align-self: flex-start;
-    border-radius: 1rem 1rem 1rem 0;
-    background-color: rgb(226, 224, 221); /* Adjusted to 'orange' */
-    color: black; /* Adjust text color as needed */
+.selected-image {
+    max-width: 50px; /* Définissez la largeur maximale souhaitée */
+    max-height: 50px; /* Définissez la hauteur maximale souhaitée */
+    border-radius: 0.5rem; /* Ajoutez un rayon de bordure pour l'image */
 }
+
 
 .chat-sender > div {
     height: 70%;
     padding: 0px 15px 0px 15px;
 }
-.send-button2{
+
+.send-button2 {
     background-color: orange;
     color: white;
     border: none;

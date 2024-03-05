@@ -32,12 +32,12 @@ function TopBarBack() {
                   <a className="navbar-brand" href="index.html">
                     <img
                       className="light-mode-item navbar-brand-item h-30px"
-                      src="/assets/images/logo-mobile.svg"
+                      src="/assets/images/logo/logo.png"
                       alt
                     />
                     <img
                       className="dark-mode-item navbar-brand-item h-30px"
-                      src="/assets/images/logo-mobile-light.svg"
+                      src="/assets/images/logo/logo.png"
                       alt
                     />
                   </a>

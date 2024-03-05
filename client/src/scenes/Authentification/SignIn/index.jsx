@@ -8,15 +8,30 @@ import { useSelector } from "react-redux";
 import GridLoader from "react-spinners/GridLoader";
 import { ToastContainer, toast } from "react-toastify";
 import Backdrop from "@mui/material/Backdrop";
+
+import TextField from '@mui/material/TextField'; 
+import Button from '@mui/material/Button'; 
+import Paper from '@mui/material/Paper'; 
+import Typography from '@mui/material/Typography'; 
+
 import GoogleAuth from "components/GoogleAuth";
 import FacebookLogin from "components/FacebookLogin";
 import { jwtDecode } from "jwt-decode";
+
 
 function Index() {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
+
+  const [tokenCode, setTokenCode] = useState("");
+  const [loginStatus, setLoginStatus] = useState(null);
+  const isAuth = Boolean(useSelector((state) => state.accessToken));
+  const [credentials, setCredentials] = useState({ email: '', password: '' });
+
+
   const isAuth = useSelector((state) => state.accessToken);
+
   useEffect(() => {
     if (isAuth) {
       const userRoles = isAuth ? jwtDecode(isAuth).roles : []; 
@@ -27,8 +42,12 @@ function Index() {
             navigate("/home");
         }
     }
+
+  }, [isAuth, navigate]);
+
     
   });
+
 
   let [loading, setLoading] = useState(true);
   let [color, setColor] = useState("#399ebf");
@@ -67,6 +86,7 @@ function Index() {
   
   const login = async (values, onSubmitProps) => {
     setOpen(true);
+    setCredentials({ email: values.email, password: values.password });
     try {
       const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
@@ -81,6 +101,9 @@ function Index() {
         toastShowError(loggedIn.message);
         setOpen(false);
       } else if (loggedInResponse.status === 401) {
+
+        setLoginStatus(loggedInResponse.status);
+
         toastShowWarning(loggedIn.message);
         setOpen(false);
         dispatch(setLogout()); // Logout on refresh token error
@@ -89,11 +112,18 @@ function Index() {
         setOpen(false);
         dispatch(
           setLogin({
+
+            user: loggedIn.user,
+
             //user: loggedIn.user,
+
             accessToken: loggedIn.accessToken,
             refreshToken: loggedIn.refreshToken,
           })
         );
+
+        navigate("/home");
+
         const accessTokenn = loggedIn.accessToken;
         const userRoles = accessTokenn ? jwtDecode(accessTokenn).roles : []; 
         //console.log("userRole ",userRoles);
@@ -102,6 +132,7 @@ function Index() {
         } else if (userRoles.includes('student') || userRoles.includes('parent')) {
             navigate("/home");
         }
+
       }
     } catch (error) {
       console.error("Error logging in:", error);
@@ -114,6 +145,38 @@ function Index() {
     const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
     //console.log("Values",formValues);
     await login(formValues);
+  };
+
+  const submitTokenCode = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/auth/verify2fa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+          token:tokenCode
+        }),
+      });
+      const data = await response.json();
+      
+      if (response.ok) {
+        console.log("Token verified successfully!")
+        toastShowSeccus("Token verified successfully!");
+        dispatch(setLogin({
+          user: data.user,
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+        }));
+        navigate("/home");
+      } else {
+        toastShowError(data.message || "Token verification failed.");
+        setTokenCode(""); // Reset token input
+      }
+    } catch (error) {
+      console.error("Error verifying token:", error);
+      toastShowError("An error occurred while verifying the token.");
+    }
   };
 
   return (
@@ -198,6 +261,7 @@ function Index() {
                           Your password must be 8 characters at least
                         </div>
                       </div>
+
                       {/* Check box */}
                       <div className="mb-4 d-flex justify-content-between mb-4">
                         <div className="form-check">
@@ -249,7 +313,10 @@ function Index() {
                         <GoogleAuth />
                       </div>
                       {/* Social btn */}
-                      <FacebookLogin />
+                     
+                        <FacebookLogin />
+                        
+
                     </div>
                     {/* Sign up link */}
                     <div className="mt-4 text-center">
@@ -328,7 +395,33 @@ function Index() {
           </div>
         </section>
       </main>
+
       {/* **************** MAIN CONTENT END **************** */}
+      {/* Token Code (if required) */}
+      {loginStatus === 401 && (
+        <Paper elevation={3} style={{ padding: '20px', marginTop: '20px', borderRadius: '10px' }}>
+          <Typography variant="h5" component="h3" style={{ marginBottom: '20px' }}>
+            Token Verification Required
+          </Typography>
+          <Typography variant="body1" style={{ marginBottom: '20px' }}>
+            Please enter the verification token from your authentication app.
+          </Typography>
+          <TextField
+            fullWidth
+            variant="outlined"
+            label="Token Code"
+            name="tokenCode"
+            value={tokenCode}
+            onChange={(e) => setTokenCode(e.target.value)}
+            placeholder="Enter your token"
+            style={{ marginBottom: '20px' }}
+          />
+          <Button variant="contained" color="primary" onClick={submitTokenCode}>
+            Submit Token
+          </Button>
+        </Paper>
+      )}
+
     </div>
   );
 }

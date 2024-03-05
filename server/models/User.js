@@ -28,10 +28,19 @@ const UserSchema = new mongoose.Schema(
         picturePath: {
             type: String,
             default: "",
+
+        }, 
+        twoFactorSecret:{
+            type:String,
+            default: "",
+        },
+        isTwoFactorEnabled:{
+            type:Boolean,
+            default: true,
         },
         verified: {
             type: Boolean,
-            default: false
+            default: true
         },
         refreshToken: {
             type: String,
