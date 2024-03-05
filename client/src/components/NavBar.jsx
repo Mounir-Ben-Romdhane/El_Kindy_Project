@@ -5,6 +5,9 @@ import { setLogout } from '../state'
 import { useSelector } from "react-redux";
 import { loadScripts } from '../scriptLoader';
 
+import logoahmed from '../assetss/images/logo/logo.png';
+
+
 function NavBar() {
 
   const user = useSelector((state) => state.user);
@@ -52,8 +55,12 @@ function NavBar() {
       {/* Logo START */}
 
       <a className="navbar-brand" href="index.html">
+
+
+
         <img className="light-mode-item navbar-brand-item" src="/assets/images/logo/logo.png" style={{ width: '150px', height: '60px' }} alt="logo" />
         <img className="dark-mode-item navbar-brand-item" src="/assets/images/logo/logo.png" style={{ width: '150px', height: '60px' }} alt="logo" />
+
 
       </a>
       {/* Logo END */}
@@ -169,6 +176,7 @@ function NavBar() {
             </ul>
           </li>
 
+
           {/* Nav item 3 Account */}
           <li className="nav-item dropdown">
             <a className="nav-link dropdown-toggle" href="#" id="accounntMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Accounts</a>
@@ -234,6 +242,7 @@ function NavBar() {
               </li>
             </ul>
           </li>
+
 
           {/* Nav item 4 Component*/}
           <li className="nav-item "><a className="nav-link" href="docs/alerts.html">Témoignags</a></li>

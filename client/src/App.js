@@ -1,5 +1,21 @@
 
 
+import ListEventsPage from '../src/scenes/EventsPage/ListEventPage'
+import AdminReservation from '../src/scenes/EventsPage/AdminReservation'
+import AddEventPage from '../src/scenes/EventsPage/AddEventPage'
+
+import ListEventUser from '../src/scenes/EventsPage/EventFront'
+import DetailEvents from '../src/scenes/EventsPage/DetailEventPage'
+
+import EditEventPage from '../src/scenes/EventsPage/EditEventPage'
+
+
+import AddCoursePage from '../src/scenes/Courses/AddCoursePage'
+import ListCategoryPage from '../src/scenes/Category/ListCategoryPage'
+import AddCategoryPage from '../src/scenes/Category/AddCategoryPage'
+import EditCategoryPage from '../src/scenes/Category/EditCategoryPage'
+
+
 
 
 
@@ -8,6 +24,8 @@ import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 import { useSelector } from "react-redux";
 import { loadScripts } from './scriptLoader';
+
+
 
 
 import React, { useEffect, useRef } from "react";
@@ -50,6 +68,7 @@ import { useDispatch, useSelector } from "react-redux";
 import EditCourse from "scenes/Courses/EditCoursePage";
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
+
 
 function App() {
   const isAuth = Boolean(useSelector((state) => state.accessToken));
@@ -121,6 +140,24 @@ function App() {
           element={<InscriptionPage />}
           />
 
+
+          <Route  path="/listReservation" 
+              element={isAuth ? <AdminReservation /> : <Navigate to="/" /> }   
+          />
+          <Route  path="/addEvent" 
+              element={isAuth ? <AddEventPage /> : <Navigate to="/" /> }   
+              />
+         <Route path="/editEvent/:id" element={isAuth ? <EditEventPage /> : <Navigate to="/" />} />
+
+          <Route  path="/addCourse" 
+              element={isAuth ? <AddCoursePage /> : <Navigate to="/" /> } 
+
+
+               />
+
+              
+
+
         {/* PRIVATE ROUTE */}
         <Route
           path="/dashboard-admin"
@@ -128,6 +165,7 @@ function App() {
             <PrivateRoute
               element={<AdminHomePage />}
               requiredRoles={["superAdmin", "admin"]}
+
 
             />
           }
@@ -180,6 +218,13 @@ function App() {
           element={isAuth ? <EditCourse /> : <Navigate to="/" />}
         />
 
+
+          <Route path="/listEventUser"
+               element={isAuth ? <ListEventUser /> : <Navigate to="/" />} />
+
+          <Route path="/detailEvent/:id"
+               element={isAuth ? <DetailEvents /> : <Navigate to="/" />} />
+
         <Route
           path="/ListStage"
           element={isAuth ? <ListStage /> : <Navigate to="/" />}
@@ -229,6 +274,7 @@ function App() {
           element={isAuth ? <Chat /> : <Navigate to="../auth" />}
         />
             
+
           
           <Route path="/about" element={<AboutPage />}/>
             <Route  path="/listCategories" 

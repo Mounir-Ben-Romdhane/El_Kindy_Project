@@ -28,7 +28,9 @@ const initialValuesRegister = {
 function Index() {
   let [loading, setLoading] = useState(true);
   let [color, setColor] = useState("#399ebf");
+  const [qrCodeUrl, setQRCodeUrl] = useState("");
   const navigate = useNavigate();
+  const [isTwoFactorEnabled,setIsTwoFactorEnabled]=useState(false); 
 
   const [open, setOpen] = useState(false);
 
@@ -42,15 +44,18 @@ function Index() {
   };
 
   const toastShowSeccus = (msg) => {
-    toast.success(msg, {
+    /* toast.success(msg, {
       autoClose: 2500,
       style: {
         color: "green", // Text color
       },
     });
+     setTimeout(() => {
+      navigate("/");
+    }, 1000) */
     setTimeout(() => {
       navigate("/");
-    }, 3000);
+    }, 9000);
   };
 
   const register = async (values) => {
@@ -65,14 +70,26 @@ function Index() {
         body: JSON.stringify(values),
       }
     );
-    if (savedUserResponse.status === 500) {
-      toastShowError("Account already exist !");
+
+    if (savedUserResponse.status === 400) {
+      toastShowError("Account already exists!");
       setOpen(false);
     } else if (savedUserResponse.status === 201) {
       const savedUser = await savedUserResponse.json();
-      //console.log('user', savedUser);
-      setOpen(false);
+      if (savedUser.qrCodeUrl) {
+        // Check if qrCodeUrl is already set to avoid resetting it
+        if (!qrCodeUrl) {
+          setQRCodeUrl(savedUser.qrCodeUrl);
+        }
+      }
+
+      /*  setOpen(false); */
       toastShowSeccus(savedUser.message);
+
+      // Redirect only if QR code URL is not available
+      if (!savedUser.qrCodeUrl) {
+        navigate("/");
+      }
     }
   };
 
@@ -93,6 +110,46 @@ function Index() {
         open={open}
       >
         <GridLoader color={color} loading={loading} size={20} />
+      </Backdrop>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <div>
+          {" "}
+          {qrCodeUrl && (
+            <div
+              style={{
+                backgroundColor: "#ffffff",
+                borderRadius: "8px",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+                padding: "20px",
+                maxWidth: "320px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <h3 style={{ marginBottom: "20px" }}>Please Scan QR Code</h3>
+              <img
+                src={qrCodeUrl}
+                alt="QR Code"
+                style={{
+                  maxWidth: "100%",
+                  height: "auto",
+                  marginBottom: "20px",
+                  border: "1px solid #ddd", // Optional: adds a subtle border around the QR code
+                  padding: "10px", // Optional: adds spacing inside the border, if used
+                  backgroundColor: "#f9f9f9", // Optional: adds a light background color inside the border, if used
+                }}
+              />
+              <p style={{ fontSize: "14px", color: "#666" }}>
+                Scan this QR code with your 2FA app to enable two-factor
+                authentication.
+              </p>
+            </div>
+          )}{" "}
+        </div>
       </Backdrop>
       {/* **************** MAIN CONTENT START **************** */}
       <main>
@@ -339,13 +396,15 @@ function Index() {
                                 type="checkbox"
                                 className="form-check-input"
                                 id="checkbox-1"
+                                checked={isTwoFactorEnabled}
+                                onChange={(e)=> setIsTwoFactorEnabled(e.target.checked)}
                               />
                               <label
                                 className="form-check-label"
                                 htmlFor="checkbox-1"
                               >
-                                By signing up, you agree to the
-                                <a href="#"> terms of service</a>
+                                By signing up, you agree to 
+                                <a href="#"> Enable 2FA Security</a>
                               </label>
                             </div>
                           </div>
@@ -402,6 +461,31 @@ function Index() {
         </section>
       </main>
       {/* **************** MAIN CONTENT END **************** */}
+      {qrCodeUrl && (
+        <div
+          className="text-center mt-5"
+          style={{
+            padding: "20px",
+            backgroundColor: "#fff",
+            border: "1px solid #ddd",
+            boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+            maxWidth: "300px",
+            margin: "auto",
+          }}
+        >
+          <h3>Please Scan QR Code</h3>
+          <div style={{ padding: "10px" }}>
+            <img
+              src={qrCodeUrl}
+              alt="QR Code"
+              style={{ maxWidth: "100%", height: "auto" }}
+            />
+          </div>
+          <p style={{ marginTop: "10px" }}>
+            Scan this QR code with your 2FA app
+          </p>
+        </div>
+      )}
     </div>
   );
 }

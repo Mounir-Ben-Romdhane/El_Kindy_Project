@@ -2,36 +2,6 @@ import Event from "../models/Event.js";
 
 
 
-/* // Create Event
-export async function create(req, res) {
-  try {
-    const { title, description, price, images, dateDebut, dateFin } = req.body;
-    const newEvent = new Event({
-      title,
-      description,
-      price,
-      images,
-      dateDebut,
-      dateFin,
-    });
-    const savedEvent = await newEvent.save();
-    res.status(201).json({ savedEvent });
-  } catch (err) {
-    console.error(err);
-    if (err.name === "ValidationError") {
-      return res
-        .status(400)
-        .json({ error: "Validation Error", message: err.message });
-    }
-    res
-      .status(500)
-      .json({
-        error: "Internal Server Error",
-        message: "Could not create event",
-      });
-  }
-} */
-
 // Get All Events
 export async function list(req, res) {
   try {
@@ -49,28 +19,37 @@ export async function list(req, res) {
 }
 
 // Edit Event
-export async function update(req, res) {
-  const eventId = req.params.id;
+export const updateEvent = async (req, res) => {
   try {
-    const updatedEvent = await Event.findByIdAndUpdate(eventId, req.body, {
-      new: true,
-    });
-    if (!updatedEvent) {
-      return res
-        .status(404)
-        .json({ error: "Not Found", message: "Event not found" });
-    }
-    res.json(updatedEvent);
+      const { id } = req.params;
+      let updateData = req.body; // Assuming req.body contains the fields to update
+
+      // Log the received file data
+      console.log("Received file:", req.file);
+
+      // If a file is uploaded, add its path to updateData
+      if (req.file) {
+          console.log("File path:", req.file.path);
+          // Remove the 'public/assets/' prefix from the file path
+          updateData.picturePath = req.file.path.replace('public/assets/', '');
+      }
+      
+      // Log the updateData to verify its content
+      console.log("Update data:", updateData);
+
+      // Update the category with the given ID
+      const updateEvent = await Event.findByIdAndUpdate(id, updateData, { new: true });
+     
+      if (!updateEvent) {
+          return res.status(404).json({ success: false, error: "Event not found." });
+      }
+
+      return res.status(200).json({ success: true, data: updateEvent });
   } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({
-        error: "Internal Server Error",
-        message: "Could not update event",
-      });
+      console.log(err);
+      return res.status(500).json({ success: false, error: err.message });
   }
-}
+};
 
 // Delete Event
 export async function remove(req, res) {
@@ -102,19 +81,24 @@ export const addNewEvent = async (req, res) => {
         title,
         description,
         price,
-        images,
+        picturePath,
         dateDebut,
         dateFin,
       } = req.body;
+
+
+      
 
       const newEvent = new Event({
         title,
         description,
         price,
-        images,
+        picturePath,
         dateDebut,
         dateFin,
       });
+
+     
 
       const savedEvent = await newEvent.save();
 
@@ -129,3 +113,18 @@ export const addNewEvent = async (req, res) => {
       return res.status(500).json({ success: false, error: err.message });
   }
 };
+
+export const getEventById = async (req,res)=>{
+  try{
+    const eventId = req.params.id;
+    const event = await Event.findById(eventId); 
+    if (!event) {
+      return res.status(404).send({ message: "Event not found" });
+  }
+  res.status(200).send(event);
+  }catch (error) {
+    res.status(500).send({ message: "Error fetching event details", error: error.message });
+}
+}
+
+
