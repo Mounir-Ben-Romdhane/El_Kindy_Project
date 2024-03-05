@@ -1,22 +1,56 @@
 import BannerStart from 'components/BannerStart'
 import SideBar from 'components/SideBar'
 import TopBarBack from 'components/TopBarBack'
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-notifications/lib/notifications.css';
 import { Link, useNavigate } from 'react-router-dom'
+import { loadScripts } from '../../../scriptLoader';
+import axios from 'axios';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 
+//test
 
 function Index() {
 
   const [dataTheme, setDataTheme] = useState('');
+  const scriptsLoaded = useRef(false);
+  const [categories, setCategories] = useState([]);
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/api/categories");
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   useEffect(() => {
     // Retrieve the value of data-theme from localStorage
     const themeValue = localStorage.getItem('data-theme');
+
+    fetchCategories();
+    
     setDataTheme(themeValue);
+    const scripts = [
+      '/assets/js/functions.js',
+    ];
+
+    if (!scriptsLoaded.current) {
+      loadScripts(scripts);
+      scriptsLoaded.current = true;
+    }
+
+    return () => {
+      // Remove all script tags
+      const scriptTags = document.querySelectorAll('script[src^="/assets"]');
+      scriptTags.forEach((scriptTag) => {
+        scriptTag.parentNode.removeChild(scriptTag);
+      });
+    };
   }, []); // Empty dependency array ensures this effect runs only once
 
   
@@ -94,13 +128,20 @@ const handleFormSubmit = async (values, onSubmitProps) => {
   //await addCourse(values, onSubmitProps);
   values.preventDefault();
   const formData = new FormData(values.target); // Create FormData object from form
+  formData.append('fullDescription', fullDescription); // Append full description to form data
   const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
- // console.log("Values",formValues);
+  console.log("Values",formValues);
   await addCourse(formValues, onSubmitProps);
 };
 
 
+// Inside your component function
+const [fullDescription, setFullDescription] = useState('');
 
+// Function to handle changes in the full description field
+const handleFullDescriptionChange = (content) => {
+    setFullDescription(content);
+};
 
 
   return (
@@ -206,12 +247,10 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   <div className="col-md-6">
                     <label className="form-label">Course category</label>
                     <select name="courseCategory" className="form-select  border-0 z-index-9 bg-transparent" aria-label=".form-select-sm" data-search-enabled="true" required>
-                      <option value>Select category</option>
-                      <option>Engineer</option>
-                      <option>Medical</option>
-                      <option>Information technology</option>
-                      <option>Finance</option>
-                      <option>Marketing</option>
+                    <option value="">Select category</option>
+                        {categories.map(category => (
+                          <option key={category._id} value={category._id}>{category.name}</option>
+                        ))}
                     </select>
                   </div>
                   {/* Course level */}
@@ -241,7 +280,17 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   </div>
 
 
-                    
+                 {/* Course description */}
+<div className="col-12">
+    <label className="form-label">Add description</label>
+    
+    {/* Main toolbar */}
+    <div className="bg-body border rounded-bottom overflow-hidden">
+        <ReactQuill theme="snow" value={fullDescription} onChange={handleFullDescriptionChange} />
+    </div>
+</div>
+
+
                   
                 </div>
                 

@@ -6,11 +6,14 @@ import 'react-confirm-alert/src/react-confirm-alert.css'; // Importez les styles
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import Swal from 'sweetalert2'; // Importez SweetAlert2
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 const MySwal = withReactContent(Swal);
 
 function Index() {
   const [categories, setCategories] = useState([]);
+  const axiosPrivate = useAxiosPrivate();
 
+  /*
   useEffect(() => {
     // Fonction pour récupérer les catégories
     const fetchCategories = async () => {
@@ -32,10 +35,10 @@ function Index() {
       }
     };
     fetchCategories();
-  }, []);
+  }, []);*/
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/categories");
+      const response = await axiosPrivate.get("http://localhost:3001/api/categories");
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -171,7 +174,7 @@ function Index() {
         <img
         src={`http://localhost:3001/assets/${category.picturePath}`}
         alt="Category"
-        style={{ width: '30px', height: 'auto' }} // Adjust size as needed
+        style={{ width: '100px', height: 'auto' }} // Adjust size as needed
       />
       
         ) : (

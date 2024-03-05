@@ -82,6 +82,7 @@ function ClassesForm() {
       <div className="page-content">
         <TopBarBack />
         <ToastContainer />
+        <div className="page-content-wrapper border">
 
         {/* Add your banner component if you have one */}
         <BannerStart
@@ -155,6 +156,8 @@ function ClassesForm() {
           </form>
         </div>
       </div>
+      </div>
+
     </main>
   );
 }
