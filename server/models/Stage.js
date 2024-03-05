@@ -16,14 +16,13 @@ const StageSchema = new mongoose.Schema(
         finishDate: {
             type: String,
             required: true
-           
         }, 
         description: {
             type: String,
             required: true,
             min:5
         },
-        imageStage: {
+        picturePath: {
             type: String,
             required: true
         }

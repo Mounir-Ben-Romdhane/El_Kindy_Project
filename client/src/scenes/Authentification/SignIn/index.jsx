@@ -3,31 +3,51 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin, setLogout } from "../../../state";
 import { useSelector } from "react-redux";
-import refreshToken from "../TokenService/tokenService";
-import * as yup from "yup";
 
 //toast
 import GridLoader from "react-spinners/GridLoader";
 import { ToastContainer, toast } from "react-toastify";
 import Backdrop from "@mui/material/Backdrop";
+
 import TextField from '@mui/material/TextField'; 
 import Button from '@mui/material/Button'; 
 import Paper from '@mui/material/Paper'; 
 import Typography from '@mui/material/Typography'; 
 
+import GoogleAuth from "components/GoogleAuth";
+import FacebookLogin from "components/FacebookLogin";
+import { jwtDecode } from "jwt-decode";
+
+
 function Index() {
   const dispatch = useDispatch();
+
   const navigate = useNavigate();
+
   const [tokenCode, setTokenCode] = useState("");
   const [loginStatus, setLoginStatus] = useState(null);
   const isAuth = Boolean(useSelector((state) => state.accessToken));
   const [credentials, setCredentials] = useState({ email: '', password: '' });
 
+
+  const isAuth = useSelector((state) => state.accessToken);
+
   useEffect(() => {
     if (isAuth) {
-      navigate("/home");
+      const userRoles = isAuth ? jwtDecode(isAuth).roles : []; 
+        console.log("userRole ",userRoles);
+        if (userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('parent')) {
+          navigate("/dashboard-admin");
+        } else if(userRoles.includes('parent') || userRoles.includes('student')){
+            navigate("/home");
+        }
     }
+
   }, [isAuth, navigate]);
+
+    
+  });
+
 
   let [loading, setLoading] = useState(true);
   let [color, setColor] = useState("#399ebf");
@@ -63,6 +83,7 @@ function Index() {
       navigate("/");
     }, 2500);
   };
+  
   const login = async (values, onSubmitProps) => {
     setOpen(true);
     setCredentials({ email: values.email, password: values.password });
@@ -80,7 +101,9 @@ function Index() {
         toastShowError(loggedIn.message);
         setOpen(false);
       } else if (loggedInResponse.status === 401) {
+
         setLoginStatus(loggedInResponse.status);
+
         toastShowWarning(loggedIn.message);
         setOpen(false);
         dispatch(setLogout()); // Logout on refresh token error
@@ -89,12 +112,27 @@ function Index() {
         setOpen(false);
         dispatch(
           setLogin({
+
             user: loggedIn.user,
+
+            //user: loggedIn.user,
+
             accessToken: loggedIn.accessToken,
             refreshToken: loggedIn.refreshToken,
           })
         );
+
         navigate("/home");
+
+        const accessTokenn = loggedIn.accessToken;
+        const userRoles = accessTokenn ? jwtDecode(accessTokenn).roles : []; 
+        //console.log("userRole ",userRoles);
+        if (userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('superAdmin')) {
+          navigate("/dashboard-admin");
+        } else if (userRoles.includes('student') || userRoles.includes('parent')) {
+            navigate("/home");
+        }
+
       }
     } catch (error) {
       console.error("Error logging in:", error);
@@ -157,12 +195,25 @@ function Index() {
             <div className="row">
               {/* left */}
 
-              <div className="col-12 col-lg-6 m-auto">
+              <div className="col-12 col-lg-6 ">
+                <img
+                  className=""
+                  src="/assets/images/logo/logo.png"
+                  style={{
+                    width: "150px",
+                    height: "100px",
+                  }}
+                  alt
+                />
                 <div className="row my-5">
                   <div className="col-sm-10 col-xl-8 m-auto">
+                  
                     {/* Title */}
-                    <span className="mb-0 fs-1">👋</span>
-                    <h1 className="fs-2">Login into Eduport!</h1>
+                    <h1 className="fs-2">Login into EL KINDY <img
+                      src="assets/images/element/music-notes-svgrepo-com.svg"
+                      className="h-40px mb-2"
+                      alt=""
+                    /></h1>
                     <p className="lead mb-4">
                       Nice to see you! Please log in with your account.
                     </p>
@@ -259,18 +310,13 @@ function Index() {
                       </div>
                       {/* Social btn */}
                       <div className="col-xxl-6 d-grid">
-                        <a href="#" className="btn bg-google mb-2 mb-xxl-0">
-                          <i className="fab fa-fw fa-google text-white me-2" />
-                          Login with Google
-                        </a>
+                        <GoogleAuth />
                       </div>
                       {/* Social btn */}
-                      <div className="col-xxl-6 d-grid">
-                        <a href="#" className="btn bg-facebook mb-0">
-                          <i className="fab fa-fw fa-facebook-f me-2" />
-                          Login with Facebook
-                        </a>
-                      </div>
+                     
+                        <FacebookLogin />
+                        
+
                     </div>
                     {/* Sign up link */}
                     <div className="mt-4 text-center">
@@ -285,21 +331,22 @@ function Index() {
               </div>
 
               {/* Right */}
-
               <div className="col-12 col-lg-6 d-md-flex align-items-center justify-content-center bg-primary bg-opacity-10 vh-lg-100">
+                  
                 <div className="p-3 p-lg-5">
                   {/* Title */}
                   <div className="text-center">
-                    <h2 className="fw-bold">
-                      Welcome to our largest community
-                    </h2>
-                    <p className="mb-0 h6 fw-light">
-                      Let's learn something new today!
-                    </p>
+                    <h1 className="fw-bold">
+                      Art has been in you ! 
+                    </h1>
+                    <h4 className="fw-bold">
+                        For 20 years ...
+                    </h4>
+                    
                   </div>
                   {/* SVG Image */}
                   <img
-                    src="assets/images/element/02.svg"
+                    src="assets/images/element/orchpreview.png"
                     className="mt-5"
                     alt
                   />
