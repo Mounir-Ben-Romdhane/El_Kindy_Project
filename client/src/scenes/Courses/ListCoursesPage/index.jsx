@@ -19,25 +19,14 @@ function Index() {
   
   //refresh token
   const axiosPrivate = useAxiosPrivate();
-  const [selectedCourse, setSelectedCourse] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [pagination, setPagination] = useState({
     currentPage: 1,
     entriesPerPage: 8,
   });
-  const [categories, setCategories] = useState([]);
-  const fetchCategories = async () => {
-    try {
-      const response = await axiosPrivate.get("http://localhost:3001/api/categories");
-      setCategories(response.data);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
 
   useEffect(() => {
-    fetchCategories();
 
     /*
     const fetchData = async () => {
@@ -106,9 +95,10 @@ function Index() {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:3001/course/delete/${id}`, {
+      /*await fetch(`http://localhost:3001/course/delete/${id}`, {
         method: "DELETE",
-      });
+      });*/
+      await axiosPrivate.delete(`/course/delete/${id}`);
 
       toast.success("Course deleted successfully !!", {
         autoClose: 1500,

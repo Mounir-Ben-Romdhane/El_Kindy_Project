@@ -11,7 +11,7 @@ function index() {
                 <div className="row">
                     <div className="col-12 text-center">
                     {/* Image */}
-                    <img src="assets/images/element/error404-01.svg" className="h-200px h-md-400px mb-4" alt />
+                    <img src="/assets/images/element/error404-01.svg" className="h-200px h-md-400px mb-4" alt />
                     {/* Title */}
                     <h1 className="display-1 text-danger mb-0">404</h1>
                     {/* Subtitle */}

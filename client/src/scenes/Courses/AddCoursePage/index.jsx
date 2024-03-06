@@ -10,18 +10,39 @@ import { loadScripts } from '../../../scriptLoader';
 import axios from 'axios';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-
+import 'react-quill/dist/quill.bubble.css';
+//refreshToken
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 //test
+const  modules  = {
+  toolbar: [
+      [{ font: [] }],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      [{ script:  "sub" }, { script:  "super" }],
+      ["blockquote", "code-block"],
+      [{ list:  "ordered" }, { list:  "bullet" }],
+      ["link"],
+      ["clean"],
+  ],
+};
 
 function Index() {
 
   const [dataTheme, setDataTheme] = useState('');
   const scriptsLoaded = useRef(false);
   const [categories, setCategories] = useState([]);
+  //refresh token
+  const axiosPrivate = useAxiosPrivate();
+
+  
+
+
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/categories");
+      const response = await axiosPrivate.get('/api/categories');
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -93,29 +114,24 @@ const addCourse = async (values, onSubmitProps) => {
     console.log("formData",formData);
     console.log("picture name", values.picture.name);
     
-    const savedCourseResponse = await fetch(
-        "http://localhost:3001/course/add",
-        {
-            method: "POST",
-            body: formData,
-        }
-    );
-    const savedCourse = await savedCourseResponse.json();
-    //onSubmitProps.resetForm();
-
-    if (savedCourse) {
-        console.log('Course added!');
-            console.log("Course", savedCourse);
-            // Show the toast notification with autoClose: false
-            toast.success("Course added successfully !!", { autoClose: 1500,
+    try {
+      const response = await axiosPrivate.post("/course/add", formData);
+          const savedCourse = response.data;
+          console.log('Course added!');
+          console.log("Course", savedCourse);
+          // Show the toast notification with autoClose: false
+          toast.success("Course added successfully !!", { autoClose: 1500,
               style: {
-                color: 'green' // Text color
+                  color: 'green' // Text color
               }});
-            setTimeout(() => {
+          setTimeout(() => {
               navigate('/listCourses');
-            }, 2000);
-            
-    } 
+          }, 2000);
+  } catch (error) {
+      console.error('Error adding course:', error);
+      // Handle error
+      toast.error("Failed to add course. Please try again.");
+  }
 };
 
 const handleFormSubmit = async (values, onSubmitProps) => {
@@ -280,15 +296,24 @@ const handleFullDescriptionChange = (content) => {
                   </div>
 
 
-                 {/* Course description */}
-<div className="col-12">
+                  <div className="col-12">
     <label className="form-label">Add description</label>
     
     {/* Main toolbar */}
-    <div className="bg-body border rounded-bottom overflow-hidden">
-        <ReactQuill theme="snow" value={fullDescription} onChange={handleFullDescriptionChange} />
+    <div className="bg-body border overflow-hidden" style={{ borderRadius: '15px' }}>
+        <ReactQuill 
+            modules={modules}  
+            theme="snow" 
+            value={fullDescription} 
+            onChange={handleFullDescriptionChange} 
+            placeholder="The content starts here..."  
+            style={{ height: '100%' }} // Adjust the height of the ReactQuill editor
+        />
     </div>
 </div>
+
+
+
 
 
                   

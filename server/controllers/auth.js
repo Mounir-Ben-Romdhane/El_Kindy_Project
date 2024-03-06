@@ -59,7 +59,7 @@ export const login = async (req, res) => {
         await user.save();
 
         const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
-         roles: user.roles,  email : user.email }, process.env.JWT_SECRET, {expiresIn:"2m"});
+         roles: user.roles,  email : user.email }, process.env.JWT_SECRET, {expiresIn:"10m"});
         
         if(!user.verified) {
             const url = `http://localhost:3000/verify-account/${user._id}/verify/${accessToken}`;
@@ -95,7 +95,7 @@ export const refreshToken = async (req, res) => {
         }
 
         const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
-        roles: user.roles,  email : user.email  }, process.env.JWT_SECRET, { expiresIn: "30s" });
+        roles: user.roles,  email : user.email  }, process.env.JWT_SECRET, { expiresIn: "10m" });
         res.json({ accessToken });
     } catch (error) {
         console.error(error);
