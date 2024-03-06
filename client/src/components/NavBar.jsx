@@ -189,7 +189,7 @@ function NavBar() {
               <li className="dropdown-submenu dropend">
                 <a className="dropdown-item dropdown-toggle" href="#"><i className="fas fa-user-tie fa-fw me-1" />Instructor</a>
                 <ul className="dropdown-menu dropdown-menu-start" data-bs-popper="none">
-                  <li> <a className="dropdown-item" href="/dashbordTeacher"><i className="bi bi-grid-fill fa-fw me-1" />Dashboard</a> </li>
+                  <li> <Link className="dropdown-item" to="/dashbordTeacher"><i className="bi bi-grid-fill fa-fw me-1" />Dashboard</Link> </li>
                   <li> <a className="dropdown-item" href="instructor-create-course.html"><i className="bi bi-basket-fill fa-fw me-1" />Courses</a> </li>
                   <li> <a className="dropdown-item" href="instructor-create-course.html"><i className="bi bi-file-earmark-plus-fill fa-fw me-1" />Create Course</a> </li>
                   <li> <a className="dropdown-item" href="course-added.html"><i className="bi bi-file-check-fill fa-fw me-1" />Course Added</a> </li>
@@ -205,7 +205,7 @@ function NavBar() {
               <li className="dropdown-submenu dropend">
                 <a className="dropdown-item dropdown-toggle" href="#"><i className="fas fa-user-graduate fa-fw me-1" />Student</a>
                 <ul className="dropdown-menu dropdown-menu-start" data-bs-popper="none">
-                  <li> <a className="dropdown-item" href="/dashbordStudent"><i className="bi bi-grid-fill fa-fw me-1" />Dashboard</a> </li>
+                  <li> <Link className="dropdown-item" to="/dashbordStudent"><i className="bi bi-grid-fill fa-fw me-1" />Dashboard</Link> </li>
                   <li> <a className="dropdown-item" href="student-subscription.html"><i className="bi bi-card-checklist fa-fw me-1" />My Subscriptions</a> </li>
                   <li> <a className="dropdown-item" href="student-course-list.html"><i className="bi bi-basket-fill fa-fw me-1" />Courses</a> </li>
                   <li> <a className="dropdown-item" href="student-course-resume.html"><i className="far fa-fw fa-file-alt me-1" />Course Resume <span className="badge bg-success ms-2 smaller">New</span></a> </li>

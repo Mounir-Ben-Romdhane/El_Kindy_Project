@@ -31,7 +31,7 @@ import categorieRoutes from "./routes/categorieRoutes.js"; // Import des routes 
 import { verifyToken } from "./middleware/auth.js";
 import ChatRoute from './routes/ChatRoute.js'
 import MessageRoute from './routes/MessageRoute.js'
-
+import meetingRoutes from './routes/meetingRoutes.js';
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -90,6 +90,7 @@ app.use("/inscription", inscriptionRoutes);
 
 app.use('/chat', ChatRoute)
 app.use('/message', MessageRoute)
+app.use('/meeting', meetingRoutes);
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
