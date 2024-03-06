@@ -1,9 +1,5 @@
 
 
-
-
-
-
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -46,10 +42,11 @@ import Room from '../src/scenes/PlatformTeacher/Room';
 
 import Chat from '../src/scenes/Chat/Chat'
 
-
-
+import AdminReservation from '../src/scenes/EventsPage/AdminReservation'
+import DetailEvents from '../src/scenes/EventsPage/DetailEventPage'
+import EditEventPage from '../src/scenes/EventsPage/EditEventPage'
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
-
+import ListEventUser from '../src/scenes/EventsPage/EventFront'
 import EditCourse from "scenes/Courses/EditCoursePage";
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
@@ -197,6 +194,10 @@ function App() {
         />
 
         
+<Route  path="/listReservation" 
+              element={isAuth ? <AdminReservation /> : <Navigate to="/" /> }   
+          />
+
 
         <Route
           path="/dashbordStudent"
@@ -266,6 +267,16 @@ function App() {
           path="/addEvent"
           element={isAuth ? <AddEventPage /> : <Navigate to="/" />}
         />
+
+<Route path="/editEvent/:id" element={isAuth ? <EditEventPage /> : <Navigate to="/" />} />
+
+<Route path="/detailEvent/:id"
+               element={isAuth ? <DetailEvents /> : <Navigate to="/" />} />
+
+<Route path="/listEventUser"
+               element={isAuth ? <ListEventUser /> : <Navigate to="/" />} />
+
+
         <Route
           path="/addCourse"
           element={isAuth ? <AddCoursePage /> : <Navigate to="/" />}
