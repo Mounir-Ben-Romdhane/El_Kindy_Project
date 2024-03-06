@@ -1,30 +1,5 @@
 import Salle from "../models/Salle.js";
 
-export async function create(req, res) {
-  try {
-    const { numero, capacity, status} = req.body;
-    const newSalle = new Salle({
-        numero,
-        capacity,
-        status,
-    });
-    const savedSalle = await newSalle.save();
-    res.status(201).json({ savedSalle });
-  } catch (err) {
-    console.error(err);
-    if (err.name === "ValidationError") {
-      return res
-        .status(400)
-        .json({ error: "Validation Error", message: err.message });
-    }
-    res
-      .status(500)
-      .json({
-        error: "Internal Server Error",
-        message: "Could not create salle",
-      });
-  }
-}
 
 // Get All salles
 export async function list(req, res) {
@@ -41,6 +16,8 @@ export async function list(req, res) {
       });
   }
 }
+
+
 
 // Edit salle
 /*export async function update(req, res) {
@@ -119,5 +96,30 @@ export const getClasseById = async (req, res) => {
       res.status(200).json(salle);
   } catch (error) {
       res.status(400).json({ message: error.message });
+  }
+};
+
+export const create = async (req, res) => {
+  try {
+    console.log('Request Body:', req.body);
+    const { name, capacity, status } = req.body;
+
+    const newSalle = new Salle({
+      name,
+      capacity,
+      status,
+    });
+
+    const savedSalle = await newSalle.save();
+
+    return res.status(201).json({
+      success: true,
+      id: savedSalle._id,
+      message: "The class has been created!",
+    });
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ success: false, error: err.message });
   }
 };

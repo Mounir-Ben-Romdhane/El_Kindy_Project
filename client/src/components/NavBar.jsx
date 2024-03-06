@@ -85,9 +85,11 @@ function NavBar() {
   <nav className="navbar navbar-expand-xl">
     <div className="container">
       {/* Logo START */}
+
       <a className="navbar-brand" href="index.html">
         <img className="light-mode-item navbar-brand-item" src="/assets/images/logo/logo.png" style={{ width: '150px', height: '60px' }} alt="logo" />
         <img className="dark-mode-item navbar-brand-item" src="/assets/images/logo/logo.png" style={{ width: '150px', height: '60px' }} alt="logo" />
+
       </a>
       {/* Logo END */}
       {/* Responsive navbar toggler */}
@@ -201,6 +203,73 @@ function NavBar() {
               <li> <a className="dropdown-item" href="wishlist.html">Wishlist</a></li>
             </ul>
           </li>
+
+          {/* Nav item 3 Account */}
+          <li className="nav-item dropdown">
+            <a className="nav-link dropdown-toggle" href="#" id="accounntMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Accounts</a>
+            <ul className="dropdown-menu" aria-labelledby="accounntMenu">
+              {/* Dropdown submenu */}
+              <li className="dropdown-submenu dropend">
+                <a className="dropdown-item dropdown-toggle" href="#"><i className="fas fa-user-tie fa-fw me-1" />Instructor</a>
+                <ul className="dropdown-menu dropdown-menu-start" data-bs-popper="none">
+                  <li> <a className="dropdown-item" href="/dashbordTeacher"><i className="bi bi-grid-fill fa-fw me-1" />Dashboard</a> </li>
+                  <li> <a className="dropdown-item" href="instructor-create-course.html"><i className="bi bi-basket-fill fa-fw me-1" />Courses</a> </li>
+                  <li> <a className="dropdown-item" href="instructor-create-course.html"><i className="bi bi-file-earmark-plus-fill fa-fw me-1" />Create Course</a> </li>
+                  <li> <a className="dropdown-item" href="course-added.html"><i className="bi bi-file-check-fill fa-fw me-1" />Course Added</a> </li>
+                  <li> <a className="dropdown-item" href="instructor-quiz.html"><i className="bi bi-question-diamond fa-fw me-1" />Quiz <span className="badge bg-success ms-2 smaller">New</span></a> </li>
+                  <li> <a className="dropdown-item" href="instructor-earning.html"><i className="fas fa-chart-line fa-fw me-1" />Earnings</a> </li>
+                  <li> <a className="dropdown-item" href="instructor-studentlist.html"><i className="fas fa-user-graduate fa-fw me-1" />Students</a> </li>
+                  <li> <a className="dropdown-item" href="instructor-order.html"><i className="bi bi-cart-check-fill fa-fw me-1" />Orders</a> </li>
+                  <li> <a className="dropdown-item" href="instructor-review.html"><i className="bi bi-star-fill fa-fw me-1" />Reviews</a> </li>
+                  <li> <a className="dropdown-item" href="instructor-payout.html"><i className="fas fa-wallet fa-fw me-1" />Payout</a> </li>
+                </ul>
+              </li>
+              {/* Dropdown submenu */}
+              <li className="dropdown-submenu dropend">
+                <a className="dropdown-item dropdown-toggle" href="#"><i className="fas fa-user-graduate fa-fw me-1" />Student</a>
+                <ul className="dropdown-menu dropdown-menu-start" data-bs-popper="none">
+                  <li> <a className="dropdown-item" href="/dashbordStudent"><i className="bi bi-grid-fill fa-fw me-1" />Dashboard</a> </li>
+                  <li> <a className="dropdown-item" href="student-subscription.html"><i className="bi bi-card-checklist fa-fw me-1" />My Subscriptions</a> </li>
+                  <li> <a className="dropdown-item" href="student-course-list.html"><i className="bi bi-basket-fill fa-fw me-1" />Courses</a> </li>
+                  <li> <a className="dropdown-item" href="student-course-resume.html"><i className="far fa-fw fa-file-alt me-1" />Course Resume <span className="badge bg-success ms-2 smaller">New</span></a> </li>
+                  <li> <a className="dropdown-item" href="student-quiz.html"><i className="bi bi-question-diamond fa-fw me-1" />Quiz <span className="badge bg-success ms-2 smaller">New</span></a> </li>
+                  <li> <a className="dropdown-item" href="student-payment-info.html"><i className="bi bi-credit-card-2-front-fill fa-fw me-1" />Payment Info</a> </li>
+                  <li> <a className="dropdown-item" href="student-bookmark.html"><i className="fas bi-cart-check-fill fa-fw me-1" />Wishlist</a> </li>
+                </ul>
+              </li>
+              <li> <a className="dropdown-item" href="admin-dashboard.html"><i className="fas fa-user-cog fa-fw me-1" />Admin</a> </li>
+              <li> <hr className="dropdown-divider" /></li>
+              <li> <a className="dropdown-item" href="instructor-edit-profile.html"><i className="fas fa-fw fa-edit me-1" />Edit Profile</a> </li>
+              <li> <a className="dropdown-item" href="instructor-setting.html"><i className="fas fa-fw fa-cog me-1" />Settings</a> </li>
+              <li> <a className="dropdown-item" href="instructor-delete-account.html"><i className="fas fa-fw fa-trash-alt me-1" />Delete Profile</a> </li>
+              <li> <hr className="dropdown-divider" /></li>
+              {/* Dropdown Level */}
+              <li className="dropdown-submenu dropend">
+                <a className="dropdown-item dropdown-toggle" href="#">Dropdown levels</a>
+                <ul className="dropdown-menu dropdown-menu-start" data-bs-popper="none">
+                  {/* dropdown submenu open right */}
+                  <li className="dropdown-submenu dropend">
+                    <a className="dropdown-item dropdown-toggle" href="#">Dropdown (end)</a>
+                    <ul className="dropdown-menu" data-bs-popper="none">
+                      <li> <a className="dropdown-item" href="#">Dropdown item</a> </li>
+                      <li> <a className="dropdown-item" href="#">Dropdown item</a> </li>
+                    </ul>
+                  </li>
+                  <li> <a className="dropdown-item" href="#">Dropdown item</a> </li>
+                  {/* dropdown submenu open left */}
+                  <li className="dropdown-submenu dropstart">
+                    <a className="dropdown-item dropdown-toggle" href="#">Dropdown (start)</a>
+                    <ul className="dropdown-menu dropdown-menu-end" data-bs-popper="none">
+                      <li> <a className="dropdown-item" href="#">Dropdown item</a> </li>
+                      <li> <a className="dropdown-item" href="#">Dropdown item</a> </li>
+                    </ul>
+                  </li>
+                  <li> <a className="dropdown-item" href="#">Dropdown item</a> </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+
           {/* Nav item 4 Component*/}
           <li className="nav-item "><a className="nav-link" href="docs/alerts.html">Témoignags</a></li>
           {/* Nav item 4 Component*/}
