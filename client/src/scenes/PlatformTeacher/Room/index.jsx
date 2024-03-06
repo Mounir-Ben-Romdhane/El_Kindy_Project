@@ -7,21 +7,26 @@ import SideBarTeacher from 'components/SideBarTeacher';
 import { useSelector } from "react-redux";
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
 //import MeetingHomeStudent from '../src/scenes/PlatformStudent/MeetingHomeStudent';
-import MeetingHomeStudent from '../../PlatformStudent/MeetingHomeStudent';
+import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 
 const Room = () => {
     const { roomId } = useParams()
-    const currentUser = useSelector(state => state.user);
+    const accessToken = useSelector((state) => state.accessToken);
+    
+
+    const decodeToken = accessToken ? jwtDecode(accessToken) : "";
+
+   // const currentUser = useSelector(state => state.user);
     const [meetingLink, setMeetingLink] = useState(""); // Ajout de l'état local
     const [showLinkInterface, setShowLinkInterface] = useState(false);
-    const [showLinkInterfaceInMeetingHome, setShowLinkInterfaceInMeetingHome] = useState(false);
+    const [setShowLinkInterfaceInMeetingHome] = useState(false);
 
     const myMeeting = async (element) => {
         const appID = 984376862;
         const serverSecret = "7deae5e2a3a2361722b16d4867d0e1a3";
-        console.log("Current User:", currentUser);
-        if (currentUser && currentUser.firstName) {
-            const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomId, Date.now().toString(), currentUser.firstName);
+        console.log("Current User:", decodeToken);
+        if (decodeToken && decodeToken.fullName) {
+            const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomId, Date.now().toString(), decodeToken.fullName);
             console.log("Kit Token:", kitToken);
             const zc = ZegoUIKitPrebuilt.create(kitToken);
             zc.joinRoom({
