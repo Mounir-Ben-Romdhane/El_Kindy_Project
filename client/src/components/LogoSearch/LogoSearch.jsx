@@ -15,7 +15,7 @@ const LogoSearch = ({ onSearch }) => {
     <div className="Search">
       <input
         type="text"
-        placeholder="#Explore"
+        placeholder="Rechercher"
         value={searchTerm}
         onChange={handleChange}
       />

@@ -15,6 +15,34 @@ function NavBar() {
     dispatch(
       setLogout()
   );
+
+  navigate("/");
+  }
+
+  const scriptsLoaded = useRef(false);
+
+  useEffect(() => {
+    const scripts = [
+      //'/assets/js/functions.js',
+    ];
+
+    if (!scriptsLoaded.current) {
+      loadScripts(scripts);
+      scriptsLoaded.current = true;
+    }
+
+    return () => {
+      // Remove all script tags
+      const scriptTags = document.querySelectorAll('script[src^="/assets"]');
+      scriptTags.forEach((scriptTag) => {
+        scriptTag.parentNode.removeChild(scriptTag);
+      });
+    };
+  }, []); // Empty dependency array ensures this effect runs only once
+
+  return (
+
+
   navigate("/home");
   }
 
@@ -46,6 +74,7 @@ function NavBar() {
   }, []); // Empty dependency array ensures this effect runs only once
 
   return (
+
 
     
 
@@ -194,7 +223,9 @@ function NavBar() {
       {/* Profile START */}
       {accessToken ? <div className="dropdown ms-1 ms-lg-0">
         <a className="avatar avatar-sm p-0" href="#" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" aria-expanded="false">
+
           <img className="avatar-img rounded-circle" src={accessToken?.picturePath} alt="avatar" />
+
         </a>
         <ul className="dropdown-menu dropdown-animation dropdown-menu-end shadow pt-3" aria-labelledby="profileDropdown">
           {/* Profile info */}
@@ -202,7 +233,9 @@ function NavBar() {
             <div className="d-flex align-items-center">
               {/* Avatar */}
               <div className="avatar me-3">
+
                 <img className="avatar-img rounded-circle shadow" src={accessToken?.picturePath} alt="avatar" />
+
               </div>
               <div>
                 <a className="h6 mt-2 mt-sm-0" href="#">
