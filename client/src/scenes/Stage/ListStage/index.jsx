@@ -144,11 +144,15 @@ function Index() {
                           </td>
                           <td>{stage.startDate}</td>
                           <td>{stage.finishDate}</td>
-                          <td>{stage.description}</td>
+                          <td>{stage.description.length > 50 ? `${stage.description.substring(0, 50)}...` : stage.description}</td>
 
                           <td>
-                           < Link to={`/EditStage/${stage._id}`} className="fas fa-edit text-warning me-1 mb-1 mb-md-0" onClick={() => handleEditClick(stage)} style={{ cursor: 'pointer', fontSize: '1.4rem' }}></Link>
-                            <i className="fas fa-trash-alt text-danger me-1 mb-1 mb-md-0" onClick={() => handleDelete(stage._id)} style={{ cursor: 'pointer', fontSize: '1.4rem' }}></i>
+
+                          <Link to={`/EditStage/${stage._id}`}  className="btn btn-sm btn-dark me-1 mb-1 mb-md-0"  onClick={() => handleEditClick(stage)}>
+          Edit
+        </Link>
+                           <button onClick={() => handleDelete(stage._id)}className="btn btn-sm btn-danger me-1 mb-1 mb-md-0">Delete</button>
+
                           </td>
                         </tr>
                       ))}
