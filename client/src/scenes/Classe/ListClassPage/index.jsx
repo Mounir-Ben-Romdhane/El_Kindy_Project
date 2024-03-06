@@ -87,16 +87,17 @@ function Index() {
     handleSort();
   }, [sortOption]);
 
-    // Fonction pour trier les classes
-  const handleSort = () => {
-    const sortedClasses = [...classes];
-    if (sortOption === "asc") {
-      sortedClasses.sort((a, b) => a.numero - b.numero);
-    } else if (sortOption === "desc") {
-      sortedClasses.sort((a, b) => b.numero - a.numero);
-    }
-    setClasses(sortedClasses);
-  };
+  // Fonction pour trier les classes
+const handleSort = () => {
+  const sortedClasses = [...classes];
+  if (sortOption === "asc") {
+    sortedClasses.sort((a, b) => (a.name && b.name) ? a.name.localeCompare(b.name) : 0);
+  } else if (sortOption === "desc") {
+    sortedClasses.sort((a, b) => (a.name && b.name) ? b.name.localeCompare(a.name) : 0);
+  }
+  setClasses(sortedClasses);
+};
+
 
   return (
     <div>
@@ -169,7 +170,7 @@ function Index() {
                     {/* Table head */}
                     <thead>
   <tr>
-    <th scope="col" className="border-0 rounded-start">Numero</th>
+    <th scope="col" className="border-0 rounded-start">Name</th>
     <th scope="col" className="border-0">Capcité</th>
     <th scope="col" className="border-0">Status</th> {/* Nouvelle colonne pour l'image */}
     <th scope="col" className="border-0 rounded-end">Action</th>
@@ -178,7 +179,7 @@ function Index() {
 <tbody>
   {classes.map((clas, index) => (
     <tr key={index}>
-      <td>{clas.numero}</td>
+      <td>{clas.name}</td>
       <td>{clas.capacity}</td>
       <td>{clas.status}</td>
 

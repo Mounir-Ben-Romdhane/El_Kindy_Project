@@ -53,14 +53,20 @@ const loggedIn = await loggedInResponse.json();
     await login(response);
   };
 
+const handleClick = ()=>{
+  console.log("hh")
+}
   return (
     <div className="col-xxl-6 d-grid">    
       <FacebookLoginButton
+        className="btn bg-facebook mb-2 mb-xxl-0"
         cssClass="btn bg-facebook mb-2 mb-xxl-0 w-100"
         appId="902291134956476"
         callback={responseFacebook}
       >
       </FacebookLoginButton>
+
+
   </div>
   );
 };
