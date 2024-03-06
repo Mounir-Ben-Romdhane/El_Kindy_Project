@@ -12,6 +12,10 @@ const CourseSchema = new mongoose.Schema(
             type:String,
             required:true,
         },
+        fullDescription:{
+            type:String,
+            default: ""
+        },
         picturePath: {
             type: String,
             default: "",

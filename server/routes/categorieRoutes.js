@@ -4,7 +4,8 @@ import { createCategorie, getAllCategories, updateCategorie, deleteCategorie, ge
 
 const router = express.Router();
 
-router.get("/",verifyToken, getAllCategories);
+//router.get("/",verifyToken, getAllCategories);
+router.get("/", getAllCategories);
 router.put("/:id", updateCategorie);
 router.delete("/:id", deleteCategorie);
 router.get("/:id", getCategorieById);

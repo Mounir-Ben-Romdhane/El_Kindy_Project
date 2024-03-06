@@ -8,11 +8,13 @@ import { userChats } from "../../api/ChatRequests";
 import { useDispatch, useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import NavBar from "components/NavBar";
+import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 
 const Chat = () => {
   const dispatch = useDispatch();
   const socket = useRef();
-  const user = useSelector((state) => state.user);
+  const accessToken = useSelector((state) => state.accessToken);
+  const userId = accessToken ? jwtDecode(accessToken).id : "";
   const [chats, setChats] = useState([]);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
@@ -24,7 +26,7 @@ const Chat = () => {
   useEffect(() => {
     const getChats = async () => {
       try {
-        const { data } = await userChats(user._id);
+        const { data } = await userChats(userId);
         setChats(data);
         setFilteredChats(data); // Initialize filtered chats with all chats
       } catch (error) {
@@ -32,16 +34,16 @@ const Chat = () => {
       }
     };
     getChats();
-  }, [user._id]);
+  }, [userId]);
 
   // Connect to Socket.io
   useEffect(() => {
     socket.current = io("ws://localhost:8800");
-    socket.current.emit("new-user-add", user._id);
+    socket.current.emit("new-user-add", userId);
     socket.current.on("get-users", (users) => {
       setOnlineUsers(users);
     });
-  }, [user]);
+  }, []);
 
   // Send Message to socket server
   useEffect(() => {
@@ -70,7 +72,7 @@ const Chat = () => {
   
 
   const checkOnlineStatus = (chat) => {
-    const chatMember = chat.members.find((member) => member !== user._id);
+    const chatMember = chat.members.find((member) => member !== userId);
     const online = onlineUsers.find((user) => user.userId === chatMember);
     return online ? true : false;
   };
@@ -92,7 +94,7 @@ const Chat = () => {
                   <Conversation
                     key={chat._id}
                     data={chat}
-                    currentUser={user._id}
+                    currentUser={userId}
                     online={checkOnlineStatus(chat)}
                   />
                 </div>
@@ -106,7 +108,7 @@ const Chat = () => {
           <div style={{ width: "20rem", alignSelf: "flex-end" }}></div>
           <ChatBox
             chat={currentChat}
-            currentUser={user._id}
+            currentUser={userId}
             setSendMessage={setSendMessage}
             receivedMessage={receivedMessage}
           />

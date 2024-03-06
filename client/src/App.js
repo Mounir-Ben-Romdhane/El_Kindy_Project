@@ -25,10 +25,11 @@ import AddClassPage from "../src/scenes/Classe/AddClassPage";
 import Category from "../src/scenes/CategoryHome";
 import InscriptionPage from "./scenes/Inscriptions/InscriptionPage";
 import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
+import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
 
 import Chat from '../src/scenes/Chat/Chat'
 
-import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route  } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 import { loadScripts } from "./scriptLoader";
@@ -79,8 +80,9 @@ function App() {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
+        {/* auth routes */}
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route
           path="/reset-password/:id?/:token?"
@@ -90,10 +92,15 @@ function App() {
           path="/verify-account/:id/verify/:token"
           element={<EmailVerify />}
         />
+
+        {/* public routes */}
+        <Route path="/" element={<Navigate to="/home" />} />
         <Route
           path="/home"
-          element={isAuth ? <HomePage /> : <Navigate to="/" />}
+          element={<HomePage /> }
         />
+
+        {/* we want to protect these routes */}
         <Route
           path="/category"
           element={isAuth ? <Category /> : <Navigate to="/" />}
@@ -120,6 +127,16 @@ function App() {
           element={
             <PrivateRoute
               element={<InscriptionList />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/inscriptionDetails/:id"
+          element={
+            <PrivateRoute
+              element={<InscriptionDetails />}
               requiredRoles={["superAdmin", "admin"]}
             />
           }
