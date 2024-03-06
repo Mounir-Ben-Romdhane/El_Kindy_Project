@@ -11,12 +11,14 @@ function Footer() {
               {/* Widget 1 START */}
               <div className="col-lg-3">
                 {/* logo */}
+
                 {/* Logo START */}
                   <a className="navbar-brand" href="index.html">
                     <img className="light-mode-item navbar-brand-item" src="/assets/images/logo/logo.png" style={{ width: '150px', height: '60px' }} alt="logo" />
                     <img className="dark-mode-item navbar-brand-item" src="/assets/images/logo/logo.png" style={{ width: '150px', height: '60px' }} alt="logo" />
                   </a>
                   {/* Logo END */}
+
                 <p className="my-3">
                   Eduport education theme, built specifically for the education
                   centers which is dedicated to teaching and involve learners.

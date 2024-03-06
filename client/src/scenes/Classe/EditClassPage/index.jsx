@@ -8,7 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 function ClassesForm() {
   const [formState, setFormState] = useState({
-    numero: "",
+    name: "",
     capacity: "",
     status: "",
   });
@@ -24,7 +24,7 @@ function ClassesForm() {
           `http://localhost:3001/salle/${id}`
         );
         setFormState({
-          numero: response.data.numero,
+          name: response.data.name,
           capacity: response.data.capacity,
           status: response.data.status,
 
@@ -103,15 +103,16 @@ function ClassesForm() {
           <form onSubmit={handleSubmit}>
             {/* Category Name */}
             <div className="mb-3">
-              <label htmlFor="numero" className="form-label">
-                Numero
+              <label htmlFor="name" className="form-label">
+                Name
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="numero"
-                name="numero"
-                value={formState.numero}
+                id="name"
+                name="name"
+                required
+                value={formState.name}
                 onChange={handleChange}
               />
             </div>
@@ -124,6 +125,7 @@ function ClassesForm() {
                 className="form-control"
                 id="capacity"
                 name="capacity"
+                required
                 value={formState.capacity}
                 onChange={handleChange}
               />
@@ -136,6 +138,7 @@ function ClassesForm() {
     className="form-select"
     id="status"
     name="status"
+    required
     value={formState.status}
     onChange={handleChange}
   >

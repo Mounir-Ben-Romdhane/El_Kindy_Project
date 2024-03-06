@@ -249,7 +249,10 @@ function Index() {
                         <GoogleAuth />
                       </div>
                       {/* Social btn */}
-                      <FacebookLogin />
+                     
+                        <FacebookLogin />
+                        
+
                     </div>
                     {/* Sign up link */}
                     <div className="mt-4 text-center">
