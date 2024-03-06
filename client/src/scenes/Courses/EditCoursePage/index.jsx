@@ -10,10 +10,30 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAccessToken, setLogout } from "../../../state";
 import refreshToken from "scenes/Authentification/TokenService/tokenService";
 import axios from 'axios';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import 'react-quill/dist/quill.bubble.css';
+
+const  modules  = {
+  toolbar: [
+      [{ font: [] }],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      [{ script:  "sub" }, { script:  "super" }],
+      ["blockquote", "code-block"],
+      [{ list:  "ordered" }, { list:  "bullet" }],
+      ["link"],
+      ["clean"],
+  ],
+};
 
 function EditCourse() {
 
     const [dataTheme, setDataTheme] = useState('');
+      
+  // Inside your component function
+const [fullDescription, setFullDescription] = useState('');
     const [course, setCourse] = useState({
         title: "",
         description: "",
@@ -22,6 +42,7 @@ function EditCourse() {
         courseLevel: "",
         courseTime: 0,
         coursePrice: 0,
+        fullDescription:""
     });
     const dispatch = useDispatch();
     const { id } = useParams();
@@ -51,6 +72,7 @@ function EditCourse() {
             if (response.ok) {
               const data = await response.json();
               setCourse(data);
+              setFullDescription(data.fullDescription);
             } else if (response.status === 401 || response.status === 403 ) {
               // Refresh access token
               const newAccessToken = await refreshToken(refreshTokenState, dispatch);
@@ -154,6 +176,13 @@ const handleChange = (event) => {
     }));
   };
 
+
+
+// Function to handle changes in the full description field
+const handleFullDescriptionChange = (content) => {
+  setFullDescription(content);
+};
+
 const handleFormSubmit = async (values, onSubmitProps) => {
     //values.preventDefault();
    // const formData = new FormData(values.target); // Create FormData object from form
@@ -164,10 +193,14 @@ const handleFormSubmit = async (values, onSubmitProps) => {
     //await addCourse(values, onSubmitProps);
     values.preventDefault();
     const formData = new FormData(values.target); // Create FormData object from form
+    formData.append('fullDescription', fullDescription); // Append full description to form data
     const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
-   // console.log("Values",formValues);
+    console.log("Values",formValues);
     await updateCourse(formValues, onSubmitProps);
   };
+
+
+
 
   return (
     <div>
@@ -314,7 +347,21 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   </div>
 
 
-                    
+                  <div className="col-12">
+        <label className="form-label">Add description</label>
+        
+        {/* Main toolbar */}
+        <div className="bg-body border rounded-bottom overflow-hidden" style={{ borderRadius: '15px' }}>
+            <ReactQuill 
+                modules={modules}  
+                theme="snow"
+                onChange={handleFullDescriptionChange}
+                value={fullDescription} 
+                placeholder="The content starts here..."  
+                style={{ height: '100%' }} // Adjust the height of the ReactQuill editor
+            />
+        </div>
+    </div>
                   
                 </div>
                 

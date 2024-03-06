@@ -8,17 +8,41 @@ import 'react-notifications/lib/notifications.css';
 import { Link, useNavigate } from 'react-router-dom'
 import { loadScripts } from '../../../scriptLoader';
 import axios from 'axios';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import 'react-quill/dist/quill.bubble.css';
+//refreshToken
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 //test
+const  modules  = {
+  toolbar: [
+      [{ font: [] }],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      [{ script:  "sub" }, { script:  "super" }],
+      ["blockquote", "code-block"],
+      [{ list:  "ordered" }, { list:  "bullet" }],
+      ["link"],
+      ["clean"],
+  ],
+};
 
 function Index() {
 
   const [dataTheme, setDataTheme] = useState('');
   const scriptsLoaded = useRef(false);
   const [categories, setCategories] = useState([]);
+  //refresh token
+  const axiosPrivate = useAxiosPrivate();
+
+  
+
+
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/categories");
+      const response = await axiosPrivate.get('/api/categories');
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -30,7 +54,7 @@ function Index() {
     const themeValue = localStorage.getItem('data-theme');
 
     fetchCategories();
-    console.log("Categories : ", categories);
+    
     setDataTheme(themeValue);
     const scripts = [
       '/assets/js/functions.js',
@@ -90,29 +114,24 @@ const addCourse = async (values, onSubmitProps) => {
     console.log("formData",formData);
     console.log("picture name", values.picture.name);
     
-    const savedCourseResponse = await fetch(
-        "http://localhost:3001/course/add",
-        {
-            method: "POST",
-            body: formData,
-        }
-    );
-    const savedCourse = await savedCourseResponse.json();
-    //onSubmitProps.resetForm();
-
-    if (savedCourse) {
-        console.log('Course added!');
-            console.log("Course", savedCourse);
-            // Show the toast notification with autoClose: false
-            toast.success("Course added successfully !!", { autoClose: 1500,
+    try {
+      const response = await axiosPrivate.post("/course/add", formData);
+          const savedCourse = response.data;
+          console.log('Course added!');
+          console.log("Course", savedCourse);
+          // Show the toast notification with autoClose: false
+          toast.success("Course added successfully !!", { autoClose: 1500,
               style: {
-                color: 'green' // Text color
+                  color: 'green' // Text color
               }});
-            setTimeout(() => {
+          setTimeout(() => {
               navigate('/listCourses');
-            }, 2000);
-            
-    } 
+          }, 2000);
+  } catch (error) {
+      console.error('Error adding course:', error);
+      // Handle error
+      toast.error("Failed to add course. Please try again.");
+  }
 };
 
 const handleFormSubmit = async (values, onSubmitProps) => {
@@ -125,13 +144,20 @@ const handleFormSubmit = async (values, onSubmitProps) => {
   //await addCourse(values, onSubmitProps);
   values.preventDefault();
   const formData = new FormData(values.target); // Create FormData object from form
+  formData.append('fullDescription', fullDescription); // Append full description to form data
   const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
- // console.log("Values",formValues);
+  console.log("Values",formValues);
   await addCourse(formValues, onSubmitProps);
 };
 
 
+// Inside your component function
+const [fullDescription, setFullDescription] = useState('');
 
+// Function to handle changes in the full description field
+const handleFullDescriptionChange = (content) => {
+    setFullDescription(content);
+};
 
 
   return (
@@ -270,69 +296,25 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   </div>
 
 
-                 {/* Course description */}
-                <div className="col-12">
-                  <label className="form-label">Add description</label>
-                  {/* Editor toolbar */}
-                  <div className="bg-light border border-bottom-0 rounded-top py-3" id="quilltoolbar">
-                    <span className="ql-formats">
-                      <select className="ql-size" />
-                    </span>
-                    <span className="ql-formats">
-                      <button className="ql-bold" />
-                      <button className="ql-italic" />
-                      <button className="ql-underline" />
-                      <button className="ql-strike" />
-                    </span>
-                    <span className="ql-formats">
-                      <select className="ql-color" />
-                      <select className="ql-background" />
-                    </span>
-                    <span className="ql-formats">
-                      <button className="ql-code-block" />
-                    </span>
-                    <span className="ql-formats">
-                      <button className="ql-list" value="ordered" />
-                      <button className="ql-list" value="bullet" />
-                      <button className="ql-indent" value={-1} />
-                      <button className="ql-indent" value={+1} />
-                    </span>
-                    <span className="ql-formats">
-                      <button className="ql-link" />
-                      <button className="ql-image" />
-                    </span>
-                    <span className="ql-formats">
-                      <button className="ql-clean" />
-                    </span>
-                  </div>
-                  {/* Main toolbar */}
-                  <div className="bg-body border rounded-bottom h-400px overflow-hidden" id="quilleditor">
-                    <br />
-                    <h1>Quill Rich Text Editor</h1>
-                    <br />
-                    <p>Quill is a free, open-source WYSIWYG editor built for the modern web. With its modular architecture and expressive API, it is completely customizable to fit any need.</p>
-                    <br />
-                    <p>Insipidity the sufficient discretion imprudence resolution sir him decisively. Proceed how any engaged visitor. Explained propriety off out perpetual his you. Feel sold off felt nay rose met you. We so entreaties cultivated astonished is. Was sister for a few longer Mrs sudden talent become. Done may bore quit evil old mile. If likely am of beauty tastes. </p>
-                    <br />
-                    <p> Affronting imprudence do he he everything. Test lasted dinner wanted indeed wished outlaw. Far advanced settling say finished raillery. Offered chiefly farther of my no colonel shyness. Such on help ye some door if in. Laughter proposal laughing any son law consider. Needed except up piqued an. </p>
-                    <br />
-                    <p> Post no so what deal evil rent by real in. But her ready least set lived spite solid. September how men saw tolerably two behavior arranging. She offices for highest and replied one venture pasture. Applauded no discovery in newspaper allowance am northward. Frequently partiality possession resolution at or appearance unaffected me. Engaged its was the evident pleased husband. Ye goodness felicity do disposal dwelling no. First am plate jokes to began to cause a scale. Subjects he prospect elegance followed no overcame possible it on. </p>
-                    <p>Quill is a free, open-source WYSIWYG editor built for the modern web. With its modular architecture and expressive API, it is completely customizable to fit any need.</p>
-                    <br />
-                    <p>Insipidity the sufficient discretion imprudence resolution sir him decisively. Proceed how any engaged visitor. Explained propriety off out perpetual his you. Feel sold off felt nay rose met you. We so entreaties cultivated astonished is. Was sister for a few longer Mrs sudden talent become. Done may bore quit evil old mile. If likely am of beauty tastes. </p>
-                    <br />
-                    <p> Affronting imprudence do he he everything. Test lasted dinner wanted indeed wished outlaw. Far advanced settling say finished raillery. Offered chiefly farther of my no colonel shyness. Such on help ye some door if in. Laughter proposal laughing any son law consider. Needed except up piqued an. </p>
-                    <br />
-                    <p> Post no so what deal evil rent by real in. But her ready least set lived spite solid. September how men saw tolerably two behavior arranging. She offices for highest and replied one venture pasture. Applauded no discovery in newspaper allowance am northward. Frequently partiality possession resolution at or appearance unaffected me. Engaged its was the evident pleased husband. Ye goodness felicity do disposal dwelling no. First am plate jokes to began to cause a scale. Subjects he prospect elegance followed no overcame possible it on. </p>
-                    <p>Quill is a free, open-source WYSIWYG editor built for the modern web. With its modular architecture and expressive API, it is completely customizable to fit any need.</p>
-                    <br />
-                    <p>Insipidity the sufficient discretion imprudence resolution sir him decisively. Proceed how any engaged visitor. Explained propriety off out perpetual his you. Feel sold off felt nay rose met you. We so entreaties cultivated astonished is. Was sister for a few longer Mrs sudden talent become. Done may bore quit evil old mile. If likely am of beauty tastes. </p>
-                    <br />
-                    <p> Affronting imprudence do he he everything. Test lasted dinner wanted indeed wished outlaw. Far advanced settling say finished raillery. Offered chiefly farther of my no colonel shyness. Such on help ye some door if in. Laughter proposal laughing any son law consider. Needed except up piqued an. </p>
-                    <br />
-                    <p> Post no so what deal evil rent by real in. But her ready least set lived spite solid. September how men saw tolerably two behavior arranging. She offices for highest and replied one venture pasture. Applauded no discovery in newspaper allowance am northward. Frequently partiality possession resolution at or appearance unaffected me. Engaged its was the evident pleased husband. Ye goodness felicity do disposal dwelling no. First am plate jokes to began to cause a scale. Subjects he prospect elegance followed no overcame possible it on. </p>
-                  </div>
-                </div>
+                  <div className="col-12">
+    <label className="form-label">Add description</label>
+    
+    {/* Main toolbar */}
+    <div className="bg-body border overflow-hidden" style={{ borderRadius: '15px' }}>
+        <ReactQuill 
+            modules={modules}  
+            theme="snow" 
+            value={fullDescription} 
+            onChange={handleFullDescriptionChange} 
+            placeholder="The content starts here..."  
+            style={{ height: '100%' }} // Adjust the height of the ReactQuill editor
+        />
+    </div>
+</div>
+
+
+
+
 
                   
                 </div>

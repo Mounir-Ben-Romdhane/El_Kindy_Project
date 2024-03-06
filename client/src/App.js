@@ -6,7 +6,7 @@
 
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loadScripts } from './scriptLoader';
 
 
@@ -37,6 +37,7 @@ import AddClassPage from "../src/scenes/Classe/AddClassPage";
 import Category from "../src/scenes/CategoryHome";
 import InscriptionPage from "./scenes/Inscriptions/InscriptionPage";
 import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
+
 import MeetingHomeStudent from './scenes/PlatformStudent/MeetingHomeStudent';
 import DashbordTeacher from './scenes/PlatformTeacher/DashbordTeacher'
 import HomePagee from '../src/scenes/PlatformTeacher/HomePagee';
@@ -46,7 +47,9 @@ import Room from '../src/scenes/PlatformTeacher/Room';
 import Chat from '../src/scenes/Chat/Chat'
 
 
-import { useDispatch } from "react-redux";
+
+import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
+
 import EditCourse from "scenes/Courses/EditCoursePage";
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
@@ -96,8 +99,9 @@ function App() {
 
     <div>
       <Routes>
-        <Route path="/" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
+        {/* auth routes */}
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route
           path="/reset-password/:id?/:token?"
@@ -107,10 +111,15 @@ function App() {
           path="/verify-account/:id/verify/:token"
           element={<EmailVerify />}
         />
+
+        {/* public routes */}
+        <Route path="/" element={<Navigate to="/home" />} />
         <Route
           path="/home"
-          element={<HomePage />}
+          element={<HomePage /> }
         />
+
+        {/* we want to protect these routes */}
         <Route
           path="/category"
           element={isAuth ? <Category /> : <Navigate to="/" />}
@@ -138,6 +147,16 @@ function App() {
           element={
             <PrivateRoute
               element={<InscriptionList />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/inscriptionDetails/:id"
+          element={
+            <PrivateRoute
+              element={<InscriptionDetails />}
               requiredRoles={["superAdmin", "admin"]}
             />
           }
