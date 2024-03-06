@@ -40,11 +40,7 @@ function NavBar() {
     };
   }, []); // Empty dependency array ensures this effect runs only once
 
-  return (
-
-
-  navigate("/home");
-  }
+ 
 
   const handleSignIn = () => {
   
@@ -52,26 +48,7 @@ function NavBar() {
   }
 
 
-  const scriptsLoaded = useRef(false);
-
-  useEffect(() => {
-    const scripts = [
-      //'/assets/js/functions.js',
-    ];
-
-    if (!scriptsLoaded.current) {
-      loadScripts(scripts);
-      scriptsLoaded.current = true;
-    }
-
-    return () => {
-      // Remove all script tags
-      const scriptTags = document.querySelectorAll('script[src^="/assets"]');
-      scriptTags.forEach((scriptTag) => {
-        scriptTag.parentNode.removeChild(scriptTag);
-      });
-    };
-  }, []); // Empty dependency array ensures this effect runs only once
+  
 
   return (
 
