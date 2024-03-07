@@ -98,7 +98,7 @@ function Index() {
         const userRoles = accessTokenn ? jwtDecode(accessTokenn).roles : []; 
         //console.log("userRole ",userRoles);
         if (userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('superAdmin')) {
-          navigate("/dashboard-admin");
+          navigate("/dashboard-admin"); 
         } else if (userRoles.includes('student') || userRoles.includes('parent')) {
             navigate("/home");
         }

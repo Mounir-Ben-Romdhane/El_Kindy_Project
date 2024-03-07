@@ -52,6 +52,7 @@ import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetail
 import EditCourse from "scenes/Courses/EditCoursePage";
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
+import ContactPage from "scenes/ContactPage";
 
 function App() {
   const isAuth = Boolean(useSelector((state) => state.accessToken));
@@ -117,11 +118,11 @@ function App() {
           path="/home"
           element={<HomePage /> }
         />
+        <Route path="/contact-us" element={<ContactPage />} />
 
-        {/* we want to protect these routes */}
         <Route
           path="/category"
-          element={isAuth ? <Category /> : <Navigate to="/" />}
+          element={ <Category />}
         />
 
         <Route
