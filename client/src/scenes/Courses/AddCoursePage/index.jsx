@@ -1,22 +1,77 @@
 import BannerStart from 'components/BannerStart'
 import SideBar from 'components/SideBar'
 import TopBarBack from 'components/TopBarBack'
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-notifications/lib/notifications.css';
 import { Link, useNavigate } from 'react-router-dom'
+import { loadScripts } from '../../../scriptLoader';
+import axios from 'axios';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import 'react-quill/dist/quill.bubble.css';
+//refreshToken
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 
-
+//test
+const  modules  = {
+  toolbar: [
+      [{ font: [] }],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      [{ script:  "sub" }, { script:  "super" }],
+      ["blockquote", "code-block"],
+      [{ list:  "ordered" }, { list:  "bullet" }],
+      ["link"],
+      ["clean"],
+  ],
+};
 
 function Index() {
 
   const [dataTheme, setDataTheme] = useState('');
+  const scriptsLoaded = useRef(false);
+  const [categories, setCategories] = useState([]);
+  //refresh token
+  const axiosPrivate = useAxiosPrivate();
+
+  
+
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axiosPrivate.get('/api/categories');
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   useEffect(() => {
     // Retrieve the value of data-theme from localStorage
     const themeValue = localStorage.getItem('data-theme');
+
+    fetchCategories();
+    
     setDataTheme(themeValue);
+    const scripts = [
+      '/assets/js/functions.js',
+    ];
+
+    if (!scriptsLoaded.current) {
+      loadScripts(scripts);
+      scriptsLoaded.current = true;
+    }
+
+    return () => {
+      // Remove all script tags
+      const scriptTags = document.querySelectorAll('script[src^="/assets"]');
+      scriptTags.forEach((scriptTag) => {
+        scriptTag.parentNode.removeChild(scriptTag);
+      });
+    };
   }, []); // Empty dependency array ensures this effect runs only once
 
   
@@ -59,29 +114,24 @@ const addCourse = async (values, onSubmitProps) => {
     console.log("formData",formData);
     console.log("picture name", values.picture.name);
     
-    const savedCourseResponse = await fetch(
-        "http://localhost:3001/course/add",
-        {
-            method: "POST",
-            body: formData,
-        }
-    );
-    const savedCourse = await savedCourseResponse.json();
-    //onSubmitProps.resetForm();
-
-    if (savedCourse) {
-        console.log('Course added!');
-            console.log("Course", savedCourse);
-            // Show the toast notification with autoClose: false
-            toast.success("Course added successfully !!", { autoClose: 1500,
+    try {
+      const response = await axiosPrivate.post("/course/add", formData);
+          const savedCourse = response.data;
+          console.log('Course added!');
+          console.log("Course", savedCourse);
+          // Show the toast notification with autoClose: false
+          toast.success("Course added successfully !!", { autoClose: 1500,
               style: {
-                color: 'green' // Text color
+                  color: 'green' // Text color
               }});
-            setTimeout(() => {
+          setTimeout(() => {
               navigate('/listCourses');
-            }, 2000);
-            
-    } 
+          }, 2000);
+  } catch (error) {
+      console.error('Error adding course:', error);
+      // Handle error
+      toast.error("Failed to add course. Please try again.");
+  }
 };
 
 const handleFormSubmit = async (values, onSubmitProps) => {
@@ -94,13 +144,20 @@ const handleFormSubmit = async (values, onSubmitProps) => {
   //await addCourse(values, onSubmitProps);
   values.preventDefault();
   const formData = new FormData(values.target); // Create FormData object from form
+  formData.append('fullDescription', fullDescription); // Append full description to form data
   const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
- // console.log("Values",formValues);
+  console.log("Values",formValues);
   await addCourse(formValues, onSubmitProps);
 };
 
 
+// Inside your component function
+const [fullDescription, setFullDescription] = useState('');
 
+// Function to handle changes in the full description field
+const handleFullDescriptionChange = (content) => {
+    setFullDescription(content);
+};
 
 
   return (
@@ -206,12 +263,10 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   <div className="col-md-6">
                     <label className="form-label">Course category</label>
                     <select name="courseCategory" className="form-select  border-0 z-index-9 bg-transparent" aria-label=".form-select-sm" data-search-enabled="true" required>
-                      <option value>Select category</option>
-                      <option>Engineer</option>
-                      <option>Medical</option>
-                      <option>Information technology</option>
-                      <option>Finance</option>
-                      <option>Marketing</option>
+                    <option value="">Select category</option>
+                        {categories.map(category => (
+                          <option key={category._id} value={category._id}>{category.name}</option>
+                        ))}
                     </select>
                   </div>
                   {/* Course level */}
@@ -241,7 +296,26 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                   </div>
 
 
-                    
+                  <div className="col-12">
+    <label className="form-label">Add description</label>
+    
+    {/* Main toolbar */}
+    <div className="bg-body border overflow-hidden" style={{ borderRadius: '15px' }}>
+        <ReactQuill 
+            modules={modules}  
+            theme="snow" 
+            value={fullDescription} 
+            onChange={handleFullDescriptionChange} 
+            placeholder="The content starts here..."  
+            style={{ height: '100%' }} // Adjust the height of the ReactQuill editor
+        />
+    </div>
+</div>
+
+
+
+
+
                   
                 </div>
                 

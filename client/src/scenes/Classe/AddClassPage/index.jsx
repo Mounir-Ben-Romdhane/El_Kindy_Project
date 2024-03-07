@@ -25,51 +25,48 @@ function Index() {
 const navigate = useNavigate();
 
 const addClasses = async (values, onSubmitProps) => {
-    console.log("values",values);
-    // this allow us to send form info with image
-    const formData = new FormData();
-    for (let value in values) {
-        formData.append(value, values[value]);
-    }
-    console.log("formData",formData);
-    
-    const savedClassesResponse = await fetch(
-        "http://localhost:3001/salle",
-        {
-            method: "POST",
-            body: formData,
-        }
-    );
-    const savedClasses = await savedClassesResponse.json();
-    //onSubmitProps.resetForm();
+  console.log("values", values);
 
-    if (savedClasses) {
-        console.log('Class added!');
-            console.log("Salle", savedClasses);
-            // Show the toast notification with autoClose: false
-            toast.success("Class added successfully !!", { autoClose: 1500,
-              style: {
-                color: 'green' // Text color
-              }});
-            setTimeout(() => {
-              navigate('/listClasse');
-            }, 2000);
-            
-    } 
+  const savedClassesResponse = await fetch(
+    "http://localhost:3001/salle",
+    {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(values),
+    }
+  );
+
+  const savedClasses = await savedClassesResponse.json();
+
+  if (savedClasses.success) {
+    console.log('Class added!');
+    console.log("Salle", savedClasses);
+    toast.success("Class added successfully !!", {
+      autoClose: 1500,
+      style: {
+        color: 'green'
+      }
+    });
+
+    setTimeout(() => {
+      navigate('/listClasse');
+    }, 2000);
+  } else {
+    toast.error(`Error: ${savedClasses.error}`, {
+      autoClose: 5000,
+      style: {
+        color: 'red'
+      }
+    });
+  }
 };
 
 const handleFormSubmit = async (values, onSubmitProps) => {
-  //values.preventDefault();
- // const formData = new FormData(values.target); // Create FormData object from form
- // const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
- // console.log("Values",formValues);
-   //await register(values, onSubmitProps);
-  //console.log("values",values);
-  //await addCourse(values, onSubmitProps);
   values.preventDefault();
-  const formData = new FormData(values.target); // Create FormData object from form
-  const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
- // console.log("Values",formValues);
+  const formData = new FormData(values.target);
+  const formValues = Object.fromEntries(formData.entries());
   await addClasses(formValues, onSubmitProps);
 };
 
@@ -80,7 +77,7 @@ const handleFormSubmit = async (values, onSubmitProps) => {
   return (
     <div>
       <SideBar />
-      <main>
+      <main>²
        {/* Page content START */}
        <div className="page-content">
           <TopBarBack />
@@ -119,8 +116,8 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                 <div className="row g-4">
                   {/* Course title */}
                   <div className="col-12">
-                    <label className="form-label">numero</label>
-                    <input className="form-control" name="numero" type="text" placeholder="Enter number class" required/>
+                    <label className="form-label">Name </label>
+                    <input className="form-control" name="name" type="text" placeholder="Enter number class" required/>
                   </div>
                   <div className="col-12">
                     <label className="form-label">capacite</label>
