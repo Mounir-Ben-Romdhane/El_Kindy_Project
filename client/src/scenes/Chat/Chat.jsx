@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import ChatBox from "../../components/ChatBox/ChatBox";
 import Conversation from "../../components/Coversation/Conversation";
 import LogoSearch from "../../components/LogoSearch/LogoSearch";
-import NavIcons from "../../components/NavIcons/NavIcons";
 import "./Chat.css";
 import { userChats } from "../../api/ChatRequests";
 import { useDispatch, useSelector } from "react-redux";
@@ -86,7 +85,7 @@ const Chat = () => {
           <div className="Chat-container22">
             <div style={{ display: "flex", alignItems: "center" }}>
               <h4>Chats </h4>
-              <LogoSearch onSearch={handleSearch} />
+            {/*   <LogoSearch onSearch={handleSearch} />*/}
             </div>
             <div className="Chat-list" style={{ maxHeight: "calc(100vh - 150px)", overflowY: "auto" }}>
               {filteredChats.map((chat) => (

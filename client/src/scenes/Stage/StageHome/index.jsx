@@ -2,12 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import Footer from "components/Footer";
 import NavBar from "components/NavBar";
 import { useSelector } from "react-redux";
-import { loadScripts } from "../../../scriptLoader";
 
 function Index() {
   const [stages, setStages] = useState([]);
-  const user = useSelector((state) => state.user);
-  const scriptsLoaded = useRef(false);
 
   // Récupérer les stage de l'API
   useEffect(() => {

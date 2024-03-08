@@ -54,8 +54,6 @@ const Room = () => {
    
 
     return (
-
-
         <div>
             {/* **************** MAIN CONTENT START **************** */}
             <main>

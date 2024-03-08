@@ -95,7 +95,7 @@ export const refreshToken = async (req, res) => {
         }
 
         const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
-        roles: user.roles,  email : user.email  }, process.env.JWT_SECRET, { expiresIn: "30s" });
+        roles: user.roles,  email : user.email, picturePath : user.picturePath  }, process.env.JWT_SECRET, { expiresIn: "30s" });
         res.json({ accessToken });
     } catch (error) {
         console.error(error);
@@ -189,3 +189,13 @@ export const getUser = async (req, res) => {
       res.status(500).json(error);
     }
   };
+//Get all User by Role
+export const getAllUserByRole = async (req, res) => {
+    const role = req.params.role;
+    try {
+        const users = await User.find({roles: role});
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};

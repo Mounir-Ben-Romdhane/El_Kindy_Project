@@ -1,7 +1,7 @@
 import Footer from "components/Footer";
 import NavBar from "components/NavBar";
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { useSelector } from "react-redux";
 import { loadScripts } from "../../scriptLoader";
@@ -40,6 +40,7 @@ function Index() {
     window.scrollTo(0, 0); // Scroll to the top when component mounts
     //Get all category
     fetchCoursesByCategories();
+    console.log("user",user);
 
     const scripts = [
       "/assets/vendor/purecounterjs/dist/purecounter_vanilla.js",
@@ -64,7 +65,7 @@ function Index() {
     const interval = setInterval(() => {
       setNextImage((prevImage) => (prevImage + 1) % images.length);
     }, 5000); // Change image every 5 seconds
-
+    
     return () => clearInterval(interval);
   }, []);
 

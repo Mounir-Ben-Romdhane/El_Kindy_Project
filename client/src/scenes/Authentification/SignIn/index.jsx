@@ -21,9 +21,9 @@ function Index() {
     if (isAuth) {
       const userRoles = isAuth ? jwtDecode(isAuth).roles : []; 
         console.log("userRole ",userRoles);
-        if (userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('parent')) {
+        if (userRoles.includes('admin')  || userRoles.includes('parent')) {
           navigate("/dashboard-admin");
-        } else if(userRoles.includes('parent') || userRoles.includes('student')){
+        } else if(userRoles.includes('parent') || userRoles.includes('student')|| userRoles.includes('teacher')){
             navigate("/home");
         }
     }
@@ -96,10 +96,10 @@ function Index() {
         );
         const accessTokenn = loggedIn.accessToken;
         const userRoles = accessTokenn ? jwtDecode(accessTokenn).roles : []; 
-        //console.log("userRole ",userRoles);
-        if (userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('superAdmin')) {
+        //console.log("userRole ",userRoles);//fareshabet e teacher m dashborad lil home ba3d raj3ouh
+        if (userRoles.includes('admin')  || userRoles.includes('superAdmin')) {
           navigate("/dashboard-admin");
-        } else if (userRoles.includes('student') || userRoles.includes('parent')) {
+        } else if (userRoles.includes('student') || userRoles.includes('parent')|| userRoles.includes('teacher')) {
             navigate("/home");
         }
       }

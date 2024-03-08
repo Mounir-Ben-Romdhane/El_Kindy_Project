@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import withReactContent from "sweetalert2-react-content";
 import "react-confirm-alert/src/react-confirm-alert.css"; // Importez les styles CSS
@@ -7,7 +6,6 @@ import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import { ToastContainer, toast } from "react-toastify";
 import Swal from "sweetalert2"; // Importez SweetAlert2
-const MySwal = withReactContent(Swal);
 
 function Index() {
   const [inscription, setInscription] = useState([]);

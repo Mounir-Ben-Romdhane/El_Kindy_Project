@@ -1,15 +1,5 @@
-
-
-
-
-
-
 import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
-
-import { useSelector } from "react-redux";
 import { loadScripts } from './scriptLoader';
-
-
 import React, { useEffect, useRef } from "react";
 import AboutPage from "../src/scenes/AboutPage";
 import HomePage from "../src/scenes/HomePage";
@@ -43,6 +33,7 @@ import HomePagee from '../src/scenes/PlatformTeacher/HomePagee';
 import DashbordStudent from './scenes/PlatformStudent/DashbordStudent'
 import Room from '../src/scenes/PlatformTeacher/Room';
 
+import TeachersList from '../src/scenes/PlatformStudent/TeachersList'
 import Chat from '../src/scenes/Chat/Chat'
 
 
@@ -114,6 +105,10 @@ function App() {
         <Route
           path="/category"
           element={isAuth ? <Category /> : <Navigate to="/" />}
+        />
+         <Route
+          path="/TeachersList"
+          element={isAuth ? <TeachersList /> : <Navigate to="/" />}
         />
 
         <Route
