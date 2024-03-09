@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { BrowserRouter } from "react-router-dom";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 import {
   persistStore,
   persistReducer,
@@ -15,10 +17,9 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { PersistGate } from "redux-persist/integration/react";
-
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
-import authReducer from './state'
+import authReducer from './state';
 
 const persistConfig = { key : "root", storage, version: 1};
 const persistedReducer = persistReducer(persistConfig, authReducer);
@@ -38,7 +39,9 @@ root.render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistStore(store)}>
         <BrowserRouter>
+        <GoogleOAuthProvider clientId="96761309582-mtdj5s9a4n8jscpq0p2v8ju87ltvhpho.apps.googleusercontent.com">
           <App />
+          </GoogleOAuthProvider>
         </BrowserRouter>
       </PersistGate>
     </Provider>

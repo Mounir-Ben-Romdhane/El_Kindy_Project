@@ -1,9 +1,8 @@
-import React from 'react'
-
+import React from 'react';
 function BannerStart(props) {
   return (
     <div>
-       {/* =======================
+       {/* =============================================================
         Page Banner START */}
             <section className="py-0 bg-blue h-100px align-items-center d-flex h-200px rounded-4" style={{background: 'url(assets/images/pattern/04.png) no-repeat center center', backgroundSize: 'cover'}}>
             {/* Main banner background image */}
@@ -25,3 +24,4 @@ function BannerStart(props) {
 }
 
 export default BannerStart
+
