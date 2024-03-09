@@ -1,10 +1,6 @@
 
 
-
-
-
-
-import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 import { loadScripts } from './scriptLoader';
@@ -46,10 +42,17 @@ import Room from '../src/scenes/PlatformTeacher/Room';
 
 import Chat from '../src/scenes/Chat/Chat'
 
-
+import AdminReservation from '../src/scenes/EventsPage/AdminReservation'
+import DetailEvents from '../src/scenes/EventsPage/DetailEventPage'
+import EditEventPage from '../src/scenes/EventsPage/EditEventPage'
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
 
+
 import EditCourse from "scenes/Courses/backOffice/EditCoursePage";
+
+import ListEventUser from '../src/scenes/EventsPage/EventFront'
+import EditCourse from "scenes/Courses/EditCoursePage";
+
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
 import ContactPage from "scenes/ContactPage";
@@ -61,7 +64,7 @@ import ListCourses from "scenes/Courses/frontOffice/listCourses";
 
 function App() {
   const isAuth = Boolean(useSelector((state) => state.accessToken));
-  
+
 
 
   const scriptsLoaded = useRef(false);
@@ -101,7 +104,7 @@ function App() {
 
   return (
 
-     
+
     <div>
       <Routes>
         {/* auth routes */}
@@ -138,7 +141,7 @@ function App() {
         <Route
           path="/inscription/:id?"
           element={<InscriptionPage />}
-          />
+        />
 
         {/* PRIVATE ROUTE */}
           <Route
@@ -222,29 +225,89 @@ function App() {
             }
           />
 
-           <Route 
-              path="/dashbordTeacher" 
-              element={isAuth ? <DashbordTeacher/> : <Navigate to="/" /> } 
-            />
 
-            <Route 
-              path="/meetingHomeS" 
-              element={isAuth ? <MeetingHomeStudent/> : <Navigate to="/" /> } 
-            />
 
-            <Route 
-              path="/dashbordStudent" 
-              element={isAuth ? <DashbordStudent/> : <Navigate to="/" /> } 
+
+        <Route
+          path="/listCourses"
+          element={
+            <PrivateRoute
+              element={<ListCoursesPage />}
+              requiredRoles={["superAdmin", "admin"]}
             />
-                
-                <Route 
-              path="/homeMeet" 
-              element={isAuth ? <HomePagee /> : <Navigate to="/" /> } 
-            />
-             <Route path="/room/:roomId"
-              element={isAuth ? <Room /> : <Navigate to="/" /> } 
-          />
+          }
+        />
         
+          <Route
+          path="/dashbordTeacher"
+          element={
+            <PrivateRoute
+              element={<DashbordTeacher />}
+              requiredRoles={["superAdmin", "teacher"]}
+
+
+            />
+          }
+        />
+
+        
+
+<Route
+          path="/meetingHomeS"
+          element={
+            <PrivateRoute
+              element={<MeetingHomeStudent />}
+              requiredRoles={["superAdmin", "student"]}
+
+
+            />
+          }
+        />
+
+        
+<Route  path="/listReservation" 
+              element={isAuth ? <AdminReservation /> : <Navigate to="/" /> }   
+          />
+
+
+        <Route
+          path="/dashbordStudent"
+          element={
+            <PrivateRoute
+              element={<DashbordStudent />}
+              requiredRoles={["superAdmin", "student"]}
+
+
+            />
+          }
+        />
+
+
+
+        <Route
+          path="/homeMeet"
+          element={
+            <PrivateRoute
+              element={<HomePagee />}
+              requiredRoles={["superAdmin", "student","teacher"]}
+
+            />
+          }
+        />
+        
+
+        
+         <Route
+          path="/room/:roomId"
+          element={
+            <PrivateRoute
+              element={<Room />}
+              requiredRoles={["superAdmin", "student","teacher"]}
+
+            />
+          }
+        />
+
         <Route
           path="/edit-course/:id"
           element={isAuth ? <EditCourse /> : <Navigate to="/" />}
@@ -276,6 +339,16 @@ function App() {
           path="/addEvent"
           element={isAuth ? <AddEventPage /> : <Navigate to="/" />}
         />
+
+<Route path="/editEvent/:id" element={isAuth ? <EditEventPage /> : <Navigate to="/" />} />
+
+<Route path="/detailEvent/:id"
+               element={isAuth ? <DetailEvents /> : <Navigate to="/" />} />
+
+<Route path="/listEventUser"
+               element={isAuth ? <ListEventUser /> : <Navigate to="/" />} />
+
+
         <Route
           path="/addCourse"
           element={isAuth ? <AddCoursePage /> : <Navigate to="/" />}
@@ -298,17 +371,17 @@ function App() {
           path="/chat"
           element={isAuth ? <Chat /> : <Navigate to="../auth" />}
         />
-            
-          
-          <Route path="/about" element={<AboutPage />}/>
-            <Route  path="/listCategories" 
-              element={isAuth ? <ListCategoryPage /> : <Navigate to="/" /> } 
-          />
-             <Route  path="/add-category" 
-              element={isAuth ? <AddCategoryPage /> : <Navigate to="/" /> } 
-          />
-          <Route path="/edit-category/:id"
-              element={isAuth ? <EditCategoryPage /> : <Navigate to="/" /> } />
+
+
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/listCategories"
+          element={isAuth ? <ListCategoryPage /> : <Navigate to="/" />}
+        />
+        <Route path="/add-category"
+          element={isAuth ? <AddCategoryPage /> : <Navigate to="/" />}
+        />
+        <Route path="/edit-category/:id"
+          element={isAuth ? <EditCategoryPage /> : <Navigate to="/" />} />
 
         <Route path="/*" element={<NotFound />} />
 
