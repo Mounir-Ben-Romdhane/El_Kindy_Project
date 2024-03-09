@@ -1,12 +1,11 @@
 import Footer from "components/Footer";
 import NavBar from "components/NavBar";
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { useSelector } from "react-redux";
 import { loadScripts } from "../../scriptLoader";
 import axios from "axios";
-import useAuth from "hooks/useAuth";
 
 
 function Index() {
@@ -76,24 +75,7 @@ function Index() {
     return () => clearTimeout(transitionTimer);
   }, [nextImage]);
 
-  const test = async () => {
-    try {
-      const response = await fetch("http://localhost:3001/auth/getAll", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const allUsers = await response.json();
-
-      if (allUsers) {
-        //console.log("users", allUsers.users);
-      }
-    } catch (error) {
-      console.error("Error registering user:", error);
-    }
-  };
-  //test();
+  
 
   return (
     <>
@@ -683,20 +665,7 @@ Main Banner END */}
                             </p>
                             {/* You can render other course details here */}
                           </div>
-                          {/* Card footer */}
-                          <div className="card-footer pt-0 pb-3">
-                            <hr />
-                            <div className="d-flex justify-content-between">
-                              <span className="h6 fw-light mb-0">
-                                <i className="far fa-clock text-danger me-2" />
-                                {course.courseTime} hours
-                              </span>
-                              <span className="h6 fw-light mb-0">
-                                <i className="fas fa-table text-orange me-2" />
-                                {course.coursePrice} DT
-                              </span>
-                            </div>
-                          </div>
+                          
                         </div>
                       </div>
                     ))}
@@ -706,6 +675,11 @@ Main Banner END */}
               ))}
             </div>
             {/* Tabs content END */}
+        {/* Button */}
+<div className="text-center mt-5">
+  <a href="#" className="btn btn-primary-soft">View more<i className="fas fa-sync ms-2" /></a>
+</div>
+
           </div>
         </section>
         {/* =======================

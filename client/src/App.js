@@ -20,11 +20,11 @@ import ResetPassword from "./scenes/Authentification/ResetPassword";
 import EmailVerify from "./scenes/Authentification/EmailVerify";
 import NotFound from "./scenes/NotFound";
 import AdminHomePage from "../src/scenes/AdminHomePage";
-import ListCoursesPage from "../src/scenes/Courses/ListCoursesPage";
+import ListCoursesPage from "./scenes/Courses/backOffice/ListCoursesPage";
 import Stage from "../src/scenes/Stage/StageHome";
 import ListEventsPage from "../src/scenes/EventsPage/ListEventPage";
 import AddEventPage from "../src/scenes/EventsPage/AddEventPage";
-import AddCoursePage from "../src/scenes/Courses/AddCoursePage";
+import AddCoursePage from "./scenes/Courses/backOffice/AddCoursePage";
 import ListCategoryPage from "../src/scenes/Category/ListCategoryPage";
 import AddCategoryPage from "../src/scenes/Category/AddCategoryPage";
 import EditCategoryPage from "../src/scenes/Category/EditCategoryPage";
@@ -49,10 +49,15 @@ import Chat from '../src/scenes/Chat/Chat'
 
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
 
-import EditCourse from "scenes/Courses/EditCoursePage";
+import EditCourse from "scenes/Courses/backOffice/EditCoursePage";
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
 import ContactPage from "scenes/ContactPage";
+import AdminsDashboard from "scenes/UsersAdmin/Admins";
+import TeachersDashboard from "scenes/UsersAdmin/Teachers";
+import StudentsDashboard from "scenes/UsersAdmin/Students";
+import ParentsDashboard from "scenes/UsersAdmin/Parents";
+import ListCourses from "scenes/Courses/frontOffice/listCourses";
 
 function App() {
   const isAuth = Boolean(useSelector((state) => state.accessToken));
@@ -126,62 +131,108 @@ function App() {
         />
 
         <Route
+          path="/courses"
+          element={ <ListCourses />}
+        />
+
+        <Route
           path="/inscription/:id?"
           element={<InscriptionPage />}
           />
 
         {/* PRIVATE ROUTE */}
-        <Route
-          path="/dashboard-admin"
-          element={
-            <PrivateRoute
-              element={<AdminHomePage />}
-              requiredRoles={["superAdmin", "admin"]}
+          <Route
+            path="/dashboard-admin"
+            element={
+              <PrivateRoute
+                element={<AdminHomePage />}
+                requiredRoles={["superAdmin", "admin"]}
 
-            />
-          }
-        />
+              />
+            }
+          />
 
-        <Route
-          path="/inscriptionsList"
-          element={
-            <PrivateRoute
-              element={<InscriptionList />}
-              requiredRoles={["superAdmin", "admin"]}
-            />
-          }
-        />
+          <Route
+            path="/inscriptionsList"
+            element={
+              <PrivateRoute
+                element={<InscriptionList />}
+                requiredRoles={["superAdmin", "admin"]}
+              />
+            }
+          />
 
-        <Route
-          path="/inscriptionDetails/:id"
-          element={
-            <PrivateRoute
-              element={<InscriptionDetails />}
-              requiredRoles={["superAdmin", "admin"]}
-            />
-          }
-        />
+          <Route
+            path="/inscriptionDetails/:id"
+            element={
+              <PrivateRoute
+                element={<InscriptionDetails />}
+                requiredRoles={["superAdmin", "admin"]}
+              />
+            }
+          />
 
-        <Route
-          path="/listCourses"
-          element={
-            <PrivateRoute
-              element={<ListCoursesPage />}
-              requiredRoles={["superAdmin", "admin"]}
-            />
-          }
-        />
+          <Route
+            path="/listCourses"
+            element={
+              <PrivateRoute
+                element={<ListCoursesPage />}
+                requiredRoles={["superAdmin", "admin"]}
+              />
+            }
+          />
+
+          <Route
+            path="/admins"
+            element={
+              <PrivateRoute
+                element={<AdminsDashboard />}
+                requiredRoles={["superAdmin"]}
+              />
+            }
+          />
+
+          <Route
+            path="/teachers"
+            element={
+              <PrivateRoute
+                element={<TeachersDashboard />}
+                requiredRoles={["superAdmin", "admin"]}
+              />
+            }
+          />
+
+          <Route
+            path="/students"
+            element={
+              <PrivateRoute
+                element={<StudentsDashboard />}
+                requiredRoles={["superAdmin", "admin"]}
+              />
+            }
+          />
+
+          <Route
+            path="/parents"
+            element={
+              <PrivateRoute
+                element={<ParentsDashboard />}
+                requiredRoles={["superAdmin", "admin"]}
+              />
+            }
+          />
+
            <Route 
               path="/dashbordTeacher" 
               element={isAuth ? <DashbordTeacher/> : <Navigate to="/" /> } 
             />
 
-<Route 
+            <Route 
               path="/meetingHomeS" 
               element={isAuth ? <MeetingHomeStudent/> : <Navigate to="/" /> } 
             />
 
-<Route 
+            <Route 
               path="/dashbordStudent" 
               element={isAuth ? <DashbordStudent/> : <Navigate to="/" /> } 
             />
@@ -213,7 +264,7 @@ function App() {
         />
         <Route
           path="/stage"
-          element={isAuth ? <Stage /> : <Navigate to="/" />}
+          element={<Stage /> }
         />
 
 

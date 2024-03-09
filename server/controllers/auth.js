@@ -59,7 +59,7 @@ export const login = async (req, res) => {
         await user.save();
 
         const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
-         roles: user.roles,  email : user.email }, process.env.JWT_SECRET, {expiresIn:"10m"});
+         roles: user.roles,  email : user.email, picturePath: user.picturePath, authSource: user.authSource, gender: user.gender }, process.env.JWT_SECRET, {expiresIn:"30m"});
         
         if(!user.verified) {
             const url = `http://localhost:3000/verify-account/${user._id}/verify/${accessToken}`;
@@ -84,22 +84,24 @@ export const refreshToken = async (req, res) => {
         
 
         if (!user || user.refreshToken !== refreshToken) {
-            return res.status(403).json({ message: "Invalid refresh token" });
+            return res.status(401).json({ message: "Invalid refresh token" });
         }
 
         // Check expiration date of refresh token
-        const decodedRefreshToken = jwt.decode(refreshToken);
-        if (decodedRefreshToken && decodedRefreshToken.exp && Date.now() >= decodedRefreshToken.exp * 1000) {
-            //console.log("Token expired!");
-            return res.status(401).json({ message: "Refresh token has expired" });
-        }
+       
 
         const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
         roles: user.roles,  email : user.email  }, process.env.JWT_SECRET, { expiresIn: "10m" });
         res.json({ accessToken });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Internal server error" });
+        if (error.name === 'TokenExpiredError') {
+            console.log("JWT expired:", error.message);
+            return res.status(401).json({ message: "JWT expired" });
+        } else {
+            console.log("Error:", error.message);
+            return res.status(500).json({ message: "Internal Server Error" });
+        }
+    
     }
 };
 
