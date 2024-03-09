@@ -85,28 +85,21 @@ function Index() {
         setOpen(false);
         dispatch(setLogout()); // Logout on refresh token error
       } else if (loggedInResponse.status === 200) {
-        //console.log("logged successfully!!");
+        console.log("logged successfully!!");
         setOpen(false);
         dispatch(
           setLogin({
+            //user: loggedIn.user,
             accessToken: loggedIn.accessToken,
             refreshToken: loggedIn.refreshToken,
           })
         );
         const accessTokenn = loggedIn.accessToken;
         const userRoles = accessTokenn ? jwtDecode(accessTokenn).roles : []; 
-
         //console.log("userRole ",userRoles);
         if (userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('superAdmin')) {
           navigate("/dashboard-admin"); 
         } else if (userRoles.includes('student') || userRoles.includes('parent')) {
-
-        console.log("userRoleeeeeeee ",userRoles);
-        navigate("/home");
-        if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
-          navigate("/dashboard-admin");
-        } else if (userRoles.includes('student') || userRoles.includes('parent')|| userRoles.includes('teacher')) {
-
             navigate("/home");
         }
       }
