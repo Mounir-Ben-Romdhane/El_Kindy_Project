@@ -1,12 +1,11 @@
 import Footer from "components/Footer";
 import NavBar from "components/NavBar";
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { useSelector } from "react-redux";
 import { loadScripts } from "../../scriptLoader";
 import axios from "axios";
-import useAuth from "hooks/useAuth";
 
 
 function Index() {
