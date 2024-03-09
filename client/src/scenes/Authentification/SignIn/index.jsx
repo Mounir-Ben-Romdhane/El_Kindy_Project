@@ -95,11 +95,18 @@ function Index() {
         );
         const accessTokenn = loggedIn.accessToken;
         const userRoles = accessTokenn ? jwtDecode(accessTokenn).roles : []; 
+
+        //console.log("userRole ",userRoles);
+        if (userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('superAdmin')) {
+          navigate("/dashboard-admin"); 
+        } else if (userRoles.includes('student') || userRoles.includes('parent')) {
+
         console.log("userRoleeeeeeee ",userRoles);
         navigate("/home");
         if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
           navigate("/dashboard-admin");
         } else if (userRoles.includes('student') || userRoles.includes('parent')|| userRoles.includes('teacher')) {
+
             navigate("/home");
         }
       }

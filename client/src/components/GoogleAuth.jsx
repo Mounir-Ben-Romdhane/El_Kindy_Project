@@ -32,8 +32,8 @@ const GoogleAuth = () => {
       const loggedIn = await loggedInResponse.json();
 
       if (loggedIn.accessToken && loggedIn.refreshToken) {
-        console.log("logged successfully!!");
-        console.log("LoggedIn", loggedIn);
+      //  console.log("logged successfully!!");
+      //  console.log("LoggedIn", loggedIn);
 
         dispatch(
           setLogin({
@@ -61,9 +61,9 @@ const GoogleAuth = () => {
   };
 
   const handleSuccess = async (credentialResponse) => {
-    console.log("Success:", credentialResponse);
+    //console.log("Success:", credentialResponse);
     const credentialResponseDecoded = jwtDecode(credentialResponse.credential);
-    console.log("User Object:", credentialResponseDecoded);
+    //console.log("User Object:", credentialResponseDecoded);
 
     // Prepare JSON object with decoded token data
     const userData = {
@@ -73,7 +73,7 @@ const GoogleAuth = () => {
       family_name: credentialResponseDecoded.family_name,
       picture: credentialResponseDecoded.picture,
     };
-    console.log("User Data:", userData);
+   // console.log("User Data:", userData);
     await login(userData);
   };
 
