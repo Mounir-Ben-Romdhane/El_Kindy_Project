@@ -19,32 +19,46 @@ export async function list(req, res) {
 }
 
 // Edit Event
-export const updateEvent = async (req, res) => {
+/* export const updateEvent = async (req, res) => {
   try {
       const { id } = req.params;
-      let updateData = req.body; // Assuming req.body contains the fields to update
+      let updateData = req.body; 
 
       // Log the received file data
       console.log("Received file:", req.file);
 
-      // If a file is uploaded, add its path to updateData
+    
       if (req.file) {
-          console.log("File path:", req.file.path);
-          // Remove the 'public/assets/' prefix from the file path
-          updateData.picturePath = req.file.path.replace('public/assets/', '');
-      }
-      
+        updateData.picturePath = req.file.path; // Or adjust based on your storage logic
+    }
       // Log the updateData to verify its content
       console.log("Update data:", updateData);
 
       // Update the category with the given ID
-      const updateEvent = await Event.findByIdAndUpdate(id, updateData, { new: true });
-     
+      const updatedEvent = await Event.findByIdAndUpdate(id, updateData, { new: true });
+      if (!updatedEvent) {
+        return res.status(404).json({ success: false, error: "Event not found." });
+      }
+
+      return res.status(200).json({ success: true, data: updatedEvent });
+  } catch (err) {
+    console.error("Update Event Error:", err);
+    return res.status(500).json({ success: false, error: 'Failed to update event', details: err.message });
+  }
+}; */
+
+
+export const updateEvent = async (req, res) => {
+  try {
+      const { id } = req.params;
+
+      const updateEvent = await Event.findByIdAndUpdate(id, { $set: req.body }, { new: true });
+
       if (!updateEvent) {
           return res.status(404).json({ success: false, error: "Event not found." });
       }
 
-      return res.status(200).json({ success: true, data: updateEvent });
+      return res.status(200).json({ success: true, data: updateEvent});
   } catch (err) {
       console.log(err);
       return res.status(500).json({ success: false, error: err.message });

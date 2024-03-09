@@ -35,12 +35,12 @@ function EditEvent() {
     }
 };
 
-  const handleRemoveImage = () => {
-    setImageName(null);
-    setImageFile(null);
-    document.getElementById("image").value = "";
-  };
-
+const handleRemoveImage = () => {
+  setImageName(null);
+  setImageFile(null);
+  setPreviewImageUrl(""); // Clear the preview image URL
+  document.getElementById("picture").value = ""; // Reset the file input
+};
   useEffect(() => {
     const fetchEvent = async () => {
       try {
@@ -54,10 +54,11 @@ function EditEvent() {
           description: eventData.description,
           price: eventData.price,
           dateDebut: formatDate(eventData.dateDebut),
-        dateFin: formatDate(eventData.dateFin),
+          dateFin: formatDate(eventData.dateFin),
         });
-        if (eventData.imagePath) {
-          setPreviewImageUrl(`http://localhost:3001/assets/${eventData.imagePath}`);
+        if (eventData.picturePath) { 
+          setPreviewImageUrl(`http://localhost:3001/assets/${eventData.picturePath}`);
+          setImageName(eventData.picturePath); 
         }
       } catch (error) {
         console.error("Error Fetching Event:", error);
@@ -96,8 +97,8 @@ function EditEvent() {
     }
     
     try {
-      const response = await axios.put(
-        `http://localhost:3001/event/edit/${id}`,
+      const response = await axios.patch(
+        `http://localhost:3001/event/update/${id}`,
         formData,
         {
           headers: {
@@ -201,59 +202,35 @@ function EditEvent() {
                   <div className="m-4">
                     {/* Image */}
                     <div className="col-12">
-                      <div className="text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3">
-                        {/* Display the image */}
-                        {previewImageUrl && (
-  <div>
-    <img
-      src={previewImageUrl}
-      alt="Event Preview"
-      style={{ maxWidth: "300px", maxHeight: "300px" }}
+  <div className="mb-3">
+    <label htmlFor="picture" className="form-label">Event Image</label>
+    {/* Image Preview or Current Image Display */}
+    {previewImageUrl && (
+      <div className="text-center mb-3">
+        <img
+          src={previewImageUrl}
+          alt="Preview"
+          style={{ maxWidth: "300px", maxHeight: "300px" }}
+        />
+        <div className="mt-2">
+          <button type="button" className="btn btn-danger btn-sm" onClick={handleRemoveImage}>Remove Image</button>
+        </div>
+      </div>
+    )}
+    {/* Image Upload Input */}
+    <input
+      type="file"
+      className="form-control"
+      id="picture"
+      name="picture"
+      accept="image/*"
+      onChange={handleImageSelect}
     />
+    <p className="small mt-2">
+      <b>Note:</b> Only JPG, JPEG, and PNG formats are supported. Our suggested dimensions are 600px * 450px. Larger images will be cropped to fit our thumbnails/previews.
+    </p>
   </div>
-)}
-                        {/* Upload image button */}
-                        <div className="mb-3">
-                          <h6 className="my-2">
-                            Upload Event image here, or{" "}
-                            <span
-                              className="text-primary"
-                              style={{ cursor: "pointer" }}
-                            >
-                              Browse
-                            </span>
-                          </h6>
-                          {/* File input */}
-                          <input
-                            className="form-control"
-                            type="file"
-                            name="picture"
-                            id="image"
-                            accept="image/gif, image/jpeg, image/png"
-                            onChange={handleImageSelect}
-                          />
-                          {/* Note */}
-                          <p className="small mb-0 mt-2">
-                            <b>Note:</b> Only JPG, JPEG, and PNG formats are
-                            supported. Our suggested dimensions are 600px *
-                            450px. Larger images will be cropped to fit our
-                            thumbnails/previews.
-                          </p>
-                        </div>
-                        {/* Remove image button */}
-                        {imageName && (
-                          <div className="d-sm-flex justify-content-end mt-2">
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-danger-soft mb-3"
-                              onClick={handleRemoveImage}
-                            >
-                              Remove image
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+</div>
                   </div>
                   {/* Upload image END */}
                 </div>

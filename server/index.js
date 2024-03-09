@@ -9,7 +9,7 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from "url";
 import { addNewCourse, updateCourse } from "./controllers/courseController.js";
-import { addNewEvent } from "./controllers/event.js";
+import { addNewEvent,updateEvent } from "./controllers/event.js";
 import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
 import eventRoutes from "./routes/Event.js";
 import salleRoutes from "./routes/salle.js";
@@ -70,6 +70,8 @@ app.post("/course/add",upload.single("picture"),addNewCourse);
 app.patch("/course/update/:id",upload.single("picture"),verifyToken, updateCourse);
 
 app.post("/event/add",upload.single("picture"),addNewEvent);
+app.patch("/event/update/:id",upload.single("picture"),updateEvent);
+
 
 app.post("/api/categories", upload.single("picture"), createCategorie);
 app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
