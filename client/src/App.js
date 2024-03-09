@@ -51,7 +51,7 @@ import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetail
 import EditCourse from "scenes/Courses/backOffice/EditCoursePage";
 
 import ListEventUser from '../src/scenes/EventsPage/EventFront'
-import EditCourse from "scenes/Courses/EditCoursePage";
+
 
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
