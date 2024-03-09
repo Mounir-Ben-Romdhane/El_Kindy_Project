@@ -39,7 +39,7 @@ function BannerStartHome(props) {
               {/* Title */}
               <h1 className="mb-3">{props.title}</h1>
               <p className="mb-3">{props.description}</p>
-              {/* Search */}
+              {/* Search 
               {list && list.length > 0 && (
                     <form className="bg-body rounded p-2">
                         <div className="input-group">
@@ -47,7 +47,7 @@ function BannerStartHome(props) {
                             <button type="button" className="btn btn-dark mb-0 rounded">Search</button>
                         </div>
                     </form>
-                )}
+                )}*/}
             </div>
             {/* Image */}
             <div className="col-6 col-md-3 text-center order-3">
