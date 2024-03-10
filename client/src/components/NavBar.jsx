@@ -112,7 +112,7 @@ function NavBar() {
                 {/* CORSUS */}
                 <li className="nav-item dropdown">
                   <a
-                    className={`nav-link dropdown-toggle ${activeNavItem === "/category" || activeNavItem === "/courses" ? "active" : ""}`}
+                    className={`nav-link dropdown-toggle ${activeNavItem === "/category" || activeNavItem === "/courses"|| activeNavItem === "/stage" ? "active" : ""}`}
                     href="#"
                     id="demoMenu"
                     data-bs-toggle="dropdown"
