@@ -345,10 +345,10 @@ function App() {
 <Route path="/editEvent/:id" element={isAuth ? <EditEventPage /> : <Navigate to="/" />} />
 
 <Route path="/detailEvent/:id"
-               element={isAuth ? <DetailEvents /> : <Navigate to="/" />} />
+               element={<DetailEvents />} />
 
 <Route path="/listEventUser"
-               element={isAuth ? <ListEventUser /> : <Navigate to="/" />} />
+               element={<ListEventUser /> } />
 
 
         <Route
