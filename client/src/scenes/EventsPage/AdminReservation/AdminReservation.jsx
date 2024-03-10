@@ -59,7 +59,8 @@ function Index() {
     reservation.eventId.title.toLowerCase().includes(searchTerm) ||
       reservation.userName.toLowerCase().includes(searchTerm) ||
       reservation.userEmail.toLowerCase().includes(searchTerm) ||
-      reservation.phoneNumber.toString().includes(searchTerm)
+      reservation.phoneNumber.toString().includes(searchTerm) ||
+      reservation.status.toLowerCase().includes(searchTerm)
   );
 
   return (

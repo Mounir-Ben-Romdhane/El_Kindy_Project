@@ -3,6 +3,9 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogout } from "../state";
 import { useSelector } from "react-redux";
+import { faConciergeBell } from '@fortawesome/free-solid-svg-icons';
+import { faTicketAlt } from '@fortawesome/free-solid-svg-icons';
+import { faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUsers,
@@ -221,6 +224,21 @@ function SideBar() {
                   Events
                 </Link>
               </li>
+
+              {/* menu item Reservation */}
+              <li className="nav-item">
+                <Link
+                to="/listReservation" 
+                className={`nav-link ${activeNavItem === "/listReservation" ? "active" : ""}`}
+                onClick={() => handleNavItemClick("/listReservation")}>
+                  <FontAwesomeIcon
+                    icon={faTicketAlt}
+                    className="fa-fw me-1"
+                  />{" "}
+                  Reservations
+                </Link>
+              </li>
+
 
               {/* menu item events */}
               <li className="nav-item">
