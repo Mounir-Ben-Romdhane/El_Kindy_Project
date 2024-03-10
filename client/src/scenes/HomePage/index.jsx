@@ -67,7 +67,7 @@ function Index() {
     
     return () => clearInterval(interval);
   }, []);
-
+//test
   useEffect(() => {
     const transitionTimer = setTimeout(() => {
       setCurrentImage(nextImage);
