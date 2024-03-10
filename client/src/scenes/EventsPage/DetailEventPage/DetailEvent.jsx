@@ -24,6 +24,9 @@
   import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 
 
+  import BannerStartHome from "components/BannerStartHome";
+
+
   function DetailEvents() {
     const { id } = useParams();
     const [eventDetails, setEventDetails] = useState({});
@@ -210,6 +213,11 @@
         {/* Header END */}
         {/* **************** MAIN CONTENT START **************** */}
         <main>
+
+        <BannerStartHome
+          title="About Event"
+          description="More information about the event."
+        />
           {/* =======================
       Page content START */}
         </main>

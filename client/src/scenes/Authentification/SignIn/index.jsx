@@ -20,10 +20,13 @@ function Index() {
   useEffect(() => {
     if (isAuth) {
       const userRoles = isAuth ? jwtDecode(isAuth).roles : []; 
-        console.log("userRole ",userRoles);
-        if (userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('parent')) {
+        //console.log("userRole ",userRoles);
+        if (userRoles.includes('admin') || userRoles.includes('parent')) {
           navigate("/dashboard-admin");
-        } else if(userRoles.includes('parent') || userRoles.includes('student')){
+        }else if (userRoles.includes('teacher') )  {
+          navigate('/dashbordTeacher');
+        }
+         else if(userRoles.includes('parent') || userRoles.includes('student')){
             navigate("/home");
         }
     }
@@ -97,9 +100,14 @@ function Index() {
         const accessTokenn = loggedIn.accessToken;
         const userRoles = accessTokenn ? jwtDecode(accessTokenn).roles : []; 
         //console.log("userRole ",userRoles);
-        if (userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('superAdmin')) {
+        if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
           navigate("/dashboard-admin"); 
-        } else if (userRoles.includes('student') || userRoles.includes('parent')) {
+
+        }else if (userRoles.includes('teacher')){
+          navigate('/courses');
+        } 
+        else if (userRoles.includes('student') || userRoles.includes('parent')) {
+
             navigate("/home");
         }
       }

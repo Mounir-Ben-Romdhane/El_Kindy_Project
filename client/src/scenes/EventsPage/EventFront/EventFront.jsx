@@ -81,47 +81,7 @@ function ListEventUser() {
 
     {/* =======================
 About START */}
-<section>
-  <div className="container bg-light">
-    <div className="row g-4 align-items-center">
-      <div className="col-lg-5">
-        {/* Title */}
-        <h2>Immerse in Our<span className="text-warning"> Flourishing Conservatory Life.</span></h2>
-        {/* Image */}
-        <img src="assets/images/about/03.jpg" className="rounded-2" alt="conservatory events" />
-      </div>
-      <div className="col-lg-7">
-        <div className="row g-4">
-          <br></br>
-          {/* Item */}
-          <div className="col-sm-6">
-            <div className="icon-lg bg-orange bg-opacity-10 text-orange rounded-2"><i className="fas fa-chalkboard-teacher fs-5"></i></div>
-            <h5 className="mt-2">Masterclasses with Maestros</h5>
-            <p className="mb-0">Engage directly with virtuosos and seasoned performers. Expand your musical prowess and be inspired by experts.</p>
-          </div>
-          {/* Item */}
-          <div className="col-sm-6">
-            <div className="icon-lg bg-info bg-opacity-10 text-info rounded-2"><i className="fas fa-music fs-5"></i></div>
-            <h5 className="mt-2">A Symphony of Events</h5>
-            <p className="mb-0">Our calendar is a composition of various events—recitals, workshops, and seasonal concerts. There’s a perfect harmony for everyone.</p>
-          </div>
-          {/* Item */}
-          <div className="col-sm-6">
-            <div className="icon-lg bg-success bg-opacity-10 text-success rounded-2"><i className="fas fa-clock fs-5"></i></div>
-            <h5 className="mt-2">Harmonious Flexibility</h5>
-            <p className="mb-0">We offer a variety of events that cater to different schedules and learning paces, ensuring that you can enjoy the beauty of music at your convenience.</p>
-          </div>
-          {/* Item */}
-          <div className="col-sm-6">
-            <div className="icon-lg bg-purple bg-opacity-10 text-purple rounded-2"><i className="fas fa-palette fs-5"></i></div>
-            <h5 className="mt-2">Elevated Artistic Standards</h5>
-            <p className="mb-0">Partake in events that epitomize excellence and creativity, designed to resonate with aficionados and newcomers alike.</p>
-          </div>		
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+
 
     {/* =======================
 About END */}
@@ -183,8 +143,47 @@ Trending courses START */}
 
 </section>
 
-
-
+<section>
+  <div className="container ">
+    <div className="row g-4 align-items-center">
+      <div className="col-lg-5">
+        {/* Title */}
+        <h2>Immerse in Our<span className="text-warning"> Flourishing Conservatory Life.</span></h2>
+        {/* Image */}
+        <img src="assets/images/about/03.jpg" className="rounded-2" alt="conservatory events" />
+      </div>
+      <div className="col-lg-7">
+        <div className="row g-4">
+          <br></br>
+          {/* Item */}
+          <div className="col-sm-6">
+            <div className="icon-lg bg-orange bg-opacity-10 text-orange rounded-2"><i className="fas fa-chalkboard-teacher fs-5"></i></div>
+            <h5 className="mt-2">Masterclasses with Maestros</h5>
+            <p className="mb-0">Engage directly with virtuosos and seasoned performers. Expand your musical prowess and be inspired by experts.</p>
+          </div>
+          {/* Item */}
+          <div className="col-sm-6">
+            <div className="icon-lg bg-info bg-opacity-10 text-info rounded-2"><i className="fas fa-music fs-5"></i></div>
+            <h5 className="mt-2">A Symphony of Events</h5>
+            <p className="mb-0">Our calendar is a composition of various events—recitals, workshops, and seasonal concerts. There’s a perfect harmony for everyone.</p>
+          </div>
+          {/* Item */}
+          <div className="col-sm-6">
+            <div className="icon-lg bg-success bg-opacity-10 text-success rounded-2"><i className="fas fa-clock fs-5"></i></div>
+            <h5 className="mt-2">Harmonious Flexibility</h5>
+            <p className="mb-0">We offer a variety of events that cater to different schedules and learning paces, ensuring that you can enjoy the beauty of music at your convenience.</p>
+          </div>
+          {/* Item */}
+          <div className="col-sm-6">
+            <div className="icon-lg bg-purple bg-opacity-10 text-purple rounded-2"><i className="fas fa-palette fs-5"></i></div>
+            <h5 className="mt-2">Elevated Artistic Standards</h5>
+            <p className="mb-0">Partake in events that epitomize excellence and creativity, designed to resonate with aficionados and newcomers alike.</p>
+          </div>		
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 
     {/* =======================
@@ -216,6 +215,9 @@ Video divider START */}
           <path className="fill-warning" d="M22.003,11.001 C22.003,17.078 17.077,22.003 11.001,22.003 C4.925,22.003 -0.001,17.078 -0.001,11.001 C-0.001,4.925 4.925,-0.000 11.001,-0.000 C17.077,-0.000 22.003,4.925 22.003,11.001 Z" />
         </svg>
       </figure>
+
+
+
       <div className="container position-relative">
         <div className="row justify-content-between align-items-center my-5">
           <div className="col-lg-5 position-relative">

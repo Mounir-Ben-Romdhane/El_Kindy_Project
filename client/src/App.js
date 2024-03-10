@@ -1,6 +1,8 @@
 
+ import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
-import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+
+
 
 import { useDispatch, useSelector } from "react-redux";
 import { loadScripts } from './scriptLoader';
@@ -243,7 +245,8 @@ function App() {
           element={
             <PrivateRoute
               element={<DashbordTeacher />}
-              requiredRoles={["superAdmin", "teacher"]}
+              requiredRoles={["superAdmin", "teacher", "student"]}
+
 
 
             />
@@ -397,7 +400,7 @@ function PrivateRoute({ element, requiredRoles }) {
   const userRoles = accessToken ? jwtDecode(accessToken).roles : [];
 
   // If user is authenticated and has required roles, render the element
-  if (accessToken && userRoles.some((role) => requiredRoles.includes(role))) {
+  if (accessToken && userRoles?.some((role) => requiredRoles.includes(role))) {
     return element;
   } else {
     dispatch(setLogout());
