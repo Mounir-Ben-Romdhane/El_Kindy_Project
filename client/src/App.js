@@ -228,6 +228,17 @@ function App() {
           />
 
 
+          <Route
+            path="/dashbordTeacher"
+            element={
+              <PrivateRoute
+                element={<DashbordTeacher />}
+                requiredRoles={["superAdmin", "admin", "teacher"]}
+              />
+            }
+          />
+
+
 
 
         <Route
@@ -240,18 +251,6 @@ function App() {
           }
         />
         
-          <Route
-          path="/dashbordTeacher"
-          element={
-            <PrivateRoute
-              element={<DashbordTeacher />}
-              requiredRoles={["superAdmin", "teacher", "student"]}
-
-
-
-            />
-          }
-        />
 
         
 

@@ -92,7 +92,6 @@ function Index() {
         setOpen(false);
         dispatch(
           setLogin({
-            //user: loggedIn.user,
             accessToken: loggedIn.accessToken,
             refreshToken: loggedIn.refreshToken,
           })

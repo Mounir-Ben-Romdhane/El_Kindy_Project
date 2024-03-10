@@ -13,7 +13,7 @@ function Index() {
   const scriptsLoaded = useRef(false);
   const [coursesByCategories, setCoursesByCategories] = useState([]);
   
-
+//
   const [currentImage, setCurrentImage] = useState(0);
   const [nextImage, setNextImage] = useState(1);
   const images = [
