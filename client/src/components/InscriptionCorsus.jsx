@@ -8,6 +8,9 @@ import { ToastContainer, toast } from "react-toastify";
 import Backdrop from "@mui/material/Backdrop";
 import CalendarInscription from "./CalendarInscription";
 import BannerStartHome from "./BannerStartHome";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faCheck } from '@fortawesome/free-solid-svg-icons';
+import "../App.css"
 
 
 function InscriptionCorsus(props) {
@@ -641,12 +644,16 @@ Contact form START */}
                                                           </a>
                                                         )}
                                                         {/* Favorite icon */}
-                                                        <a
-                                                          className="h5 mb-0"
-                                                          onClick={() => handleToggleFavorite(course._id)}
-                                                        >
-                                                          <i className={formData.likedCourses.includes(course._id) ? "fas fa-heart text-danger" : "far fa-heart"} />
-                                                        </a>  
+                                                          <div
+                                                            className={`icon-circle ${formData.likedCourses.includes(course._id) ? 'liked' : ''}`}
+                                                            onClick={() => handleToggleFavorite(course._id)}
+                                                          >
+                                                            {formData.likedCourses.includes(course._id) ? (
+                                                              <FontAwesomeIcon icon={faCheck} className="text-success" /> // Checked icon
+                                                            ) : (
+                                                              <FontAwesomeIcon icon={faPlus} className="text-primary" /> // Plus icon
+                                                            )}
+                                                          </div>
 
                                                       </div>
                                                       {/* Title */}
