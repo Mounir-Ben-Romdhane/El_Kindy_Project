@@ -143,12 +143,17 @@ function NavBar() {
                         Courses
                       </Link>
                     </li>
+                   
+
                     <li>
                       {" "}
-                      <a className="dropdown-item" href="index-2.html">
-                      <FontAwesomeIcon icon={faBriefcase} className="fa-fw me-1" /> {/* Stages */}
-                        InternalShip
-                      </a>
+                      <Link 
+                         className={`dropdown-item ${activeNavItem === "/stage" ? "active" : ""}`}
+                         to="/stage"
+                         onClick={() => handleNavItemClick("/stage")}>
+                      <FontAwesomeIcon icon={faBriefcase} className="fa-fw me-1" /> 
+                      InternalShip
+                      </Link>
                     </li>
                   </ul>
                 </li>

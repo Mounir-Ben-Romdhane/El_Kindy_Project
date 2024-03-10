@@ -3,7 +3,7 @@ import Footer from "components/Footer";
 import NavBar from "components/NavBar";
 import { useSelector } from "react-redux";
 import { loadScripts } from "../../../scriptLoader";
-
+import BannerStartHome from "components/BannerStartHome";
 function Index() {
   const [stages, setStages] = useState([]);
   const user = useSelector((state) => state.user);
@@ -28,6 +28,11 @@ function Index() {
   return (
     <>
       <NavBar />
+
+      <BannerStartHome
+          title="All Stages"
+          description="Find Out Our stages."
+        />
 
       {/* =======================
 Main Banner START */}
