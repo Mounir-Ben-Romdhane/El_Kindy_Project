@@ -2,6 +2,8 @@
  import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 
 
+
+
 import { useDispatch, useSelector } from "react-redux";
 import { loadScripts } from './scriptLoader';
 
@@ -18,8 +20,8 @@ import NotFound from "./scenes/NotFound";
 import AdminHomePage from "../src/scenes/AdminHomePage";
 import ListCoursesPage from "./scenes/Courses/backOffice/ListCoursesPage";
 import Stage from "../src/scenes/Stage/StageHome";
-import ListEventsPage from "../src/scenes/EventsPage/ListEventPage";
-import AddEventPage from "../src/scenes/EventsPage/AddEventPage";
+import ListEventsPage from "./scenes/EventsPage/ListEventPage/ListEvent";
+import AddEventPage from "./scenes/EventsPage/AddEventPage/AddEvent";
 import AddCoursePage from "./scenes/Courses/backOffice/AddCoursePage";
 import ListCategoryPage from "../src/scenes/Category/ListCategoryPage";
 import AddCategoryPage from "../src/scenes/Category/AddCategoryPage";
@@ -42,11 +44,17 @@ import Room from '../src/scenes/PlatformTeacher/Room';
 
 import Chat from '../src/scenes/Chat/Chat'
 
-
-
+import AdminReservation from './scenes/EventsPage/AdminReservation/AdminReservation'
+import DetailEvents from './scenes/EventsPage/DetailEventPage/DetailEvent'
+import EditEventPage from './scenes/EventsPage/EditEventPage/EditEvent'
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
 
+
 import EditCourse from "scenes/Courses/backOffice/EditCoursePage";
+
+import ListEventUser from './scenes/EventsPage/EventFront/EventFront'
+
+
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
 import ContactPage from "scenes/ContactPage";
@@ -219,6 +227,9 @@ function App() {
             }
           />
 
+
+
+
         <Route
           path="/listCourses"
           element={
@@ -235,6 +246,7 @@ function App() {
             <PrivateRoute
               element={<DashbordTeacher />}
               requiredRoles={["superAdmin", "teacher", "student"]}
+
 
 
             />
@@ -256,6 +268,10 @@ function App() {
         />
 
         
+<Route  path="/listReservation" 
+              element={isAuth ? <AdminReservation /> : <Navigate to="/" /> }   
+          />
+
 
         <Route
           path="/dashbordStudent"
@@ -263,6 +279,7 @@ function App() {
             <PrivateRoute
               element={<DashbordStudent />}
               requiredRoles={["superAdmin", "student"]}
+
 
             />
           }
@@ -325,6 +342,16 @@ function App() {
           path="/addEvent"
           element={isAuth ? <AddEventPage /> : <Navigate to="/" />}
         />
+
+<Route path="/editEvent/:id" element={isAuth ? <EditEventPage /> : <Navigate to="/" />} />
+
+<Route path="/detailEvent/:id"
+               element={isAuth ? <DetailEvents /> : <Navigate to="/" />} />
+
+<Route path="/listEventUser"
+               element={isAuth ? <ListEventUser /> : <Navigate to="/" />} />
+
+
         <Route
           path="/addCourse"
           element={isAuth ? <AddCoursePage /> : <Navigate to="/" />}
