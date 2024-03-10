@@ -9,7 +9,7 @@ import '../../../Style.css'
 
 function ListCourses() {
 
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const accessToken = useSelector((state) => state.accessToken);
   const [courses, setCourses] = useState([]);
   const [coursesByCategories, setCoursesByCategories] = useState([]);

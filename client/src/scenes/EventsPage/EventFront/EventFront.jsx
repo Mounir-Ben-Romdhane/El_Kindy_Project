@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-import BannerStart from 'components/BannerStart'
-import "./index.css";
+import BannerStart from 'components/BannerStart';
 import kendy from "../../../../src/assetss/images/kendy.png";
 import Navbar  from "components/NavBar";
 import Footer from "components/Footer";
+import '../../Style.css';
+import './EventFront.css';
+import BannerStartHome from "components/BannerStartHome";
 
 function ListEventUser() {
   const [events, setEvents] = useState([]);
@@ -64,14 +66,18 @@ function ListEventUser() {
 <Navbar />
   {/* Top header END */}
   {/* Header START */}
-
+ {/* =======================
+        Page Banner START */}
+       
+        {/* =======================
+        Page Banner END */}
   {/* Header END */}
   {/* **************** MAIN CONTENT START **************** */}
   <main>
-  <BannerStart 
-                  title= "Welcome to our Event Page"
-                  description= "Find and book the best events happening around you."
-                />
+  <BannerStartHome
+          title="All Events"
+          description="Find and book the best events happening around you."
+        />
 
     {/* =======================
 About START */}
@@ -122,45 +128,59 @@ About END */}
     {/* =======================
 Trending courses START */}
 <section className="pt-0 pt-md-5">
-  <div className="container">
-    <div className="row">
-      <div className="col-lg-8 mb-4">
-        <h2 className="mb-0">Discover Our <span className="text-warning">Trending</span> Events</h2>
-        <p>Explore the hottest events happening now!</p>
-      </div>
+<div className="container">
+  <div className="row">
+    <div className="col-lg-8 mb-4">
+      <h2 className="mb-0">Discover Our <span className="text-warning">Trending</span> Events</h2>
+      <p>Explore the hottest events happening now!</p>
     </div>
-    <div className="row g-4">
-      {events.map(event => (
-        <div className="col-md-6 col-xl-4" key={event._id} onClick={() => navigateToDetailPage(event._id)}>
-          <article className="event-card">
-            <div className="card-image">
+  </div>
+  <div className="row g-4">
+    {events.map(event => (
+      <div className="col-md-6 col-xl-4" key={event._id} onClick={() => navigateToDetailPage(event._id)}>
+        <article className="event-card">
+          <div className="cardd shadow-hover h-100">
+            {/* Wrap the image inside a div and apply background color to the div */}
+            <div style={{ background: 'linear-gradient(rgba(236, 231, 225, 0.25), rgba(18, 91, 193, 0.93))' }}>
               <img
                 src={event.picturePath ? `http://localhost:3001/assets/${event.picturePath}` : "assets/images/default-event.jpg"}
                 alt={event.title}
+                className="card-img-top"
+                style={{ height: "200px", objectFit: "cover" }}
               />
-              <div className="overlay">
-                <div className="overlay-text">
-                  <i className="fas fa-info-circle"></i>Learn More
-                </div>
-              </div>
             </div>
-            <div className="card-content">
-              <h5>{event.title}</h5>
-              <div className="event-dates">
-                <span><i className="fas fa-calendar-alt"></i> {new Date(event.dateDebut).toLocaleDateString()} - {new Date(event.dateFin).toLocaleDateString()}</span>
-              </div>
-              <div className="event-info">
-                <span className="price">${event.price}</span>
-              </div>
+            <div className="card-content p-3">
+              <h5 className="card-title text-center mt-2">{event.title}</h5>
+              <p className="event-dates text-center mb-0">
+                <i className="fas fa-calendar-alt"></i> {new Date(event.dateDebut).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })} - {new Date(event.dateFin).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+              </p>
+              <p className="event-price text-center my-2">
+                <span className="badge bg-primary">${event.price}</span>
+              </p>
+               {/* Title */}
+               <h5 className="card-title fw-normal">
+                          {/*     <a href="#">{event.title}</a> */}
+                            </h5>
+                            <div className="text-center mt-5 cardd-layer">
+                            <a href="#" className="btn btn-primary btn-sm">View more</a>
+                            </div>
+                            
             </div>
-          </article>
-        </div>
-      ))}
-    </div>
-    <div className="text-center mt-5">
-      <button className="btn btn-primary">View More Events</button>
-    </div>
+          </div>
+        </article>
+      </div>
+    ))}
   </div>
+  <div className="text-center mt-5">
+    <button className="btn btn-primary">View More Events</button>
+  </div>
+</div>
+
+
+
+
+
+
 </section>
 
 

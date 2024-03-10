@@ -18,8 +18,8 @@ import NotFound from "./scenes/NotFound";
 import AdminHomePage from "../src/scenes/AdminHomePage";
 import ListCoursesPage from "./scenes/Courses/backOffice/ListCoursesPage";
 import Stage from "../src/scenes/Stage/StageHome";
-import ListEventsPage from "../src/scenes/EventsPage/ListEventPage";
-import AddEventPage from "../src/scenes/EventsPage/AddEventPage";
+import ListEventsPage from "./scenes/EventsPage/ListEventPage/ListEvent";
+import AddEventPage from "./scenes/EventsPage/AddEventPage/AddEvent";
 import AddCoursePage from "./scenes/Courses/backOffice/AddCoursePage";
 import ListCategoryPage from "../src/scenes/Category/ListCategoryPage";
 import AddCategoryPage from "../src/scenes/Category/AddCategoryPage";
@@ -42,15 +42,15 @@ import Room from '../src/scenes/PlatformTeacher/Room';
 
 import Chat from '../src/scenes/Chat/Chat'
 
-import AdminReservation from '../src/scenes/EventsPage/AdminReservation'
-import DetailEvents from '../src/scenes/EventsPage/DetailEventPage'
-import EditEventPage from '../src/scenes/EventsPage/EditEventPage'
+import AdminReservation from './scenes/EventsPage/AdminReservation/AdminReservation'
+import DetailEvents from './scenes/EventsPage/DetailEventPage/DetailEvent'
+import EditEventPage from './scenes/EventsPage/EditEventPage/EditEvent'
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
 
 
 import EditCourse from "scenes/Courses/backOffice/EditCoursePage";
 
-import ListEventUser from '../src/scenes/EventsPage/EventFront'
+import ListEventUser from './scenes/EventsPage/EventFront/EventFront'
 
 
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library

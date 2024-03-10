@@ -316,7 +316,7 @@
   {/* Personal Info in Card Design */}
   <div className="card shadow-sm mt-3">
     <div className="card-body">
-      <h6 className="card-subtitle mb-2 text-muted">Event Details</h6>
+      <h6 className="card-subtitle mb-2 ">Event Details</h6>
       <ul className="list-group list-group-flush">
         <li className="list-group-item">
           <LocationOnIcon className="text-primary me-2" />
