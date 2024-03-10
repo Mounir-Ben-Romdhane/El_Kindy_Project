@@ -190,18 +190,20 @@ function Index() {
                             <td>
                               <Link
                                 to={`/inscriptionDetails/${inscription._id}`}
-                                className="btn btn-sm btn-info-soft mb-0 me-1 mb-md-0"
-                              
+                                className="btn btn-info-soft btn-round mb-1 me-1 mb-md-0"
                               >
-                               Details
+                                <i class="bi bi-eye"></i>
                               </Link>
-                              
 
                               <button
+                                class="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top"
+                                title=""
+                                data-bs-original-title="Delete"
                                 onClick={() => handleDelete(inscription._id)}
-                                className="btn btn-sm btn-danger-soft me-1 mb-1 mb-md-0"
                               >
-                                Delete
+                                <i class="bi bi-trash"></i>
                               </button>
                             </td>
                           </tr>
