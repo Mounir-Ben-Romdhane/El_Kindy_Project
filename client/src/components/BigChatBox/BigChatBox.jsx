@@ -1,24 +1,25 @@
 import React, { useEffect, useState, useRef } from "react";
 import { addMessage, getMessages } from "../../api/MessageRequests";
-import "./ChatBox.css";
-import { io } from "socket.io-client";
+import "./BigChatBox.css";
 import { format } from "timeago.js";
 import InputEmoji from "react-input-emoji";
 import { jwtDecode } from "jwt-decode";
 import { useDispatch, useSelector } from "react-redux";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
+import { io } from "socket.io-client";
 
 const ChatBox = (props) => {
   const [userData, setUserData] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [picturePath, setPicturePath] = useState(null);
-  const [sendMessage, setSendMessage] = useState(null);
-  const [receivedMessage, setReceivedMessage] = useState(null);
-  const [onlineUsers, setOnlineUsers] = useState([]);
   const [isChatBoxOpen, setIsChatBoxOpen] = useState(true);
   const axiosPrivate = useAxiosPrivate();
+  const [sendMessage, setSendMessage] = useState(null);
+  const [receivedMessage, setReceivedMessage] = useState(null);
   const socket = useRef();
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [chatMember] = useState("");
 
   const accessToken = useSelector((state) => state.accessToken);
   const refreshTokenState = useSelector((state) => state.refreshToken);
@@ -56,12 +57,14 @@ const ChatBox = (props) => {
   }, [sendMessage]);
 
   // Get the message from socket server
-  useEffect(() => {
-    socket.current.on("recieve-message", (data) => {
-      setReceivedMessage(data);
-    });
-  }, []);
+useEffect(() => {
+  socket.current.on("recieve-message", (data) => {
+    setMessages((prevMessages) => [...prevMessages, data]);
+  });
+}, []);
 
+
+//fetch messages
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -75,14 +78,23 @@ const ChatBox = (props) => {
     if (props.chat !== null) fetchMessages();
   }, [props.chat, accessToken, dispatch]);
 
+
+  //getUserData
   const getUserData = async () => {
     try {
-      const { data } = await axiosPrivate.get(`/auth/${props.receiverId}`);
+      const { data } = await axiosPrivate.get(`/auth/${props.thereciver}`);
       setUserData(data);
     } catch (error) {
       console.log(error);
     }
   };
+ 
+useEffect(() => {
+  if (receivedMessage && receivedMessage.chatId === props.keyy) {
+    setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+    console.log("receivedMessage", receivedMessage);
+  }
+}, [receivedMessage]);
 
   //scroll 2 last msg
   useEffect(() => {
@@ -122,12 +134,12 @@ const ChatBox = (props) => {
     }
   };
 
-
   useEffect(() => {
     if (receivedMessage && receivedMessage.chatId === props.keyy) {
       setMessages([...messages, receivedMessage]);
     }
   }, [receivedMessage]);
+
 
   const scroll = useRef();
   const imageRef = useRef();
@@ -137,89 +149,71 @@ const ChatBox = (props) => {
     setPicturePath(file);
   };
 
-
-  
   return (
-    <>
-      {isChatBoxOpen && (
-        <div>
-          <div className="chat-header  sticky-header " style={{ padding: "0.8rem", borderBottom: "1px solid #ccc" }} >
-            <div
-              className="follower"
-              style={{ display: "flex", alignItems: "center" }}
-            >
+    <div className="ChatBox-container-big">
+      {props.chat ? (
+        <>
+          {/* chat-header */}
+          <div className="chat-header-big">
+            <div className="follower" style={{ display: "flex", alignItems: "center" }}>
               <img
                 src={userData?.picturePath || "defaultProfile.png"}
                 alt="Profile"
                 className="followerImage"
-                style={{ width: "35px", height: "35px", borderRadius: "50%" }}
+                style={{ width: "50px", height: "50px", borderRadius: "50%" }}
               />
-              <div className="name " style={{ fontSize: "1rem", fontFamily: "sans-serif", color: 'black', marginLeft: "10px" }}>
+              <div className="name" style={{ fontSize: "0.9rem", marginLeft: "10px" }}>
                 <span>
                   {userData?.firstName} {userData?.lastName}
                 </span>
               </div>
-              <div
-                className="close-button"
-                onClick={handleClose}
-                style={{
-                  position: "absolute",
-                  top: "10px",
-                  right: "10px",
-                  color: "black",
-                }}
-              >
-                x
-              </div>
             </div>
+            <hr
+              style={{
+                width: "95%",
+                border: "0.1px solid #ececec",
+                marginTop: "20px",
+              }}
+            />
           </div>
-          <div className="ChatBox-container">
-            {props.chat ? (
-              <>
-                <div className="chat-body my-5">
-                  {messages && messages.length > 0 ? (
-                    messages.map((message) => (
-                      <div
-                        key={message._id}
-                        className={`message ${message.senderId === props.currentUser
-                          ? "own"
-                          : "received"
-                          }`}
-                      >
-                        <span>{message.text}</span>
-                        {message.picturePath && !message.text && (
-                          <div className="image-container">
-                            <img src={message.picturePath} alt="Uploaded" style={{ width: "200px", height: "100px" }} />
-                            <span className="message-time">{format(message.createdAt)}</span>
-                          </div>
-                        )}
-                        {!message.picturePath && (
-                          <span className="message-time">{format(message.createdAt)}</span>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <span className="style-de-non-message">No messages yet...</span>
-                  )}
-                  <div ref={scroll}></div>
+          {/* chat-body */}
+          <div className="chat-body-big">
+            {messages && messages.length > 0 ? (
+              messages.map((message) => (
+                <div
+                  key={message._id}
+                  className={`message ${message.senderId === props.currentUser ? "own" : "received"}`}
+                >
+                  <span>{message.text}</span>
+                  
+                  {message.picturePath && !message.text && ( // Ajoutez cette condition
+        <img src={message.picturePath} alt="Uploaded" />
+      )}
+                  <span>{format(message.createdAt)}</span>
                 </div>
-              </>
+              ))
             ) : (
-              <span className="chatbox-empty-message">
-                Appuyez sur une conversation pour commencer...
-              </span>
+              <span>No messages yet...</span>
             )}
+            <div ref={scroll}></div> {/* For scrolling to the bottom */}
           </div>
-
-          <div className="chat-sender input-fixed " style={{ padding: "0.8rem", borderTop: "1px solid #ccc" }}>
-            <h1>{props.key}</h1>
+          {/* chat-sender */}
+          <div className="chat-sender-big">
             <div onClick={() => imageRef.current.click()}>+</div>
-            <InputEmoji value={newMessage} onChange={handleChange} onKeyDown={handleKeyDown} />
+            <InputEmoji
+              value={newMessage}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+            />
             {picturePath && (
-              <img src={URL.createObjectURL(picturePath)} alt="Selected" style={{ width: "40px", height: "40px" }} />
+              <img
+                src={URL.createObjectURL(picturePath)}
+                alt="Selected"
+                style={{ width: "50px", height: "50px" }} // Définissez la taille de l'image comme vous le souhaitez
+              />
             )}
-            <div className="send-button2" onClick={handleSend}>
-              <i className="bi bi-send"></i>
+            <div className="send-button2-big" onClick={handleSend}>
+              Send
             </div>
             <input
               type="file"
@@ -228,9 +222,13 @@ const ChatBox = (props) => {
               onChange={handleImageChange}
             />
           </div>
-        </div>
+
+        </>
+      ) : (
+        <span className="chatbox-empty-message-big">Tap on a chat to start conversation...</span>
       )}
-    </>
+    </div>
+
   );
 };
 
