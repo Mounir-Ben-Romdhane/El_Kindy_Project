@@ -155,10 +155,13 @@ function NavBar() {
                 
                 {/* Nav item 4 Component*/}
                 <li className="nav-item ">
-                  <a className="nav-link" href="docs/alerts.html">
-                  <FontAwesomeIcon icon={faCalendarAlt} className="fa-fw me-1" /> {/* Events */}
-                    Events
-                  </a>
+                  <Link 
+                         className={`nav-link ${activeNavItem === "/listEventUser" ? "active" : ""}`}
+                         to="/listEventUser"
+                         onClick={() => handleNavItemClick("/listEventUser")}>
+                      <FontAwesomeIcon icon={faCalendarAlt} className="fa-fw me-1" /> 
+                      Events
+                      </Link>
                 </li>
                 
 
