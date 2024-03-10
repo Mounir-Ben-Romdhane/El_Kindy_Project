@@ -17,15 +17,15 @@
   
 /* Input-fixed */
 .input-fixed {
-    position: fixed; /* Rendre l'élément fixe */
-    bottom: 0; /* Positionner en bas de la fenêtre */
-    right: 0; /* Positionner à gauche de la fenêtre */
-    width: 24%; /* Largeur de l'élément */
-    background-color: white; /* Fond blanc */
-    z-index: 1000; /* Mettre au-dessus des autres éléments */
-    padding: 1rem; /* Espacement intérieur */
-    display: flex; /* Afficher en tant que flexbox */
-    align-items: center; /* Centrer verticalement */
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 24%;
+    background-color: white;
+    z-index: 1000;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
 }
 
 .chat-header {
@@ -91,7 +91,17 @@
     background-color: rgb(226, 224, 221); /* Adjusted background color */
     color: black; /* Adjust text color as needed */
 }
-
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .message-time {
+    margin-top: 5px;
+    align-self: flex-end;
+  }
+  
 .message img {
     max-width: 50%; /* Pour s'assurer que les images ne dépassent pas la largeur du conteneur */
     border-radius: 0.5rem; /* Ajouter un rayon de bordure si nécessaire */
@@ -102,7 +112,6 @@
     padding: 0.8rem;
     border-radius: 1rem;
     align-self: end;
-    max-width: 90vw; /* Utilisation de vw pour la largeur maximale */
     display: flex;
     justify-content: space-between; /* Aligner les éléments aux extrémités */
 }
@@ -132,7 +141,7 @@
     font-weight: bold;
     margin-left: 30px;
     cursor: pointer;   
-    width: 15%;
+    width: 12%;
     margin-left: auto;
     color: white; /* Déplacer l'élément vers la droite */
 }
@@ -152,4 +161,8 @@
     right:0 ;
     border-radius: 0.5rem;
     cursor: pointer;
+}
+.style-de-non-message{
+    color: #358ff9;
+    font-size:larger;
 }

@@ -37,12 +37,6 @@
   flex-direction: column;
   gap: 1rem;
 }
-.Right-side-chat2 {
-  background-color: rgb(94, 99, 99);
-  display: flex;
-  width: 22%;
-  height: 60%;
-}
 
 .conversation:hover {
   background: #80808038;
@@ -73,23 +67,6 @@
   justify-content: center;
   font-size: 20px;
 }
-
-.ChatBox-container2 {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  height: 60%;
-  background-size: 100%;
-  width: 350px;  /* Largeur de la boîte de chat */
-  background-color: white; /* Couleur de fond */
-  border-radius: 8px 8px 0 0; /* Coins arrondis */
-  overflow-y: scroll;
-  overflow-x: hidden; 
-  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2); /* Ombre */
-  margin-left: 0; /* Supprimer la marge à gauche */
-  margin-right: 0; /* Supprimer la marge à droite */
-}
-
 
 @media screen and (max-width: 768px) {
  .Chat {

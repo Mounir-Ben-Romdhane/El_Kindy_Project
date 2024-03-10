@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef  } from 'react';
 import NavBar from "components/NavBar";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 import { useDispatch, useSelector } from "react-redux";
 import SideBarStudent from 'components/SideBarStudent';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
 import ChatBox from "../../../components/ChatBox/ChatBox";
+import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
 import { createChat, findChat } from '../../../api/ChatRequests';
 
@@ -18,6 +19,11 @@ function Index() {
   const [reciveeeeeerId, setReciveeeeeerId] = useState("");
   const axiosPrivate = useAxiosPrivate();
   const dispatch = useDispatch();
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [currentChat, setCurrentChat] = useState(null);
+  const [sendMessage, setSendMessage] = useState(null);
+  const [receivedMessage, setReceivedMessage] = useState(null);
+  const socket = useRef();
 
   const userId = accessToken ? jwtDecode(accessToken).id : "";
 
@@ -46,23 +52,31 @@ function Index() {
   const handleContact = async (id) => {
     try {
       const response = await axiosPrivate.get(`/chat/find/${userId}/${id}`);
-
+  
       setExistingChat(response.data);
-
+  
       if (response.status === 200 && response.data) {
         setCreatedChatId(response.data._id);
-        setReciveeeeeerId(response.data.members[1]);
-
-
+  
+        if (response.data.members && response.data.members.length > 1) {
+          setReciveeeeeerId(response.data.members[1]);
+        } else {
+          alert("Le chat n'a pas les membres requis.");
+          return;
+        }
+  
       } else {
-        //setReciveeeeeerId(id);
-
         const res = await createChat({ senderId: userId, receiverId: id });
         if (res.status === 201 && res.data) {
           setCreatedChatId(res.data._id);
-          setReciveeeeeerId(response.data.members[1]);
-
-
+  
+          if (res.data.members && res.data.members.length > 1) {
+            setReciveeeeeerId(res.data.members[1]);
+          } else {
+            alert("Le chat créé n'a pas les membres requis.");
+            return;
+          }
+  
         } else {
           alert("Une erreur s'est produite lors de la création du chat.");
           return;
@@ -74,6 +88,7 @@ function Index() {
       return;
     }
   };
+  
   useEffect(() => {
     if (createdChatId) {
       setShowChatBox(true);
@@ -81,6 +96,27 @@ function Index() {
   }, [createdChatId]);
 
 
+ // Connect to Socket.io
+ useEffect(() => {
+  socket.current = io("ws://localhost:8800");
+  socket.current.emit("new-user-add", userId);
+  socket.current.on("get-users", (users) => {
+    setOnlineUsers(users);
+  });
+}, []);
+
+// Send Message to socket server
+useEffect(() => {
+  if (sendMessage!==null) {
+    socket.current.emit("send-message", sendMessage);}
+}, [sendMessage]);
+
+// Get the message from socket server
+useEffect(() => {
+  socket.current.on("recieve-message", (data) => {
+    setReceivedMessage(data);
+  });
+}, []);
 
 
   return (

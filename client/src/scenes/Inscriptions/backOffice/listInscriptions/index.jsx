@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom"; // Assurez-vous d'importer Link depuis react-router-dom
 import withReactContent from "sweetalert2-react-content";
 import "react-confirm-alert/src/react-confirm-alert.css"; // Importez les styles CSS
 import SideBar from "components/SideBar";
