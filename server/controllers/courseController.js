@@ -55,6 +55,7 @@ export const addNewCourse = async (req, res) => {
         const {
             title,
             description,
+            fullDescription,
             picturePath,
             courseCategory,
             courseLevel,
@@ -65,6 +66,7 @@ export const addNewCourse = async (req, res) => {
         const newCourse = new Course({
             title,
             description,
+            fullDescription,
             picturePath,
             courseCategory,
             courseLevel,

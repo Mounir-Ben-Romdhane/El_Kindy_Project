@@ -6,6 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import GridLoader from "react-spinners/GridLoader";
 import { ToastContainer, toast } from "react-toastify";
 import Backdrop from "@mui/material/Backdrop";
+import CalendarInscription from "./CalendarInscription";
+
 
 function InscriptionCorsus(props) {
   const [coursesByCategories, setCoursesByCategories] = useState([]);
@@ -51,6 +53,9 @@ function InscriptionCorsus(props) {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
+  
+  
 
   const toastShowError = (msg) => {
     toast.error(msg, {
@@ -576,7 +581,7 @@ Contact form START */}
                                 data-bs-target="#collapse-2"
                                 aria-expanded="false"
                                 aria-controls="collapse-2"
-                              >
+                                  >
                                 DESIRED INSTRUMENTS ( Like what you want to learn)
                               </button>
                             </h6>
@@ -740,7 +745,7 @@ Contact form START */}
                                 aria-expanded="false"
                                 aria-controls="collapse-3"
                               >
-                                Education
+                                AVAILABLE TIME SLOTS
                               </button>
                             </h6>
                             {/* Body */}
@@ -750,7 +755,9 @@ Contact form START */}
                               aria-labelledby="heading-3"
                               data-bs-parent="#accordionExample2"
                             >
-                              <div className="accordion-body mt-3"></div>
+                              <div className="accordion-body mt-3">
+                              <CalendarInscription/>
+                              </div>
                             </div>
                           </div>
                           {/* Button */}
