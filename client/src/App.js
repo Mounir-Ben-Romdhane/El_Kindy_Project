@@ -1,4 +1,8 @@
+
  import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+
+
+
 
 import { useDispatch, useSelector } from "react-redux";
 import { loadScripts } from './scriptLoader';
@@ -16,8 +20,8 @@ import NotFound from "./scenes/NotFound";
 import AdminHomePage from "../src/scenes/AdminHomePage";
 import ListCoursesPage from "./scenes/Courses/backOffice/ListCoursesPage";
 import Stage from "../src/scenes/Stage/StageHome";
-import ListEventsPage from "../src/scenes/EventsPage/ListEventPage";
-import AddEventPage from "../src/scenes/EventsPage/AddEventPage";
+import ListEventsPage from "./scenes/EventsPage/ListEventPage/ListEvent";
+import AddEventPage from "./scenes/EventsPage/AddEventPage/AddEvent";
 import AddCoursePage from "./scenes/Courses/backOffice/AddCoursePage";
 import ListCategoryPage from "../src/scenes/Category/ListCategoryPage";
 import AddCategoryPage from "../src/scenes/Category/AddCategoryPage";
@@ -40,10 +44,17 @@ import Room from '../src/scenes/PlatformTeacher/Room';
 
 import Chat from '../src/scenes/Chat/Chat'
 
-
+import AdminReservation from './scenes/EventsPage/AdminReservation/AdminReservation'
+import DetailEvents from './scenes/EventsPage/DetailEventPage/DetailEvent'
+import EditEventPage from './scenes/EventsPage/EditEventPage/EditEvent'
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
 
+
 import EditCourse from "scenes/Courses/backOffice/EditCoursePage";
+
+import ListEventUser from './scenes/EventsPage/EventFront/EventFront'
+
+
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
 import ContactPage from "scenes/ContactPage";
@@ -55,7 +66,7 @@ import ListCourses from "scenes/Courses/frontOffice/listCourses";
 
 function App() {
   const isAuth = Boolean(useSelector((state) => state.accessToken));
-  
+
 
 
   const scriptsLoaded = useRef(false);
@@ -95,7 +106,7 @@ function App() {
 
   return (
 
-     
+
     <div>
       <Routes>
         {/* auth routes */}
@@ -132,7 +143,7 @@ function App() {
         <Route
           path="/inscription/:id?"
           element={<InscriptionPage />}
-          />
+        />
 
         {/* PRIVATE ROUTE */}
           <Route
@@ -216,6 +227,7 @@ function App() {
             }
           />
 
+
           <Route
             path="/dashbordTeacher"
             element={
@@ -226,24 +238,78 @@ function App() {
             }
           />
 
-            <Route 
-              path="/meetingHomeS" 
-              element={isAuth ? <MeetingHomeStudent/> : <Navigate to="/" /> } 
-            />
 
-            <Route 
-              path="/dashbordStudent" 
-              element={isAuth ? <DashbordStudent/> : <Navigate to="/" /> } 
+
+
+        <Route
+          path="/listCourses"
+          element={
+            <PrivateRoute
+              element={<ListCoursesPage />}
+              requiredRoles={["superAdmin", "admin"]}
             />
-                
-                <Route 
-              path="/homeMeet" 
-              element={isAuth ? <HomePagee /> : <Navigate to="/" /> } 
-            />
-             <Route path="/room/:roomId"
-              element={isAuth ? <Room /> : <Navigate to="/" /> } 
-          />
+          }
+        />
         
+
+        
+
+<Route
+          path="/meetingHomeS"
+          element={
+            <PrivateRoute
+              element={<MeetingHomeStudent />}
+              requiredRoles={["superAdmin", "student"]}
+
+
+            />
+          }
+        />
+
+        
+<Route  path="/listReservation" 
+              element={isAuth ? <AdminReservation /> : <Navigate to="/" /> }   
+          />
+
+
+        <Route
+          path="/dashbordStudent"
+          element={
+            <PrivateRoute
+              element={<DashbordStudent />}
+              requiredRoles={["superAdmin", "student"]}
+
+
+            />
+          }
+        />
+
+
+
+        <Route
+          path="/homeMeet"
+          element={
+            <PrivateRoute
+              element={<HomePagee />}
+              requiredRoles={["superAdmin", "student","teacher"]}
+
+            />
+          }
+        />
+        
+
+        
+         <Route
+          path="/room/:roomId"
+          element={
+            <PrivateRoute
+              element={<Room />}
+              requiredRoles={["superAdmin", "student","teacher"]}
+
+            />
+          }
+        />
+
         <Route
           path="/edit-course/:id"
           element={isAuth ? <EditCourse /> : <Navigate to="/" />}
@@ -275,6 +341,16 @@ function App() {
           path="/addEvent"
           element={isAuth ? <AddEventPage /> : <Navigate to="/" />}
         />
+
+<Route path="/editEvent/:id" element={isAuth ? <EditEventPage /> : <Navigate to="/" />} />
+
+<Route path="/detailEvent/:id"
+               element={isAuth ? <DetailEvents /> : <Navigate to="/" />} />
+
+<Route path="/listEventUser"
+               element={isAuth ? <ListEventUser /> : <Navigate to="/" />} />
+
+
         <Route
           path="/addCourse"
           element={isAuth ? <AddCoursePage /> : <Navigate to="/" />}
@@ -297,17 +373,17 @@ function App() {
           path="/chat"
           element={isAuth ? <Chat /> : <Navigate to="../auth" />}
         />
-            
-          
-          <Route path="/about" element={<AboutPage />}/>
-            <Route  path="/listCategories" 
-              element={isAuth ? <ListCategoryPage /> : <Navigate to="/" /> } 
-          />
-             <Route  path="/add-category" 
-              element={isAuth ? <AddCategoryPage /> : <Navigate to="/" /> } 
-          />
-          <Route path="/edit-category/:id"
-              element={isAuth ? <EditCategoryPage /> : <Navigate to="/" /> } />
+
+
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/listCategories"
+          element={isAuth ? <ListCategoryPage /> : <Navigate to="/" />}
+        />
+        <Route path="/add-category"
+          element={isAuth ? <AddCategoryPage /> : <Navigate to="/" />}
+        />
+        <Route path="/edit-category/:id"
+          element={isAuth ? <EditCategoryPage /> : <Navigate to="/" />} />
 
         <Route path="/*" element={<NotFound />} />
 
@@ -323,7 +399,7 @@ function PrivateRoute({ element, requiredRoles }) {
   const userRoles = accessToken ? jwtDecode(accessToken).roles : [];
 
   // If user is authenticated and has required roles, render the element
-  if (accessToken && userRoles.some((role) => requiredRoles.includes(role))) {
+  if (accessToken && userRoles?.some((role) => requiredRoles.includes(role))) {
     return element;
   } else {
     dispatch(setLogout());

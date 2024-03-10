@@ -101,10 +101,12 @@ function Index() {
         //console.log("userRole ",userRoles);
         if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
           navigate("/dashboard-admin"); 
+
         }else if (userRoles.includes('teacher')){
           navigate('/courses');
         } 
         else if (userRoles.includes('student') || userRoles.includes('parent')) {
+
             navigate("/home");
         }
       }

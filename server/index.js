@@ -9,7 +9,7 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from "url";
 import { addNewCourse, updateCourse } from "./controllers/courseController.js";
-import { addNewEvent } from "./controllers/event.js";
+import { addNewEvent,updateEvent } from "./controllers/event.js";
 import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
 import eventRoutes from "./routes/Event.js";
 import salleRoutes from "./routes/salle.js";
@@ -19,7 +19,7 @@ import authRoutes from "./routes/auth.js";
 import courseRoute from './routes/courseRoute.js'
 import { register } from "./controllers/auth.js";
 import { addMessage } from './controllers/MessageController.js';
-
+import twilio from "twilio";
 import User from './models/User.js';
 import { users } from "./data/index.js";
 import { createStage, updateStage } from "./controllers/stageController.js";
@@ -31,6 +31,8 @@ import categorieRoutes from "./routes/categorieRoutes.js"; // Import des routes 
 import { verifyToken } from "./middleware/auth.js";
 import ChatRoute from './routes/ChatRoute.js'
 import MessageRoute from './routes/MessageRoute.js'
+import meetingRoutes from './routes/meetingRoutes.js';
+import reservationRoutes  from "./routes/Reservation.js";
 
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
@@ -68,6 +70,8 @@ app.post("/course/add",upload.single("picture"),addNewCourse);
 app.patch("/course/update/:id",upload.single("picture"),verifyToken, updateCourse);
 
 app.post("/event/add",upload.single("picture"),addNewEvent);
+app.patch("/event/update/:id",upload.single("picture"),updateEvent);
+
 
 app.post("/api/categories", upload.single("picture"), createCategorie);
 app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
@@ -76,6 +80,24 @@ app.post("/api/stage", upload.single("picture"), createStage);
 app.patch("/api/stage/:id", upload.single("picture"),updateStage );
 
 app.post("/addMessage", upload.single("picture"), addMessage);
+
+
+
+/*Twilio */
+dotenv.config();
+export const sendSms = (toPhoneNumber) => {
+    const formattedPhoneNumber = `+216${toPhoneNumber}`; // E.164 format
+    const client = new twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+
+    return client.messages
+        .create({
+            body: 'Thank you, Your Event Participation has been Accepted !',
+            from: process.env.TWILIO_PHONE_NUMBER,
+            to: formattedPhoneNumber // Format to +216 ( tunisian Number)
+        })
+        .then(message => console.log("Message sent:", message.sid))
+        .catch(err => console.error("Error sending message:", err));
+};
 
 
 
@@ -90,7 +112,8 @@ app.use("/inscription", inscriptionRoutes);
 
 app.use('/chat', ChatRoute)
 app.use('/message', MessageRoute)
-
+app.use('/meeting', meetingRoutes);
+app.use("/events",reservationRoutes);
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
 mongoose.connect(process.env.MONGO_URL, {
