@@ -32,6 +32,7 @@ import DashbordTeacher from './scenes/PlatformTeacher/DashbordTeacher'
 import HomePagee from '../src/scenes/PlatformTeacher/HomePagee';
 import DashbordStudent from './scenes/PlatformStudent/DashbordStudent'
 import Room from '../src/scenes/PlatformTeacher/Room';
+import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
 
 import TeachersList from '../src/scenes/PlatformStudent/TeachersList'
 import Chat from '../src/scenes/Chat/Chat'
@@ -87,8 +88,9 @@ function App() {
      
     <div>
       <Routes>
-        <Route path="/" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
+        {/* auth routes */}
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route
           path="/reset-password/:id?/:token?"
@@ -98,10 +100,15 @@ function App() {
           path="/verify-account/:id/verify/:token"
           element={<EmailVerify />}
         />
+
+        {/* public routes */}
+        <Route path="/" element={<Navigate to="/home" />} />
         <Route
           path="/home"
-          element={isAuth ? <HomePage /> : <Navigate to="/" />}
+          element={<HomePage /> }
         />
+
+        {/* we want to protect these routes */}
         <Route
           path="/category"
           element={isAuth ? <Category /> : <Navigate to="/" />}
@@ -133,6 +140,16 @@ function App() {
           element={
             <PrivateRoute
               element={<InscriptionList />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/inscriptionDetails/:id"
+          element={
+            <PrivateRoute
+              element={<InscriptionDetails />}
               requiredRoles={["superAdmin", "admin"]}
             />
           }

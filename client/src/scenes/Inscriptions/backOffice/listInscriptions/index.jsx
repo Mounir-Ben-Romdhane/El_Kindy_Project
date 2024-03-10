@@ -56,27 +56,7 @@ function Index() {
     }
   };
 
-  const approveInscription = async (id) => {
-    try {
-      const response = await axios.patch(
-        `http://localhost:3001/inscription/${id}/approve`
-      );
-      fetchData();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const rejectInscription = async (id) => {
-    try {
-      const response = await axios.patch(
-        `http://localhost:3001/inscription/${id}/reject`
-      );
-      fetchData();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  
 
   return (
     <div>
@@ -151,34 +131,13 @@ function Index() {
                             Full Name
                           </th>
                           <th scope="col" className="border-0">
-                            Gender
-                          </th>
-                          <th scope="col" className="border-0">
-                            Date of birth
-                          </th>
-                          <th scope="col" className="border-0">
                             Email
-                          </th>
-                          <th scope="col" className="border-0">
-                            City
-                          </th>
-                          <th scope="col" className="border-0">
-                            Level of study
                           </th>
                           <th scope="col" className="border-0">
                             Parent name
                           </th>
                           <th scope="col" className="border-0">
-                            Parent profession
-                          </th>
-                          <th scope="col" className="border-0">
                             Phone number N°1
-                          </th>
-                          <th scope="col" className="border-0">
-                            Phone number N°2
-                          </th>
-                          <th scope="col" className="border-0">
-                            Liked courses
                           </th>
                           <th scope="col" className="border-0">
                             Status
@@ -196,15 +155,9 @@ function Index() {
                             <td>
                               {inscription.firstName} {inscription.lastName}
                             </td>
-                            <td>{inscription.gender}</td>
-                            <td>{inscription.dateOfBirth}</td>
                             <td>{inscription.email}</td>
-                            <td>{inscription.city}</td>
-                            <td>{inscription.niveauEtude}</td>
                             <td>{inscription.parentName}</td>
-                            <td>{inscription.parentProfession}</td>
                             <td>{inscription.phoneNumber1}</td>
-                            <td>{inscription.phoneNumber2}</td>
                             {/* 
                           <td>
                             <select >
@@ -213,13 +166,6 @@ function Index() {
                               ))}
                             </select>
                           </td>*/}
-                            <td>
-                              <ul>
-                                {inscription.likedCourses.map((course) => (
-                                  <li key={course.id}>{course.title}</li>
-                                ))}
-                              </ul>
-                            </td>
 
                             <td>
                               {inscription.status === "pending" && (
@@ -240,22 +186,18 @@ function Index() {
                             </td>
 
                             <td>
-                              <button
-                                className="btn btn-sm btn-success-soft me-1 mb-1 mb-md-0"
-                                onClick={() => approveInscription(inscription._id)}
+                              <Link
+                                to={`/inscriptionDetails/${inscription._id}`}
+                                className="btn btn-sm btn-info-soft mb-0 me-1 mb-md-0"
+                              
                               >
-                                Approve
-                              </button>
-                              <button
-                                className="btn btn-sm btn-danger-soft me-1 mb-1 mb-md-0"
-                                onClick={() => rejectInscription(inscription._id)}
-                              >
-                                Reject
-                              </button>
+                               Details
+                              </Link>
+                              
 
                               <button
                                 onClick={() => handleDelete(inscription._id)}
-                                className="btn btn-sm btn-danger me-1 mb-1 mb-md-0"
+                                className="btn btn-sm btn-danger-soft me-1 mb-1 mb-md-0"
                               >
                                 Delete
                               </button>
