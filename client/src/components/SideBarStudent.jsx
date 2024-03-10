@@ -1,6 +1,7 @@
 import react from  'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { Link } from 'react-router-dom';
 
 const  Index = () => {
 
@@ -24,7 +25,7 @@ const  Index = () => {
                <div className="list-group list-group-dark list-group-borderless">
                    <a className="list-group-item active" href="instructor-dashboard.html"><i className="bi bi-ui-checks-grid fa-fw me-2" />Dashboard</a>
                    <a className="list-group-item" href="instructor-manage-course.html"><i className="bi bi-basket fa-fw me-2" />My Courses</a>
-                   <a className="list-group-item" href="/meetingHomeS"><i className="bi bi-basket fa-fw me-2" />Meeting En Ligne</a>
+                   <Link className="list-group-item" to="/meetingHomeS"><i className="bi bi-basket fa-fw me-2" />Meeting En Ligne</Link>
                    <a className="list-group-item" href="instructor-quiz.html"><i className="bi bi-question-diamond fa-fw me-2" />Quiz</a>
                    <Link className="list-group-item" to="/TeachersList"  > <i className="bi bi-people fa-fw me-2" />Teachers</Link>
                    <a className="list-group-item" href="instructor-studentlist.html"><i className="bi bi-people fa-fw me-2" />Students</a>

@@ -1,16 +1,18 @@
-import Footer from 'components/Footer';
-import NavBar from 'components/NavBar';
+
 import React from 'react';
 import SideBarTeacher from 'components/SideBarTeacher';
-import { Link } from 'react-router-dom';
+
 import TopBarTeacherStudent from  'components/TopBarTeacherStudent';
-function index() {
+
+
+function Index() {
+
+  
+
     return (
         <div>
             {/* **************** MAIN CONTENT START **************** */}
             <main>
-
-                <NavBar />
                 {/* hedha l partie l fou9aneya  */}
                 < TopBarTeacherStudent />
                 {/* =======================
@@ -28,12 +30,6 @@ Page content START */}
                 {/* =======================
 Page content END */}
 
-
-                <Footer />
-
-
-
-
             </main>
             {/* **************** MAIN CONTENT END **************** */}
 
@@ -41,4 +37,4 @@ Page content END */}
     )
 }
 
-export default index
+export default Index

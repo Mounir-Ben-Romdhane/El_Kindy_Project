@@ -182,10 +182,11 @@ function Index() {
         )}
       </td>
       <td>
-        <Link to={`/edit-category/${category._id}`} className="btn btn-sm btn-dark me-1 mb-1 mb-md-0">
-          Edit
+        <Link to={`/edit-category/${category._id}`} className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0">
+            <i class="bi bi-pencil-square"></i>
         </Link>
-        <button onClick={() => handleDeleteCategory(category._id)} className="btn btn-sm btn-danger me-1 mb-1 mb-md-0">Delete</button>
+        <button onClick={() => handleDeleteCategory(category._id)} 
+        className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"><i class="bi bi-trash"></i></button>
       </td>
     </tr>
   ))}
