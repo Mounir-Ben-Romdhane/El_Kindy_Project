@@ -182,7 +182,15 @@ function SideBar() {
                   {/* Category Courses */}Category
                 </Link>
               </li>
-
+              <li className="nav-item">
+                <Link
+                to="/Planning" 
+                className={`nav-link ${activeNavItem === "/Planning" ? "active" : ""}`}
+                onClick={() => handleNavItemClick("/Planning")}>
+                  <FontAwesomeIcon icon={faTags} className="fa-fw me-1" />{" "}
+                  {/* Category Courses */}Planning
+                </Link>
+              </li>
               {/* menu item courses */}
               <li className="nav-item">
                 <Link 

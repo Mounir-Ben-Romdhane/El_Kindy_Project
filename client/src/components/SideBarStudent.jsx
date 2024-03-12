@@ -26,6 +26,8 @@ const  Index = () => {
                    <a className="list-group-item active" href="instructor-dashboard.html"><i className="bi bi-ui-checks-grid fa-fw me-2" />Dashboard</a>
                    <a className="list-group-item" href="instructor-manage-course.html"><i className="bi bi-basket fa-fw me-2" />My Courses</a>
                    <Link className="list-group-item" to="/meetingHomeS"><i className="bi bi-basket fa-fw me-2" />Meeting En Ligne</Link>
+                   <a className="list-group-item" href="/PlanningStudent"><i className="bi bi-basket fa-fw me-2" />Planning</a>
+
                    <a className="list-group-item" href="instructor-quiz.html"><i className="bi bi-question-diamond fa-fw me-2" />Quiz</a>
                    <Link className="list-group-item" to="/TeachersList"  > <i className="bi bi-people fa-fw me-2" />Teachers</Link>
                    <a className="list-group-item" href="instructor-studentlist.html"><i className="bi bi-people fa-fw me-2" />Students</a>
