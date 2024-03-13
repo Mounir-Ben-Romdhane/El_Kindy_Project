@@ -20,14 +20,15 @@ function Index() {
   useEffect(() => {
     if (isAuth) {
       const userRoles = isAuth ? jwtDecode(isAuth).roles : []; 
+
         //console.log("userRole ",userRoles);
-        if (userRoles.includes('admin') || userRoles.includes('parent')) {
+        if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
           navigate("/dashboard-admin");
         }else if (userRoles.includes('teacher') )  {
           navigate('/dashbordTeacher');
         }
          else if(userRoles.includes('parent') || userRoles.includes('student')){
-            navigate("/home");
+            navigate("/dashbordStudent");
         }
     }
     
@@ -92,23 +93,23 @@ function Index() {
         setOpen(false);
         dispatch(
           setLogin({
-            //user: loggedIn.user,
             accessToken: loggedIn.accessToken,
             refreshToken: loggedIn.refreshToken,
           })
         );
         const accessTokenn = loggedIn.accessToken;
         const userRoles = accessTokenn ? jwtDecode(accessTokenn).roles : []; 
+
         //console.log("userRole ",userRoles);
         if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
           navigate("/dashboard-admin"); 
 
         }else if (userRoles.includes('teacher')){
-          navigate('/courses');
+          navigate('/dashbordTeacher');
         } 
         else if (userRoles.includes('student') || userRoles.includes('parent')) {
 
-            navigate("/home");
+            navigate("/dashbordStudent");
         }
       }
     } catch (error) {

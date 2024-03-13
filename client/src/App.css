@@ -13,4 +13,34 @@
     color: #212529; /* Change badge text color on hover */
   }
   
-  
+
+/* CSS for the circular icon */
+.icon-circle {
+  width: 25px; /* Adjust as needed */
+  height: 25px; /* Adjust as needed */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 2px solid rgb(25, 120, 236); /* Default blue border */
+  transition: border-color 0.3s ease; /* Transition for border color change */
+}
+
+/* CSS for the liked state */
+.icon-circle.liked {
+  border-color: rgba(12,188,135,255); /* Green border when liked */
+}
+
+/* Styling for the FontAwesome icon */
+.icon-circle .fa-icon {
+  font-size: 20px; /* Adjust as needed */
+  color: blue; /* Default blue color */
+}
+
+/* Styling for the FontAwesome icon in the liked state */
+.icon-circle.liked .fa-icon {
+  color: green; /* Green color when liked */
+}
+
+

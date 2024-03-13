@@ -1,13 +1,6 @@
-
  import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
-
-
-
-
 import { useDispatch, useSelector } from "react-redux";
 import { loadScripts } from './scriptLoader';
-
-
 import React, { useEffect, useRef } from "react";
 import AboutPage from "../src/scenes/AboutPage";
 import HomePage from "../src/scenes/HomePage";
@@ -36,13 +29,17 @@ import Category from "../src/scenes/CategoryHome";
 import InscriptionPage from "./scenes/Inscriptions/InscriptionPage";
 import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
 
+
 import MeetingHomeStudent from './scenes/PlatformStudent/MeetingHomeStudent';
 import DashbordTeacher from './scenes/PlatformTeacher/DashbordTeacher'
 import HomePagee from '../src/scenes/PlatformTeacher/HomePagee';
 import DashbordStudent from './scenes/PlatformStudent/DashbordStudent'
 import Room from '../src/scenes/PlatformTeacher/Room';
 
+import TeachersList from '../src/scenes/PlatformStudent/TeachersList'
 import Chat from '../src/scenes/Chat/Chat'
+
+
 
 import AdminReservation from './scenes/EventsPage/AdminReservation/AdminReservation'
 import DetailEvents from './scenes/EventsPage/DetailEventPage/DetailEvent'
@@ -139,6 +136,10 @@ function App() {
           path="/courses"
           element={ <ListCourses />}
         />
+         <Route
+          path="/TeachersList"
+          element={isAuth ? <TeachersList /> : <Navigate to="/" />}
+        />
 
         <Route
           path="/inscription/:id?"
@@ -228,6 +229,17 @@ function App() {
           />
 
 
+          <Route
+            path="/dashbordTeacher"
+            element={
+              <PrivateRoute
+                element={<DashbordTeacher />}
+                requiredRoles={["superAdmin", "admin", "teacher"]}
+              />
+            }
+          />
+
+
 
 
         <Route
@@ -240,18 +252,6 @@ function App() {
           }
         />
         
-          <Route
-          path="/dashbordTeacher"
-          element={
-            <PrivateRoute
-              element={<DashbordTeacher />}
-              requiredRoles={["superAdmin", "teacher", "student"]}
-
-
-
-            />
-          }
-        />
 
         
 
@@ -346,10 +346,10 @@ function App() {
 <Route path="/editEvent/:id" element={isAuth ? <EditEventPage /> : <Navigate to="/" />} />
 
 <Route path="/detailEvent/:id"
-               element={isAuth ? <DetailEvents /> : <Navigate to="/" />} />
+               element={<DetailEvents />} />
 
 <Route path="/listEventUser"
-               element={isAuth ? <ListEventUser /> : <Navigate to="/" />} />
+               element={<ListEventUser /> } />
 
 
         <Route

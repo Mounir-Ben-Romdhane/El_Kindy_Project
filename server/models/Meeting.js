@@ -9,6 +9,10 @@ const meetingSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
+  date: {  // Add the new 'date' attribute
+    type: Date,
+    required: true
+  },
   meetingLink: {
     type: String,
     required: true
