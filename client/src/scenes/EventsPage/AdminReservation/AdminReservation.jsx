@@ -131,14 +131,36 @@ function Index() {
                           <td>{reservation.userEmail}</td>
                           <td>{reservation.phoneNumber}</td>
                           <td>
-                            <span className={`badge ${reservation.status === 'accepted' ? 'bg-success' : reservation.status === 'refused' ? 'bg-danger' : 'bg-warning'}`}>
-                              {reservation.status}
-                            </span>
-                          </td>
+                              {reservation.status === "pending" && (
+                                <span className="badge bg-warning bg-opacity-15 text-warning">
+                                  Pending
+                                </span>
+                              )}
+                              {reservation.status === "accepted" && (
+                                <span className="badge bg-success bg-opacity-15 text-success">
+                                  Accepted
+                                </span>
+                              )}
+                              {reservation.status === "refused" && (
+                                <span className="badge bg-danger bg-opacity-15 text-danger">
+                                  Refused
+                                </span>
+                              )}
+                            </td>
+                        
                           <td>
-                            <button onClick={() => updateReservationStatus(reservation._id, 'accepted')} className="btn btn-sm btn-success me-1">Accept</button>
-                            <button onClick={() => updateReservationStatus(reservation._id, 'refused')} className="btn btn-sm btn-danger">Refuse</button>
-                          </td>
+                              <Link
+                                onClick={() => updateReservationStatus(reservation._id, 'accepted')} 
+                                className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+                              >
+                                <i className="bi bi-check fs-4"></i> {/* Accept icon */}
+                              </Link>
+                              <button
+                                onClick={() => updateReservationStatus(reservation._id, 'refused')} 
+                                className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0">
+                                  <i className="bi bi-x fs-4"></i> {/* Refuse icon */}
+                              </button>
+                            </td>
                         </tr>
                       ))}
                     </tbody>

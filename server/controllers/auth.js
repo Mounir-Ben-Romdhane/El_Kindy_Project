@@ -186,11 +186,9 @@ export const refreshToken = async (req, res) => {
        
 
         const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
-<<<<<<< HEAD
+
         roles: user.roles,  email : user.email, picturePath : user.picturePath  }, process.env.JWT_SECRET, { expiresIn: "30s" });
-=======
-        roles: user.roles,  email : user.email  }, process.env.JWT_SECRET, { expiresIn: "10m" });
->>>>>>> 70c9eb0e607881c837c3169616127bbe50d61516
+
         res.json({ accessToken });
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
@@ -300,3 +298,25 @@ export const getAllUserByRole = async (req, res) => {
         res.status(500).json(error);
     }
 };
+
+
+//planning
+export const getTeachers = async (req, res) => {
+  try {
+      const teachers = await User.find({ roles: 'teacher' });
+      res.status(200).json(teachers);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
+
+// Fonction pour récupérer tous les étudiants
+export const getStudents = async (req, res) => {
+  try {
+      const students = await User.find({ roles: 'student' });
+      res.status(200).json(students);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
+

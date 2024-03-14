@@ -72,9 +72,9 @@ const Index = () => {
                     Create Meeting En Ligne
                   </Link>
                   <Link 
-                  className={`list-group-item ${activeNavItem === "/PlanningTeacher" || activeNavItem.startsWith("/room/") ? "active" : ""}`}
-                  to="/PlanningTeacher"
-                  onClick={() => handleNavItemClick("/homeMeet")}>
+                  className={`list-group-item ${activeNavItem === "/planningTeacher" || activeNavItem.startsWith("/planningTeacher") ? "active" : ""}`}
+                  to="/planningTeacher"
+                  onClick={() => handleNavItemClick("/planningTeacher")}>
                     <i className="bi bi-basket fa-fw me-2" />
                     Planning                  </Link>
 

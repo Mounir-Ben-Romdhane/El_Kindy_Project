@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Calendar, momentLocalizer } from "react-big-calendar";
@@ -9,6 +11,8 @@ import SideBarStudent from "components/SideBarStudent";
 import TopBarTeacherStudent from "components/TopBarTeacherStudent";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 import Footer from "components/Footer";
+import { useSelector } from "react-redux"; // Importez useSelector depuis React Redux
+import { jwtDecode } from "jwt-decode";
 
 const localizer = momentLocalizer(moment);
 const MyCalendar = () => {
@@ -26,104 +30,41 @@ const MyCalendar = () => {
 
   const axiosPrivate = useAxiosPrivate();
 
-  function generateTimeSlots() {
-    const slots = [];
-    for (let hour = 9; hour < 21; hour += 2) {
-      // Incrémentation par 2 pour sauter une heure à chaque itération
-      let startHour = moment({ hour });
-      let endHour = moment({ hour }).add(1, "hour");
+  const accessToken = useSelector((state) => state.accessToken); // Récupérez le jeton d'accès du store Redux
+  const decodeToken = accessToken ? jwtDecode(accessToken) : "";
 
-      slots.push({
-        title: `${startHour.format("HH[h]")} - ${endHour.format("HH[h]mm")}`,
-        start: startHour.toDate(),
-        end: endHour.toDate(),
-      });
-
-      // Merge chaque paire de créneaux horaires en une seule plage horaire d'une heure
-      if (hour < 19) {
-        let nextStartHour = moment({ hour }).add(1, "hour");
-        let nextEndHour = moment({ hour }).add(2, "hour");
-
-        slots.push({
-          title: `${nextStartHour.format("HH[h]")} - ${nextEndHour.format(
-            "HH[h]mm"
-          )}`,
-          start: nextStartHour.toDate(),
-          end: nextEndHour.toDate(),
-        });
-      }
-    }
-
-    return slots;
-  }
+  // Utilisez le jeton d'accès dans vos requêtes HTTP
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchPlannings = async () => {
       try {
-        // Fetch teachers and students data
-        const [teachersResponse, studentsResponse] = await Promise.all([
-          axios.get("http://localhost:3001/auth/teachers"),
-          axios.get("http://localhost:3001/auth/students"),
-        ]);
-
-        // Set the data and immediately use it to map events
-        setTeachersData(teachersResponse.data);
-        setStudentsData(studentsResponse.data);
-
-        // Now fetch and map events
-        const eventsResponse = await axios.get(
-          "http://localhost:3001/planning/all"
-        );
-        const loadedEvents = eventsResponse.data.map((event) => {
-          const teacher = teachersResponse.data.find(
-            (t) => t._id === event.teacherId
-          );
-          const student = studentsResponse.data.find(
-            (s) => s._id === event.studentId
-          );
-          return {
-            ...event,
-            title: `${event.title} Teacher: ${
-              teacher
-                ? teacher.firstName + " " + teacher.lastName
-                : "Enseignant inconnu"
-            }, Student: ${
-              student
-                ? student.firstName + " " + student.lastName
-                : "Étudiant inconnu"
-            }`,
-            start: new Date(event.start),
-            end: new Date(event.end),
-          };
+        const response = await axios.get(`http://localhost:3001/planning/student/${decodeToken.id}`, {
+          headers: {
+            "Authorization": `Bearer ${accessToken}`,
+          },
         });
-
-        // Update events state
-        setEvents(loadedEvents);
+        setEvents(response.data.map((planning) => ({
+          id: planning._id,
+          title: planning.title,
+          start: new Date(planning.start),
+          end: new Date(planning.end),
+          resourceId: planning.resourceId,
+          color: planning.color,
+          teacherId: planning.teacherId,
+          studentId: planning.studentId,
+        })));
       } catch (error) {
-        console.error("Error fetching data", error);
-      } finally {
-        setLoadingTeachers(false);
-        setLoadingStudents(false);
+        console.error('Erreur lors de la récupération des plannings', error);
+        // Affichez un message d'erreur à l'utilisateur ou effectuez d'autres actions en cas d'erreur
       }
     };
+  
+    fetchPlannings();
+  }, [accessToken, decodeToken.id]);
+  
 
-    fetchData();
-  }, []);
+
 
   useEffect(() => {
-    Promise.all([
-      axios.get("http://localhost:3001/auth/teachers"),
-      axios.get("http://localhost:3001/auth/students"),
-    ])
-      .then(([teachersResponse, studentsResponse]) => {
-        setTeachers(teachersResponse.data);
-        setStudents(studentsResponse.data);
-        setLoadingTeachers(false);
-        setLoadingStudents(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching teachers and students", error);
-      });
-
     axios
       .get("http://localhost:3001/salle")
       .then((response) => {
@@ -132,121 +73,94 @@ const MyCalendar = () => {
       .catch((error) => {
         console.error("There was an error fetching the rooms", error);
       });
-    axiosPrivate
-      .get("http://localhost:3001/course/all") // Récupérez la liste des cours
+      axios
+      .get("http://localhost:3001/course/all")
       .then((response) => {
-        setCourses(response.data); // Stockez les cours dans l'état
+        setCourses(response.data);
         console.log(response.data);
       })
       .catch((error) => {
         console.error("There was an error fetching the courses", error);
       });
-
+  
     axios
-      .get("http://localhost:3001/planning/all")
+      .get("http://localhost:3001/auth/teachers")
       .then((response) => {
-        const loadedEvents = response.data.map((event) => {
-          // Assurez-vous que chaque événement a un ID unique.
-          const color = event.color; // Utilisez l'ID de l'événement pour récupérer sa couleur
-
-          return {
-            ...event,
-            title: `${event.title} `,
-
-            start: new Date(event.start),
-            end: new Date(event.end),
-            resourceId: event.resourceId,
-            color, // Stockez la couleur avec l'événement
-            teacherId: event.selectedTeacherId,
-            studentId: event.selectedStudentId,
-          };
-        });
-
-        const timeSlots = generateTimeSlots();
-        setEvents([...timeSlots, ...loadedEvents]); // Combinez les tranches horaires avec les événements chargés
-        console.log("Événements mis à jour pour le calendrier:", [
-          ...timeSlots,
-          ...loadedEvents,
-        ]);
+        setTeachers(response.data);
       })
       .catch((error) => {
-        console.error("There was an error fetching the events", error);
+        console.error("There was an error fetching the teachers", error);
+      });
+  
+    axios
+      .get("http://localhost:3001/auth/students")
+      .then((response) => {
+        setStudents(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the students", error);
+      });
+  }, []); // Supprimer la redondance ici
+  
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/salle")
+      .then((response) => {
+        setRooms(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the rooms", error);
+      });
+
+      axios
+      .get("http://localhost:3001/course/all")
+      .then((response) => {
+        setCourses(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the courses", error);
       });
   }, []);
+
+  const handleSelectSlot = ({ start, end, resourceId }) => {
+    setSelectedEvent({ start, end, resourceId });
+    setShowModal(true);
+  };
 
   const addNewEvent = (event) => {
     setShowModal(false);
     const roomId = event.roomId;
     const roomExists = rooms.some((room) => room._id === roomId);
-    const selectedCourse = courses.data.find(
-      (course) => course._id === event.courseId
-    );
+    const selectedCourse = courses.data.find((course) => course._id === event.courseId);
 
     if (!roomExists) {
       console.error("L'ID de la salle spécifiée n'existe pas.");
       return;
     }
 
-    // Vérifiez si selectedCourse est défini avant d'accéder à sa propriété title
-    const courseTitle = selectedCourse
-      ? selectedCourse.title
-      : "Titre de cours non trouvé";
-
-    const newEvent = {
-      id: events.length + 1, // Assurez-vous de donner un ID unique à chaque événement
-      title: `${event.title} `,
-      start: event.start,
-      end: event.end,
-      resourceId: roomId,
-      color: event.color, // Utiliser la couleur sélectionnée du Modal
-      teacherId: event.teacherId, // Utilisez event.teacherId au lieu de event.selectedTeacherId
-      studentId: event.studentId, // Utilisez event.studentId au lieu de event.selectedStudentId
-    };
-    console.log("Nouvel événement à sauvegarder :", newEvent);
-
-    // Fusionner le nouvel événement avec les événements existants
-    const updatedEvents = [...events, newEvent];
-
-    console.log("Evénements avant la sauvegarde :", events);
-
-    // Mettre à jour les événements dans le state
-    setEvents(updatedEvents);
-
-    const response = axios.post("http://localhost:3001/planning/add", newEvent);
-    const addedEvent = response.data;
-
-    // Mise à jour de l'état avec le nouvel événement
-    setEvents((prevEvents) => [...prevEvents, addedEvent]);
-    console.log("Nouvel événement ajouté avec succès:", addedEvent);
+   
   };
+
   const formats = {
-    timeGutterFormat: (date, culture, localizer) =>
-      localizer.format(date, "HH[h]mm", culture),
+    timeGutterFormat: (date, culture, localizer) => localizer.format(date, "HH[h]mm", culture),
     eventTimeRangeFormat: ({ start, end }, culture, localizer) => {
-      let startTime = localizer.format(start, "HH[h]mm", culture);
-      let endTime = localizer.format(end, "HH[h]mm", culture);
+      const startTime = localizer.format(start, "HH[h]mm", culture);
+      const endTime = localizer.format(end, "HH[h]mm", culture);
       return `${startTime} - ${endTime}`;
     },
     dayRangeHeaderFormat: ({ start, end }, culture, localizer) => {
-      let startTime = localizer.format(start, "HH[h]mm", culture);
-      let endTime = localizer.format(end, "HH[h]mm", culture);
+      const startTime = localizer.format(start, "HH[h]mm", culture);
+      const endTime = localizer.format(end, "HH[h]mm", culture);
       return `${startTime} - ${endTime}`;
     },
   };
-  const MyEvent = ({ event }) => {
-    if (loadingTeachers || loadingStudents) {
-      return <div>Loading...</div>;
-    }
 
+  const MyEvent = ({ event }) => {
     const teacher = teachers.find((t) => t._id === event.teacherId);
     const student = students.find((s) => s._id === event.studentId);
-
-    const teacherName = teacher
-      ? `${teacher.firstName} ${teacher.lastName}`
-      : "Unknown Teacher";
-    const studentName = student
-      ? `${student.firstName} ${student.lastName}`
-      : "Unknown Student";
+    const teacherName = teacher ? `${teacher.firstName} ${teacher.lastName}` : "Enseignant inconnu";
+    const studentName = student ? `${student.firstName} ${student.lastName}` : "Étudiant inconnu";
 
     return (
       <div>
@@ -257,50 +171,20 @@ const MyCalendar = () => {
     );
   };
 
-  const handleSelectSlot = ({ start, end, resourceId }) => {
-    setSelectedEvent({ start, end, resourceId });
-    setShowModal(true);
-  };
-  const containerStyle = {
-    display: "flex",
-    flexDirection: "row",
-    height: "100vh", // Assurez-vous que le conteneur prend toute la hauteur de l'écran
-  };
-  const sidebarStyle = {
-    flex: "0 0 250px", // Utilise flex-basis au lieu de width ou min-width
-    height: "100%",
-    overflow: "auto",
-  };
-
-  const calendarStyle = {
-    flex: 1, // Prend l'espace restant
-    minWidth: "0", // Assure que le calendrier peut rétrécir si nécessaire
-    height: "100%", // Prend toute la hauteur du conteneur
-  };
-
   return (
     <div>
       <main>
-        <NavBar />
-
-        {/* hedha l partie l fou9aneya  */}
         <TopBarTeacherStudent />
-        {/* =======================
-Page content START */}
         <section className="pt-0">
           <div className="container">
             <div className="row">
-              <SideBarStudent/>
+              <SideBarStudent />
               <div className="col-xl-9">
-                {/* Student review START */}
                 <div className="card border bg-transparent rounded-3">
-                  {/* Reviews START */}
-                  <div className="card-body  ">
-                    {/* Review item START */}
+                  <div className="card-body">
                     <div className="d-sm-flex">
                       <div>
-                        <div className="mb-3 d-sm-flex justify-content-sm-between ">
-                          {/* Title */}
+                        <div className="mb-3 d-sm-flex justify-content-sm-between">
                           <div>
                             <Calendar
                               components={{
@@ -315,8 +199,8 @@ Page content START */}
                               resourceTitleAccessor="resourceTitle"
                               defaultView="day"
                               min={new Date(0, 0, 0, 9, 0)}
-                              max={new Date(0, 0, 0, 21, 0)} // Fin à 21:00 PM
-                              step={30} // Définit des tranches horaires de 30 minutes
+                              max={new Date(0, 0, 0, 21, 0)}
+                              step={30}
                               timeslots={1}
                               views={{ month: false, week: false, day: true }}
                               resources={rooms.map((room) => ({
@@ -327,56 +211,39 @@ Page content START */}
                               endAccessor="end"
                               style={{ height: "100%", width: "70%" }}
                               formats={formats}
-                              eventPropGetter={(event) => {
-                                return {
-                                  style: { backgroundColor: event.color },
-                                };
-                              }}
+                              eventPropGetter={(event) => ({
+                                style: { backgroundColor: event.color },
+                              })}
                             />
-
                             {showModal && (
                               <Modal
                                 onClose={() => setShowModal(false)}
                                 onSave={addNewEvent}
                                 eventDetails={selectedEvent}
                                 rooms={rooms}
-                                courses={courses} // Passez les cours comme prop au composant Modal
-                                teachers={teachers} // Passez les enseignants
-                                students={students} // Passez les étudiants
+                                courses={courses}
+                                teachers={teachers}
+                                students={students}
                               />
                             )}
                           </div>
                         </div>
-
-                        {/* Button */}
                         <div className="text-end"></div>
                       </div>
                     </div>
-                    {/* Divider */}
                     <hr />
-                    <div>
-                      {/* ... */}
-                      <div className="text-end"></div>
-
-                      {/* ... */}
-                    </div>
-                    {/* Divider */}
-
-                    {/* Review item END */}
+                    <div></div>
                   </div>
-                  {/* Reviews END */}
                 </div>
-                {/* Student review END */}
               </div>
             </div>
           </div>
         </section>
-
-        <Footer />
       </main>
-      {/* **************** MAIN CONTENT END **************** */}
     </div>
   );
 };
 
 export default MyCalendar;
+
+
