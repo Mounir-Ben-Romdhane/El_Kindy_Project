@@ -7,6 +7,14 @@
   .cardd:hover .card-title {
     color: #007bff; /* Change title color on hover */
   }
+
+
+
+.cardd:hover p {
+    color: white;
+    margin: 5px 10px; /* Set left and right margins to 10px */
+    font-size: 10px;
+}
   
   .cardd:hover .badge {
     background-color: #ffc107; /* Change badge background color on hover */
@@ -42,5 +50,52 @@
 .icon-circle.liked .fa-icon {
   color: green; /* Green color when liked */
 }
+
+
+/*Table avalaible*/
+.calendar-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.calendar-table th,
+.calendar-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.calendar-table th {
+  background-color: #f2f2f2; /* Header background color */
+  color: #333; /* Header text color */
+  user-select: none; /* Prevent selection */
+  width: 12%;
+}
+
+
+
+.calendar-table .time-column {
+  background-color: #f2f2f2; /* Time column background color */
+  color: #333; /* Time column text color */
+  user-select: none; /* Prevent selection */
+  white-space: nowrap; /* Prevent text wrapping */
+
+}
+
+.calendar-table .selected {
+  background-color: #94bdea; /* Selected cell background color */
+  color: #fff; /* Selected cell text color */
+}
+
+.non-selectable-cell {
+  background-color: #f58888; /* Change to your desired color */
+}
+
+.outside-range-cell {
+  background-color: #ffffff; /* Change to your desired color */
+}
+
+
+
+
 
 

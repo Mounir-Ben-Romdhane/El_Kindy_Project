@@ -29,6 +29,7 @@ function Index() {
         }
          else if(userRoles.includes('parent') || userRoles.includes('student')){
             navigate("/dashbordStudent");
+
         }
     }
     
@@ -111,6 +112,7 @@ function Index() {
 
             navigate("/dashbordStudent");
         }
+
       }
     } catch (error) {
       console.error("Error logging in:", error);
@@ -267,7 +269,7 @@ function Index() {
                     <div className="mt-4 text-center">
                       <span>
                         Don't have an account?{" "}
-                        <Link to="signup">Signup here</Link>
+                        <Link to="/sign-up">Signup here</Link>
                       </span>
                     </div>
                   </div>
