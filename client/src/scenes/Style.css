@@ -35,3 +35,18 @@
 .cardd:hover .cardd-layer {
   transform: translateY(0);
 }
+
+.imgg:hover{
+  transform: scale(1.07); /* Increase size on hover */
+    transition: transform 0.5s ease; /* Smooth transition */
+  
+}
+
+.shine-effect {
+  transition: filter 0.3s ease; /* Ajoute une transition pour une animation fluide */
+}
+
+.shine-effect:hover {
+  transform: scale(1.05); /* Increase size on hover */
+  box-shadow: 0 8px 16px rgba(147, 150, 155, 0.566);
+}

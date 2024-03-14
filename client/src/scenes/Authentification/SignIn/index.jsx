@@ -28,7 +28,8 @@ function Index() {
           navigate('/dashbordTeacher');
         }
          else if(userRoles.includes('parent') || userRoles.includes('student')){
-            navigate("/home");
+            navigate("/dashbordStudent");
+
         }
     }
     
@@ -100,15 +101,18 @@ function Index() {
         const accessTokenn = loggedIn.accessToken;
         const userRoles = accessTokenn ? jwtDecode(accessTokenn).roles : []; 
 
-                //console.log("userRole ",userRoles);
-                if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
-                  navigate("/dashboard-admin");
-                }else if (userRoles.includes('teacher') )  {
-                  navigate('/dashbordTeacher');
-                }
-                 else if(userRoles.includes('parent') || userRoles.includes('student')){
-                    navigate("/home");
-                }
+        //console.log("userRole ",userRoles);
+        if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
+          navigate("/dashboard-admin"); 
+
+        }else if (userRoles.includes('teacher')){
+          navigate('/dashbordTeacher');
+        } 
+        else if (userRoles.includes('student') || userRoles.includes('parent')) {
+
+            navigate("/dashbordStudent");
+        }
+
       }
     } catch (error) {
       console.error("Error logging in:", error);

@@ -38,9 +38,8 @@ const googleAuth = async (req, res) => {
     await user.save();
 
     const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName, roles: user.roles ,
-      email : user.email, picturePath: user.picturePath, authSource: user.authSource , gender: user.gender}, process.env.JWT_SECRET, { expiresIn: "30m" });
+      email : user.email, picturePath: user.picturePath, authSource: user.authSource , gender: user.gender}, process.env.JWT_SECRET, { expiresIn: "30m" });    
 
-    
     // Return the tokens and user data
     return res.status(200).json({ accessToken, refreshToken: user.refreshToken, message: "Logged in successfully" });
   } catch (err) {

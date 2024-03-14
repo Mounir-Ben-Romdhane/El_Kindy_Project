@@ -21,6 +21,7 @@
     color: #212529; /* Change badge text color on hover */
   }
   
+
 /* CSS for the circular icon */
 .icon-circle {
   width: 25px; /* Adjust as needed */
@@ -49,7 +50,6 @@
 .icon-circle.liked .fa-icon {
   color: green; /* Green color when liked */
 }
-
 
 
 /*Table avalaible*/

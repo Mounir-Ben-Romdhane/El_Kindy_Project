@@ -38,8 +38,13 @@ import Room from "../src/scenes/PlatformTeacher/Room";
 import TeachersList from "../src/scenes/PlatformStudent/TeachersList";
 import Chat from "../src/scenes/Chat/Chat";
 
+import ListMeetingTeacher from 'scenes/PlatformTeacher/ListMeetingTeacher'
+
+
+import AdminReservation from './scenes/EventsPage/AdminReservation/AdminReservation'
+import DetailEvents from './scenes/EventsPage/DetailEventPage/DetailEvent'
+
 import AdminReservation from "./scenes/EventsPage/AdminReservation/AdminReservation";
-import DetailEvents from "./scenes/EventsPage/DetailEventPage/DetailEvent";
 import EditEventPage from "./scenes/EventsPage/EditEventPage/EditEvent";
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
 
@@ -122,6 +127,8 @@ function App() {
 
         <Route path="/courses" element={<ListCourses />} />
         <Route
+         
+
           path="/TeachersList"
           element={isAuth ? <TeachersList /> : <Navigate to="/" />}
         />
@@ -132,11 +139,61 @@ function App() {
 
         {/* PRIVATE ROUTE */}
         <Route
+          path="/category"
+          element={<Category />}
+        />
+
+        <Route
+          path="/courses"
+          element={<ListCourses />}
+        />
+        <Route
+          path="/TeachersList"
+          element={isAuth ? <TeachersList /> : <Navigate to="/" />}
+/>
+          
+            
+          
+        
+
+        <Route
+          path="/inscriptionsList"
+          element={
+            <PrivateRoute
+              element={<InscriptionList />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/inscriptionDetails/:id"
+          element={
+            <PrivateRoute
+              element={<InscriptionDetails />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/listCourses"
+          element={
+            <PrivateRoute
+              element={<ListCoursesPage />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        {/* PRIVATE ROUTE */}
+        <Route
           path="/dashboard-admin"
           element={
             <PrivateRoute
               element={<AdminHomePage />}
               requiredRoles={["superAdmin", "admin"]}
+
             />
           }
         />
@@ -171,7 +228,7 @@ function App() {
           }
         />
 
-        <Route
+       <Route
           path="/admins"
           element={
             <PrivateRoute
@@ -190,8 +247,7 @@ function App() {
             />
           }
         />
-
-        <Route
+<Route
           path="/students"
           element={
             <PrivateRoute
@@ -210,6 +266,9 @@ function App() {
             />
           }
         />
+       
+
+
 
         <Route
           path="/dashbordTeacher"
@@ -222,6 +281,22 @@ function App() {
         />
 
         <Route
+          path="/listMeeting"
+          element={
+            <PrivateRoute
+              element={<ListMeetingTeacher />}
+              requiredRoles={["superAdmin", "teacher"]}
+
+
+            />
+          }
+        />
+
+
+       
+       
+
+        <Route
           path="/listCourses"
           element={
             <PrivateRoute
@@ -230,6 +305,7 @@ function App() {
             />
           }
         />
+
 
         <Route
           path="/meetingHomeS"
@@ -241,10 +317,12 @@ function App() {
           }
         />
 
-        <Route
-          path="/listReservation"
+
+        <Route path="/listReservation"
           element={isAuth ? <AdminReservation /> : <Navigate to="/" />}
         />
+
+
 
         <Route
           path="/dashbordStudent"
@@ -294,12 +372,14 @@ function App() {
           }
         />
 
+
         <Route
           path="/room/:roomId"
           element={
             <PrivateRoute
               element={<Room />}
               requiredRoles={["superAdmin", "student", "teacher"]}
+
             />
           }
         />
@@ -321,7 +401,11 @@ function App() {
           path="/EditStage/:id"
           element={isAuth ? <EditStage /> : <Navigate to="/" />}
         />
-        <Route path="/stage" element={<Stage />} />
+        <Route
+          path="/stage"
+          element={<Stage />}
+        />
+
 
         <Route
           path="/listEvents"
@@ -332,12 +416,14 @@ function App() {
           element={isAuth ? <AddEventPage /> : <Navigate to="/" />}
         />
 
-        <Route
-          path="/editEvent/:id"
-          element={isAuth ? <EditEventPage /> : <Navigate to="/" />}
-        />
+        <Route path="/editEvent/:id" element={isAuth ? <EditEventPage /> : <Navigate to="/" />} />
 
-        <Route path="/detailEvent/:id" element={<DetailEvents />} />
+        <Route path="/detailEvent/:id"
+          element={<DetailEvents />} />
+
+        <Route path="/listEventUser"
+          element={<ListEventUser />} />
+
 
         <Route path="/listEventUser" element={<ListEventUser />} />
 
