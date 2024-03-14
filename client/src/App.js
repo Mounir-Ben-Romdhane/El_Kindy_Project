@@ -1,13 +1,6 @@
-
  import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
-
-
-
-
 import { useDispatch, useSelector } from "react-redux";
 import { loadScripts } from './scriptLoader';
-
-
 import React, { useEffect, useRef } from "react";
 import AboutPage from "../src/scenes/AboutPage";
 import HomePage from "../src/scenes/HomePage";
@@ -36,13 +29,17 @@ import Category from "../src/scenes/CategoryHome";
 import InscriptionPage from "./scenes/Inscriptions/InscriptionPage";
 import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
 
+
 import MeetingHomeStudent from './scenes/PlatformStudent/MeetingHomeStudent';
 import DashbordTeacher from './scenes/PlatformTeacher/DashbordTeacher'
 import HomePagee from '../src/scenes/PlatformTeacher/HomePagee';
 import DashbordStudent from './scenes/PlatformStudent/DashbordStudent'
 import Room from '../src/scenes/PlatformTeacher/Room';
 
+import TeachersList from '../src/scenes/PlatformStudent/TeachersList'
 import Chat from '../src/scenes/Chat/Chat'
+
+
 
 import AdminReservation from './scenes/EventsPage/AdminReservation/AdminReservation'
 import DetailEvents from './scenes/EventsPage/DetailEventPage/DetailEvent'
@@ -139,6 +136,10 @@ function App() {
         <Route
           path="/courses"
           element={ <ListCourses />}
+        />
+         <Route
+          path="/TeachersList"
+          element={isAuth ? <TeachersList /> : <Navigate to="/" />}
         />
 
         <Route

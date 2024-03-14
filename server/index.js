@@ -33,6 +33,7 @@ import ChatRoute from './routes/ChatRoute.js'
 import MessageRoute from './routes/MessageRoute.js'
 import meetingRoutes from './routes/meetingRoutes.js';
 import reservationRoutes  from "./routes/Reservation.js";
+import planningRoutes from "./routes/planningRoutes.js";
 
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
@@ -71,6 +72,7 @@ app.patch("/course/update/:id",upload.single("picture"),verifyToken, updateCours
 
 app.post("/event/add",upload.single("picture"),addNewEvent);
 app.patch("/event/update/:id",upload.single("picture"),updateEvent);
+app.use("/planning", planningRoutes);
 
 
 app.post("/api/categories", upload.single("picture"), createCategorie);

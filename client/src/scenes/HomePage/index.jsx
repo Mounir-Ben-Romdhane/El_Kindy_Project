@@ -39,6 +39,7 @@ function Index() {
     window.scrollTo(0, 0); // Scroll to the top when component mounts
     //Get all category
     fetchCoursesByCategories();
+    console.log("user",user);
 
     const scripts = [
       "/assets/vendor/purecounterjs/dist/purecounter_vanilla.js",
@@ -63,10 +64,10 @@ function Index() {
     const interval = setInterval(() => {
       setNextImage((prevImage) => (prevImage + 1) % images.length);
     }, 5000); // Change image every 5 seconds
-
+    
     return () => clearInterval(interval);
   }, []);
-
+//test
   useEffect(() => {
     const transitionTimer = setTimeout(() => {
       setCurrentImage(nextImage);
