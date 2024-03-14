@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "api/axios";
 import '../../../Style.css' 
+import { Link } from "react-router-dom";
 
 function ListCourses() {
 
@@ -201,8 +202,8 @@ const handleFilterSubmit = () => {
                             <h5 className="card-title fw-normal">
                               <a href="#">{course.title}</a>
                             </h5>
-                            <div className="text-center mt-5 cardd-layer">
-                            <a href="#" className="btn btn-primary btn-sm">View more</a>
+                            <div className="text-center col-md-2 cardd-layer">
+                            <Link to={`/detail-course/${course._id}`} className="btn btn-primary btn-sm" >View more</Link>
                             </div>
                             
                             {/* You can render other course details here */}

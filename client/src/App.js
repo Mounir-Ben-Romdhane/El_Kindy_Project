@@ -1,6 +1,6 @@
- import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loadScripts } from './scriptLoader';
+import { loadScripts } from "./scriptLoader";
 import React, { useEffect, useRef } from "react";
 import AboutPage from "../src/scenes/AboutPage";
 import HomePage from "../src/scenes/HomePage";
@@ -29,28 +29,23 @@ import Category from "../src/scenes/CategoryHome";
 import InscriptionPage from "./scenes/Inscriptions/InscriptionPage";
 import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
 
+import MeetingHomeStudent from "./scenes/PlatformStudent/MeetingHomeStudent";
+import DashbordTeacher from "./scenes/PlatformTeacher/DashbordTeacher";
+import HomePagee from "../src/scenes/PlatformTeacher/HomePagee";
+import DashbordStudent from "./scenes/PlatformStudent/DashbordStudent";
+import Room from "../src/scenes/PlatformTeacher/Room";
 
-import MeetingHomeStudent from './scenes/PlatformStudent/MeetingHomeStudent';
-import DashbordTeacher from './scenes/PlatformTeacher/DashbordTeacher'
-import HomePagee from '../src/scenes/PlatformTeacher/HomePagee';
-import DashbordStudent from './scenes/PlatformStudent/DashbordStudent'
-import Room from '../src/scenes/PlatformTeacher/Room';
+import TeachersList from "../src/scenes/PlatformStudent/TeachersList";
+import Chat from "../src/scenes/Chat/Chat";
 
-import TeachersList from '../src/scenes/PlatformStudent/TeachersList'
-import Chat from '../src/scenes/Chat/Chat'
-
-
-
-import AdminReservation from './scenes/EventsPage/AdminReservation/AdminReservation'
-import DetailEvents from './scenes/EventsPage/DetailEventPage/DetailEvent'
-import EditEventPage from './scenes/EventsPage/EditEventPage/EditEvent'
+import AdminReservation from "./scenes/EventsPage/AdminReservation/AdminReservation";
+import DetailEvents from "./scenes/EventsPage/DetailEventPage/DetailEvent";
+import EditEventPage from "./scenes/EventsPage/EditEventPage/EditEvent";
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
-
 
 import EditCourse from "scenes/Courses/backOffice/EditCoursePage";
 
-import ListEventUser from './scenes/EventsPage/EventFront/EventFront'
-
+import ListEventUser from "./scenes/EventsPage/EventFront/EventFront";
 
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
@@ -60,11 +55,14 @@ import TeachersDashboard from "scenes/UsersAdmin/Teachers";
 import StudentsDashboard from "scenes/UsersAdmin/Students";
 import ParentsDashboard from "scenes/UsersAdmin/Parents";
 import ListCourses from "scenes/Courses/frontOffice/listCourses";
+import DetailsCourse from "scenes/Courses/frontOffice/detailsCourse";
+//Planning
+import PlanningTeacher from "./scenes/PlatformTeacher/Planning";
+import PlanningStudent from "./scenes/PlatformStudent/Planning";
+import Planning from "./scenes/Planning";
 
 function App() {
   const isAuth = Boolean(useSelector((state) => state.accessToken));
-
-
 
   const scriptsLoaded = useRef(false);
   /*'/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js',
@@ -76,8 +74,6 @@ function App() {
       '/assets/vendor/aos/aos.js',
       '/assets/vendor/quill/js/quill.min.js',
       '/assets/vendor/stepper/js/bs-stepper.min.js', */
-
-
 
   useEffect(() => {
     const scripts = [
@@ -102,8 +98,6 @@ function App() {
   }, []);
 
   return (
-
-
     <div>
       <Routes>
         {/* auth routes */}
@@ -121,126 +115,51 @@ function App() {
 
         {/* public routes */}
         <Route path="/" element={<Navigate to="/home" />} />
-        <Route
-          path="/home"
-          element={<HomePage /> }
-        />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/contact-us" element={<ContactPage />} />
 
-        <Route
-          path="/category"
-          element={ <Category />}
-        />
+        <Route path="/category" element={<Category />} />
 
+        <Route path="/courses" element={<ListCourses />} />
         <Route
-          path="/courses"
-          element={ <ListCourses />}
-        />
-         <Route
           path="/TeachersList"
           element={isAuth ? <TeachersList /> : <Navigate to="/" />}
         />
 
-        <Route
-          path="/inscription/:id?"
-          element={<InscriptionPage />}
-        />
+        <Route path="/detail-course/:id" element={<DetailsCourse />} />
+
+        <Route path="/inscription/:id?" element={<InscriptionPage />} />
 
         {/* PRIVATE ROUTE */}
-          <Route
-            path="/dashboard-admin"
-            element={
-              <PrivateRoute
-                element={<AdminHomePage />}
-                requiredRoles={["superAdmin", "admin"]}
+        <Route
+          path="/dashboard-admin"
+          element={
+            <PrivateRoute
+              element={<AdminHomePage />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
 
-              />
-            }
-          />
+        <Route
+          path="/inscriptionsList"
+          element={
+            <PrivateRoute
+              element={<InscriptionList />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
 
-          <Route
-            path="/inscriptionsList"
-            element={
-              <PrivateRoute
-                element={<InscriptionList />}
-                requiredRoles={["superAdmin", "admin"]}
-              />
-            }
-          />
-
-          <Route
-            path="/inscriptionDetails/:id"
-            element={
-              <PrivateRoute
-                element={<InscriptionDetails />}
-                requiredRoles={["superAdmin", "admin"]}
-              />
-            }
-          />
-
-          <Route
-            path="/listCourses"
-            element={
-              <PrivateRoute
-                element={<ListCoursesPage />}
-                requiredRoles={["superAdmin", "admin"]}
-              />
-            }
-          />
-
-          <Route
-            path="/admins"
-            element={
-              <PrivateRoute
-                element={<AdminsDashboard />}
-                requiredRoles={["superAdmin"]}
-              />
-            }
-          />
-
-          <Route
-            path="/teachers"
-            element={
-              <PrivateRoute
-                element={<TeachersDashboard />}
-                requiredRoles={["superAdmin", "admin"]}
-              />
-            }
-          />
-
-          <Route
-            path="/students"
-            element={
-              <PrivateRoute
-                element={<StudentsDashboard />}
-                requiredRoles={["superAdmin", "admin"]}
-              />
-            }
-          />
-
-          <Route
-            path="/parents"
-            element={
-              <PrivateRoute
-                element={<ParentsDashboard />}
-                requiredRoles={["superAdmin", "admin"]}
-              />
-            }
-          />
-
-
-          <Route
-            path="/dashbordTeacher"
-            element={
-              <PrivateRoute
-                element={<DashbordTeacher />}
-                requiredRoles={["superAdmin", "admin", "teacher"]}
-              />
-            }
-          />
-
-
-
+        <Route
+          path="/inscriptionDetails/:id"
+          element={
+            <PrivateRoute
+              element={<InscriptionDetails />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
 
         <Route
           path="/listCourses"
@@ -251,27 +170,81 @@ function App() {
             />
           }
         />
-        
 
-        
+        <Route
+          path="/admins"
+          element={
+            <PrivateRoute
+              element={<AdminsDashboard />}
+              requiredRoles={["superAdmin"]}
+            />
+          }
+        />
 
-<Route
+        <Route
+          path="/teachers"
+          element={
+            <PrivateRoute
+              element={<TeachersDashboard />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/students"
+          element={
+            <PrivateRoute
+              element={<StudentsDashboard />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/parents"
+          element={
+            <PrivateRoute
+              element={<ParentsDashboard />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/dashbordTeacher"
+          element={
+            <PrivateRoute
+              element={<DashbordTeacher />}
+              requiredRoles={["superAdmin", "admin", "teacher"]}
+            />
+          }
+        />
+
+        <Route
+          path="/listCourses"
+          element={
+            <PrivateRoute
+              element={<ListCoursesPage />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
           path="/meetingHomeS"
           element={
             <PrivateRoute
               element={<MeetingHomeStudent />}
               requiredRoles={["superAdmin", "student"]}
-
-
             />
           }
         />
 
-        
-<Route  path="/listReservation" 
-              element={isAuth ? <AdminReservation /> : <Navigate to="/" /> }   
-          />
-
+        <Route
+          path="/listReservation"
+          element={isAuth ? <AdminReservation /> : <Navigate to="/" />}
+        />
 
         <Route
           path="/dashbordStudent"
@@ -279,34 +252,54 @@ function App() {
             <PrivateRoute
               element={<DashbordStudent />}
               requiredRoles={["superAdmin", "student"]}
-
-
             />
           }
         />
-
-
 
         <Route
           path="/homeMeet"
           element={
             <PrivateRoute
               element={<HomePagee />}
-              requiredRoles={["superAdmin", "student","teacher"]}
-
+              requiredRoles={["superAdmin", "student", "teacher"]}
             />
           }
         />
-        
 
-        
-         <Route
+        <Route
+          path="/planningTeacher"
+          element={
+            <PrivateRoute
+              element={<PlanningTeacher />}
+              requiredRoles={["superAdmin", "teacher"]}
+            />
+          }
+        />
+        <Route
+          path="/planning"
+          element={
+            <PrivateRoute
+              element={<Planning />}
+              requiredRoles={["superAdmin"]}
+            />
+          }
+        />
+        <Route
+          path="/planningStudent"
+          element={
+            <PrivateRoute
+              element={<PlanningStudent />}
+              requiredRoles={["superAdmin", "student"]}
+            />
+          }
+        />
+
+        <Route
           path="/room/:roomId"
           element={
             <PrivateRoute
               element={<Room />}
-              requiredRoles={["superAdmin", "student","teacher"]}
-
+              requiredRoles={["superAdmin", "student", "teacher"]}
             />
           }
         />
@@ -328,11 +321,7 @@ function App() {
           path="/EditStage/:id"
           element={isAuth ? <EditStage /> : <Navigate to="/" />}
         />
-        <Route
-          path="/stage"
-          element={<Stage /> }
-        />
-
+        <Route path="/stage" element={<Stage />} />
 
         <Route
           path="/listEvents"
@@ -343,14 +332,14 @@ function App() {
           element={isAuth ? <AddEventPage /> : <Navigate to="/" />}
         />
 
-<Route path="/editEvent/:id" element={isAuth ? <EditEventPage /> : <Navigate to="/" />} />
+        <Route
+          path="/editEvent/:id"
+          element={isAuth ? <EditEventPage /> : <Navigate to="/" />}
+        />
 
-<Route path="/detailEvent/:id"
-               element={<DetailEvents />} />
+        <Route path="/detailEvent/:id" element={<DetailEvents />} />
 
-<Route path="/listEventUser"
-               element={<ListEventUser /> } />
-
+        <Route path="/listEventUser" element={<ListEventUser />} />
 
         <Route
           path="/addCourse"
@@ -375,19 +364,21 @@ function App() {
           element={isAuth ? <Chat /> : <Navigate to="../auth" />}
         />
 
-
         <Route path="/about" element={<AboutPage />} />
-        <Route path="/listCategories"
+        <Route
+          path="/listCategories"
           element={isAuth ? <ListCategoryPage /> : <Navigate to="/" />}
         />
-        <Route path="/add-category"
+        <Route
+          path="/add-category"
           element={isAuth ? <AddCategoryPage /> : <Navigate to="/" />}
         />
-        <Route path="/edit-category/:id"
-          element={isAuth ? <EditCategoryPage /> : <Navigate to="/" />} />
+        <Route
+          path="/edit-category/:id"
+          element={isAuth ? <EditCategoryPage /> : <Navigate to="/" />}
+        />
 
         <Route path="/*" element={<NotFound />} />
-
       </Routes>
     </div>
   );
