@@ -3,7 +3,6 @@ import Footer from "components/Footer";
 import NavBar from "components/NavBar";
 import { useSelector } from "react-redux";
 
-
 import { loadScripts } from "../../../scriptLoader";
 import BannerStartHome from "components/BannerStartHome";
 import '../../Style.css';

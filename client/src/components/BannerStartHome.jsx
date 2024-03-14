@@ -20,7 +20,7 @@ function BannerStartHome(props) {
           <div className="row align-items-center">
             {/* Image */}
             <div className="col-6 col-md-3 text-center order-1">
-              <img src="/assets/images/banner/bannerRight.png" alt="bannerLeft" />
+              <img src="/assets/images/banner/leftFemme.png" alt="bannerLeft" />
             </div>
             {/* Content */}
             <div className="col-md-6 px-md-5 text-center position-relative order-md-2 mb-5 mb-md-0">
@@ -51,7 +51,7 @@ function BannerStartHome(props) {
             </div>
             {/* Image */}
             <div className="col-6 col-md-3 text-center order-3">
-              <img src="/assets/images/banner/bannerLeft.png" alt="bannerRight" />
+              <img src="/assets/images/banner/homme.png" alt="bannerRight" />
             </div>
           </div> {/* Row END */}
         </div>
