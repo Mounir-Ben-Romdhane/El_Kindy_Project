@@ -1,4 +1,4 @@
- import {BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loadScripts } from './scriptLoader';
 import React, { useEffect, useRef } from "react";
@@ -38,7 +38,7 @@ import Room from '../src/scenes/PlatformTeacher/Room';
 
 import TeachersList from '../src/scenes/PlatformStudent/TeachersList'
 import Chat from '../src/scenes/Chat/Chat'
-
+import ListMeetingTeacher from 'scenes/PlatformTeacher/ListMeetingTeacher'
 
 
 import AdminReservation from './scenes/EventsPage/AdminReservation/AdminReservation'
@@ -123,20 +123,20 @@ function App() {
         <Route path="/" element={<Navigate to="/home" />} />
         <Route
           path="/home"
-          element={<HomePage /> }
+          element={<HomePage />}
         />
         <Route path="/contact-us" element={<ContactPage />} />
 
         <Route
           path="/category"
-          element={ <Category />}
+          element={<Category />}
         />
 
         <Route
           path="/courses"
-          element={ <ListCourses />}
+          element={<ListCourses />}
         />
-         <Route
+        <Route
           path="/TeachersList"
           element={isAuth ? <TeachersList /> : <Navigate to="/" />}
         />
@@ -147,99 +147,109 @@ function App() {
         />
 
         {/* PRIVATE ROUTE */}
-          <Route
-            path="/dashboard-admin"
-            element={
-              <PrivateRoute
-                element={<AdminHomePage />}
-                requiredRoles={["superAdmin", "admin"]}
+        <Route
+          path="/dashboard-admin"
+          element={
+            <PrivateRoute
+              element={<AdminHomePage />}
+              requiredRoles={["superAdmin", "admin"]}
 
-              />
-            }
-          />
+            />
+          }
+        />
 
-          <Route
-            path="/inscriptionsList"
-            element={
-              <PrivateRoute
-                element={<InscriptionList />}
-                requiredRoles={["superAdmin", "admin"]}
-              />
-            }
-          />
+        <Route
+          path="/inscriptionsList"
+          element={
+            <PrivateRoute
+              element={<InscriptionList />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
 
-          <Route
-            path="/inscriptionDetails/:id"
-            element={
-              <PrivateRoute
-                element={<InscriptionDetails />}
-                requiredRoles={["superAdmin", "admin"]}
-              />
-            }
-          />
+        <Route
+          path="/inscriptionDetails/:id"
+          element={
+            <PrivateRoute
+              element={<InscriptionDetails />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
 
-          <Route
-            path="/listCourses"
-            element={
-              <PrivateRoute
-                element={<ListCoursesPage />}
-                requiredRoles={["superAdmin", "admin"]}
-              />
-            }
-          />
+        <Route
+          path="/listCourses"
+          element={
+            <PrivateRoute
+              element={<ListCoursesPage />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
 
-          <Route
-            path="/admins"
-            element={
-              <PrivateRoute
-                element={<AdminsDashboard />}
-                requiredRoles={["superAdmin"]}
-              />
-            }
-          />
+        <Route
+          path="/admins"
+          element={
+            <PrivateRoute
+              element={<AdminsDashboard />}
+              requiredRoles={["superAdmin"]}
+            />
+          }
+        />
 
-          <Route
-            path="/teachers"
-            element={
-              <PrivateRoute
-                element={<TeachersDashboard />}
-                requiredRoles={["superAdmin", "admin"]}
-              />
-            }
-          />
+        <Route
+          path="/teachers"
+          element={
+            <PrivateRoute
+              element={<TeachersDashboard />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
 
-          <Route
-            path="/students"
-            element={
-              <PrivateRoute
-                element={<StudentsDashboard />}
-                requiredRoles={["superAdmin", "admin"]}
-              />
-            }
-          />
+        <Route
+          path="/students"
+          element={
+            <PrivateRoute
+              element={<StudentsDashboard />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
 
-          <Route
-            path="/parents"
-            element={
-              <PrivateRoute
-                element={<ParentsDashboard />}
-                requiredRoles={["superAdmin", "admin"]}
-              />
-            }
-          />
-
-
-          <Route
-            path="/dashbordTeacher"
-            element={
-              <PrivateRoute
-                element={<DashbordTeacher />}
-                requiredRoles={["superAdmin", "admin", "teacher"]}
-              />
-            }
-          />
+        <Route
+          path="/parents"
+          element={
+            <PrivateRoute
+              element={<ParentsDashboard />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
 
 
+        <Route
+          path="/dashbordTeacher"
+          element={
+            <PrivateRoute
+              element={<DashbordTeacher />}
+              requiredRoles={["superAdmin", "admin", "teacher"]}
+            />
+          }
+        />
+
+        <Route
+          path="/listMeeting"
+          element={
+            <PrivateRoute
+              element={<ListMeetingTeacher />}
+              requiredRoles={["superAdmin", "teacher"]}
+
+
+            />
+          }
+        />
 
 
         <Route
@@ -251,11 +261,11 @@ function App() {
             />
           }
         />
-        
 
-        
 
-<Route
+
+
+        <Route
           path="/meetingHomeS"
           element={
             <PrivateRoute
@@ -267,10 +277,10 @@ function App() {
           }
         />
 
-        
-<Route  path="/listReservation" 
-              element={isAuth ? <AdminReservation /> : <Navigate to="/" /> }   
-          />
+
+        <Route path="/listReservation"
+          element={isAuth ? <AdminReservation /> : <Navigate to="/" />}
+        />
 
 
         <Route
@@ -292,20 +302,20 @@ function App() {
           element={
             <PrivateRoute
               element={<HomePagee />}
-              requiredRoles={["superAdmin", "student","teacher"]}
+              requiredRoles={["superAdmin", "student", "teacher"]}
 
             />
           }
         />
-        
 
-        
-         <Route
+
+
+        <Route
           path="/room/:roomId"
           element={
             <PrivateRoute
               element={<Room />}
-              requiredRoles={["superAdmin", "student","teacher"]}
+              requiredRoles={["superAdmin", "student", "teacher"]}
 
             />
           }
@@ -330,7 +340,7 @@ function App() {
         />
         <Route
           path="/stage"
-          element={<Stage /> }
+          element={<Stage />}
         />
 
 
@@ -343,13 +353,13 @@ function App() {
           element={isAuth ? <AddEventPage /> : <Navigate to="/" />}
         />
 
-<Route path="/editEvent/:id" element={isAuth ? <EditEventPage /> : <Navigate to="/" />} />
+        <Route path="/editEvent/:id" element={isAuth ? <EditEventPage /> : <Navigate to="/" />} />
 
-<Route path="/detailEvent/:id"
-               element={<DetailEvents />} />
+        <Route path="/detailEvent/:id"
+          element={<DetailEvents />} />
 
-<Route path="/listEventUser"
-               element={<ListEventUser /> } />
+        <Route path="/listEventUser"
+          element={<ListEventUser />} />
 
 
         <Route
