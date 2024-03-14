@@ -63,6 +63,7 @@ import TeachersDashboard from "scenes/UsersAdmin/Teachers";
 import StudentsDashboard from "scenes/UsersAdmin/Students";
 import ParentsDashboard from "scenes/UsersAdmin/Parents";
 import ListCourses from "scenes/Courses/frontOffice/listCourses";
+import DetailsCourse from "scenes/Courses/frontOffice/detailsCourse";
 
 function App() {
   const isAuth = Boolean(useSelector((state) => state.accessToken));
@@ -138,6 +139,11 @@ function App() {
         <Route
           path="/courses"
           element={ <ListCourses />}
+        />
+
+        <Route
+          path="/detail-course/:id"
+          element={ <DetailsCourse />}
         />
 
         <Route

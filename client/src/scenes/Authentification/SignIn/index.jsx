@@ -265,7 +265,7 @@ function Index() {
                     <div className="mt-4 text-center">
                       <span>
                         Don't have an account?{" "}
-                        <Link to="signup">Signup here</Link>
+                        <Link to="/sign-up">Signup here</Link>
                       </span>
                     </div>
                   </div>
