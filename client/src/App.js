@@ -39,13 +39,14 @@ import Room from '../src/scenes/PlatformTeacher/Room';
 import TeachersList from '../src/scenes/PlatformStudent/TeachersList'
 import Chat from '../src/scenes/Chat/Chat'
 
+import MessageProf from '../src/scenes/PlatformTeacher/MessageProf'
 
 
 import AdminReservation from './scenes/EventsPage/AdminReservation/AdminReservation'
 import DetailEvents from './scenes/EventsPage/DetailEventPage/DetailEvent'
 import EditEventPage from './scenes/EventsPage/EditEventPage/EditEvent'
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
-
+import StageDetail from "scenes/Stage/StageDetail";
 
 import EditCourse from "scenes/Courses/backOffice/EditCoursePage";
 
@@ -132,6 +133,10 @@ function App() {
           element={ <Category />}
         />
 
+        <Route
+          path="/StageDetail/:id"
+          element={ <StageDetail />}
+        />
         <Route
           path="/courses"
           element={ <ListCourses />}
@@ -234,6 +239,15 @@ function App() {
             element={
               <PrivateRoute
                 element={<DashbordTeacher />}
+                requiredRoles={["superAdmin", "admin", "teacher"]}
+              />
+            }
+          />
+          <Route
+            path="/messages"
+            element={
+              <PrivateRoute
+                element={<MessageProf />}
                 requiredRoles={["superAdmin", "admin", "teacher"]}
               />
             }

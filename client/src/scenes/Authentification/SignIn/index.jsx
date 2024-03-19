@@ -20,21 +20,14 @@ function Index() {
   useEffect(() => {
     if (isAuth) {
       const userRoles = isAuth ? jwtDecode(isAuth).roles : []; 
-<<<<<<< HEAD
         console.log("userRole ",userRoles);
-        if (userRoles.includes('admin')  || userRoles.includes('parent')) {
-          navigate("/dashboard-admin");
-        } else if(userRoles.includes('parent') || userRoles.includes('student')|| userRoles.includes('teacher')){
-=======
-        //console.log("userRole ",userRoles);
-        if (userRoles.includes('admin') || userRoles.includes('parent')) {
+         if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
           navigate("/dashboard-admin");
         }else if (userRoles.includes('teacher') )  {
           navigate('/dashbordTeacher');
         }
          else if(userRoles.includes('parent') || userRoles.includes('student')){
->>>>>>> 70c9eb0e607881c837c3169616127bbe50d61516
-            navigate("/home");
+            navigate("/dashbordStudent");
         }
     }
     
@@ -105,23 +98,16 @@ function Index() {
         );
         const accessTokenn = loggedIn.accessToken;
         const userRoles = accessTokenn ? jwtDecode(accessTokenn).roles : []; 
-<<<<<<< HEAD
         //console.log("userRole ",userRoles);//fareshabet e teacher m dashborad lil home ba3d raj3ouh
-        if (userRoles.includes('admin')  || userRoles.includes('superAdmin')) {
-          navigate("/dashboard-admin");
-        } else if (userRoles.includes('student') || userRoles.includes('parent')|| userRoles.includes('teacher')) {
-=======
-        //console.log("userRole ",userRoles);
-        if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
+         if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
           navigate("/dashboard-admin"); 
 
         }else if (userRoles.includes('teacher')){
-          navigate('/courses');
+          navigate('/dashbordTeacher');
         } 
         else if (userRoles.includes('student') || userRoles.includes('parent')) {
 
->>>>>>> 70c9eb0e607881c837c3169616127bbe50d61516
-            navigate("/home");
+            navigate("/dashbordStudent");
         }
       }
     } catch (error) {

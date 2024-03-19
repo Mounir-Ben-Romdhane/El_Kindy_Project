@@ -91,11 +91,7 @@ export const refreshToken = async (req, res) => {
        
 
         const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
-<<<<<<< HEAD
         roles: user.roles,  email : user.email, picturePath : user.picturePath  }, process.env.JWT_SECRET, { expiresIn: "30s" });
-=======
-        roles: user.roles,  email : user.email  }, process.env.JWT_SECRET, { expiresIn: "10m" });
->>>>>>> 70c9eb0e607881c837c3169616127bbe50d61516
         res.json({ accessToken });
     } catch (error) {
         if (error.name === 'TokenExpiredError') {

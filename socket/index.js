@@ -7,6 +7,7 @@ const io = require("socket.io")(8800, {
 let activeUsers = [];
 
 io.on("connection", (socket) => {
+  console.log(`Un utilisateur s'est connecté avec l'ID de socket ${socket.id}`);
   // add new User
   socket.on("new-user-add", (newUserId) => {
     // if user is not added previously
@@ -27,13 +28,18 @@ io.on("connection", (socket) => {
   });
 
   // send message to a specific user
-  socket.on("send-message", (data) => {
-    const { receiverId } = data;
-    const user = activeUsers.find((user) => user.userId === receiverId);
-    console.log("Sending from socket to :", receiverId)
-    console.log("Data: ", data)
-    if (user) {
-      io.to(user.socketId).emit("recieve-message", data);
-    }
-  });
+socket.on("send-message", (data) => {
+  console.log(`Message reçu de ${data.senderId} à ${data.receiverId}`, data);
+  const user = activeUsers.find(user => user.userId === data.receiverId);
+  if (user) {
+    console.log(`Envoi du message à ${data.receiverId}`);
+    io.to(user.socketId).emit("receive-message", data);
+  } else {
+    console.log(`Destinataire ${data.receiverId} non trouvé.`);
+  }
+});
+
+  
+  
+  
 });
