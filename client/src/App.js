@@ -44,7 +44,6 @@ import ListMeetingTeacher from 'scenes/PlatformTeacher/ListMeetingTeacher'
 import AdminReservation from './scenes/EventsPage/AdminReservation/AdminReservation'
 import DetailEvents from './scenes/EventsPage/DetailEventPage/DetailEvent'
 
-import AdminReservation from "./scenes/EventsPage/AdminReservation/AdminReservation";
 import EditEventPage from "./scenes/EventsPage/EditEventPage/EditEvent";
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
 

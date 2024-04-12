@@ -8,7 +8,7 @@ const classSchema = new mongoose.Schema({
   },
   students: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Inscription', // Référence au modèle d'étudiant
+    ref: 'User', // Référence au modèle d'étudiant
   }],
   teachers: [{
     type: mongoose.Schema.Types.ObjectId,
