@@ -288,12 +288,30 @@ export const getUser = async (req, res) => {
       res.status(500).json(error);
     }
   };
+
+// Get a User
+export const getUserById = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const user = await User.findById(id);
+    if (user) {
+
+      res.status(200).json(user);
+    } else {
+      res.status(404).json("No such User");
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 //Get all User by Role
 export const getAllUserByRole = async (req, res) => {
     const role = req.params.role;
     try {
         const users = await User.find({roles: role});
-        res.status(200).json(users);
+        res.status(200).json({data: users});
     } catch (error) {
         res.status(500).json(error);
     }
@@ -319,4 +337,6 @@ export const getStudents = async (req, res) => {
       res.status(500).json({ message: error.message });
   }
 };
+
+
 

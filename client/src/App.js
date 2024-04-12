@@ -41,7 +41,6 @@ import Chat from "../src/scenes/Chat/Chat";
 import ListMeetingTeacher from 'scenes/PlatformTeacher/ListMeetingTeacher'
 
 
-import AdminReservation from './scenes/EventsPage/AdminReservation/AdminReservation'
 import DetailEvents from './scenes/EventsPage/DetailEventPage/DetailEvent'
 
 import EditEventPage from "./scenes/EventsPage/EditEventPage/EditEvent";
