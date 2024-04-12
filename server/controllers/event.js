@@ -98,6 +98,9 @@ export const addNewEvent = async (req, res) => {
         picturePath,
         dateDebut,
         dateFin,
+        place, 
+        timeFrom, 
+        timeTo 
       } = req.body;
 
 
@@ -110,6 +113,9 @@ export const addNewEvent = async (req, res) => {
         picturePath,
         dateDebut,
         dateFin,
+        place, 
+        timeFrom, 
+        timeTo 
       });
 
      

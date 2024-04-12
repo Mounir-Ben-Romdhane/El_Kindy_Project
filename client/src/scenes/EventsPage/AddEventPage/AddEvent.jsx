@@ -10,6 +10,10 @@ import "react-notifications/lib/notifications.css";
 import { Link, useNavigate } from "react-router-dom";
 
 function AddEvent() {
+  const [isPaid, setIsPaid] = useState(false);
+
+
+
   // State to hold the image name
   const [imageName, setImageName] = useState(null);
   // State to hold the image file
@@ -138,7 +142,7 @@ function AddEvent() {
                       required
                     />
                   </div>
-                  <div className="col-md-6">
+                 {/*  <div className="col-md-6">
                     <label className="form-label">Event Price</label>
                     <input
                       type="number"
@@ -146,6 +150,30 @@ function AddEvent() {
                       name="price"
                       placeholder="Enter event price"
                     />
+                  </div> */}
+
+<div className="col-md-6">
+                    <label className="form-label">Event Price</label>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="flexCheckDefault"
+                        checked={isPaid}
+                        onChange={() => setIsPaid(!isPaid)}
+                      />
+                      <label className="form-check-label" htmlFor="flexCheckDefault">
+                        Paid
+                      </label>
+                    </div>
+                    {isPaid && (
+                      <input
+                        type="number"
+                        className="form-control"
+                        name="price"
+                        placeholder="Enter event price"
+                      />
+                    )}
                   </div>
                   {/* Upload image START */}
                   <div className="m-4">

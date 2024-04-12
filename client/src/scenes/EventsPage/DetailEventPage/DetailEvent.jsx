@@ -32,6 +32,7 @@
     const [eventDetails, setEventDetails] = useState({});
     const [daysUntilStart, setDaysUntilStart] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [paymentResponse, setPaymentResponse] = useState(null); // New state for payment response
     const [error, setError] = useState("");
     const [reservation, setReservation] = useState({
       name: "",
@@ -73,6 +74,7 @@
       };
       fetchEventDetails();
     }, [id]);
+    
 
     const handleInputChange = (e) => {
       const { name, value } = e.target;
@@ -82,16 +84,34 @@
       }));
     };
 
+    
     const handleReservationSubmit = async (e) => {
       e.preventDefault();
       setIsSubmitting(true);
+    
       try {
-        // Here you should replace 'YOUR_RESERVATION_ENDPOINT' with your actual endpoint URL
+        if (!eventDetails.price || parseFloat(eventDetails.price) === 0) {
+          // Event is free, submit reservation directly
+          await submitReservation();
+        } else {
+          // Event is paid, initiate payment process
+          await initiatePayment();
+        }
+      } catch (error) {
+        toast.error("Reservation failed. " + error.message);
+        console.error("Reservation error:", error);
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
+
+   const submitReservation = async () => {
+      try {
         const url = `http://localhost:3001/events/${id}/reservation`;
         const dataToSend = {
           userName: reservation.name,
-          userEmail: reservation.email, // Assuming 'reservation.email' holds the user's email
-          phoneNumber: reservation.phoneNumber, // Assuming this is correctly named
+          userEmail: reservation.email,
+          phoneNumber: reservation.phoneNumber,
         };
         const response = await axios.post(url, dataToSend);
         console.log("Reservation response:", response.data);
@@ -100,12 +120,61 @@
           autoClose: 2000,
         });
       } catch (error) {
-        toast.error("Reservation failed. " + error.message);
-        console.error("Reservation error:", error);
-      } finally {
-        setIsSubmitting(false);
+        throw new Error("Failed to submit reservation.");
+      }
+    }; 
+ 
+
+    
+    const initiatePayment = async () => {
+      try {
+        const paymentData = {
+          amount: eventDetails.price,
+        };
+        const response = await axios.post(
+          `http://localhost:3001/payment/payment`,
+          paymentData
+        );
+        console.log("Payment initiation response:", response.data);
+
+        // Assuming the response contains the payment ID
+        const paymentId = response.data.result.payment_id; 
+
+        // Redirect user to payment gateway URL
+        window.open(response.data.result.link, '_blank');
+
+        // After payment is completed, verify payment status
+         verifyPayment(paymentId);
+
+        
+      } catch (error) {
+        console.error("Failed to initiate payment.", error);
+        // Handle error
       }
     };
+
+    const verifyPayment = async (paymentId) => {
+      try {
+        // Make a request to your backend to verify the payment
+        const verifyUrl = `https://developers.flouci.com/api/verify_payment/${paymentId}`;
+        const verifyResponse = await axios.get(verifyUrl, {
+          headers: {
+            'apppublic': 'a1e02adf-ac26-42dd-ac2c-bcce4039c770',
+            'appsecret': process.env.flouci_secret
+          }
+        });
+    
+        // Assuming payment verification is successful
+        console.log("Payment verification response:", verifyResponse.data);
+    
+        // Proceed with reservation after payment verification
+        submitReservation();
+      } catch (error) {
+        console.error("Error verifying payment:", error);
+        // Handle error
+      }
+    };
+    
 
     if (loading) {
       return (
@@ -334,9 +403,7 @@
           <MoneyOffIcon className="text-primary me-2" />
           Price: {eventDetails.price ? (
             <>
-              <span className="text-success">${eventDetails.price}</span>
-              <del className="text-muted ms-2">$350</del>
-              <span className="badge bg-info text-dark ms-2">60% off</span>
+              <span className="text-success">{eventDetails.price} TND</span>
             </>
           ) : (
             <span className="text-success">FREE</span>

@@ -184,35 +184,31 @@ function Index() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredEvents.map((event, index) => (
-                        <tr key={index}>
-                          <td>{event.title}</td>
-                          <td>
-                            {new Date(event.dateDebut).toLocaleDateString()}
-                          </td>
-                          <td>
-                            {new Date(event.dateFin).toLocaleDateString()}
-                          </td>
-                          <td>{event.price || "Free"}</td>
-                          <td>
-                            {/* Actions */}
-                            <a
-                              onClick={() => editEvents(event._id)}
-                              className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0">
-            <i class="bi bi-pencil-square"></i>
-                            </a>
-                            <button
-                              onClick={() => deleteEvents(event._id)}
+  {filteredEvents.map((event, index) => (
+    <tr key={index}>
+      <td>{event.title}</td>
+      <td>{new Date(event.dateDebut).toLocaleDateString()}</td>
+      <td>{new Date(event.dateFin).toLocaleDateString()}</td>
+      <td>{event.price ? `${event.price} TND` : "Free"}</td>
+      <td>
+        {/* Actions */}
+        <a
+          onClick={() => editEvents(event._id)}
+          className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+        >
+          <i class="bi bi-pencil-square"></i>
+        </a>
+        <button
+          onClick={() => deleteEvents(event._id)}
+          className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
+        >
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
 
-                              className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"><i class="bi bi-trash"></i>
-
-                              
-
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
                   </table>
                 </div>
               </div>

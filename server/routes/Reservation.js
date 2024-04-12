@@ -9,4 +9,6 @@ router.get("/reservation/:eventId", listReservationsByid);
 router.get("/reservations", listReservations);
 router.patch('/reservations/:reservationId', updateReservationStatus);
 
+
+
 export default router;

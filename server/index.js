@@ -33,6 +33,9 @@ import ChatRoute from './routes/ChatRoute.js'
 import MessageRoute from './routes/MessageRoute.js'
 import meetingRoutes from './routes/meetingRoutes.js';
 import reservationRoutes  from "./routes/Reservation.js";
+import paymentRouter from "./routes/paymentRouter.js";
+
+
 
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
@@ -63,6 +66,7 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage });
+
 
 /* ROUTES WITH FILES*/
 //app.post("/auth/register",upload.single("picture"),register);
@@ -102,6 +106,9 @@ export const sendSms = (toPhoneNumber) => {
 
 
 /* ROUTES */
+
+
+/* ROUTES */
 app.use("/auth",authRoutes);
 app.use("/api/categories", categorieRoutes); 
 app.use("/stage",stageRouter);
@@ -114,6 +121,12 @@ app.use('/chat', ChatRoute)
 app.use('/message', MessageRoute)
 app.use('/meeting', meetingRoutes);
 app.use("/events",reservationRoutes);
+
+
+app.use("/payment",paymentRouter);
+
+
+
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
 mongoose.connect(process.env.MONGO_URL, {

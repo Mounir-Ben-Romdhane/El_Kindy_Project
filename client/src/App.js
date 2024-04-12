@@ -63,6 +63,9 @@ import TeachersDashboard from "scenes/UsersAdmin/Teachers";
 import StudentsDashboard from "scenes/UsersAdmin/Students";
 import ParentsDashboard from "scenes/UsersAdmin/Parents";
 import ListCourses from "scenes/Courses/frontOffice/listCourses";
+import Success from "scenes/Payment/Success";
+import Fail from "scenes/Payment/Fail";
+import Payment from "scenes/Payment/Payment";
 
 function App() {
   const isAuth = Boolean(useSelector((state) => state.accessToken));
@@ -271,6 +274,30 @@ function App() {
 <Route  path="/listReservation" 
               element={isAuth ? <AdminReservation /> : <Navigate to="/" /> }   
           />
+
+         <Route path="/payment" element={
+            <PrivateRoute
+              element={<Payment />}
+              requiredRoles={["superAdmin", "student"]}
+            />
+          } 
+          /> 
+
+<Route path="/success" element={
+            <PrivateRoute
+              element={<Success />}
+              requiredRoles={["superAdmin", "student"]}
+            />
+          } 
+          /> 
+
+<Route path="/fail" element={
+            <PrivateRoute
+              element={<Fail />}
+              requiredRoles={["superAdmin", "student"]}
+            />
+          } 
+          /> 
 
 
         <Route

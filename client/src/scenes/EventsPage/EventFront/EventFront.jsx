@@ -115,8 +115,12 @@ Trending courses START */}
                 <i className="fas fa-calendar-alt"></i> {new Date(event.dateDebut).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })} - {new Date(event.dateFin).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
               </p>
               <p className="event-price text-center my-2">
-                <span className="badge bg-primary">${event.price}</span>
-              </p>
+    {event.price ? (
+      <span className="badge bg-primary">{event.price} TND</span>
+    ) : (
+      <span className="badge bg-success">Free Event</span>
+    )}
+  </p>
                {/* Title */}
                <h5 className="card-title fw-normal">
                           {/*     <a href="#">{event.title}</a> */}
@@ -131,9 +135,9 @@ Trending courses START */}
       </div>
     ))}
   </div>
-  <div className="text-center mt-5">
+{/*   <div className="text-center mt-5">
     <button className="btn btn-primary">View More Events</button>
-  </div>
+  </div> */}
 </div>
 
 
