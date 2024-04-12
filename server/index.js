@@ -12,6 +12,8 @@ import { addNewCourse, updateCourse } from "./controllers/courseController.js";
 import { addNewEvent,updateEvent } from "./controllers/event.js";
 import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
 import eventRoutes from "./routes/Event.js";
+import classRoute from "./routes/ClassRoutes.js";
+
 import salleRoutes from "./routes/salle.js";
 import inscriptionRoutes from "./routes/inscriptionRoutes.js";
 import stageRouter  from "./routes/stageRoute.js";
@@ -107,6 +109,8 @@ export const sendSms = (toPhoneNumber) => {
 app.use("/auth",authRoutes);
 app.use("/api/categories", categorieRoutes); 
 app.use("/stage",stageRouter);
+app.use('/classes', classRoute);
+
 app.use('/event', eventRoutes);
 app.use("/course",courseRoute);
 app.use("/salle",salleRoutes);
