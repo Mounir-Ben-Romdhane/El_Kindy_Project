@@ -58,7 +58,10 @@ const MyCalendar = () => {
     try {
       const response = await axios.put(`http://localhost:3001/planning/${selectedEventId}`, event);
       const updatedEventData = response.data;
-  
+        // Convertir les valeurs de start et end en objets Date JavaScript
+      // Convertir les valeurs de start et end en objets Date JavaScript
+      // Convertir les valeurs de start et end en objets Date JavaScript
+
       // Convertir les valeurs de start et end en objets Date JavaScript
       updatedEventData.start = new Date(updatedEventData.start);
       updatedEventData.end = new Date(updatedEventData.end);
