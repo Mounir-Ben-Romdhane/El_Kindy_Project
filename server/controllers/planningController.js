@@ -70,3 +70,37 @@ export const getPlanningsForStudent = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const updatePlanning = async (req, res) => {
+  try {
+    const updatedPlanning = await Planning.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.status(200).json(updatedPlanning);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// Fonction pour supprimer un événement
+export const deletePlanning = async (req, res) => {
+  try {
+    await Planning.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Event deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getPlanning = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const planning = await Planning.findById(id);
+
+    if (!planning) {
+      return res.status(404).json({ message: "Événement non trouvé" });
+    }
+
+    return res.json(planning);
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};

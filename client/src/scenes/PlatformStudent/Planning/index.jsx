@@ -160,13 +160,11 @@ const MyCalendar = () => {
     const teacher = teachers.find((t) => t._id === event.teacherId);
     const student = students.find((s) => s._id === event.studentId);
     const teacherName = teacher ? `${teacher.firstName} ${teacher.lastName}` : "Enseignant inconnu";
-    const studentName = student ? `${student.firstName} ${student.lastName}` : "Étudiant inconnu";
 
     return (
       <div>
         <strong>{event.title}</strong>
         <div>Teacher: {teacherName}</div>
-        <div>Student: {studentName}</div>
       </div>
     );
   };
@@ -174,6 +172,8 @@ const MyCalendar = () => {
   return (
     <div>
       <main>
+      <NavBar />
+
         <TopBarTeacherStudent />
         <section className="pt-0">
           <div className="container">
@@ -209,8 +209,9 @@ const MyCalendar = () => {
                               }))}
                               startAccessor="start"
                               endAccessor="end"
-                              style={{ height: "100%", width: "70%" }}
-                              formats={formats}
+                              dayLayoutAlgorithm={'overlap'} // Ajustez la taille des cases en fonction des événements qui se chevauchent
+                              style={{ height: '2500px', width: "70%"  }} // Augmentez la hauteur du calendrier pour afficher plus de cases
+                                                        formats={formats}
                               eventPropGetter={(event) => ({
                                 style: { backgroundColor: event.color },
                               })}
