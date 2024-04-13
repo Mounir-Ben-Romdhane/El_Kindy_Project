@@ -20,11 +20,16 @@ function Index() {
   useEffect(() => {
     if (isAuth) {
       const userRoles = isAuth ? jwtDecode(isAuth).roles : []; 
-        console.log("userRole ",userRoles);
-        if (userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('parent')) {
+
+        //console.log("userRole ",userRoles);
+        if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
           navigate("/dashboard-admin");
-        } else if(userRoles.includes('parent') || userRoles.includes('student')){
-            navigate("/home");
+        }else if (userRoles.includes('teacher') )  {
+          navigate('/dashbordTeacher');
+        }
+         else if(userRoles.includes('parent') || userRoles.includes('student')){
+            navigate("/dashbordStudent");
+
         }
     }
     
@@ -89,19 +94,25 @@ function Index() {
         setOpen(false);
         dispatch(
           setLogin({
-            //user: loggedIn.user,
             accessToken: loggedIn.accessToken,
             refreshToken: loggedIn.refreshToken,
           })
         );
         const accessTokenn = loggedIn.accessToken;
         const userRoles = accessTokenn ? jwtDecode(accessTokenn).roles : []; 
+
         //console.log("userRole ",userRoles);
-        if (userRoles.includes('admin') || userRoles.includes('teacher') || userRoles.includes('superAdmin')) {
+        if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
           navigate("/dashboard-admin"); 
-        } else if (userRoles.includes('student') || userRoles.includes('parent')) {
-            navigate("/home");
+
+        }else if (userRoles.includes('teacher')){
+          navigate('/dashbordTeacher');
+        } 
+        else if (userRoles.includes('student') || userRoles.includes('parent')) {
+
+            navigate("/dashbordStudent");
         }
+
       }
     } catch (error) {
       console.error("Error logging in:", error);
@@ -258,7 +269,7 @@ function Index() {
                     <div className="mt-4 text-center">
                       <span>
                         Don't have an account?{" "}
-                        <Link to="signup">Signup here</Link>
+                        <Link to="/sign-up">Signup here</Link>
                       </span>
                     </div>
                   </div>

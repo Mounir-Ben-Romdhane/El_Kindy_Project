@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const UserSchema = new mongoose.Schema(
     {
@@ -25,11 +26,18 @@ const UserSchema = new mongoose.Schema(
             required: true,
             min:5,
         },
+        passwordDecoded: {
+            type: String
+        },
         picturePath: {
             type: String,
             default: "",
         },
         verified: {
+            type: Boolean,
+            default: false
+        },
+        blocked: {
             type: Boolean,
             default: false
         },
@@ -43,10 +51,90 @@ const UserSchema = new mongoose.Schema(
         },
         roles: {
             type: [String], // Allow multiple roles for a user
-            enum: ["superAdmin", "admin", "teacher", "student", "parent"],
+            enum: ["superAdmin", "admin", "teacher", "student"],
             default: ["student"] // Assuming default role is student
+        },
+        // Additional attributes for all users
+        dateOfBirth: {
+            type: Date,
+            default: null
+        },
+        address: {
+            type: String,
+            default: ""
+        },
+        gender: {
+            type: String,
+            //required: true
+        },
+        phoneNumber1: {
+        type: String,
+        //required: true
+        },
+        phoneNumber2: {
+        type: String
+        },
+        disponibilite: {
+            type: Array,
+            default: []
+        },
+        // Additional attributes for specific roles
+        teacherInfo: {
+            type: {
+                instrumentsTaught: {
+                    type: [String], // Array of strings representing instruments
+                    required: true
+                },
+                classes: {
+                    type: [String], // Assuming an array of class names
+                    default: []
+                },
+                qualifications: {
+                    type: String,
+                    default: ""
+                },
+                experienceYears: {
+                    type: Number,
+                    default: 0
+                },
+                // You can add more fields specific to teachers here
+            },
+            _id: false, // Exclude _id field from teacherInfo sub-document
+            required: function() {
+                return this.roles.includes('teacher');
+            }
+        },
+
+        studentInfo: {
+            type: {
+                classLevel: {
+                    type: String,
+                    default: "" 
+                },
+                coursesEnrolled: {
+                    type: [{
+                        courseName: String,
+                        level: String
+                    }],
+                    default: []
+                },
+                parentInfo: {
+                    type: {
+                        parentName: String,
+                        parentEmail: String,
+                        parentPhone: String
+                    },
+                    default: {}
+                }
+            },
+            _id: false,
+            required: function() {
+                return this.roles.includes('student');
+            }
         }
+
     },
+    
     { timestamps: true}
     );
 
