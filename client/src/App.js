@@ -40,7 +40,7 @@ import TeachersList from '../src/scenes/PlatformStudent/TeachersList'
 import Chat from '../src/scenes/Chat/Chat'
 
 import MessageProf from '../src/scenes/PlatformTeacher/MessageProf'
-
+import StudentsGrades from '../src/scenes/PlatformTeacher/StudentsGrades'
 
 import AdminReservation from './scenes/EventsPage/AdminReservation/AdminReservation'
 import DetailEvents from './scenes/EventsPage/DetailEventPage/DetailEvent'
@@ -248,6 +248,16 @@ function App() {
             element={
               <PrivateRoute
                 element={<MessageProf />}
+                requiredRoles={["superAdmin", "admin", "teacher"]}
+              />
+            }
+          />
+
+        <Route
+            path="/StudentsGrades"
+            element={
+              <PrivateRoute
+                element={<StudentsGrades />}
                 requiredRoles={["superAdmin", "admin", "teacher"]}
               />
             }

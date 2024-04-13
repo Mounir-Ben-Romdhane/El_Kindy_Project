@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { sendEmail } from '../utils/sendMailer.js';
+import Grade from "../models/Grade.js";
 
 
 /* REGISTER USER */
@@ -199,5 +200,33 @@ export const getAllUserByRole = async (req, res) => {
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json(error);
+    }
+};
+//Get all students
+export const getAllStudents = async (req, res) => {
+    try {
+        const students = await User.find({roles: "student"});
+        res.status(200).json(students);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+// Endpoint to add grades for multiple students
+export const addGrades = async (req, res) => {
+    try {
+        // Extract array of grades from request body
+        const grades = req.body.grades;
+
+        // Validate if grades array is provided and not empty
+        if (!grades || !Array.isArray(grades) || grades.length === 0) {
+            return res.status(400).json({ error: "Grades array is required and cannot be empty" });
+        }
+
+        // Insert all grades in a single operation
+        await Grade.insertMany(grades);
+
+        res.status(201).json({ message: "Grades added successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 };

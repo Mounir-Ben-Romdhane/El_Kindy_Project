@@ -80,13 +80,15 @@ const Index = () => {
                     Messages
                   </Link>
 
-                  <a
-                    className="list-group-item"
-                    href="instructor-studentlist.html"
-                  >
+
+                  <Link 
+                  className={`list-group-item ${activeNavItem === "/StudentsGrades" ? "active" : ""}`}
+                  to="/StudentsGrades"
+                  onClick={() => handleNavItemClick("/StudentsGrades")}>
                     <i className="bi bi-people fa-fw me-2" />
-                    Students
-                  </a>
+                    Students Grades
+                  </Link>
+
 
                   <a
                     className="list-group-item"
