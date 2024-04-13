@@ -64,7 +64,8 @@ const MyCalendar = () => {
           axios.get("http://localhost:3001/auth/teachers"),
           axios.get("http://localhost:3001/auth/students"),
         ]);
-        
+                // Set the data and immediately use it to map events
+
         // Set the data and immediately use it to map events
         setTeachersData(teachersResponse.data);
         setStudentsData(studentsResponse.data);
