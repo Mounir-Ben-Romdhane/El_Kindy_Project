@@ -252,10 +252,19 @@ function SideBar() {
                 className={`nav-link ${activeNavItem === "/listClasse" ? "active" : ""}`}
                 onClick={() => handleNavItemClick("/listClasse")}>
                   <FontAwesomeIcon icon={faSchool} className="fa-fw me-1" />{" "}
+                  Salle
+                </Link>
+              </li>
+               {/* menu item classess */}
+              <li className="nav-item">
+                <Link
+                to="/AddAllClasse" 
+                className={`nav-link ${activeNavItem === "/AddAllClasse" ? "active" : ""}`}
+                onClick={() => handleNavItemClick("/AddAllClasse")}>
+                  <FontAwesomeIcon icon={faSchool} className="fa-fw me-1" />{" "}
                   Classes
                 </Link>
               </li>
-
               {/* Menu item 9 */}
               <li className="nav-item">
                 {" "}
