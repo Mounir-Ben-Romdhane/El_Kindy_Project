@@ -102,8 +102,6 @@ export const addNewEvent = async (req, res) => {
         timeFrom, 
         timeTo 
       } = req.body;
-
-
       
 
       const newEvent = new Event({

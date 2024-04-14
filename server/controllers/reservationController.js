@@ -39,7 +39,7 @@ export const createReservation = async (req, res) => {
     }
 
     // Check if the event is free
-    if (eventDetails.price === 0) {
+    if (!eventDetails.price) {
       // If event is free, create reservation directly
       const newReservation = new Reservation({
         eventId,

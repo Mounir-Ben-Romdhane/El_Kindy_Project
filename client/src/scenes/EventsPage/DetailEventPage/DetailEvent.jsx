@@ -22,6 +22,11 @@
   import PhoneIcon from '@mui/icons-material/Phone'; // New icon for phone number
   import EmailIcon from '@mui/icons-material/Email'; // New icon for email
   import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+  import ScheduleIcon from '@material-ui/icons/Schedule';
+  import TimerOffIcon from '@material-ui/icons/TimerOff'
+  import AlarmOffIcon from '@material-ui/icons/AlarmOff';
+  import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+  import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 
   import BannerStartHome from "components/BannerStartHome";
@@ -392,36 +397,47 @@
 
   {/* Personal Info in Card Design */}
   <div className="card shadow-sm mt-3">
-    <div className="card-body">
-      <h6 className="card-subtitle mb-2 ">Event Details</h6>
-      <ul className="list-group list-group-flush">
-        <li className="list-group-item">
-          <LocationOnIcon className="text-primary me-2" />
-          Address: <strong>2002 Rue De Tunis, TN, 2023</strong>
-        </li>
-        <li className="list-group-item">
-          <MoneyOffIcon className="text-primary me-2" />
-          Price: {eventDetails.price ? (
-            <>
-              <span className="text-success">{eventDetails.price} TND</span>
-            </>
-          ) : (
-            <span className="text-success">FREE</span>
-          )}
-        </li>
-        <li className="list-group-item">
-          <DateRangeIcon className="text-primary me-2" />
-          Start Date: <strong>{new Date(eventDetails.dateDebut).toLocaleDateString()}</strong>
-          <EventAvailableIcon className="text-primary ms-4 me-2" />
-          End Date: <strong>{new Date(eventDetails.dateFin).toLocaleDateString()}</strong>
-        </li>
-        <li className="list-group-item">
-          <AccessTimeIcon className="text-primary me-2" />
-          Days until event starts: <strong>{daysUntilStart} days</strong>
-        </li>
-      </ul>
-    </div>
+  <div className="card-body">
+    <h6 className="card-subtitle mb-2 ">Event Details</h6>
+    <ul className="list-group list-group-flush">
+      <li className="list-group-item">
+        <LocationOnIcon className="text-primary me-2" />
+        Address: <strong>{eventDetails.place}</strong>
+      </li>
+      <li className="list-group-item">
+  <MonetizationOnIcon className="text-primary me-2" />
+  Price: {eventDetails.price ? (
+    <>
+      <span className="text-success">{eventDetails.price} TND</span>
+    </>
+  ) : (
+    <span className="text-success">FREE</span>
+  )}
+</li>
+
+      <li className="list-group-item">
+        <DateRangeIcon className="text-primary me-2" />
+        Start Date: <strong>{new Date(eventDetails.dateDebut).toLocaleDateString()}</strong>
+        <EventAvailableIcon className="text-primary ms-4 me-2" />
+        End Date: <strong>{new Date(eventDetails.dateFin).toLocaleDateString()}</strong>
+      </li>
+      <li className="list-group-item d-flex align-items-center">
+  <TimerOffIcon className="text-primary me-2" />
+  <div>
+    <strong>Time:  </strong>
+    
+      {eventDetails.timeFrom || 'Start Time'} <span className="mx-2">-</span> {eventDetails.timeTo || 'End Time'}
+    
   </div>
+</li>
+      <li className="list-group-item">
+        <AccessTimeIcon className="text-primary me-2" />
+        Days until event starts: <strong>{daysUntilStart} days</strong>
+      </li>
+    </ul>
+  </div>
+</div>
+
 </div>
 
               {/* Tabs END */}
