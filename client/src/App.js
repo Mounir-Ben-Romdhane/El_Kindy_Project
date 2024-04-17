@@ -316,9 +316,7 @@ function App() {
         />
 
 
-        <Route path="/listReservation"
-          element={isAuth ? <AdminReservation /> : <Navigate to="/" />}
-        />
+       
 
 
 

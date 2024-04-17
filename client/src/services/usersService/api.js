@@ -1,6 +1,6 @@
 import { axiosPrivate, axiosPublic } from "api/axios";
 
-export const getAdmins = async (role) => {
+export const getUsers = async (role) => {
     const reponse = await axiosPublic.get(`/auth/getAllUserByRole/${role}`);
     return reponse;
 }
@@ -30,7 +30,7 @@ export const addAdmin = async (userData) => {
 // Update an existing user
 export const updateAdmin = async (userId, userData) => {
     try {
-        const response = await axiosPublic.put(`/auth/updateUser/${userId}`, userData);
+        const response = await axiosPublic.put(`/auth/updateAdmin/${userId}`, userData);
         return response;
     } catch (error) {
         console.error('Error updating user:', error);
@@ -59,4 +59,29 @@ export const blockUser = async (userId) => {
       throw error;
     }
   };
+
+
+  
+// Add a new teacher
+export const addTeacher = async (teacherData) => {
+  try {
+      const response = await axiosPublic.post(`/auth/addTeacher`, teacherData);
+      return response;
+  } catch (error) {
+      console.error('Error adding teacher:', error);
+      throw error;
+  }
+};
+
+// Update an existing teacher
+export const updateTeacher = async (teacherId, teacherData) => {
+  try {
+      const response = await axiosPublic.put(`/auth/updateTeacher/${teacherId}`, teacherData);
+      return response;
+  } catch (error) {
+      console.error('Error updating teacher:', error);
+      throw error;
+  }
+};
+
   

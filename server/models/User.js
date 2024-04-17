@@ -81,14 +81,15 @@ const UserSchema = new mongoose.Schema(
         // Additional attributes for specific roles
         teacherInfo: {
             type: {
-                instrumentsTaught: {
-                    type: [String], // Array of strings representing instruments
-                    required: true
-                },
-                classes: {
-                    type: [String], // Assuming an array of class names
-                    default: []
-                },
+                coursesTaught: [{
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'Course',
+                }],
+                // Reference to the classes taught by the teacher
+                classesTeaching: [{
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'Classe',
+                }],
                 qualifications: {
                     type: String,
                     default: ""
