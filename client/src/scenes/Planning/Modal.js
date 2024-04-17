@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const Modal = ({
   onClose,
@@ -8,9 +9,13 @@ const Modal = ({
   teachers,
   students,
   courses,
+  classes
 }) => {
   const isEditing = eventDetails._id; // Check if eventDetails has an id to determine if it's for editing
-
+  const [selectedStudentId, setSelectedStudentId] = useState(
+    eventDetails.studentId || ""
+  );
+console.log("eventassad",eventDetails)
   const [course, setCourse] = useState({
     id: eventDetails.id || null,
     title: eventDetails.title || "",
@@ -18,21 +23,30 @@ const Modal = ({
     roomId: eventDetails.resourceId || "",
   });
 
-
+  const [selectedOption, setSelectedOption] = useState(""); // Ajout de l'état pour suivre l'option sélectionnée
+ 
+  const [selectedClassId, setSelectedClassId] = useState(
+    eventDetails.classId || ""
+  );
+  const selectedClassOrStudentId = selectedOption === "class" ? selectedClassId : selectedStudentId;
+  
   const [color, setColor] = useState(eventDetails.color || "#000000");
   const [selectedTeacherId, setSelectedTeacherId] = useState(
     eventDetails.teacherId || ""
   );
-  const [selectedStudentId, setSelectedStudentId] = useState(
-    eventDetails.studentId || ""
-  );
+
   const [selectedRoomId, setSelectedRoomId] = useState(
     eventDetails.resourceId || ""
   ); // Use the current room as the initial value
   const [selectedCourseId, setselectedCourseId] = useState(
     eventDetails.courseId || ""
   );
-
+  const handleOptionChange = (e) => {
+    setSelectedOption(e.target.value);
+  };
+  const handleClassChange = (e) => {
+    setSelectedClassId(e.target.value);
+  };
 
   const rooms = eventDetails.rooms || []; // Retrieve the list of rooms from eventDetails
   const handleRoomChange = (e) => {
@@ -89,9 +103,11 @@ const Modal = ({
       title: selectedCourse.title,
       color,
       teacherId: selectedTeacherId,
-      studentId: selectedStudentId,
+      studentId: selectedStudentId || null,
       resourceId: selectedRoomId,
-      courseId: selectedCourseId,
+      courseId: selectedCourseId ,
+      classId: selectedClassId || null, // Assurez-vous que selectedClassId est inclus ici
+
     };
 
     onSave(updatedEvent);
@@ -196,7 +212,63 @@ const Modal = ({
         <label style={{ marginBottom: "16px", display: "block" }}>
           Select a student:
         </label>
+{/* Ajout d'un espace entre les éléments */}
+<div style={{ marginBottom: "16px" }}></div>
+  
+  {/* Ajout des radios */}
+  <div>
+    <input
+      type="radio"
+      id="classOption"
+      value="class"
+      checked={selectedOption === "class"}
+      onChange={handleOptionChange}
+    />
+    <label htmlFor="classOption" style={{ marginLeft: "4px" }}>
+      Select by class
+    </label>
+  </div>
 
+  <div>
+    <input
+      type="radio"
+      id="studentOption"
+      value="student"
+      checked={selectedOption === "student"}
+      onChange={handleOptionChange}
+    />
+    <label htmlFor="studentOption" style={{ marginLeft: "4px" }}>
+      Select by student
+    </label>
+  </div>
+
+      {/* Ajout d'un espace entre les éléments */}
+      <div style={{ marginBottom: "16px" }}></div>
+  
+      {/* Affichage conditionnel des sélecteurs */}
+      {selectedOption === "class" && (
+        <select
+        value={selectedClassId}
+        onChange={handleClassChange}
+        style={{
+          marginBottom: "16px",
+          width: "100%",
+          padding: "8px",
+          borderRadius: "4px",
+          border: "1px solid #ccc",
+        }}
+      >
+        <option value="">-- Select a class --</option>
+        {classes.map((classe) => (
+          <option key={classe._id} value={classe._id}>
+            {classe.className}
+          </option>
+        ))}
+      </select>
+      
+      )}
+  
+      {selectedOption === "student" && (
         <select
           value={selectedStudentId}
           onChange={handleStudentChange}
@@ -215,6 +287,8 @@ const Modal = ({
             </option>
           ))}
         </select>
+      )}
+
         <label style={{ marginTop: "16px", display: "block" }}>
           Choose a color:
         </label>

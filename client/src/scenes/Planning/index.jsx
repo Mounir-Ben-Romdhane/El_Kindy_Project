@@ -16,6 +16,8 @@ const MyCalendar = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState({});
   const [courses, setCourses] = useState({ data: [] });
+  const [classes, setClasses] = useState({ data: [] });
+
   const [teachers, setTeachers] = useState([]); // Ajout d'un état pour les enseignants
   const [students, setStudents] = useState([]); // Ajout d'un état pour les étudiants
   const [loadingTeachers, setLoadingTeachers] = useState(true);
@@ -53,19 +55,19 @@ const MyCalendar = () => {
     setEditEventDetails(event);
     setShowModal(true);
   };
- 
   const updateEvent = async (event) => {
     try {
+      // Envoyer la requête de mise à jour à l'API
       const response = await axios.put(`http://localhost:3001/planning/${selectedEventId}`, event);
+  
+      // Extraire les données mises à jour de la réponse de l'API
       const updatedEventData = response.data;
-        // Convertir les valeurs de start et end en objets Date JavaScript
-      // Convertir les valeurs de start et end en objets Date JavaScript
-      // Convertir les valeurs de start et end en objets Date JavaScript
-
-      // Convertir les valeurs de start et end en objets Date JavaScript
+  
+      // Convertir les valeurs de start et end en objets Date JavaScript si nécessaire
       updatedEventData.start = new Date(updatedEventData.start);
       updatedEventData.end = new Date(updatedEventData.end);
     
+      // Mettre à jour l'état des événements avec les données mises à jour
       setEvents(events.map((evt) => (evt._id === updatedEventData._id ? updatedEventData : evt)));
       
       console.log("Event updated successfully:", updatedEventData);
@@ -73,6 +75,7 @@ const MyCalendar = () => {
       console.error("Error updating event", error);
     }
   };
+  
   
  
   
@@ -113,30 +116,41 @@ const MyCalendar = () => {
     return slots;
   }
   
-  // Définissez le composant MyEvent
   const MyEvent = ({ event }) => {
-    // Vérifiez d'abord si les noms des enseignants et des étudiants sont disponibles
+    // Vérifier d'abord si les noms des enseignants et des étudiants sont disponibles
     const teacher = teachers.find((t) => t._id === event.teacherId);
     const student = students.find((s) => s._id === event.studentId);
-
+    const className = classes.find((c) => c._id === event.classId)?.className;
+  
     // Si les noms des enseignants et des étudiants ne sont pas disponibles, affichez "Loading..."
-    if (!teacher || !student || loadingTeachers || loadingStudents) {
+    if ((event.classId && !className) || (!teacher && !student) || loadingTeachers || loadingStudents) {
       return <div>Loading...</div>;
     }
-
+  
     // Les noms des enseignants et des étudiants sont disponibles, construisez le composant avec les noms
-    const teacherName = `${teacher.firstName} ${teacher.lastName}`;
-    const studentName = `${student.firstName} ${student.lastName}`;
-
+    const teacherName = teacher ? `${teacher.firstName} ${teacher.lastName}` : "";
+    const studentName = student ? `${student.firstName} ${student.lastName}` : "";
+    const displayStudent = event.studentId && studentName ? `Student: ${studentName}` : "";
+  
+    // Afficher "Teacher :" si l'enseignant est sélectionné, sinon afficher "Student :"
+    const displayLabel = event.teacherId ? "Teacher :" : "Student :";
+  
+    // Afficher "Classe :" uniquement lorsque l'étudiant est sélectionné et que la classe est disponible
+    const displayClass = event.classId && className ? `Classe: ${className}` : "";
+  
     return (
       <div>
         <strong>{event.title}</strong>
-        <div>Teacher: {teacherName}</div>
-        <div>Student: {studentName}</div>
+        <div>{displayLabel} {event.teacherId ? teacherName : studentName}</div>
+  
+        {displayClass && <div>{displayClass}</div>}
+        {displayStudent && <div>{displayStudent}</div>}
       </div>
     );
   };
-
+  
+  
+  
   // Effect hook pour charger les données
   useEffect(() => {
     const fetchData = async () => {
@@ -211,6 +225,15 @@ const MyCalendar = () => {
       .catch((error) => {
         console.error("There was an error fetching the courses", error);
       });
+      axiosPrivate
+      .get("http://localhost:3001/classes/getAll") // Récupérez la liste des cours
+      .then((response) => {
+        setClasses(response.data); // Stockez les cours dans l'état
+        console.log("claaassssss",response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the courses", error);
+      });
 
     axios
       .get("http://localhost:3001/planning/all")
@@ -271,7 +294,6 @@ const MyCalendar = () => {
     setSelectedEvent({ start, end, resourceId });
     setShowModal(true);
   };
-
   const addNewEvent = (event) => {
     setShowModal(false);
     const roomId = event.roomId;
@@ -279,12 +301,12 @@ const MyCalendar = () => {
     const selectedCourse = courses.data.find(
       (course) => course._id === event.courseId
     );
-
+  
     // Vérifiez si selectedCourse est défini avant d'accéder à sa propriété title
     const courseTitle = selectedCourse
       ? selectedCourse.title
       : "Titre de cours non trouvé";
-
+  
     const newEvent = {
       id: events.length + 1, // Assurez-vous de donner un ID unique à chaque événement
       title: `${event.title} `,
@@ -292,26 +314,32 @@ const MyCalendar = () => {
       end: event.end,
       resourceId: roomId,
       color: event.color, // Utiliser la couleur sélectionnée du Modal
-      teacherId: event.teacherId, // Utilisez event.teacherId au lieu de event.selectedTeacherId
-      studentId: event.studentId, // Utilisez event.studentId au lieu de event.selectedStudentId
-    };
-    console.log("Nouvel événement à sauvegarder :", newEvent);
+      teacherId: event.teacherId || null,
+      classId: event.classId || null,
+      studentId: event.studentId || null,
 
+      // Assurez-vous que la valeur de teacherId ou classId soit correctement définie en fonction de la logique de votre application
+    };
+  
+    console.log("Nouvel événement à sauvegarder :", newEvent);
+  
     // Fusionner le nouvel événement avec les événements existants
     const updatedEvents = [...events, newEvent];
-
+  
     console.log("Evénements avant la sauvegarde :", events);
-
+  
     // Mettre à jour les événements dans le state
     setEvents(updatedEvents);
-
+  
     const response = axios.post("http://localhost:3001/planning/add", newEvent);
     const addedEvent = response.data;
-
+  
     // Mise à jour de l'état avec le nouvel événement
     setEvents((prevEvents) => [...prevEvents, addedEvent]);
     console.log("Nouvel événement ajouté avec succès:", addedEvent);
   };
+  
+  
   const formats = {
     timeGutterFormat: (date, culture, localizer) =>
       localizer.format(date, "HH[h]mm", culture),
@@ -330,9 +358,7 @@ const MyCalendar = () => {
   const addOrUpdateEvent = async (event) => {
     setShowModal(false);
     const roomId = event.resourceId;
-    console.log(event)
-    console.log(event._id)
-
+  
     if (editEventDetails) {
       await updateEvent(event); // Passer l'ID de l'événement ici
     } else {
@@ -393,6 +419,7 @@ const MyCalendar = () => {
    ...selectedEvent,
    rooms: rooms,
    courses: courses,
+   classes: classes,
 
    resourceId: selectedEvent.resourceId
  }}  onSelectEvent={(event) => {
@@ -402,6 +429,8 @@ const MyCalendar = () => {
  courses={courses}
  teachers={teachers}
  students={students}
+ classes={classes}
+
 />
 
 )}

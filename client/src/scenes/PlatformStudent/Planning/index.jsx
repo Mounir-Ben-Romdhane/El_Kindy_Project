@@ -32,7 +32,19 @@ const MyCalendar = () => {
 
   const accessToken = useSelector((state) => state.accessToken); // Récupérez le jeton d'accès du store Redux
   const decodeToken = accessToken ? jwtDecode(accessToken) : "";
-
+  const handleEventClick = async (event) => {
+    try {
+      const response = await axios.get(`http://localhost:3001/planning/${event.id}/details`);
+      const courseDetails = response.data;
+      
+      // Affichez les détails du cours dans une fenêtre modale ou une autre méthode de votre choix
+      console.log(courseDetails);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des détails du cours", error);
+      // Affichez un message d'erreur à l'utilisateur ou effectuez d'autres actions en cas d'erreur
+    }
+  };
+  
   // Utilisez le jeton d'accès dans vos requêtes HTTP
   useEffect(() => {
     const fetchPlannings = async () => {
@@ -190,6 +202,8 @@ const MyCalendar = () => {
                               components={{
                                 event: MyEvent,
                               }}
+                              onSelectEvent={handleEventClick}
+
                               key={events.length}
                               localizer={localizer}
                               events={events}
