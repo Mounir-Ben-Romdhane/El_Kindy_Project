@@ -52,13 +52,15 @@ export const createReservation = async (req, res) => {
     }
     
     // If event is paid, generate payment link
+    const amountinMillimes = eventDetails.price * 1000;
     const paymentPayload = {
-      amount: eventDetails.price,
+      amount: amountinMillimes,
     };
     
     axios.post('http://localhost:3001/payment/payment', paymentPayload)
       .then(paymentResponse => {
         const paymentLink = paymentResponse.data.result.link;
+         console.log("Payment link:", paymentResponse.data.result.developer_tracking_id);
         // Redirect user to payment link
         res.redirect(paymentLink);
       })

@@ -111,29 +111,22 @@ Trending courses START */}
               />
             </div>
             <div className="card-content p-3">
-              <h5 className="card-title text-center mt-2">{event.title}</h5>
-              <p className="event-dates text-center mb-0">
-                <i className="fas fa-calendar-alt"></i> {new Date(event.dateDebut).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })} - {new Date(event.dateFin).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
-              </p>
-             
-               {/* Title */}
-               <h5 className="card-title fw-normal">
-                          {/*     <a href="#">{event.title}</a> */}
-                            </h5>
-                            <h5 className="card-title fw-normal">
-                          {/* Additional fields */}
-                          <div className="event-place text-center my-2">
-                        <i className="fas fa-map-marker-alt"></i> {event.place}
-                      </div>
-                      <div className="event-time text-center my-2">
-                        <i className="fas fa-clock"></i> {event.timeFrom} - {event.timeTo}
-                      </div>
-                        </h5>
-                            <div className="text-center mt-5 cardd-layer">
-                            <a href="#" className="btn btn-primary btn-sm">View more</a>
-                            </div>
-                            
-            </div>
+  <div className="text-center">
+    <h5 className="card-title mt-2">{event.title}</h5>
+    <p className="event-dates mb-2">
+      <i className="fas fa-calendar-alt"></i> {new Date(event.dateDebut).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })} - {new Date(event.dateFin).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+    </p>
+    <div className="event-details mb-3">
+      <p className="event-place mb-1">
+        <i className="fas fa-map-marker-alt"></i> {event.place}
+      </p>
+    </div>
+    <div className="cardd-layer my-2">
+      <a href="#" className="btn btn-primary btn-sm">View more</a>
+    </div>
+  </div>
+</div>
+
             <p className="event-price text-center my-2">
     {event.price ? (
       <span className="badge bg-primary">{event.price} TND</span>

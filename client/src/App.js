@@ -293,7 +293,7 @@ function App() {
 
 <Route path="/fail" element={
             <PrivateRoute
-              element={<Fail />}
+              element={<Success />}
               requiredRoles={["superAdmin", "student"]}
             />
           } 
