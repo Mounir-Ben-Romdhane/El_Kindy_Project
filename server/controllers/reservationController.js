@@ -2,75 +2,45 @@ import Reservation from "../models/Reservation.js";
 import Event from "../models/Event.js";
 import { sendSms } from "../index.js"
 import axios from 'axios';
+import { generateInvoice } from './Pdf.js';
 
-/* export const createReservation = async (req, res) => {
-  console.log("createReservation hit", req.params, req.body); 
-  const { eventId } = req.params;
-  const { userName, userEmail, phoneNumber } = req.body;
 
-  try{
-    const newReservation = new Reservation({
-      eventId,
-      userName,
-      userEmail,
-      phoneNumber,
-    })
 
-    const saveReservation =await newReservation.save();
-    res.status(201).json(saveReservation);
-  }
-  catch (error) {
-    res.status(500).send({ message: "Error creating reservation", error: error.message });
-}
-} */
 
-// Initiate payment for a paid event and then create a reservation
+
 export const createReservation = async (req, res) => {
-  console.log("initiatePaymentAndCreateReservation hit", req.params, req.body); 
+  console.log("Initiating reservation:", req.params, req.body);
   const { eventId } = req.params;
   const { userName, userEmail, phoneNumber } = req.body;
 
   try {
-    // Get event details to determine the price
     const eventDetails = await Event.findById(eventId);
-    console.log("event price : ",eventDetails.price);
     if (!eventDetails) {
       return res.status(404).json({ message: "Event not found" });
     }
+    console.log("Event price:", eventDetails.price);
 
-    // Check if the event is free
     if (!eventDetails.price) {
-      // If event is free, create reservation directly
-      const newReservation = new Reservation({
-        eventId,
-        userName,
-        userEmail,
-        phoneNumber,
-      });
+      const newReservation = new Reservation({ eventId, userName, userEmail, phoneNumber });
       const savedReservation = await newReservation.save();
       return res.status(201).json({ reservation: savedReservation });
     }
-    
-    // If event is paid, generate payment link
+
     const amountinMillimes = eventDetails.price * 1000;
-    const paymentPayload = {
-      amount: amountinMillimes,
-    };
-    
+    const paymentPayload = { amount: amountinMillimes };
+
     axios.post('http://localhost:3001/payment/payment', paymentPayload)
       .then(paymentResponse => {
-        const paymentLink = paymentResponse.data.result.link;
-         console.log("Payment link:", paymentResponse.data.result.developer_tracking_id);
-        // Redirect user to payment link
-        res.redirect(paymentLink);
+        console.log("Payment link generated:", paymentResponse.data.result.developer_tracking_id);
+        res.redirect(paymentResponse.data.result.link);
       })
       .catch(paymentError => {
-        console.error("Error generating payment link:", paymentError);
+        console.error("Payment link generation failed:", paymentError);
         res.status(500).json({ message: "Error generating payment link", error: paymentError.message });
       });
   } catch (error) {
-    console.error("Error initiating payment and creating reservation:", error);
-    res.status(500).json({ message: "Error initiating payment and creating reservation", error: error.message });
+    console.error("Failed to create reservation:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 }
 
@@ -122,12 +92,33 @@ export const updateReservationStatus = async (req, res) => {
     }
 
     if (status === 'accepted') {
+      // Fetch event details here
+      const eventDetails = await Event.findById(updatedReservation.eventId);
+      if (!eventDetails) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+
+      
       sendSms(updatedReservation.phoneNumber).then(() => {
           console.log("SMS notification sent.");
       }).catch(err => {
           console.error("Failed to send SMS notification:", err);
       });
-  }
+
+      generateInvoice({
+        eventName: eventDetails.name,
+        eventDate: eventDetails.date.toString(),
+        userName: updatedReservation.userName,
+        userEmail: updatedReservation.userEmail,
+        price: eventDetails.price
+      }).then(filePath => {
+        // Assuming sendInvoiceEmail function is properly defined elsewhere or imported
+        sendInvoiceEmail(updatedReservation.userEmail, filePath)
+          .then(() => console.log("Invoice emailed successfully."))
+          .catch(err => console.error("Error sending invoice email:", err));
+      }).catch(err => console.error("Error generating invoice:", err)); 
+    }
+
 
     res.json(updatedReservation);
   } catch (error) {

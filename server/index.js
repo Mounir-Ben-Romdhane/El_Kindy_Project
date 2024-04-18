@@ -36,7 +36,6 @@ import reservationRoutes  from "./routes/Reservation.js";
 import paymentRouter from "./routes/paymentRouter.js";
 
 
-
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -124,7 +123,6 @@ app.use('/chat', ChatRoute)
 app.use('/message', MessageRoute)
 app.use('/meeting', meetingRoutes);
 app.use("/events",reservationRoutes);
-
 
 app.use("/payment",paymentRouter);
 

@@ -283,21 +283,19 @@ function App() {
           } 
           /> 
 
-<Route path="/success" element={
-            <PrivateRoute
-              element={<Success />}
-              requiredRoles={["superAdmin", "student"]}
-            />
-          } 
-          /> 
+<Route
+          path="/success"
+          element={ <Success />}
+        />
 
-<Route path="/fail" element={
-            <PrivateRoute
-              element={<Success />}
-              requiredRoles={["superAdmin", "student"]}
-            />
-          } 
-          /> 
+
+<Route
+          path="/fail"
+          element={ <Fail />}
+        />
+
+
+          
 
 
         <Route
