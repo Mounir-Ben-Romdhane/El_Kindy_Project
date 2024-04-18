@@ -3,8 +3,12 @@ import TopBarBack from "components/TopBarBack";
 import React, { useEffect, useState } from "react";
 import AddTeacher from "../userCrud/addTeacher";
 import UpdateTeacher from "../userCrud/updateTeacher";
-import { blockUser, getUsers, removeUser, unblockUser } from "services/usersService/api";
-
+import {
+  blockUser,
+  getUsers,
+  removeUser,
+  unblockUser,
+} from "services/usersService/api";
 
 function TeachersDashboard() {
   const [teachers, setTeachers] = useState([]);
@@ -13,6 +17,19 @@ function TeachersDashboard() {
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [showFormUpdate, setShowFormUpdate] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+  const [teacherDetails, setTeacherDetails] = useState({});
+
+  const handleShowMore = () => {
+    setShowMore(!showMore);
+  };
+
+  const handleToggleMore = (teacherId) => {
+    setTeacherDetails((prevState) => ({
+      ...prevState,
+      [teacherId]: !prevState[teacherId],
+    }));
+  };
 
   const handleToggleForm = () => {
     setShowForm(!showForm);
@@ -22,59 +39,56 @@ function TeachersDashboard() {
   const close = () => {
     setShowForm(false);
     setShowFormUpdate(false);
-  }
-  
+  };
+
   const handleToggleFormUpdate = (teacher) => {
     // If the update form is already shown, only change the teacher
     if (showFormUpdate) {
-        setTeacher(teacher);
+      setTeacher(teacher);
     } else {
-        setTeacher(teacher);
-        setShowFormUpdate(true);
-        setShowForm(false); // Close the add form when toggling the update form
+      setTeacher(teacher);
+      setShowFormUpdate(true);
+      setShowForm(false); // Close the add form when toggling the update form
     }
   };
-
-  
 
   const handleBlockTeacher = async (teacherId) => {
     try {
       // Make API call to block teacher
       const response = await blockUser(teacherId);
-  
+
       if (response.status === 200) {
-        console.log('Teacher blocked successfully!');
+        console.log("Teacher blocked successfully!");
         // Perform any additional actions if needed
         fetchData();
       } else {
-        console.error('Error blocking teacher:', response.data);
+        console.error("Error blocking teacher:", response.data);
         // Handle error here, e.g., show error message to the user
       }
     } catch (error) {
-      console.error('Error blocking teacher:', error);
+      console.error("Error blocking teacher:", error);
       // Handle error here, e.g., show error message to the user
     }
   };
-  
+
   const handleUnblockTeacher = async (teacherId) => {
     try {
       // Make API call to unblock teacher
       const response = await unblockUser(teacherId);
-  
+
       if (response.status === 200) {
-        console.log('Teacher unblocked successfully!');
+        console.log("Teacher unblocked successfully!");
         // Perform any additional actions if needed
         fetchData();
       } else {
-        console.error('Error unblocking teacher:', response.data);
+        console.error("Error unblocking teacher:", response.data);
         // Handle error here, e.g., show error message to the user
       }
     } catch (error) {
-      console.error('Error unblocking teacher:', error);
+      console.error("Error unblocking teacher:", error);
       // Handle error here, e.g., show error message to the user
     }
   };
-  
 
   const fetchData = async () => {
     try {
@@ -202,7 +216,13 @@ function TeachersDashboard() {
                                     aria-labelledby="dropdownShare2"
                                   >
                                     <li>
-                                      <a className="dropdown-item" href="#" onClick={() => handleToggleFormUpdate(teacher)}>
+                                      <a
+                                        className="dropdown-item"
+                                        href="#"
+                                        onClick={() =>
+                                          handleToggleFormUpdate(teacher)
+                                        }
+                                      >
                                         <span className="text-primary">
                                           <i className="bi bi-pencil-square fa-fw me-2" />
                                           Edit
@@ -252,7 +272,6 @@ function TeachersDashboard() {
                                     <i className="bi bi-telephone me-2 text-primary" />
                                     <strong>Phone Number:</strong>{" "}
                                     {teacher.phoneNumber1 || "Not available"}
-                                    
                                   </p>
                                   <p className="mb-1">
                                     {teacher.blocked ? (
@@ -262,19 +281,82 @@ function TeachersDashboard() {
                                     )}
                                     <strong>State:</strong>{" "}
                                     {teacher.blocked ? (
-                                      <span className="state-badge blocked">Blocked</span>
+                                      <span className="state-badge blocked">
+                                        Blocked
+                                      </span>
                                     ) : (
-                                      <span className="state-badge">Active</span>
+                                      <span className="state-badge">
+                                        Active
+                                      </span>
                                     )}
                                   </p>
-
-
+                                  <div className="teacher-more">
+            <a
+              className="p-0 mb-0 mt-2 btn-more d-flex align-items-center"
+              onClick={() => handleToggleMore(teacher._id)}
+            >
+              {teacherDetails[teacher._id] ? (
+                <>
+                  See less{" "}
+                  <i className="fas fa-angle-up ms-2" />
+                </>
+              ) : (
+                <>
+                  See{" "}
+                  <span className="see-more ms-1">more</span>
+                  <i className="fas fa-angle-down ms-2" />
+                </>
+              )}
+            </a>
+            {teacherDetails[teacher._id] && (
+              <div className="m-1">
+                {/* Display additional information for the teacher */}
+                {/* Courses Taught */}
+                <p className="mb-1">
+                                          <i className="bi bi-journal-text me-2 text-primary" />{" "}
+                                          {/* Icon for Courses Taught */}
+                                          <strong>Courses Taught:</strong>{" "}
+                                          {/* Heading for Courses Taught */}
+                                          {/* Display coursesTaught */}
+                                          {teacher.teacherInfo.coursesTaught
+                                            .length > 0
+                                            ? teacher.teacherInfo.coursesTaught.map(
+                                                (course) => (
+                                                  <span key={course._id}>
+                                                    {course.title},{" "}
+                                                  </span>
+                                                )
+                                              )
+                                            : "None"}
+                                        </p>
+                                        {/* Classes Teaching */}
+                                        <p className="mb-1">
+                                          <i className="bi bi-people me-2 text-primary" />{" "}
+                                          {/* Icon for Classes Teaching */}
+                                          <strong>
+                                            Classes Teaching:
+                                          </strong>{" "}
+                                          {/* Heading for Classes Teaching */}
+                                          {/* Display classesTeaching */}
+                                          {teacher.teacherInfo.classesTeaching
+                                            .length > 0
+                                            ? teacher.teacherInfo.classesTeaching.map(
+                                                (classItem) => (
+                                                  <span key={classItem._id}>
+                                                    {classItem.className},{" "}
+                                                  </span>
+                                                )
+                                              )
+                                            : "None"}
+                                        </p>
+              </div>
+            )}
+          </div>
                                 </div>
                               </div>
                               {/* Card footer */}
                               <div className="card-footer bg-transparent border-top">
                                 <div className="d-sm-flex justify-content-between align-items-center">
-                                        
                                   {/* Rating star */}
                                   <h6 className="mb-2 mb-sm-0">
                                     <i className="bi bi-calendar fa-fw text-orange me-2" />
@@ -285,49 +367,52 @@ function TeachersDashboard() {
                                   </h6>
                                   {/* Buttons */}
                                   <div className="text-end text-primary-hover">
-                                      {/* Message button */}
-                                      <a
-                                        href="#"
-                                        className="btn btn-link text-body p-0 mb-0 me-2"
+                                    {/* Message button */}
+                                    <a
+                                      href="#"
+                                      className="btn btn-link text-body p-0 mb-0 me-2"
+                                      data-bs-toggle="tooltip"
+                                      data-bs-placement="top"
+                                      title="Message"
+                                      aria-label="Message"
+                                    >
+                                      <span className="text-primary">
+                                        <i className="bi bi-envelope-fill me-1" />
+                                      </span>
+                                    </a>
+                                    {/* Block/Unblock button */}
+                                    {teacher.blocked ? (
+                                      <button
+                                        className="btn btn-link text-body p-0 mb-0"
                                         data-bs-toggle="tooltip"
                                         data-bs-placement="top"
-                                        title="Message"
-                                        aria-label="Message"
+                                        title="Unblock"
+                                        aria-label="Unblock"
+                                        onClick={() =>
+                                          handleUnblockTeacher(teacher._id)
+                                        }
                                       >
-                                        <span className="text-primary">
-                                          <i className="bi bi-envelope-fill me-1" />
+                                        <span className="text-danger">
+                                          <i className="bi bi-lock-fill me-1" />
                                         </span>
-                                      </a>
-                                      {/* Block/Unblock button */}
-                                      {teacher.blocked ? (
-                                        <button
-                                          className="btn btn-link text-body p-0 mb-0"
-                                          data-bs-toggle="tooltip"
-                                          data-bs-placement="top"
-                                          title="Unblock"
-                                          aria-label="Unblock"
-                                          onClick={() => handleUnblockTeacher(teacher._id)}
-                                        >
-                                          <span className="text-danger">
-                                            <i className="bi bi-lock-fill me-1" />
-                                          </span>
-                                        </button>
-                                      ) : (
-                                        <button
-                                          className="btn btn-link text-body p-0 mb-0"
-                                          data-bs-toggle="tooltip"
-                                          data-bs-placement="top"
-                                          title="Block"
-                                          aria-label="Block"
-                                          onClick={() => handleBlockTeacher(teacher._id)}
-                                        >
-                                          <span className="text-danger">
-                                            <i className="bi bi-unlock-fill me-1" />
-                                          </span>
-                                        </button>
-                                      )}
-                                    </div>
-
+                                      </button>
+                                    ) : (
+                                      <button
+                                        className="btn btn-link text-body p-0 mb-0"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="Block"
+                                        aria-label="Block"
+                                        onClick={() =>
+                                          handleBlockTeacher(teacher._id)
+                                        }
+                                      >
+                                        <span className="text-danger">
+                                          <i className="bi bi-unlock-fill me-1" />
+                                        </span>
+                                      </button>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -389,11 +474,14 @@ function TeachersDashboard() {
 
           {showForm && <AddTeacher onClose={close} fetchData={fetchData} />}
 
-          {showFormUpdate && <UpdateTeacher teacher={teacher} onClose={close} fetchData={fetchData} />}
-
+          {showFormUpdate && (
+            <UpdateTeacher
+              teacher={teacher}
+              onClose={close}
+              fetchData={fetchData}
+            />
+          )}
         </div>
-
-        
       </main>
     </div>
   );

@@ -1,49 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import { getAllClasses } from 'services/classesService/api';
-import { getAllCourses } from 'services/courseService/api';
-import { updateTeacher } from 'services/usersService/api';
+import { updateStudent } from 'services/usersService/api';
 import '../../../../App.css';
+import { getAllCourses } from 'services/courseService/api';
 
-function UpdateTeacher({ teacher, onClose, fetchData }) {
+function UpdateStudent({ student, onClose, fetchData }) {
   const [formData, setFormData] = useState({
-    firstName: teacher.firstName || '',
-    lastName: teacher.lastName || '',
-    email: teacher.email || '',
-    password: teacher.password || '',
-    coursesTaught: teacher.coursesTaught || [],
-    classesTeaching: teacher.classesTeaching || [],
-    dateOfBirth: teacher.dateOfBirth ? teacher.dateOfBirth.split('T')[0] : '',
-    address: teacher.address || '',
-    gender: teacher.gender || '',
-    phoneNumber1: teacher.phoneNumber1 || '',
-    phoneNumber2: teacher.phoneNumber2 || '',
-    qualifications: teacher.qualifications || '',
-    experienceYears: teacher.experienceYears || 0,
-    disponibilite: [],
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    classLevel: '', // Add classLevel for student
+    coursesEnrolled: [],
+    dateOfBirth: '',
+    address: '',
+    gender: '',
+    phoneNumber1: '',
+    phoneNumber2: '',
+    parentName: '',
+    parentEmail: '',
+    parentPhone: '',
+    disponibilite: [] // Availability slots
   });
 
-  // Update form data when teacher prop changes
-useEffect(() => {
-  setFormData({
-    firstName: teacher.firstName || '',
-    lastName: teacher.lastName || '',
-    email: teacher.email || '',
-    password: teacher.passwordDecoded || '',
-    coursesTaught: teacher.teacherInfo.coursesTaught.map(course => course._id) || [],
-    classesTeaching: teacher.teacherInfo.classesTeaching.map(classe => classe._id) || [], 
-    dateOfBirth: teacher.dateOfBirth ? teacher.dateOfBirth.split('T')[0] : '',
-    address: teacher.address || '',
-    gender: teacher.gender || '',
-    phoneNumber1: teacher.phoneNumber1 || '',
-    phoneNumber2: teacher.phoneNumber2 || '',
-    qualifications: teacher.teacherInfo.qualifications || '',
-    experienceYears: teacher.teacherInfo.experienceYears || 0,
-    disponibilite: teacher.disponibilite || [],
-    // Add other necessary fields here
-  });
-  setSelectedTimeSlots(teacher.disponibilite || []);
-}, [teacher]);
+  useEffect(() => {
+    setFormData({
+      firstName: student.firstName || '',
+      lastName: student.lastName || '',
+      email: student.email || '',
+      password: student.passwordDecoded || '',
+      classLevel: student.studentInfo.classLevel._id || '', // Add classLevel for student
+      coursesEnrolled: student.studentInfo.coursesEnrolled.map(course => course._id) || [],
+      dateOfBirth: student.dateOfBirth ? student.dateOfBirth.split('T')[0] : '',
+      address: student.address || '',
+      gender: student.gender || '',
+      phoneNumber1: student.phoneNumber1 || '',
+      phoneNumber2: student.phoneNumber2 || '',
+      parentName: student.studentInfo.parentName || '',
+      parentEmail: student.studentInfo.parentEmail || '',
+      parentPhone: student.studentInfo.parentPhone || '',
+      disponibilite: student.disponibilite || [] // Availability slots
+    });
+    setSelectedTimeSlots(student.disponibilite || []);
+  }, [student]);
 
+
+  
   //table time
   const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
@@ -114,12 +116,11 @@ useEffect(() => {
     return !nonSelectableHours.includes(currentTime);
   };
 
-
-
-  const [courses, setCourses] = useState([]);
   const [classes, setClasses] = useState([]);
+  const [courses, setCourses] = useState([]);
 
   useEffect(() => {
+    
     const fetchCourses = async () => {
       try {
         const response = await getAllCourses();
@@ -144,7 +145,7 @@ useEffect(() => {
 
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
-    if (name === 'coursesTaught' || name === 'classesTeaching') {
+    if (name === 'coursesEnrolled') {
       const selectedValue = value;
       const isChecked = checked;
       setFormData((prevFormData) => ({
@@ -157,27 +158,23 @@ useEffect(() => {
       setFormData({ ...formData, [name]: value });
     }
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     formData.disponibilite = selectedTimeSlots;
-    console.log("formDta : ",formData);
     try {
-      const response = await updateTeacher(teacher._id, formData);
+      const response = await updateStudent(student._id, formData);
       if (response.status === 200) {
-        console.log('Teacher updated successfully!');
+        console.log('Student updated successfully!');
         onClose();
         fetchData();
       } else {
-        console.error('Error updating teacher:', response.data);
+        console.error('Error updating student:', response.data);
       }
     } catch (error) {
-      console.error('Error updating teacher:', error);
+      console.error('Error updating student:', error);
     }
   };
-
-  // Include the code for handling time slots here...
 
   return (
     <div className="page-content-wrapper border">
@@ -190,9 +187,8 @@ useEffect(() => {
           <i className="bi bi-x-lg"></i>
         </button>
         <form onSubmit={handleSubmit}>
-          {/* Personal information */}
           <div className="mt-5">
-            <h5 className="font-base">Update Teacher Info</h5>
+            <h5 className="font-base">Update Student Info</h5>
             <div className="accordion-body mt-3">
               <div className="row g-4">
                 {/* First name */}
@@ -271,63 +267,56 @@ useEffect(() => {
                     </div>
                   </div>
                 </div>
-                {/* Courses taught */}
+                {/* Class Level */}
                 <div className="col-12">
                   <div className="row g-xl-0 align-items-center">
                     <div className="col-lg-4">
-                      <h6 className="mb-lg-0">
-                        Courses Taught <span className="text-danger">*</span>
-                      </h6>
+                      <h6 className="mb-lg-0">Class Level</h6>
                     </div>
                     <div className="col-lg-8">
-                      <div className="row row-cols-3">
-                        {courses.map((course) => (
-                          <div key={course._id} className="col">
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                                id={course._id}
-                                name="coursesTaught"
-                                value={course._id}
-                                onChange={handleChange}
-                                checked={formData.coursesTaught.includes(course._id)}
-                              />
-                              <label className="form-check-label" htmlFor={course._id}>
-                                {course.title}
-                              </label>
-                            </div>
-                          </div>
+                      <select
+                        name="classLevel"
+                        value={formData.classLevel}
+                        onChange={handleChange}
+                        className="form-select"
+                      >
+                        <option value="">Select class</option>
+                        {classes.map((classItem) => (
+                          <option key={classItem._id} value={classItem._id}>
+                            {classItem.className}
+                          </option>
                         ))}
-                      </div>
+                      </select>
                     </div>
                   </div>
                 </div>
-                {/* Classes Teaching */}
+                {/* Courses Enrolled */}
                 <div className="col-12">
                   <div className="row g-xl-0 align-items-center">
                     <div className="col-lg-4">
                       <h6 className="mb-lg-0">
-                        Classes Teaching <span className="text-danger">*</span>
+                        Courses Enrolled <span className="text-danger">*</span>
                       </h6>
                     </div>
                     <div className="col-lg-8">
-                      {classes.map((classItem) => (
-                        <div key={classItem._id} className="form-check form-check-inline">
+                    <div className="row row-cols-3">
+                      {courses.map((course) => (
+                        <div key={course._id} className="form-check">
                           <input
-                            type="checkbox"
-                            name="classesTeaching"
-                            value={classItem._id}
-                            checked={formData.classesTeaching.includes(classItem._id)}
-                            onChange={handleChange}
                             className="form-check-input"
-                            id={classItem._id}
+                            type="checkbox"
+                            id={course._id}
+                            value={course._id}
+                            checked={formData.coursesEnrolled.includes(course._id)}
+                            onChange={handleChange}
+                            name="coursesEnrolled"
                           />
-                          <label className="form-check-label" htmlFor={classItem._id}>
-                            {classItem.className}
+                          <label className="form-check-label" htmlFor={course._id}>
+                            {course.title}
                           </label>
                         </div>
                       ))}
+                    </div>
                     </div>
                   </div>
                 </div>
@@ -421,42 +410,58 @@ useEffect(() => {
                     </div>
                   </div>
                 </div>
-                {/* Qualifications */}
+                {/* Parent Name */}
                 <div className="col-12">
                   <div className="row g-xl-0 align-items-center">
                     <div className="col-lg-4">
-                      <h6 className="mb-lg-0">Qualifications</h6>
+                      <h6 className="mb-lg-0">Parent Name</h6>
                     </div>
                     <div className="col-lg-8">
                       <input
                         type="text"
-                        name="qualifications"
-                        value={formData.qualifications}
+                        name="parentName"
+                        value={formData.parentName}
                         onChange={handleChange}
                         className="form-control"
                       />
                     </div>
                   </div>
                 </div>
-                {/* Experience Years */}
+                {/* Parent Email */}
                 <div className="col-12">
                   <div className="row g-xl-0 align-items-center">
                     <div className="col-lg-4">
-                      <h6 className="mb-lg-0">Experience Years</h6>
+                      <h6 className="mb-lg-0">Parent Email</h6>
                     </div>
                     <div className="col-lg-8">
                       <input
-                        type="number"
-                        name="experienceYears"
-                        value={formData.experienceYears}
+                        type="email"
+                        name="parentEmail"
+                        value={formData.parentEmail}
                         onChange={handleChange}
                         className="form-control"
                       />
                     </div>
                   </div>
                 </div>
-                {/* Add other necessary fields here */}
-                  {/* Availability */}
+                {/* Parent Phone */}
+                <div className="col-12">
+                  <div className="row g-xl-0 align-items-center">
+                    <div className="col-lg-4">
+                      <h6 className="mb-lg-0">Parent Phone</h6>
+                    </div>
+                    <div className="col-lg-8">
+                      <input
+                        type="text"
+                        name="parentPhone"
+                        value={formData.parentPhone}
+                        onChange={handleChange}
+                        className="form-control"
+                      />
+                    </div>
+                  </div>
+                </div>
+                {/* Availability */}
                   <div className="mb-3">
                     <h6
                       className="mb-lg-0"
@@ -571,4 +576,4 @@ useEffect(() => {
   );
 }
 
-export default UpdateTeacher;
+export default UpdateStudent;

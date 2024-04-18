@@ -84,4 +84,27 @@ export const updateTeacher = async (teacherId, teacherData) => {
   }
 };
 
+// Add a new student
+export const addStudent = async (studentData) => {
+  try {
+    const response = await axiosPublic.post(`/auth/addStudentAndParent`, studentData);
+    return response;
+  } catch (error) {
+    console.error('Error adding student:', error);
+    throw error;
+  }
+};
+
+// Update an existing student
+export const updateStudent = async (studentId, studentData) => {
+  try {
+    const response = await axiosPublic.put(`/auth/updateStudent/${studentId}`, studentData);
+    return response;
+  } catch (error) {
+    console.error('Error updating student:', error);
+    throw error;
+  }
+};
+
+
   

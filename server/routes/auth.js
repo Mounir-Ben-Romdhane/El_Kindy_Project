@@ -3,7 +3,7 @@ import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord,
 import { verifyToken } from '../middleware/auth.js';
 import googleAuth from "../controllers/googleAuth.js";
 import { facebooklogin } from "../controllers/passport-facebook.js";
-import { addAdmin, addStudentAndParent, addTeacher, blockUser, removeUser, unblockUser, updateTeacher, updateUser } from "../controllers/users.js";
+import { addAdmin, addStudentAndParent, addTeacher, blockUser, removeUser, unblockUser, updateStudent, updateTeacher, updateUser } from "../controllers/users.js";
 
 
 
@@ -40,6 +40,7 @@ router.get("/userById/:id", getUserById);
 // Update user
 router.put("/updateAdmin/:userId", updateUser);
 router.put("/updateTeacher/:teacherId", updateTeacher);
+router.put("/updateStudent/:studentId", updateStudent);
 
 // blockUser and unblockUser
 router.put("/blockUser/:userId", blockUser);

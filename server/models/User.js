@@ -109,23 +109,28 @@ const UserSchema = new mongoose.Schema(
         studentInfo: {
             type: {
                 classLevel: {
-                    type: String,
-                    default: "" 
+                    type: mongoose.Schema.Types.ObjectId, // Assuming classLevel relates to Classe model
+                    ref: 'Classe', // Referencing the Classe model
+                    default: null // Default value if not specified
                 },
                 coursesEnrolled: {
                     type: [{
-                        courseName: String,
-                        level: String
+                        type: mongoose.Schema.Types.ObjectId, // Assuming coursesEnrolled relates to Course model
+                        ref: 'Course', // Referencing the Course model
                     }],
                     default: []
                 },
-                parentInfo: {
-                    type: {
-                        parentName: String,
-                        parentEmail: String,
-                        parentPhone: String
-                    },
-                    default: {}
+                parentName: {
+                    type: String,
+                    default: ""
+                },
+                parentEmail: {
+                    type: String,
+                    default: ""
+                },
+                parentPhone: {
+                    type: String,
+                    default: ""
                 }
             },
             _id: false,
@@ -133,6 +138,7 @@ const UserSchema = new mongoose.Schema(
                 return this.roles.includes('student');
             }
         }
+        
 
     },
     
