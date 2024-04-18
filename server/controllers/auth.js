@@ -308,14 +308,33 @@ export const getUserById = async (req, res) => {
 
 //Get all User by Role
 export const getAllUserByRole = async (req, res) => {
-    const role = req.params.role;
-    try {
-        const users = await User.find({roles: role});
-        res.status(200).json({data: users});
-    } catch (error) {
-        res.status(500).json(error);
-    }
+  const role = req.params.role;
+  try {
+      let users;
+
+      // Check if role is "admin"
+      if (role === 'admin') {
+          // Retrieve all users without populating any fields
+          users = await User.find({ roles: role });
+      } else {
+          // For other roles, determine the fields to populate
+          let populateFields = '';
+          if (role === 'teacher') {
+              populateFields = 'teacherInfo.coursesTaught teacherInfo.classesTeaching';
+          } else if (role === 'student') {
+              populateFields = 'studentInfo.classLevel studentInfo.coursesEnrolled';
+          }
+
+          // Populate the specified fields
+          users = await User.find({ roles: role }).populate(populateFields.split(' '));
+      }
+
+      res.status(200).json({ data: users });
+  } catch (error) {
+      res.status(500).json(error);
+  }
 };
+
 
 
 //planning

@@ -81,14 +81,15 @@ const UserSchema = new mongoose.Schema(
         // Additional attributes for specific roles
         teacherInfo: {
             type: {
-                instrumentsTaught: {
-                    type: [String], // Array of strings representing instruments
-                    required: true
-                },
-                classes: {
-                    type: [String], // Assuming an array of class names
-                    default: []
-                },
+                coursesTaught: [{
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'Course',
+                }],
+                // Reference to the classes taught by the teacher
+                classesTeaching: [{
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'Classe',
+                }],
                 qualifications: {
                     type: String,
                     default: ""
@@ -108,23 +109,28 @@ const UserSchema = new mongoose.Schema(
         studentInfo: {
             type: {
                 classLevel: {
-                    type: String,
-                    default: "" 
+                    type: mongoose.Schema.Types.ObjectId, // Assuming classLevel relates to Classe model
+                    ref: 'Classe', // Referencing the Classe model
+                    default: null // Default value if not specified
                 },
                 coursesEnrolled: {
                     type: [{
-                        courseName: String,
-                        level: String
+                        type: mongoose.Schema.Types.ObjectId, // Assuming coursesEnrolled relates to Course model
+                        ref: 'Course', // Referencing the Course model
                     }],
                     default: []
                 },
-                parentInfo: {
-                    type: {
-                        parentName: String,
-                        parentEmail: String,
-                        parentPhone: String
-                    },
-                    default: {}
+                parentName: {
+                    type: String,
+                    default: ""
+                },
+                parentEmail: {
+                    type: String,
+                    default: ""
+                },
+                parentPhone: {
+                    type: String,
+                    default: ""
                 }
             },
             _id: false,
@@ -132,6 +138,7 @@ const UserSchema = new mongoose.Schema(
                 return this.roles.includes('student');
             }
         }
+        
 
     },
     
