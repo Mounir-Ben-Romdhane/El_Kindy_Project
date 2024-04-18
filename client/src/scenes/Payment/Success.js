@@ -1,7 +1,8 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
-import success from '../../assetss/images/icons8-success.svg';
+import { useSearchParams,Link } from 'react-router-dom';
+import success from '../../assetss/images/icons8-success.svg'
+import fail from '../../assetss/images/icons8-fail-188.png'
 
 function Success() {
   const [searchParams] = useSearchParams();
@@ -9,14 +10,21 @@ function Success() {
   const paymentId = searchParams.get("payment_id");
 
   useEffect(() => {
+    if (!paymentId) return; // Exit early if paymentId is not available
+  
     axios
       .post(`/payment/payment/${paymentId}`)
       .then(res => {
-        setResult(res.data.result.status);
+        const message = res.data.message;
+        if (message === "Payment verified successfully. Reservation status updated.") {
+          setResult("SUCCESS");
+        } else {
+          setResult("FAILURE");
+        }
       })
       .catch(error => {
         console.error("Error fetching payment status:", error);
-        setResult("FAILURE");
+        setResult("FAILURE"); 
       });
   }, [paymentId]);
 
@@ -26,12 +34,18 @@ function Success() {
         <div className="col-md-6">
           <div className="card shadow border-0 rounded-3 p-4">
             <div className="card-body text-center">
-              {result === "SUCCESS" && (
+              {result === "SUCCESS" ? (
                 <React.Fragment>
                   <h3 className="mb-4 text-success">Payment Successful</h3>
                   <img src={success} alt="Success Icon" className="img-fluid mb-4" />
                   <p className="text">Thank you for your payment. Your transaction was successful.</p>
                   <Link to="/listEventUser" className="btn btn-primary mt-4">Return to View Event</Link>
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  <h3 className="mb-4 text-danger">Payment Failed</h3>
+                  <img src={fail} alt="Error Icon" className="img-fluid mb-4" />
+                  <p className="text-muted">Oops! Something went wrong with your payment. Please try again later.</p>
                 </React.Fragment>
               )}
             </div>

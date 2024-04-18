@@ -138,6 +138,7 @@ function DetailEvents() {
         userName: reservation.name,
         userEmail: reservation.email,
         phoneNumber: reservation.phoneNumber,
+        eventId: eventDetails.id,
       };
       const response = await axios.post(
         `http://localhost:3001/payment/payment`,
@@ -145,18 +146,16 @@ function DetailEvents() {
       );
       console.log("Payment initiation response:", response.data);
   
-      // Check if the response contains paymentLink
+
       if (response.data && response.data.paymentLink) {
         const paymentLink = response.data.paymentLink;
   
-        // Redirect user to payment gateway URL
+
         window.open(paymentLink, '_blank');
   
-        // Assuming the response contains the payment ID
+
         const paymentId = response.data.paymentId;
   
-        // After payment is completed, verify payment status
-        // You can choose to verify payment status here or handle it separately
       } else {
         console.error("Payment link not found in the response.");
       }
@@ -185,7 +184,6 @@ function DetailEvents() {
       submitReservation();
     } catch (error) {
       console.error("Error verifying payment:", error);
-      // Handle error
     }
   };
   
@@ -377,6 +375,48 @@ Form and Tabs START */}
     />
   </div>
 
+ {/* Number of Reservations */}
+  <div className="mb-3">
+    <label htmlFor="numberOfReservations" className="form-label">
+      Number of Reservations *
+    </label>
+    <div className="input-group">
+      <button
+        className="btn btn-outline-secondary"
+        type="button"
+        onClick={() =>
+          setReservation((prevReservation) => ({
+            ...prevReservation,
+            numberOfReservations: Math.max(0, prevReservation.numberOfReservations - 1),
+          }))
+        }
+      >
+        -
+      </button>
+      <input
+        type="number"
+        className="form-control"
+        id="numberOfReservations"
+        name="numberOfReservations"
+        value={reservation.numberOfReservations}
+        onChange={handleInputChange}
+        min="1"
+        aria-label="Number of Reservations"
+      />
+      <button
+        className="btn btn-outline-secondary"
+        type="button"
+        onClick={() =>
+          setReservation((prevReservation) => ({
+            ...prevReservation,
+            numberOfReservations: prevReservation.numberOfReservations + 1,
+          }))
+        }
+      >
+        +
+      </button>
+    </div>
+  </div>
   {/* Button */}
   <div className="d-grid">
     <button

@@ -25,7 +25,17 @@ function Index() {
   const [reservations, setReservations] = useState([]);
   const [sortOption, setSortOption] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [numberOfReservations, setNumberOfReservations] = useState(1);
 
+  const handleIncrement = () => {
+    setNumberOfReservations(prevCount => prevCount + 1);
+  };
+
+  const handleDecrement = () => {
+    if (numberOfReservations > 1) {
+      setNumberOfReservations(prevCount => prevCount - 1);
+    }
+  };
   useEffect(() => {
     fetchReservations();
   }, []);
@@ -108,7 +118,7 @@ function Index() {
                       />
                       <button
                         className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-                        type="button" // Changed to type="button" to prevent form submission
+                        type="button" 
                       >
                         <i className="fas fa-search fs-6" />
                       </button>
