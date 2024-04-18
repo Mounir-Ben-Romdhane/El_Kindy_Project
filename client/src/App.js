@@ -28,9 +28,10 @@ import AddClassPage from "../src/scenes/Classe/AddClassPage";
 import Category from "../src/scenes/CategoryHome";
 import InscriptionPage from "./scenes/Inscriptions/InscriptionPage";
 import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
-import AddAllClass from "../src/scenes/AllClass/AddAllClass";
 import EditAllClass from "../src/scenes/AllClass/EditAllClass";
 import ListAllClass from "../src/scenes/AllClass/ListAllClass";
+import AddAllClass from "../src/scenes/AllClass/AddAllClass";
+
 
 
 import MeetingHomeStudent from "./scenes/PlatformStudent/MeetingHomeStudent";
@@ -375,16 +376,16 @@ function App() {
           }
         />
         <Route
-          path="/AddAllClasse"
+          path="/ListAllClasse"
           element={
             <PrivateRoute
-              element={<AddAllClass />}
+              element={<ListAllClass />}
               requiredRoles={["superAdmin","admin"]}
             />
           }
         />
          <Route
-          path="/EditAllClasse"
+          path="/EditAllClasse/:id"
           element={
             <PrivateRoute
               element={<EditAllClass />}
@@ -393,10 +394,10 @@ function App() {
           }
         />
          <Route
-          path="/ListAllClasse"
+          path="/AddAllClasse"
           element={
             <PrivateRoute
-              element={<ListAllClass />}
+              element={<AddAllClass />}
               requiredRoles={["superAdmin","admin"]}
             />
           }

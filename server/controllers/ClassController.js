@@ -2,8 +2,8 @@ import Classe from '../models/ClassModel.js';
 
 export const createClass = async (req, res) => {
   try {
-    const { className, students, teachers } = req.body;
-    const newClass = await Classe.create({ className, students, teachers });
+    const { className,capacity,ordre } = req.body;
+    const newClass = await Classe.create({ className,capacity,ordre });
     res.status(201).json(newClass);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -17,6 +17,21 @@ export const getAllClasses = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getClasseById = async (req, res) => {
+  const { classId } = req.params;
+
+  try {
+      const classe = await Classe.findById(classId); // Utiliser "Classe" au lieu de "classes"
+      if (!classe) {
+          return res.status(404).json({ message: "Class not found" });
+      }
+      res.status(200).json(classe);
+  } catch (error) {
+      res.status(400).json({ message: error.message });
+  }
+};
+
 
 export const updateClass = async (req, res) => {
   try {

@@ -258,9 +258,9 @@ function SideBar() {
                {/* menu item classess */}
               <li className="nav-item">
                 <Link
-                to="/AddAllClasse" 
-                className={`nav-link ${activeNavItem === "/AddAllClasse" ? "active" : ""}`}
-                onClick={() => handleNavItemClick("/AddAllClasse")}>
+                to="/ListAllClasse" 
+                className={`nav-link ${activeNavItem === "/ListAllClasse" ? "active" : ""}`}
+                onClick={() => handleNavItemClick("/ListAllClasse")}>
                   <FontAwesomeIcon icon={faSchool} className="fa-fw me-1" />{" "}
                   Classes
                 </Link>
