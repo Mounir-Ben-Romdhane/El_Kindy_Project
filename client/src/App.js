@@ -48,7 +48,7 @@ import DetailEvents from './scenes/EventsPage/DetailEventPage/DetailEvent'
 import EditEventPage from './scenes/EventsPage/EditEventPage/EditEvent'
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
 import StageDetail from "scenes/Stage/StageDetail";
-
+import AdminReservationStage from "scenes/Stage/AdminReservationStage";
 
 
 import EditCourse from "scenes/Courses/backOffice/EditCoursePage";
@@ -377,7 +377,7 @@ function App() {
             />
           }
         />
-
+       
         <Route
           path="/parents"
           element={
@@ -427,6 +427,15 @@ function App() {
           }
         />
 
+<Route
+          path="/AdminReservationStage"
+          element={
+            <PrivateRoute
+              element={<AdminReservationStage />}
+              requiredRoles={["superAdmin", "teacher"]}
+            />
+          }
+        />
 
         <Route
           path="/meetingHomeS"
@@ -510,10 +519,7 @@ function App() {
           element={isAuth ? <EditCourse /> : <Navigate to="/" />}
         />
 
-        <Route
-          path="/ListStage"
-          element={isAuth ? <ListStage /> : <Navigate to="/" />}
-        />
+      
         <Route
           path="/AddStage"
           element={isAuth ? <AddStage /> : <Navigate to="/" />}
@@ -526,7 +532,10 @@ function App() {
           path="/stage"
           element={<Stage />}
         />
-
+<Route
+          path="/ListStage"
+          element={<ListStage />}
+        />
 
         <Route
           path="/listEvents"

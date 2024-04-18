@@ -243,8 +243,21 @@ function SideBar() {
                   Reservations
                 </Link>
               </li>
-
-
+              
+{/* menu item Reservation Stage*/}
+<li className="nav-item">
+                <Link
+                to="/AdminReservationStage" 
+                className={`nav-link ${activeNavItem === "/AdminReservationStage" ? "active" : ""}`}
+                onClick={() => handleNavItemClick("/AdminReservationStage")}>
+                  <FontAwesomeIcon
+                    icon={faTicketAlt}
+                    className="fa-fw me-1"
+                  />{" "}
+                  Internship Reservation
+                </Link>
+              </li>
+              
               {/* menu item events */}
               <li className="nav-item">
                 <Link

@@ -32,7 +32,19 @@ const MyCalendar = () => {
 
   const accessToken = useSelector((state) => state.accessToken); // Récupérez le jeton d'accès du store Redux
   const decodeToken = accessToken ? jwtDecode(accessToken) : "";
-
+  const handleEventClick = async (event) => {
+    try {
+      const response = await axios.get(`http://localhost:3001/planning/${event.id}/details`);
+      const courseDetails = response.data;
+      
+      // Affichez les détails du cours dans une fenêtre modale ou une autre méthode de votre choix
+      console.log(courseDetails);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des détails du cours", error);
+      // Affichez un message d'erreur à l'utilisateur ou effectuez d'autres actions en cas d'erreur
+    }
+  };
+  
   // Utilisez le jeton d'accès dans vos requêtes HTTP
   useEffect(() => {
     const fetchPlannings = async () => {
@@ -160,13 +172,11 @@ const MyCalendar = () => {
     const teacher = teachers.find((t) => t._id === event.teacherId);
     const student = students.find((s) => s._id === event.studentId);
     const teacherName = teacher ? `${teacher.firstName} ${teacher.lastName}` : "Enseignant inconnu";
-    const studentName = student ? `${student.firstName} ${student.lastName}` : "Étudiant inconnu";
 
     return (
       <div>
         <strong>{event.title}</strong>
         <div>Teacher: {teacherName}</div>
-        <div>Student: {studentName}</div>
       </div>
     );
   };
@@ -174,6 +184,8 @@ const MyCalendar = () => {
   return (
     <div>
       <main>
+      <NavBar />
+
         <TopBarTeacherStudent />
         <section className="pt-0">
           <div className="container">
@@ -190,6 +202,8 @@ const MyCalendar = () => {
                               components={{
                                 event: MyEvent,
                               }}
+                              onSelectEvent={handleEventClick}
+
                               key={events.length}
                               localizer={localizer}
                               events={events}
@@ -209,8 +223,9 @@ const MyCalendar = () => {
                               }))}
                               startAccessor="start"
                               endAccessor="end"
-                              style={{ height: "100%", width: "70%" }}
-                              formats={formats}
+                              dayLayoutAlgorithm={'overlap'} // Ajustez la taille des cases en fonction des événements qui se chevauchent
+                              style={{ height: '2500px', width: "70%"  }} // Augmentez la hauteur du calendrier pour afficher plus de cases
+                                                        formats={formats}
                               eventPropGetter={(event) => ({
                                 style: { backgroundColor: event.color },
                               })}

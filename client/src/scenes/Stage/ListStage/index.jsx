@@ -2,7 +2,6 @@ import SideBar from 'components/SideBar'
 import TopBarBack from 'components/TopBarBack'
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import BannerStartHome from "components/BannerStartHome";
 function Index() {
 
   const [stages, setStages] = useState([]);

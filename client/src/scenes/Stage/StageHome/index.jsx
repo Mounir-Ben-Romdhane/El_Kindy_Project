@@ -58,24 +58,7 @@ function Index() {
 				<p class="mb-0">See what course other students and experts in your domain are learning on.</p>
 			</div>
 		</div>
-      {/* Search bar */}
-      <div className="col-xl-8">
-                    <form className="border rounded p-2">
-                      <div className="input-group input-borderless">
-                        <input
-                          className="form-control me-1"
-                          type="search"
-                          placeholder="Find your course"
-                        />
-                        <button
-                          type="button"
-                          className="btn btn-primary mb-0 rounded z-index-1"
-                        >
-                          <i className="fas fa-search" />
-                        </button>
-                      </div>
-                    </form>
-                  </div>
+     
                   {/* Content */}
                   <div className="col-12 col-xl-3 d-flex justify-content-between align-items-center mt-3 mt-xl-0">
                     {/* Advanced filter responsive toggler END */}

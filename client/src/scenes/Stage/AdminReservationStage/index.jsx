@@ -32,16 +32,16 @@ function Index() {
 
   const fetchReservations = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/events/reservations");
+      const response = await axios.get("http://localhost:3001/reservationstage/reservations");
       setReservations(response.data);
     } catch (error) {
       console.error("Error fetching reservations:", error);
     }
   };
 
-  const updateReservationStatus = async (reservationId, status) => {
+  const updateReservationStatus = async (reservation, status) => {
     try {
-      await axios.patch(`http://localhost:3001/events/reservations/${reservationId}`, { status });
+      await axios.put(`http://localhost:3001/reservationstage/updateReservationStatus/${reservation}`, { status });
       MySwal.fire('Updated!', `The reservation has been ${status}.`, 'success');
       fetchReservations(); 
     } catch (error) {
@@ -56,10 +56,11 @@ function Index() {
 
   const filteredReservations = reservations.filter(
     (reservation) =>
-    reservation.eventId?.title.toLowerCase().includes(searchTerm) ||
-      reservation.userName.toLowerCase().includes(searchTerm) ||
-      reservation.userEmail.toLowerCase().includes(searchTerm) ||
-      reservation.phoneNumber.toString().includes(searchTerm)
+    reservation.stageId?.title.toLowerCase().includes(searchTerm) ||
+    reservation.userName.toLowerCase().includes(searchTerm) ||
+    reservation.userEmail.toLowerCase().includes(searchTerm) ||
+    reservation.phoneNumber.toString().includes(searchTerm) ||
+    reservation.message.toLowerCase().includes(searchTerm)
   );
 
   return (
@@ -115,10 +116,11 @@ function Index() {
                   <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
                     <thead>
                       <tr>
-                        <th scope="col" className="border-0">Event Title</th>
+                        <th scope="col" className="border-0">Stage Title</th>
                         <th scope="col" className="border-0">User Name</th>
                         <th scope="col" className="border-0">User Email</th>
                         <th scope="col" className="border-0">Phone Number</th>
+                        <th scope="col" className="border-0">Message</th>
                         <th scope="col" className="border-0">Status</th>
                         <th scope="col" className="border-0 rounded-end">Action</th>
                       </tr>
@@ -126,48 +128,47 @@ function Index() {
                     <tbody>
                       {filteredReservations.map((reservation, index) => (
                         <tr key={index}>
-                          <td>{reservation.eventId ? reservation.eventId.title : 'Event not found or deleted'}</td>
+                          <td>{reservation.stageId ? reservation.stageId.title : 'Stage not found or deleted'}</td>
                           <td>{reservation.userName}</td>
                           <td>{reservation.userEmail}</td>
                           <td>{reservation.phoneNumber}</td>
+                          <td>{reservation.message}</td>
                           <td>
-                              {reservation.status === "pending" && (
-                                <span className="badge bg-warning bg-opacity-15 text-warning">
-                                  Pending
-                                </span>
-                              )}
-                              {reservation.status === "accepted" && (
-                                <span className="badge bg-success bg-opacity-15 text-success">
-                                  Accepted
-                                </span>
-                              )}
-                              {reservation.status === "refused" && (
-                                <span className="badge bg-danger bg-opacity-15 text-danger">
-                                  Refused
-                                </span>
-                              )}
-                            </td>
-                        
+                            {reservation.status === "pending" && (
+                              <span className="badge bg-warning bg-opacity-15 text-warning">
+                                Pending
+                              </span>
+                            )}
+                            {reservation.status === "accepted" && (
+                              <span className="badge bg-success bg-opacity-15 text-success">
+                                Accepted
+                              </span>
+                            )}
+                            {reservation.status === "refused" && (
+                              <span className="badge bg-danger bg-opacity-15 text-danger">
+                                Refused
+                              </span>
+                            )}
+                          </td>
                           <td>
-                              <Link
-                                onClick={() => updateReservationStatus(reservation._id, 'accepted')} 
-                                className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
-                              >
-                                <i className="bi bi-check fs-4"></i> {/* Accept icon */}
-                              </Link>
-                              <button
-                                onClick={() => updateReservationStatus(reservation._id, 'refused')} 
-                                className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0">
-                                  <i className="bi bi-x fs-4"></i> {/* Refuse icon */}
-                              </button>
-                            </td>
+                            <button
+                              onClick={() => updateReservationStatus(reservation._id, 'accepted')} 
+                              className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+                            >
+                              <i className="bi bi-check fs-4"></i> {/* Accept icon */}
+                            </button>
+                            <button
+                              onClick={() => updateReservationStatus(reservation._id, 'refused')} 
+                              className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0">
+                                <i className="bi bi-x fs-4"></i> {/* Refuse icon */}
+                            </button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
               </div>
-              
             </div>
           </div>
         </div>

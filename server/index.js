@@ -35,7 +35,7 @@ import MessageRoute from './routes/MessageRoute.js'
 import meetingRoutes from './routes/meetingRoutes.js';
 import reservationRoutes  from "./routes/Reservation.js";
 import planningRoutes from "./routes/planningRoutes.js";
-
+import ReservationStage from "./routes/ReservationStage.js";
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -109,15 +109,15 @@ app.use("/auth",authRoutes);
 app.use("/api/categories", categorieRoutes); 
 app.use("/stage",stageRouter);
 app.use('/classes', classRoute);
-
 app.use('/event', eventRoutes);
 app.use("/course",courseRoute);
 app.use("/salle",salleRoutes);
 app.use("/inscription", inscriptionRoutes);
-app.use('/chat', ChatRoute)
-app.use('/message', MessageRoute)
+app.use('/chat', ChatRoute);
+app.use('/message', MessageRoute);
 app.use('/meeting', meetingRoutes);
 app.use("/events",reservationRoutes);
+app.use("/reservationstage", ReservationStage);
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
 mongoose.connect(process.env.MONGO_URL, {

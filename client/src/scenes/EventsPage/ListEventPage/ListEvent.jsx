@@ -186,7 +186,7 @@ function Index() {
                     <tbody>
                       {filteredEvents.map((event, index) => (
                         <tr key={index}>
-                          <td>{event.title}</td>
+                          <td>{event.name}</td>
                           <td>
                             {new Date(event.dateDebut).toLocaleDateString()}
                           </td>

@@ -98,7 +98,8 @@ function Index() {
                     </tbody>
                   </table>
                   {showStudents && (
-  <table className="table">
+ 
+ <table className="table">
     {/* Your existing table header */}
     <tbody>
       {classItem.students.map((student) => (
