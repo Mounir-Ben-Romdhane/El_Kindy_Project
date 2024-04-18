@@ -12,6 +12,8 @@ import { addNewCourse, updateCourse } from "./controllers/courseController.js";
 import { addNewEvent,updateEvent } from "./controllers/event.js";
 import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
 import eventRoutes from "./routes/Event.js";
+import classRoute from "./routes/ClassRoutes.js";
+
 import salleRoutes from "./routes/salle.js";
 import inscriptionRoutes from "./routes/inscriptionRoutes.js";
 import stageRouter  from "./routes/stageRoute.js";
@@ -33,7 +35,11 @@ import ChatRoute from './routes/ChatRoute.js'
 import MessageRoute from './routes/MessageRoute.js'
 import meetingRoutes from './routes/meetingRoutes.js';
 import reservationRoutes  from "./routes/Reservation.js";
+
 import paymentRouter from "./routes/paymentRouter.js";
+
+
+import planningRoutes from "./routes/planningRoutes.js";
 
 
 /* CONFIGURATION */
@@ -77,6 +83,7 @@ app.patch("/course/update/:id",upload.single("picture"),verifyToken, updateCours
 
 app.post("/event/add",upload.single("picture"),addNewEvent);
 app.patch("/event/update/:id",upload.single("picture"),updateEvent);
+app.use("/planning", planningRoutes);
 
 
 app.post("/api/categories", upload.single("picture"), createCategorie);
@@ -114,6 +121,8 @@ export const sendSms = (toPhoneNumber) => {
 app.use("/auth",authRoutes);
 app.use("/api/categories", categorieRoutes); 
 app.use("/stage",stageRouter);
+app.use('/classes', classRoute);
+
 app.use('/event', eventRoutes);
 app.use("/course",courseRoute);
 app.use("/salle",salleRoutes);

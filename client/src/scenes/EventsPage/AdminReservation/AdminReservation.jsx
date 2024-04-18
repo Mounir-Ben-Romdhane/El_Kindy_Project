@@ -175,6 +175,7 @@ function Index() {
                           <td>{reservation.userEmail}</td>
                           <td>{reservation.phoneNumber}</td>
                           <td>
+
                             {reservation.status === "pending" && (
                               <span className="badge bg-warning bg-opacity-15 text-warning">
                                 Pending
@@ -216,6 +217,7 @@ function Index() {
                               Refuse
                             </button>
                           </td>
+
                         </tr>
                       ))}
                     </tbody>
