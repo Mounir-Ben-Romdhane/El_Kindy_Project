@@ -59,7 +59,12 @@ const handleFormSubmit = async (values, onSubmitProps) => {
     });
   }
 };
+const [orderError, setOrderError] = useState('');
 
+  const handleOrderChange = (e) => {
+    const { value } = e.target;
+    setOrderError(value ? '' : 'Order is required.');
+  };
 
   return (
     <div>
@@ -107,9 +112,16 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                     <input className="form-control" name="capacity" type="number" placeholder="Enter capacity " />
                   </div>
                   <div className="col-12">
-                    <label className="form-label">Order</label>
-                    <input className="form-control" name="ordre" type="number" placeholder="Enter Order " />
-                  </div>
+                      <label className="form-label">Order</label>
+                      <input
+                        className="form-control"
+                        name="ordre"
+                        type="number"
+                        placeholder="Enter Order "
+                        onChange={handleOrderChange}
+                      />
+                      {orderError && <p style={{ color: 'red' }}>{orderError}</p>}
+                    </div>
                   {/* Upload image START */}
                
                   

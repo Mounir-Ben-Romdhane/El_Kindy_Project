@@ -2,16 +2,17 @@ import Classe from '../models/ClassModel.js';
 
 export const createClass = async (req, res) => {
   try {
-    const { className,capacity,ordre } = req.body;
-    const newClass = await Classe.create({ className,capacity,ordre });
+    const { className, capacity, ordre } = req.body;
+    const newClass = await Classe.create({ className, capacity, ordre });
     res.status(201).json(newClass);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 export const getAllClasses = async (req, res) => {
   try {
-    const classes = await Classe.find().populate('students teachers');
+    const classes = await Classe.find().sort({ ordre: 1 }); // Tri par ordre croissant
     res.status(200).json(classes);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -22,16 +23,15 @@ export const getClasseById = async (req, res) => {
   const { classId } = req.params;
 
   try {
-      const classe = await Classe.findById(classId); // Utiliser "Classe" au lieu de "classes"
-      if (!classe) {
-          return res.status(404).json({ message: "Class not found" });
-      }
-      res.status(200).json(classe);
+    const classe = await Classe.findById(classId);
+    if (!classe) {
+      return res.status(404).json({ message: "Class not found" });
+    }
+    res.status(200).json(classe);
   } catch (error) {
-      res.status(400).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
-
 
 export const updateClass = async (req, res) => {
   try {

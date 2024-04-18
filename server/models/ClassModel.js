@@ -13,15 +13,8 @@ const classSchema = new mongoose.Schema(
     },
     ordre: {
       type: Number,
-      required: true,
+      required: [true, 'Order is required.'],
       unique: true, // Ensure ordre is unique
-      validate: {
-        validator: async function(value) {
-          const count = await this.constructor.countDocuments({ ordre: value });
-          return count === 0; // Return true if no documents with the same ordre are found
-        },
-        message: 'ordre must be unique.', // Custom error message
-      },
     },
   },
   {
