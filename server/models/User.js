@@ -79,7 +79,7 @@ const UserSchema = new mongoose.Schema(
             default: []
         },
         // Additional attributes for specific roles
-        teacherInfo: {
+      /*  teacherInfo: {
             type: {
                 instrumentsTaught: {
                     type: [String], // Array of strings representing instruments
@@ -103,7 +103,7 @@ const UserSchema = new mongoose.Schema(
             required: function() {
                 return this.roles.includes('teacher');
             }
-        },
+        },*/
 
         studentInfo: {
             type: {
