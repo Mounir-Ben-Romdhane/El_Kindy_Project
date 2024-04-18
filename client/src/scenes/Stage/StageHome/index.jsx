@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { loadScripts } from "../../../scriptLoader";
 import BannerStartHome from "components/BannerStartHome";
 import '../../Style.css';
+
 function Index() {
   const [stages, setStages] = useState([]);
   const [selectedStage, setSelectedStage] = useState(null);

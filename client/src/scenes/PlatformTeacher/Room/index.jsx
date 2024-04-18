@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
-import NavBar from "components/NavBar";
-import Footer from "components/Footer";
+import { Link } from 'react-router-dom';
+
 import SideBarTeacher from "components/SideBarTeacher";
 import { useSelector } from "react-redux";
 import TopBarTeacherStudent from "components/TopBarTeacherStudent";
@@ -29,12 +29,12 @@ const Room = () => {
   const [meetingLink, setMeetingLink] = useState(""); // Ajout de l'état local
   const [showLinkInterface, setShowLinkInterface] = useState(false);
   // const [setShowLinkInterfaceInMeetingHome] = useState(false);
+  const [meetingLoaded, setMeetingLoaded] = useState(false);
 
-  const myMeeting = async (element) => {
-    const appID = 984376862;
-    const serverSecret = "7deae5e2a3a2361722b16d4867d0e1a3";
-    console.log("Current User:", decodeToken);
-    if (decodeToken && decodeToken.fullName) {
+  const myMeeting = (element) => {
+    if (!meetingLoaded && decodeToken && decodeToken.fullName) {
+      const appID = 601284725;
+      const serverSecret = "6407863a0afd45265fe09958043e1193";
       const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
         appID,
         serverSecret,
@@ -42,7 +42,6 @@ const Room = () => {
         Date.now().toString(),
         decodeToken.fullName
       );
-      console.log("Kit Token:", kitToken);
       const zc = ZegoUIKitPrebuilt.create(kitToken);
       zc.joinRoom({
         container: element,
@@ -55,12 +54,10 @@ const Room = () => {
         scenario: {
           mode: ZegoUIKitPrebuilt.GroupCall,
         },
-        showScreenSharingButton: true, // HTMLDivElement | string
+        showScreenSharingButton: true,
       });
       setMeetingLink(`http://localhost:3000/room/${roomId}`);
-      // Fonction pour afficher l'interface supplémentaire
-    } else {
-      console.error("User data is not available.");
+      setMeetingLoaded(true);
     }
   };
 
@@ -91,6 +88,7 @@ const Room = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          date: popupData.date,
           startTime: startTimeDate,
           endTime: endTimeDate,
           meetingLink: popupData.meetingLink,
@@ -110,6 +108,7 @@ const Room = () => {
 
         // Optionally, reset the form data and close the popup
         setPopupData({
+          date: "",
           startTime: "",
           endTime: "",
           meetingLink: "",
@@ -117,22 +116,13 @@ const Room = () => {
         });
         setShowLinkInterface(false);
 
-        // Optionally, you can show a success message to the user
-        // For example, using a notification library like react-toastify
-        // toast.success('Meeting created successfully');
       } else {
-        // Handle non-successful responses (status code other than 2xx)
         console.error("Error creating meeting:", response.statusText);
-        // You can show an error message to the user
-        // For example, using a notification library like react-toastify
-        // toast.error('Error creating meeting');
+        
       }
     } catch (error) {
-      // Handle fetch errors (e.g., network issues)
       console.error("Error creating meeting:", error);
-      // You can show an error message to the user
-      // For example, using a notification library like react-toastify
-      // toast.error('Error creating meeting');
+      
     }
   };
 
@@ -168,9 +158,12 @@ const Room = () => {
           <div className="container">
             <div className="row">
               <SideBarTeacher />
+
               <div className="col-xl-9">
                 {/* Student review START */}
+                
                 <div className="card border bg-transparent rounded-3">
+                  
                   {/* Reviews START */}
                   <div className="card-body mt-2 mt-sm-4">
                     {/* Review item START */}
@@ -179,7 +172,8 @@ const Room = () => {
                         <div className="mb-3 d-sm-flex justify-content-sm-between align-items-center">
                           {/* Title */}
                           <div>
-                            <h5 className="m-0">Making a meeting</h5>
+                            
+                            <h5 className="m-0">Communicate effectively with your students</h5>
                           </div>
                         </div>
 
@@ -206,6 +200,18 @@ const Room = () => {
                             className="row g-4 g-sm-3 mt-2 mb-0"
                             onSubmit={handleSubmit}
                           >
+                            <div className="col-12">
+                              <label className="form-label">Date:</label>
+                              <input
+                                type="date"
+                                className="form-control"
+                                aria-label="date"
+                                name="date"
+                                value={popupData.date}
+                                onChange={handleChange}
+                                required
+                              />
+                            </div>
                             {/* Start Time */}
                             <div className="col-12">
                               <label className="form-label">Start Time:</label>
@@ -276,6 +282,8 @@ const Room = () => {
                               >
                                 Book a class
                               </button>
+
+
                             </div>
                           </form>
                           {/* Form END */}
