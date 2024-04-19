@@ -20,7 +20,6 @@ function Index() {
   useEffect(() => {
     if (isAuth) {
       const userRoles = isAuth ? jwtDecode(isAuth).roles : []; 
-
         //console.log("userRole ",userRoles);
         if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
           navigate("/dashboard-admin");
@@ -100,6 +99,7 @@ function Index() {
         );
         const accessTokenn = loggedIn.accessToken;
         const userRoles = accessTokenn ? jwtDecode(accessTokenn).roles : []; 
+
 
         //console.log("userRole ",userRoles);
         if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {

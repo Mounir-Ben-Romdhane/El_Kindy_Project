@@ -133,7 +133,7 @@ function NavBar() {
                 {/* CORSUS */}
                 <li className="nav-item dropdown">
                   <a
-                    className={`nav-link dropdown-toggle ${activeNavItem === "/category" || activeNavItem === "/courses" ? "active" : ""}`}
+                    className={`nav-link dropdown-toggle ${activeNavItem === "/category" || activeNavItem === "/courses" || activeNavItem === "/stage" ? "active" : ""}`}
                     href="#"
                     id="demoMenu"
                     data-bs-toggle="dropdown"
@@ -166,10 +166,14 @@ function NavBar() {
                     </li>
                     <li>
                       {" "}
-                      <a className="dropdown-item" href="index-2.html">
-                      <FontAwesomeIcon icon={faBriefcase} className="fa-fw me-1" /> {/* Stages */}
-                        InternalShip
-                      </a>
+                      
+                      <Link 
+                         className={`dropdown-item ${activeNavItem === "/stage" ? "active" : ""}`}
+                         to="/stage"
+                         onClick={() => handleNavItemClick("/stage")}>
+                      <FontAwesomeIcon icon={faGraduationCap} className="fa-fw me-1" /> 
+                      Internship
+                      </Link>
                     </li>
                   </ul>
                 </li>

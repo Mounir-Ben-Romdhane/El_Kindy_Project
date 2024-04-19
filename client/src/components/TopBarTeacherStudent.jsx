@@ -48,7 +48,7 @@ import { jwtDecode } from "jwt-decode";
                                             <div className="avatar avatar-xxl mt-n3">
                                             <img
                                                 className="avatar-img rounded-circle"
-                                                src={getAvatarSrc()}
+                                                src={getAvatarSrc()|| "default.png"}
                                                 alt="avatar"
                                                 />          
                                              </div>
@@ -58,8 +58,7 @@ import { jwtDecode } from "jwt-decode";
                                             <div>
                                                 <h1 className="my-1 fs-4">{user?.fullName} <i className="bi bi-patch-check-fill text-info small" /></h1>
                                                 <ul className="list-inline mb-0">
-                                                    <li className="list-inline-item h6 fw-light me-3 mb-1 mb-sm-0"><i className="fas fa-user-graduate text-orange me-2" />12k Enrolled Students</li>
-                                                    <li className="list-inline-item h6 fw-light me-3 mb-1 mb-sm-0"><i className="fas fa-book text-purple me-2" />25 Courses</li>
+                                                    <li className="list-inline-item h6 fw-light me-3 mb-1 mb-sm-0"><i className="fas fa-user-graduate text-orange me-2" /> Enrolled Students</li>
                                                 </ul>
                                             </div>
                                             

@@ -1,5 +1,6 @@
 import express from "express";
-import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord, verifyAccount,getUser,getAllUserByRole, getTeachers, getStudents, getUserById } from "../controllers/auth.js"
+import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord, verifyAccount,getUser,getAllUserByRole, getTeachers, getStudents, getUserById, getTeacherById } from "../controllers/auth.js"
+
 import { verifyToken } from '../middleware/auth.js';
 import googleAuth from "../controllers/googleAuth.js";
 import { facebooklogin } from "../controllers/passport-facebook.js";
@@ -25,6 +26,8 @@ router.post("/facebooklogin", facebooklogin);
 router.get('/getAll', verifyToken,getAllUsers);
 router.post("/googleAuth", googleAuth);
 router.get('/getAllUserByRole/:role',getAllUserByRole);
+router.get('/getTeacher/:teacherId', getTeacherById);
+
 
 //Add users
 router.post("/addAdmin", addAdmin);
