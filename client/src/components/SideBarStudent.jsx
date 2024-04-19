@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogout } from "state";
 
+
 const  Index = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();

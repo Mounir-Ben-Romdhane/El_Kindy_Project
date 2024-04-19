@@ -45,11 +45,16 @@ import Chat from "../src/scenes/Chat/Chat";
 
 import ListMeetingTeacher from 'scenes/PlatformTeacher/ListMeetingTeacher'
 
+import MessageProf from '../src/scenes/PlatformTeacher/MessageProf'
+import StudentsGrades from '../src/scenes/PlatformTeacher/StudentsGrades'
 
+import AdminReservation from './scenes/EventsPage/AdminReservation/AdminReservation'
 import DetailEvents from './scenes/EventsPage/DetailEventPage/DetailEvent'
-
-import EditEventPage from "./scenes/EventsPage/EditEventPage/EditEvent";
+import EditEventPage from './scenes/EventsPage/EditEventPage/EditEvent'
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
+import StageDetail from "scenes/Stage/StageDetail";
+import AdminReservationStage from "scenes/Stage/AdminReservationStage";
+
 
 import EditCourse from "scenes/Courses/backOffice/EditCoursePage";
 
@@ -136,6 +141,14 @@ function App() {
 
         <Route path="/courses" element={<ListCourses />} />
         <Route
+          path="/StageDetail/:id"
+          element={ <StageDetail />}
+        />
+        <Route
+          path="/courses"
+          element={ <ListCourses />}
+        />
+         <Route
          
 
           path="/TeachersList"
@@ -147,6 +160,116 @@ function App() {
         <Route path="/inscription/:id?" element={<InscriptionPage />} />
 
         {/* PRIVATE ROUTE */}
+          <Route
+            path="/dashboard-admin"
+            element={
+              <PrivateRoute
+                element={<AdminHomePage />}
+                requiredRoles={["superAdmin", "admin"]}
+
+              />
+            }
+          />
+
+          <Route
+            path="/inscriptionsList"
+            element={
+              <PrivateRoute
+                element={<InscriptionList />}
+                requiredRoles={["superAdmin", "admin"]}
+              />
+            }
+          />
+
+          <Route
+            path="/inscriptionDetails/:id"
+            element={
+              <PrivateRoute
+                element={<InscriptionDetails />}
+                requiredRoles={["superAdmin", "admin"]}
+              />
+            }
+          />
+
+          <Route
+            path="/listCourses"
+            element={
+              <PrivateRoute
+                element={<ListCoursesPage />}
+                requiredRoles={["superAdmin", "admin"]}
+              />
+            }
+          />
+
+          <Route
+            path="/admins"
+            element={
+              <PrivateRoute
+                element={<AdminsDashboard />}
+                requiredRoles={["superAdmin"]}
+              />
+            }
+          />
+
+          <Route
+            path="/teachers"
+            element={
+              <PrivateRoute
+                element={<TeachersDashboard />}
+                requiredRoles={["superAdmin", "admin"]}
+              />
+            }
+          />
+
+          <Route
+            path="/students"
+            element={
+              <PrivateRoute
+                element={<StudentsDashboard />}
+                requiredRoles={["superAdmin", "admin"]}
+              />
+            }
+          />
+
+          <Route
+            path="/parents"
+            element={
+              <PrivateRoute
+                element={<ParentsDashboard />}
+                requiredRoles={["superAdmin", "admin"]}
+              />
+            }
+          />
+
+
+          <Route
+            path="/dashbordTeacher"
+            element={
+              <PrivateRoute
+                element={<DashbordTeacher />}
+                requiredRoles={["superAdmin", "admin", "teacher"]}
+              />
+            }
+          />
+          <Route
+            path="/messages"
+            element={
+              <PrivateRoute
+                element={<MessageProf />}
+                requiredRoles={["superAdmin", "admin", "teacher"]}
+              />
+            }
+          />
+
+        <Route
+            path="/StudentsGrades"
+            element={
+              <PrivateRoute
+                element={<StudentsGrades />}
+                requiredRoles={["superAdmin", "admin", "teacher"]}
+              />
+            }
+          />
         <Route
           path="/category"
           element={<Category />}
@@ -265,7 +388,7 @@ function App() {
             />
           }
         />
-
+       
         <Route
           path="/parents"
           element={
@@ -315,6 +438,15 @@ function App() {
           }
         />
 
+<Route
+          path="/AdminReservationStage"
+          element={
+            <PrivateRoute
+              element={<AdminReservationStage />}
+              requiredRoles={["superAdmin", "teacher"]}
+            />
+          }
+        />
 
         <Route
           path="/meetingHomeS"
@@ -445,10 +577,7 @@ function App() {
           element={isAuth ? <EditCourse /> : <Navigate to="/" />}
         />
 
-        <Route
-          path="/ListStage"
-          element={isAuth ? <ListStage /> : <Navigate to="/" />}
-        />
+      
         <Route
           path="/AddStage"
           element={isAuth ? <AddStage /> : <Navigate to="/" />}
@@ -461,7 +590,10 @@ function App() {
           path="/stage"
           element={<Stage />}
         />
-
+<Route
+          path="/ListStage"
+          element={<ListStage />}
+        />
 
         <Route
           path="/listEvents"

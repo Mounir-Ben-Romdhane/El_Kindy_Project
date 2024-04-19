@@ -1,5 +1,6 @@
 import { log } from "console";
 import ChatModel from "../models/chatModel.js";
+import User from "../models/User.js";
 
 export const createChat = async (req, res) => {
   console.log("createChat", req.body);
@@ -41,6 +42,32 @@ export const userChats = async (req, res) => {
     res.status(200).json(chats);
   } catch (error) {
     res.status(500).json(error);
+  }
+};
+
+// get the chats of the current user
+export const getChats = async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    let chats = await ChatModel.find({
+      members: { $in: [userId] }
+    }).lean(); // Utilisez .lean() pour améliorer la performance en retournant des objets JavaScript simples
+
+    // Enrichir chaque chat avec les informations de l'autre utilisateur
+    const chatsWithOtherUserInfo = await Promise.all(chats.map(async (chat) => {
+      // Trouvez l'ID de l'autre utilisateur
+      const otherUserId = chat.members.find(id => id !== userId);
+      // Récupérez les informations de base de l'autre utilisateur
+      const otherUser = await User.findById(otherUserId, 'firstName lastName picturePath').lean();
+      
+      // Ajoutez les informations de l'autre utilisateur à l'objet de chat
+      return { ...chat, otherUser };
+    }));
+
+    res.status(200).json(chatsWithOtherUserInfo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Erreur du serveur lors de la récupération des chats" });
   }
 };
 

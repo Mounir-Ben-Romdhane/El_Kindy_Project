@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef  } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import NavBar from "components/NavBar";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,9 +20,6 @@ function Index() {
   const [reciveeeeeerId, setReciveeeeeerId] = useState("");
   const axiosPrivate = useAxiosPrivate();
   const dispatch = useDispatch();
-  const [onlineUsers, setOnlineUsers] = useState([]);
-  const [currentChat, setCurrentChat] = useState(null);
-  const [sendMessage, setSendMessage] = useState(null);
   const [receivedMessage, setReceivedMessage] = useState(null);
   const socket = useRef();
 
@@ -53,31 +50,31 @@ function Index() {
   const handleContact = async (id) => {
     try {
       const response = await axiosPrivate.get(`/chat/find/${userId}/${id}`);
-  
+
       setExistingChat(response.data);
-  
+
       if (response.status === 200 && response.data) {
         setCreatedChatId(response.data._id);
-  
+
         if (response.data.members && response.data.members.length > 1) {
           setReciveeeeeerId(response.data.members[1]);
         } else {
           alert("Le chat n'a pas les membres requis.");
           return;
         }
-  
+
       } else {
         const res = await createChat({ senderId: userId, receiverId: id });
         if (res.status === 201 && res.data) {
           setCreatedChatId(res.data._id);
-  
+
           if (res.data.members && res.data.members.length > 1) {
             setReciveeeeeerId(res.data.members[1]);
           } else {
             alert("Le chat créé n'a pas les membres requis.");
             return;
           }
-  
+
         } else {
           alert("Une erreur s'est produite lors de la création du chat.");
           return;
@@ -89,7 +86,7 @@ function Index() {
       return;
     }
   };
-  
+
   useEffect(() => {
     if (createdChatId) {
       setShowChatBox(true);
@@ -97,27 +94,8 @@ function Index() {
   }, [createdChatId]);
 
 
- // Connect to Socket.io
- useEffect(() => {
-  socket.current = io("ws://localhost:8800");
-  socket.current.emit("new-user-add", userId);
-  socket.current.on("get-users", (users) => {
-    setOnlineUsers(users);
-  });
-}, []);
 
-// Send Message to socket server
-useEffect(() => {
-  if (sendMessage!==null) {
-    socket.current.emit("send-message", sendMessage);}
-}, [sendMessage]);
 
-// Get the message from socket server
-useEffect(() => {
-  socket.current.on("recieve-message", (data) => {
-    setReceivedMessage(data);
-  });
-}, []);
 
 
   return (
@@ -150,8 +128,6 @@ useEffect(() => {
                             <div className="d-sm-flex justify-content-sm-between align-items-center">
                               <h6 className="text-orange mb-0">{user.roles}</h6>
                               <ul className="list-inline mb-0 mt-3 mt-sm-0">
-                                <li className="list-inline-item"> <a className="mb-0 me-1 text-facebook" href="#"><i className="fab fa-fw fa-facebook-f" /></a> </li>
-                                <li className="list-inline-item"> <a className="mb-0 me-1 text-instagram-gradient" href="#"><i className="fab fa-fw fa-instagram" /></a> </li>
                                 <button onClick={() => handleContact(user._id)} className="btn btn-primary">Contacter</button>
                               </ul>
                             </div>
@@ -170,12 +146,11 @@ useEffect(() => {
                   keyy={createdChatId}
                   chat={createdChatId}
                   currentUser={userId}
-                  setSendMessage={() => { }}
                   receiverId={reciveeeeeerId}
-                  
-                  receivedMessage={null}
-                  onClose={() => setShowChatBox(false)} // Fonction de rappel pour fermer le ChatBox
+                  receivedMessage={receivedMessage}
+                  onClose={() => setShowChatBox(false)}
                 />
+
               </div>
             )}
           </div>
