@@ -4,6 +4,7 @@ import SideBarStudent from 'components/SideBarStudent';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import NavBar from "components/NavBar";
 
 function Index() {
   const [meetings, setMeetings] = useState([]);
@@ -46,6 +47,8 @@ function Index() {
       {/* **************** MAIN CONTENT START **************** */}
       <main>
         {/* hedha l partie l fou9aneya  */}
+        <NavBar />
+
         <TopBarTeacherStudent />
         {/* =======================
                 Page content START */}
