@@ -17,7 +17,11 @@ const MyCalendar = () => {
   const [selectedEvent, setSelectedEvent] = useState({});
   const [courses, setCourses] = useState({ data: [] });
   const [classes, setClasses] = useState({ data: [] });
+  const [teacherId, setTeacherId] = useState(null); // Ajoutez un état pour stocker l'ID de l'enseignant sélectionné
 
+  // Définissez une fonction pour mettre à jour l'ID de l'enseignant sélectionné
+
+  
   const [teachers, setTeachers] = useState([]); // Ajout d'un état pour les enseignants
   const [students, setStudents] = useState([]); // Ajout d'un état pour les étudiants
   const [loadingTeachers, setLoadingTeachers] = useState(true);
@@ -116,39 +120,38 @@ const MyCalendar = () => {
     return slots;
   }
   
-  const MyEvent = ({ event }) => {
+const MyEvent = ({ event }) => {
     // Vérifier d'abord si les noms des enseignants et des étudiants sont disponibles
     const teacher = teachers.find((t) => t._id === event.teacherId);
     const student = students.find((s) => s._id === event.studentId);
-    const className = classes.find((c) => c._id === event.classId)?.className;
-  
+    const classe = Array.isArray(classes) ? classes.find((s) => s._id === event.classId) : null;
+
     // Si les noms des enseignants et des étudiants ne sont pas disponibles, affichez "Loading..."
-    if ((event.classId && !className) || (!teacher && !student) || loadingTeachers || loadingStudents) {
-      return <div>Loading...</div>;
-    }
-  
+   
+    const className = classe ? `${classe.className}` : "";
+
     // Les noms des enseignants et des étudiants sont disponibles, construisez le composant avec les noms
     const teacherName = teacher ? `${teacher.firstName} ${teacher.lastName}` : "";
     const studentName = student ? `${student.firstName} ${student.lastName}` : "";
     const displayStudent = event.studentId && studentName ? `Student: ${studentName}` : "";
-  
+
     // Afficher "Teacher :" si l'enseignant est sélectionné, sinon afficher "Student :"
     const displayLabel = event.teacherId ? "Teacher :" : "Student :";
-  
+
     // Afficher "Classe :" uniquement lorsque l'étudiant est sélectionné et que la classe est disponible
     const displayClass = event.classId && className ? `Classe: ${className}` : "";
-  
+
     return (
-      <div>
-        <strong>{event.title}</strong>
-        <div>{displayLabel} {event.teacherId ? teacherName : studentName}</div>
-  
-        {displayClass && <div>{displayClass}</div>}
-        {displayStudent && <div>{displayStudent}</div>}
-      </div>
+        <div>
+            <strong>{event.title}</strong>
+            <div>{displayLabel} {event.teacherId ? teacherName : studentName}</div>
+
+            {displayClass && <div>{displayClass}</div>}
+            {displayStudent && <div>{displayStudent}</div>}
+        </div>
     );
-  };
-  
+};
+
   
   
   // Effect hook pour charger les données
@@ -207,7 +210,15 @@ const MyCalendar = () => {
       .catch((error) => {
         console.error("Error fetching teachers and students", error);
       });
-
+      axiosPrivate
+      .get("http://localhost:3001/classes/getAll") // Récupérez la liste des cours
+      .then((response) => {
+        setClasses(response.data); // Stockez les cours dans l'état
+        console.log("claaassssss",response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the courses", error);
+      });
     axios
       .get("http://localhost:3001/salle")
       .then((response) => {
@@ -225,15 +236,21 @@ const MyCalendar = () => {
       .catch((error) => {
         console.error("There was an error fetching the courses", error);
       });
-      axiosPrivate
-      .get("http://localhost:3001/classes/getAll") // Récupérez la liste des cours
-      .then((response) => {
-        setClasses(response.data); // Stockez les cours dans l'état
-        console.log("claaassssss",response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the courses", error);
-      });
+   // Appel de l'API pour obtenir les informations de l'enseignant
+axios.get(`http://localhost:3001/auth/getTeacher/${teacherId}`)
+.then((response) => {
+  // Une fois la réponse reçue, extrayez les classes enseignées par l'enseignant
+  const teacher = response.data;
+  const classesTaught = teacher.teacherInfo.classesTeaching;
+  // Stockez les classes dans l'état ou faites tout autre traitement nécessaire
+  setClasses(classesTaught);
+  console.log("Classes enseignées par l'enseignant:", classesTaught);
+})
+.catch((error) => {
+  console.error("Une erreur s'est produite lors de la récupération des informations de l'enseignant", error);
+});
+
+    
 
     axios
       .get("http://localhost:3001/planning/all")

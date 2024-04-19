@@ -175,6 +175,16 @@ function Index() {
                         <th scope="col" className="border-0">
                           End Date
                         </th>
+                        
+                        <th scope="col" className="border-0">
+                          Place
+                        </th>
+                        <th scope="col" className="border-0">
+                          Time From
+                        </th>
+                        <th scope="col" className="border-0">
+                          Time To
+                        </th>
                         <th scope="col" className="border-0">
                           Price
                         </th>
@@ -184,6 +194,33 @@ function Index() {
                       </tr>
                     </thead>
                     <tbody>
+  {filteredEvents.map((event, index) => (
+    <tr key={index}>
+      <td>{event.title}</td>
+      <td>{new Date(event.dateDebut).toLocaleDateString()}</td>
+      <td>{new Date(event.dateFin).toLocaleDateString()}</td>
+      <td>{event.place}</td>
+      <td>{event.timeFrom}</td>
+      <td>{event.timeTo}</td>
+      <td>{event.price ? `${event.price} TND` : "Free"}</td>
+      <td>
+        {/* Actions */}
+        <a
+          onClick={() => editEvents(event._id)}
+          className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+        >
+          <i class="bi bi-pencil-square"></i>
+        </a>
+        <button
+          onClick={() => deleteEvents(event._id)}
+          className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
+        >
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
                       {filteredEvents.map((event, index) => (
                         <tr key={index}>
                           <td>{event.name}</td>
@@ -208,11 +245,6 @@ function Index() {
 
                               
 
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
                   </table>
                 </div>
               </div>

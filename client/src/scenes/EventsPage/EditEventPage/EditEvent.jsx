@@ -195,7 +195,7 @@ const handleRemoveImage = () => {
                       name="price"
                       value={formState.price}
                       onChange={handleEventChange}
-                      placeholder="Enter event price"
+                      placeholder={formState.price ? "Enter Event Price" : "Free Event"}
                     />
                   </div>
                   {/* Upload image START */}
