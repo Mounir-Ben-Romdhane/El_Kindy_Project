@@ -240,7 +240,7 @@ const MyCalendar = () => {
   }))}
   startAccessor="start"
   endAccessor="end"
-  style={{ height: '2500px', width: "70%"  }} // Augmentez la hauteur du calendrier pour afficher plus de cases
+  style={{ height: '700px', width: "68%"  }} // Augmentez la hauteur du calendrier pour afficher plus de cases
   formats={formats}
   eventPropGetter={(event) => ({
     style: { backgroundColor: event.color },
@@ -280,5 +280,3 @@ const MyCalendar = () => {
 };
 
 export default MyCalendar;
-
-
