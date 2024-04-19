@@ -116,7 +116,6 @@ function Index() {
                   <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
                     <thead>
                       <tr>
-                        <th scope="col" className="border-0">Stage Title</th>
                         <th scope="col" className="border-0">User Name</th>
                         <th scope="col" className="border-0">User Email</th>
                         <th scope="col" className="border-0">Phone Number</th>
@@ -128,7 +127,6 @@ function Index() {
                     <tbody>
                       {filteredReservations.map((reservation, index) => (
                         <tr key={index}>
-                          <td>{reservation.stageId ? reservation.stageId.title : 'Stage not found or deleted'}</td>
                           <td>{reservation.userName}</td>
                           <td>{reservation.userEmail}</td>
                           <td>{reservation.phoneNumber}</td>

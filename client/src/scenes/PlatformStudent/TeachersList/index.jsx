@@ -19,9 +19,6 @@ function Index() {
   const [reciveeeeeerId, setReciveeeeeerId] = useState("");
   const axiosPrivate = useAxiosPrivate();
   const dispatch = useDispatch();
-  const [onlineUsers, setOnlineUsers] = useState([]);
-  const [currentChat, setCurrentChat] = useState(null);
-  const [sendMessage, setSendMessage] = useState(null);
   const [receivedMessage, setReceivedMessage] = useState(null);
   const socket = useRef();
 

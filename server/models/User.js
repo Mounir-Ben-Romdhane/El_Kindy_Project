@@ -79,7 +79,7 @@ const UserSchema = new mongoose.Schema(
             default: []
         },
         // Additional attributes for specific roles
-      /*  teacherInfo: {
+        teacherInfo: {
             type: {
                 coursesTaught: [{
                     type: mongoose.Schema.Types.ObjectId,
@@ -104,7 +104,7 @@ const UserSchema = new mongoose.Schema(
             required: function() {
                 return this.roles.includes('teacher');
             }
-        },*/
+        },
 
         studentInfo: {
             type: {

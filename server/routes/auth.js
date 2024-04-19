@@ -25,8 +25,7 @@ router.get("/verify-account/:id/verify",verifyToken,verifyAccount);
 router.post("/facebooklogin", facebooklogin); 
 router.get('/getAll', verifyToken,getAllUsers);
 router.post("/googleAuth", googleAuth);
-router.get('/getAllUserByRole/:role', verifyToken,getAllUserByRole);
-router.get('/getAllUserByRole/:role',getAllUserByRole);
+router.get('/getAllUserByRole/:role', getAllUserByRole);
 
 //Add users
 router.post("/addAdmin", addAdmin);
