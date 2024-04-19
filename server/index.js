@@ -34,7 +34,12 @@ import ChatRoute from './routes/ChatRoute.js'
 import MessageRoute from './routes/MessageRoute.js'
 import meetingRoutes from './routes/meetingRoutes.js';
 import reservationRoutes  from "./routes/Reservation.js";
+
+import paymentRouter from "./routes/paymentRouter.js";
+
+
 import planningRoutes from "./routes/planningRoutes.js";
+
 import ReservationStage from "./routes/ReservationStage.js";
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
@@ -48,9 +53,12 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin"}));
 app.use(morgan("common"));
 app.use(bodyParser.json({limit: "30mb", extended: true}));
 app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
+
+app.use(cors());
+
 // Configure CORS to allow requests from http://localhost:3000
 app.use(cors({
-    origin: ["http://localhost:3000","https://lh3.googleusercontent.com"],
+    origin: ["http://localhost:3000","https://lh3.googleusercontent.com","http://localhost:3001"],
     credentials: true // Include credentials in CORS request
   }));
 app.use("/assets", express.static(path.join(__dirname,'public/assets')));
@@ -65,6 +73,7 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage });
+
 
 /* ROUTES WITH FILES*/
 //app.post("/auth/register",upload.single("picture"),register);
@@ -105,6 +114,9 @@ export const sendSms = (toPhoneNumber) => {
 
 
 /* ROUTES */
+
+
+/* ROUTES */
 app.use("/auth",authRoutes);
 app.use("/api/categories", categorieRoutes); 
 app.use("/stage",stageRouter);
@@ -117,6 +129,10 @@ app.use('/chat', ChatRoute);
 app.use('/message', MessageRoute);
 app.use('/meeting', meetingRoutes);
 app.use("/events",reservationRoutes);
+
+app.use("/payment",paymentRouter);
+
+
 app.use("/reservationstage", ReservationStage);
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;

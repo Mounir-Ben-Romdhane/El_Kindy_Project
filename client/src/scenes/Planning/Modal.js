@@ -9,7 +9,6 @@ const Modal = ({
   teachers,
   students,
   courses,
-  classes
 }) => {
   const isEditing = eventDetails._id; // Check if eventDetails has an id to determine if it's for editing
   const [selectedStudentId, setSelectedStudentId] = useState(
@@ -47,6 +46,7 @@ console.log("eventassad",eventDetails)
   const handleClassChange = (e) => {
     setSelectedClassId(e.target.value);
   };
+  const [classes, setClasses] = useState([]);
 
   const rooms = eventDetails.rooms || []; // Retrieve the list of rooms from eventDetails
   const handleRoomChange = (e) => {
@@ -73,30 +73,52 @@ console.log("eventassad",eventDetails)
     }));
   };
 
+  const handleTeacherChange = (e) => {
+    const selectedTeacherId = e.target.value;
+    setSelectedTeacherId(selectedTeacherId);
+  
+    // Appeler une fonction pour récupérer les classes du professeur sélectionné
+    getClassesByTeacher(selectedTeacherId);
+  };
+  
+  const getClassesByTeacher = (teacherId) => {
+    axios.get(`http://localhost:3001/auth/getTeacher/${teacherId}`)
+      .then((response) => {
+        const teacher = response.data;
+        const classesTaught = teacher.teacherInfo.classesTeaching;
+        setClasses(classesTaught); // Mettez à jour les classes directement
+        console.log("Classes enseignées par l'enseignant:", classesTaught);
+      })
+      .catch((error) => {
+        console.error("Une erreur s'est produite lors de la récupération des informations de l'enseignant", error);
+      });
+  };
+  
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const { courseId } = course;
-
+  
     if (!courseId) {
       alert("Please select a course.");
       return;
     }
-
+  
     const selectedCourse = courses.data.find((c) => c._id === courseId);
-
+  
     if (!selectedCourse) {
       alert("The selected course is not valid.");
       return;
     }
-
+  
     const isValidRoom = rooms.find((room) => room._id === selectedRoomId);
-
+  
     if (!isValidRoom) {
       alert("The selected room does not exist. Please select a valid room.");
       return;
     }
-
+  
     const updatedEvent = {
       ...eventDetails,
       ...course,
@@ -105,17 +127,13 @@ console.log("eventassad",eventDetails)
       teacherId: selectedTeacherId,
       studentId: selectedStudentId || null,
       resourceId: selectedRoomId,
-      courseId: selectedCourseId ,
+      courseId: selectedCourseId,
       classId: selectedClassId || null, // Assurez-vous que selectedClassId est inclus ici
-
     };
-
+  
     onSave(updatedEvent);
   };
-
-  const handleTeacherChange = (e) => {
-    setSelectedTeacherId(e.target.value);
-  };
+  
 
   const handleStudentChange = (e) => {
     setSelectedStudentId(e.target.value);
@@ -247,26 +265,27 @@ console.log("eventassad",eventDetails)
   
       {/* Affichage conditionnel des sélecteurs */}
       {selectedOption === "class" && (
-        <select
-        value={selectedClassId}
-        onChange={handleClassChange}
-        style={{
-          marginBottom: "16px",
-          width: "100%",
-          padding: "8px",
-          borderRadius: "4px",
-          border: "1px solid #ccc",
-        }}
-      >
-        <option value="">-- Select a class --</option>
-        {classes.map((classe) => (
-          <option key={classe._id} value={classe._id}>
-            {classe.className}
-          </option>
-        ))}
-      </select>
+  <select
+    value={selectedClassId}
+    onChange={handleClassChange}
+    style={{
+      marginBottom: "16px",
+      width: "100%",
+      padding: "8px",
+      borderRadius: "4px",
+      border: "1px solid #ccc",
+    }}
+  >
+    <option value="">-- Select a class --</option>
+    {classes.map((classe) => (
+      <option key={classe._id} value={classe._id}>
+        {classe.className}
+      </option>
+    ))}
+  </select>
+)}
+
       
-      )}
   
       {selectedOption === "student" && (
         <select
