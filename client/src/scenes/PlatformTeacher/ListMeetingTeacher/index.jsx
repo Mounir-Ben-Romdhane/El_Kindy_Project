@@ -5,7 +5,8 @@ import SideBarTeacher from 'components/SideBarTeacher';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-
+import Footer from "components/Footer";
+import NavBar from "components/NavBar";
 const Index = () => {
 
     const [meetings, setMeetings] = useState([]);
@@ -27,6 +28,7 @@ const Index = () => {
         <div>
             {/* **************** MAIN CONTENT START **************** */}
             <main>
+                <NavBar />
                 {/* hedha l partie l fou9aneya  */}
                 <TopBarTeacherStudent />
                 {/* =======================
@@ -89,6 +91,7 @@ const Index = () => {
                     </div>
                 </section>
                 {/* Page content END */}
+                <Footer />
             </main>
             {/* MAIN CONTENT END */}
         </div>

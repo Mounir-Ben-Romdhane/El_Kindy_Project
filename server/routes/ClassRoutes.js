@@ -1,5 +1,5 @@
 import express from 'express';
-import { createClass, getAllClasses,  updateClass, deleteClass } from '../controllers/ClassController.js';
+import { createClass, getAllClasses,  updateClass, deleteClass ,getClasseById} from '../controllers/ClassController.js';
 
 const router = express.Router();
 
@@ -14,5 +14,6 @@ router.put('/:classId', updateClass);
 
 // Route pour supprimer une classe
 router.delete('/:classId', deleteClass);
+router.get("/:classId",getClasseById);
 
 export default router;

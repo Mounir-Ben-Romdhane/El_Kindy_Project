@@ -1,8 +1,5 @@
 import react from  'react';
-
-import {  Link } from "react-router-dom";
-
-
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const  Index = () => {
 

@@ -60,6 +60,7 @@ function ListEventUser() {
   <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap-icons/bootstrap-icons.css" />
   <link rel="stylesheet" type="text/css" href="assets/vendor/tiny-slider/tiny-slider.css" />
   <link rel="stylesheet" type="text/css" href="assets/vendor/glightbox/css/glightbox.css" />
+  
   {/* Theme CSS */}
   <link id="style-switch" rel="stylesheet" type="text/css" href="assets/css/style.css" />
   {/* Top header START */}
@@ -110,36 +111,38 @@ Trending courses START */}
               />
             </div>
             <div className="card-content p-3">
-              <h5 className="card-title text-center mt-2">{event.title}</h5>
-              <p className="event-dates text-center mb-0">
-                <i className="fas fa-calendar-alt"></i> {new Date(event.dateDebut).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })} - {new Date(event.dateFin).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
-              </p>
-              <p className="event-price text-center my-2">
-                <span className="badge bg-primary">${event.price}</span>
-              </p>
-               {/* Title */}
-               <h5 className="card-title fw-normal">
-                          {/*     <a href="#">{event.title}</a> */}
-                            </h5>
-                            <div className="text-center mt-5 cardd-layer">
-                            <a href="#" className="btn btn-primary btn-sm">View more</a>
-                            </div>
-                            
-            </div>
+  <div className="text-center">
+    <h5 className="card-title mt-2">{event.title}</h5>
+    <p className="event-dates mb-2">
+      <i className="fas fa-calendar-alt"></i> {new Date(event.dateDebut).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })} - {new Date(event.dateFin).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+    </p>
+    <div className="event-details mb-3">
+      <p className="event-place mb-1">
+        <i className="fas fa-map-marker-alt"></i> {event.place}
+      </p>
+    </div>
+    <div className="cardd-layer my-2">
+      <a href="#" className="btn btn-primary btn-sm">View more</a>
+    </div>
+  </div>
+</div>
+
+            <p className="event-price text-center my-2">
+    {event.price ? (
+      <span className="badge bg-primary">{event.price} TND</span>
+    ) : (
+      <span className="badge bg-success">Free Event</span>
+    )}
+  </p>
           </div>
         </article>
       </div>
     ))}
   </div>
-  <div className="text-center mt-5">
+{/*   <div className="text-center mt-5">
     <button className="btn btn-primary">View More Events</button>
-  </div>
+  </div> */}
 </div>
-
-
-
-
-
 
 </section>
 

@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { loadScripts } from "../scriptLoader";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGraduationCap, faTags, faCalendarAlt, faUsers, faClipboardList, faEnvelope, faBriefcase } from '@fortawesome/free-solid-svg-icons';
+import { jwtDecode } from "jwt-decode";
 
 
 function NavBar() {
@@ -14,7 +15,24 @@ function NavBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeNavItem, setActiveNavItem] = useState("");
+  const userRole = useSelector((state) => state.userRole);
+  const role = accessToken ? jwtDecode(accessToken).roles : null;
 
+  const getDashboardLink = () => {
+    if (!role) return "/"; // Default link if role is not available
+  
+    // Check each role individually
+    if (role.includes("student")) {
+      return "/dashboard-student";
+    } else if (role.includes("teacher")) {
+      return "/dashboard-teacher";
+    } else if (role.includes("admin") || role.includes("superAdmin")) {
+      return "/dashboard-admin";
+    } else {
+      return "/"; // Default link if role does not match any of the specified roles
+    }
+  };
+  
   const logoutHandler = () => {
     dispatch(setLogout());
 
@@ -112,7 +130,7 @@ function NavBar() {
                 {/* CORSUS */}
                 <li className="nav-item dropdown">
                   <a
-                    className={`nav-link dropdown-toggle ${activeNavItem === "/category" || activeNavItem === "/courses" ? "active" : ""}`}
+                    className={`nav-link dropdown-toggle ${activeNavItem === "/category" || activeNavItem === "/courses" || activeNavItem === "/stage" ? "active" : ""}`}
                     href="#"
                     id="demoMenu"
                     data-bs-toggle="dropdown"
@@ -145,10 +163,14 @@ function NavBar() {
                     </li>
                     <li>
                       {" "}
-                      <a className="dropdown-item" href="index-2.html">
-                      <FontAwesomeIcon icon={faBriefcase} className="fa-fw me-1" /> {/* Stages */}
-                        InternalShip
-                      </a>
+                      
+                      <Link 
+                         className={`dropdown-item ${activeNavItem === "/stage" ? "active" : ""}`}
+                         to="/stage"
+                         onClick={() => handleNavItemClick("/stage")}>
+                      <FontAwesomeIcon icon={faGraduationCap} className="fa-fw me-1" /> 
+                      Internship
+                      </Link>
                     </li>
                   </ul>
                 </li>
@@ -252,6 +274,16 @@ function NavBar() {
                     <hr />
                   </li>
                   {/* Links */}
+                  <li>
+  <Link
+    to={getDashboardLink()}
+    className="dropdown-item"
+  >
+    <i className="bi bi-grid-fill fa-fw me-1" /> {/* Replace "bi-person" with "bi-house-door" for a dashboard icon */}
+    Dashboard
+  </Link>
+</li>
+
                   <li>
                     <a className="dropdown-item" href="#">
                       <i className="bi bi-person fa-fw me-2" />
