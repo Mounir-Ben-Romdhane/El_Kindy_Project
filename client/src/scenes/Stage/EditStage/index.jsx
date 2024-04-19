@@ -144,17 +144,9 @@ function EditStage() {
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
-    //values.preventDefault();
-    // const formData = new FormData(values.target); // Create FormData object from form
-    // const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
-    // console.log("Values",formValues);
-    //await register(values, onSubmitProps);
-    //console.log("values",values);
-    //await addstage(values, onSubmitProps);
     values.preventDefault();
     const formData = new FormData(values.target); // Create FormData object from form
     const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
-    // console.log("Values",formValues);
     await updateStage(formValues, onSubmitProps);
   };
 
@@ -272,23 +264,23 @@ function EditStage() {
 
                     {/* stage time */}
                     <div className="col-md-6">
-                      <label className="form-label">stage time</label>
+                      <label className="form-label">stage start Date</label>
                       <input
                         className="form-control"
                         type="date"
                         name="startDate"
-
+                        value={stage.startDate}
                         required
                       />                    </div>
 
                     {/* stage price */}
                     <div className="col-md-6">
-                      <label className="form-label">stage price</label>
+                      <label className="form-label">stage finish Date</label>
                       <input
                         className="form-control"
                         type="date"
                         name="finishDate"
-
+                        value={stage.finishDate}
                         required
                       />                  </div>
 

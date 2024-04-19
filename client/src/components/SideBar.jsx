@@ -254,6 +254,13 @@ function SideBar() {
                 to="/listReservation" 
                 className={`nav-link ${activeNavItem === "/listReservation" ? "active" : ""}`}
                 onClick={() => handleNavItemClick("/listReservation")}>
+              
+{/* menu item Reservation Stage*/}
+<li className="nav-item">
+                <Link
+                to="/AdminReservationStage" 
+                className={`nav-link ${activeNavItem === "/AdminReservationStage" ? "active" : ""}`}
+                onClick={() => handleNavItemClick("/AdminReservationStage")}>
                   <FontAwesomeIcon
                     icon={faTicketAlt}
                     className="fa-fw me-1"
@@ -263,6 +270,10 @@ function SideBar() {
               </li>
 
 
+                  Internship Reservation
+                </Link>
+              </li>
+              
               {/* menu item events */}
               <li className="nav-item">
                 <Link
