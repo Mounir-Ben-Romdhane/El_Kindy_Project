@@ -4656,7 +4656,17 @@ textarea.form-control-lg {
 .tab-content > .active {
   display: block;
 }
+.fares{
+  overflow-y: auto;
+}
+.fares::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
 
+/* Change the color of the scrollbar thumb */
+.fares::-webkit-scrollbar-thumb {
+  background-color: #24292d; /* Color of the scrollbar thumb */
+}
 .navbar {
   position: relative;
   display: -webkit-box;
@@ -4713,6 +4723,8 @@ textarea.form-control-lg {
   margin-bottom: 0;
   list-style: none;
 }
+
+
 .navbar-nav .nav-link {
   padding-right: 0;
   padding-left: 0;

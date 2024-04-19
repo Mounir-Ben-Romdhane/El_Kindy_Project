@@ -92,13 +92,10 @@ function Index() {
           <div className="page-content-wrapper border">
             <div className="row mb-3">
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
+                <h1 className="h3 mb-2 mb-sm-0">List Event Reservations</h1>
+                <Link to="/listEventUser" className="btn btn-sm btn-primary me-1 mb-1 mb-md-0">Add a Reservation</Link>
                 <h1 className="h3 mb-2 mb-sm-0">List Reservations</h1>
-                <Link
-                  to="/listEventUser"
-                  className="btn btn-sm btn-primary me-1 mb-1 mb-md-0"
-                >
-                  Add a Reservation
-                </Link>
+             
               </div>
             </div>
 

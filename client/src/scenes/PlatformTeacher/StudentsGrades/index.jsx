@@ -5,6 +5,7 @@ import NavBar from "components/NavBar";
 import axios from "api/axios";
 import { jwtDecode } from "jwt-decode";
 import { useSelector } from "react-redux";
+import Footer from 'components/Footer';
 import StudentGrades from '../../../components/StudentGrade'; // Import the new component
 function Index() {
   const accessToken = useSelector((state) => state.accessToken);
@@ -125,6 +126,7 @@ function Index() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
