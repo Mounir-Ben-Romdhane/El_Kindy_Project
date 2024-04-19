@@ -1,9 +1,30 @@
-import react from  'react';
+import react, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-
+import { useDispatch } from "react-redux";
+import { setLogout } from "state";
 
 const  Index = () => {
-
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [activeNavItem, setActiveNavItem] = useState("");
+  
+    const logoutHandler = () => {
+      dispatch(setLogout());
+      navigate("/");
+    };
+  
+  
+    useEffect(() => {
+      // Set activeNavItem based on current location
+      const pathname = location.pathname;
+      setActiveNavItem(pathname);
+    }, [location]);
+  
+    const handleNavItemClick = (item) => {
+      setActiveNavItem(item === activeNavItem ? "" : item);
+    };
+  
 
    return (
        <>
@@ -22,7 +43,7 @@ const  Index = () => {
            <div className="bg-dark border rounded-3 pb-0 p-3 w-100">
                {/* Dashboard menu */}
                <div className="list-group list-group-dark list-group-borderless">
-                   <a className="list-group-item active" href="instructor-dashboard.html"><i className="bi bi-ui-checks-grid fa-fw me-2" />Dashboard</a>
+                   <Link className="list-group-item active" to="/dashbordStudent"><i className="bi bi-ui-checks-grid fa-fw me-2" />Dashboard</Link>
                    <Link className="list-group-item" to="/meetingHomeS"><i className="bi bi-basket fa-fw me-2" />Meeting En Ligne</Link>
 
                    <Link className="list-group-item" to="/planningStudent"><i className="bi bi-basket fa-fw me-2" />Planning</Link>
@@ -31,7 +52,11 @@ const  Index = () => {
                    <Link className="list-group-item" to="/TeachersList"  > <i className="bi bi-people fa-fw me-2" />Teachers</Link>
                    
                    <a className="list-group-item" href="instructor-edit-profile.html"><i className="bi bi-pencil-square fa-fw me-2" />Edit Profile</a>
-                   <a className="list-group-item text-danger bg-danger-soft-hover" href="sign-in.html"><i className="fas fa-sign-out-alt fa-fw me-2" />Sign Out</a>
+                   <a
+                    className="list-group-item text-danger bg-danger-soft-hover"
+                    href="#"
+                    onClick={logoutHandler}
+                  ><i className="fas fa-sign-out-alt fa-fw me-2" />Sign Out</a>
                </div>
            </div>
        </div>

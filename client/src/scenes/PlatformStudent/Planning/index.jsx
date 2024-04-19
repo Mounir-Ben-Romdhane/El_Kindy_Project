@@ -258,6 +258,8 @@ const MyCalendar = () => {
             </div>
           </div>
         </section>
+        <Footer />
+
       </main>
     </div>
   );

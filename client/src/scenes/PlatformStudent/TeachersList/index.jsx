@@ -8,6 +8,7 @@ import ChatBox from "../../../components/ChatBox/ChatBox";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
 import { createChat, findChat } from '../../../api/ChatRequests';
+import Footer from 'components/Footer';
 
 function Index() {
   const accessToken = useSelector((state) => state.accessToken);
@@ -179,7 +180,10 @@ useEffect(() => {
             )}
           </div>
         </div>
+
       </section>
+      <Footer />
+
     </div>
   )
 }
