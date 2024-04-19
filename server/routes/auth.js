@@ -1,9 +1,10 @@
 import express from "express";
-import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord, verifyAccount,getUser,getAllUserByRole, getTeachers, getStudents, getUserById } from "../controllers/auth.js"
+import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord, verifyAccount,getUser,getAllUserByRole, getTeachers, getStudents, getUserById, getTeacherById } from "../controllers/auth.js"
 import { verifyToken } from '../middleware/auth.js';
 import googleAuth from "../controllers/googleAuth.js";
 import { facebooklogin } from "../controllers/passport-facebook.js";
-import { addAdmin, addStudentAndParent, addTeacher, blockUser, removeUser, unblockUser, updateUser } from "../controllers/users.js";
+import { addAdmin, addStudentAndParent, addTeacher, blockUser, removeUser, unblockUser, updateStudent, updateTeacher, updateUser } from "../controllers/users.js";
+
 
 
 
@@ -24,6 +25,7 @@ router.post("/facebooklogin", facebooklogin);
 router.get('/getAll', verifyToken,getAllUsers);
 router.post("/googleAuth", googleAuth);
 router.get('/getAllUserByRole/:role',getAllUserByRole);
+router.get('/getTeacher/:teacherId', getTeacherById);
 
 //Add users
 router.post("/addAdmin", addAdmin);
@@ -37,7 +39,9 @@ router.delete("/removeUser/:userId", removeUser);
 router.get("/userById/:id", getUserById);
 
 // Update user
-router.put("/updateUser/:userId", updateUser);
+router.put("/updateAdmin/:userId", updateUser);
+router.put("/updateTeacher/:teacherId", updateTeacher);
+router.put("/updateStudent/:studentId", updateStudent);
 
 // blockUser and unblockUser
 router.put("/blockUser/:userId", blockUser);

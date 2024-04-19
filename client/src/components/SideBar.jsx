@@ -3,6 +3,9 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogout } from "../state";
 import { useSelector } from "react-redux";
+import { faConciergeBell } from '@fortawesome/free-solid-svg-icons';
+import { faTicketAlt } from '@fortawesome/free-solid-svg-icons';
+import { faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUsers,
@@ -245,6 +248,21 @@ function SideBar() {
               </li>
 
 
+              {/* menu item Reservation */}
+              <li className="nav-item">
+                <Link
+                to="/listReservation" 
+                className={`nav-link ${activeNavItem === "/listReservation" ? "active" : ""}`}
+                onClick={() => handleNavItemClick("/listReservation")}>
+                  <FontAwesomeIcon
+                    icon={faTicketAlt}
+                    className="fa-fw me-1"
+                  />{" "}
+                  Reservations
+                </Link>
+              </li>
+
+
               {/* menu item events */}
               <li className="nav-item">
                 <Link
@@ -252,10 +270,19 @@ function SideBar() {
                 className={`nav-link ${activeNavItem === "/listClasse" ? "active" : ""}`}
                 onClick={() => handleNavItemClick("/listClasse")}>
                   <FontAwesomeIcon icon={faSchool} className="fa-fw me-1" />{" "}
+                  Salle
+                </Link>
+              </li>
+               {/* menu item classess */}
+              <li className="nav-item">
+                <Link
+                to="/ListAllClasse" 
+                className={`nav-link ${activeNavItem === "/ListAllClasse" ? "active" : ""}`}
+                onClick={() => handleNavItemClick("/ListAllClasse")}>
+                  <FontAwesomeIcon icon={faSchool} className="fa-fw me-1" />{" "}
                   Classes
                 </Link>
               </li>
-
               {/* Menu item 9 */}
               <li className="nav-item">
                 {" "}

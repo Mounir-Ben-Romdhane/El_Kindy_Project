@@ -52,6 +52,8 @@ function Index() {
         }
   }, [accessToken, dispatch]);
 
+  console.log("courses : ",courses);
+
   const handleDelete = async (id) => {
     try {
       /*await fetch(`http://localhost:3001/course/delete/${id}`, {

@@ -3,69 +3,64 @@ import bcrypt from "bcrypt";
 import { sendEmail } from '../utils/sendMailer.js';
 import jwt from "jsonwebtoken";
 
-// Define the addTeacher function
 const addTeacher = async (req, res) => {
-    try {
-        // Extract required and optional teacher details from the request body
-        const { 
-            firstName, 
-            lastName, 
-            email, 
-            password, 
-            instrumentsTaught, 
-            classes,
-            dateOfBirth, 
-            address, 
-            gender, 
-            phoneNumber1, 
-            phoneNumber2, 
-            disponibilite, 
-            qualifications, 
-            experienceYears 
-        } = req.body;
+  try {
+      // Extract required and optional teacher details from the request body
+      const { 
+          firstName, 
+          lastName, 
+          email, 
+          password, 
+          coursesTaught, 
+          classesTeaching, // Updated field name
+          dateOfBirth, 
+          address, 
+          gender, 
+          phoneNumber1, 
+          phoneNumber2, 
+          disponibilite, 
+          qualifications, 
+          experienceYears 
+      } = req.body;
 
-        // Check if all required fields are provided
-        if (!firstName || !lastName || !email || !password || !instrumentsTaught || !classes) {
-            return res.status(400).json({ error: 'All required fields must be provided' });
-        }
+      const saltRounds = 10;
+      const salt = await bcrypt.genSalt(saltRounds);
+      const passwordHash = await bcrypt.hash(password, salt);
 
-        const saltRounds = 10;
-        const salt = await bcrypt.genSalt(saltRounds);
-        const passwordHash = await bcrypt.hash(password, salt);
+      // Create a new user with the role of 'teacher' and provided details
+      const newTeacher = new User({
+          firstName,
+          lastName,
+          email,
+          password: passwordHash,
+          passwordDecoded: password,
+          roles: ['teacher'],
+          dateOfBirth,
+          address,
+          gender,
+          phoneNumber1,
+          phoneNumber2,
+          disponibilite,
+          teacherInfo: {
+              coursesTaught,
+              classesTeaching, // Updated field name
+              qualifications,
+              experienceYears
+          }
+      });
 
-        // Create a new user with the role of 'teacher' and provided details
-        const newTeacher = new User({
-            firstName,
-            lastName,
-            email,
-            password: passwordHash,
-            passwordDecoded: password,
-            roles: ['teacher'],
-            dateOfBirth,
-            address,
-            gender,
-            phoneNumber1,
-            phoneNumber2,
-            disponibilite,
-            teacherInfo: {
-                instrumentsTaught,
-                classes,
-                qualifications,
-                experienceYears
-            }
-        });
+      // Save the new teacher to the database
+      await newTeacher.save();
 
-        // Save the new teacher to the database
-        await newTeacher.save();
-
-        // Send success response
-        res.status(201).json({ message: 'Teacher added successfully', teacher: newTeacher });
-    } catch (error) {
-        // If an error occurs, send error response
-        console.error('Error adding teacher:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+      // Send success response
+      res.status(201).json({ message: 'Teacher added successfully', teacher: newTeacher });
+  } catch (error) {
+      // If an error occurs, send error response
+      console.error('Error adding teacher:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
 };
+
 
 
 // Define the route handler to add a student and their parent
@@ -95,12 +90,17 @@ const addStudentAndParent = async (req, res) => {
             return res.status(400).json({ error: 'All required fields must be provided' });
         }
 
+        const saltRounds = 10;
+        const salt = await bcrypt.genSalt(saltRounds);
+        const passwordHash = await bcrypt.hash(password, salt);
+
         // Create a new user document for the student
         const student = new User({
             firstName,
             lastName,
             email,
-            password,
+            password: passwordHash,
+            passwordDecoded: password,
             dateOfBirth,
             address,
             gender,
@@ -111,11 +111,10 @@ const addStudentAndParent = async (req, res) => {
             studentInfo: {
                 classLevel,
                 coursesEnrolled,
-                parentInfo: {
-                    parentName,
-                    parentEmail,
-                    parentPhone
-                }
+                parentName,
+                parentEmail,
+                parentPhone
+                
             }
         });
 
@@ -337,6 +336,117 @@ const updateUser = async (req, res) => {
   }
 };
 
+// Update teacher
+const updateTeacher = async (req, res) => {
+  const teacherId = req.params.teacherId;
+  const teacherData = req.body;
+
+  try {
+    // Check if password is provided
+    if (teacherData.password) {
+      // If password is provided, hash it
+      const saltRounds = 10;
+      const salt = await bcrypt.genSalt(saltRounds);
+      const passwordHash = await bcrypt.hash(teacherData.password, salt);
+      // Set hashed password and decoded password in teacher data
+      teacherData.passwordDecoded = teacherData.password; // Update decoded password
+      teacherData.password = passwordHash;
+    }
+    
+    // Update user fields
+    const updatedTeacher = await User.findByIdAndUpdate(
+      teacherId,
+      {
+        $set: {
+          'firstName': teacherData.firstName,
+          'lastName': teacherData.lastName,
+          'email': teacherData.email,
+          'password': teacherData.password,
+          'passwordDecoded': teacherData.passwordDecoded,
+          'dateOfBirth': teacherData.dateOfBirth,
+          'address': teacherData.address,
+          'gender': teacherData.gender,
+          'phoneNumber1': teacherData.phoneNumber1,
+          'phoneNumber2': teacherData.phoneNumber2,
+          'disponibilite': teacherData.disponibilite,
+          'teacherInfo.coursesTaught': teacherData.coursesTaught,
+          'teacherInfo.classesTeaching': teacherData.classesTeaching,
+          'teacherInfo.qualifications': teacherData.qualifications,
+          'teacherInfo.experienceYears': teacherData.experienceYears
+        }
+      },
+      { new: true }
+    );
+
+    if (!updatedTeacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    res.status(200).json({ message: "Teacher updated successfully", teacher: updatedTeacher });
+  } catch (error) {
+    console.error("Error updating teacher:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const updateStudent = async (req, res) => {
+  const studentId = req.params.studentId;
+  const studentData = req.body;
+
+  try {
+      // Check if password is provided
+      if (studentData.password) {
+          // If password is provided, hash it
+          const saltRounds = 10;
+          const salt = await bcrypt.genSalt(saltRounds);
+          const passwordHash = await bcrypt.hash(studentData.password, salt);
+          // Set hashed password and decoded password in student data
+          studentData.passwordDecoded = studentData.password; // Update decoded password
+          studentData.password = passwordHash;
+      }
+
+      // Update user fields
+      const updatedStudent = await User.findByIdAndUpdate(
+          studentId,
+          {
+              $set: {
+                  'firstName': studentData.firstName,
+                  'lastName': studentData.lastName,
+                  'email': studentData.email,
+                  'password': studentData.password,
+                  'passwordDecoded': studentData.passwordDecoded,
+                  'dateOfBirth': studentData.dateOfBirth,
+                  'address': studentData.address,
+                  'gender': studentData.gender,
+                  'phoneNumber1': studentData.phoneNumber1,
+                  'phoneNumber2': studentData.phoneNumber2,
+                  'disponibilite': studentData.disponibilite,
+                  'studentInfo.classLevel': studentData.classLevel,
+                  'studentInfo.coursesEnrolled': studentData.coursesEnrolled,
+                  'studentInfo.parentName': studentData.parentName,
+                  'studentInfo.parentEmail': studentData.parentEmail,
+                  'studentInfo.parentPhone': studentData.parentPhone
+              }
+          },
+          { new: true }
+      );
+
+      if (!updatedStudent) {
+          return res.status(404).json({ message: "Student not found" });
+      }
+
+      res.status(200).json({ message: "Student updated successfully", student: updatedStudent });
+  } catch (error) {
+      console.error("Error updating student:", error);
+      res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
+
+
+
 // Define the blockUser function
 const blockUser = async (req, res) => {
   const userId = req.params.userId;
@@ -382,5 +492,5 @@ const unblockUser = async (req, res) => {
 
 
 // Export the route handler
-export { addStudentAndParent, addTeacher, addAdmin, removeUser, updateUser, blockUser, unblockUser };
+export { addStudentAndParent, addTeacher, addAdmin, removeUser, updateUser, updateTeacher, updateStudent,  blockUser, unblockUser };
 

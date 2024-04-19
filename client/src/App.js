@@ -28,6 +28,11 @@ import AddClassPage from "../src/scenes/Classe/AddClassPage";
 import Category from "../src/scenes/CategoryHome";
 import InscriptionPage from "./scenes/Inscriptions/InscriptionPage";
 import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
+import EditAllClass from "../src/scenes/AllClass/EditAllClass";
+import ListAllClass from "../src/scenes/AllClass/ListAllClass";
+import AddAllClass from "../src/scenes/AllClass/AddAllClass";
+
+
 
 import MeetingHomeStudent from "./scenes/PlatformStudent/MeetingHomeStudent";
 import DashbordTeacher from "./scenes/PlatformTeacher/DashbordTeacher";
@@ -58,11 +63,17 @@ import TeachersDashboard from "scenes/UsersAdmin/Teachers";
 import StudentsDashboard from "scenes/UsersAdmin/Students";
 import ParentsDashboard from "scenes/UsersAdmin/Parents";
 import ListCourses from "scenes/Courses/frontOffice/listCourses";
+
+import Success from "scenes/Payment/Success";
+import Fail from "scenes/Payment/Fail";
+import Payment from "scenes/Payment/Payment";
+
 import DetailsCourse from "scenes/Courses/frontOffice/detailsCourse";
 //Planning
 import PlanningTeacher from "./scenes/PlatformTeacher/Planning";
 import PlanningStudent from "./scenes/PlatformStudent/Planning";
 import Planning from "./scenes/Planning";
+
 
 function App() {
   const isAuth = Boolean(useSelector((state) => state.accessToken));
@@ -316,10 +327,30 @@ function App() {
         />
 
 
-        <Route path="/listReservation"
-          element={isAuth ? <AdminReservation /> : <Navigate to="/" />}
+       
+
+
+         <Route path="/payment" element={
+            <PrivateRoute
+              element={<Payment />}
+              requiredRoles={["superAdmin", "student"]}
+            />
+          } 
+          /> 
+
+<Route
+          path="/success"
+          element={ <Success />}
         />
 
+
+<Route
+          path="/fail"
+          element={ <Fail />}
+        />
+
+
+          
 
 
         <Route
@@ -366,6 +397,33 @@ function App() {
             <PrivateRoute
               element={<PlanningStudent />}
               requiredRoles={["superAdmin", "student"]}
+            />
+          }
+        />
+        <Route
+          path="/ListAllClasse"
+          element={
+            <PrivateRoute
+              element={<ListAllClass />}
+              requiredRoles={["superAdmin","admin"]}
+            />
+          }
+        />
+         <Route
+          path="/EditAllClasse/:id"
+          element={
+            <PrivateRoute
+              element={<EditAllClass />}
+              requiredRoles={["superAdmin","admin"]}
+            />
+          }
+        />
+         <Route
+          path="/AddAllClasse"
+          element={
+            <PrivateRoute
+              element={<AddAllClass />}
+              requiredRoles={["superAdmin","admin"]}
             />
           }
         />
