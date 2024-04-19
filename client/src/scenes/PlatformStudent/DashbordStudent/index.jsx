@@ -27,8 +27,6 @@ Page content START */}
 Page content END */}
 
 
-                <Footer />
-
 
 
 

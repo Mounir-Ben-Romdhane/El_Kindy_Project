@@ -33,8 +33,8 @@ const Room = () => {
 
   const myMeeting = (element) => {
     if (!meetingLoaded && decodeToken && decodeToken.fullName) {
-      const appID = 984376862;
-      const serverSecret = "7deae5e2a3a2361722b16d4867d0e1a3";
+      const appID = 601284725;
+      const serverSecret = "6407863a0afd45265fe09958043e1193";
       const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
         appID,
         serverSecret,
