@@ -2,7 +2,11 @@
 import React from 'react';
 import SideBarTeacher from 'components/SideBarTeacher';
 
+
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
+
+import NavBar from 'components/NavBar';
+import Footer from 'components/Footer';
 
 
 function Index() {
@@ -13,6 +17,8 @@ function Index() {
         <div>
             {/* **************** MAIN CONTENT START **************** */}
             <main>
+            <NavBar />
+
                 {/* hedha l partie l fou9aneya  */}
                 < TopBarTeacherStudent />
                 {/* =======================
@@ -75,6 +81,7 @@ Page content START */}
                 </section>
                 {/* =======================
 Page content END */}
+      <Footer />
 
             </main>
             {/* **************** MAIN CONTENT END **************** */}

@@ -24,10 +24,10 @@ function Index() {
         if (userRoles.includes('admin') || userRoles.includes('superAdmin')) {
           navigate("/dashboard-admin");
         }else if (userRoles.includes('teacher') )  {
-          navigate('/dashbordTeacher');
+          navigate('/dashboard-teacher');
         }
          else if(userRoles.includes('parent') || userRoles.includes('student')){
-            navigate("/dashbordStudent");
+            navigate("/dashboard-student");
 
         }
     }
@@ -106,11 +106,11 @@ function Index() {
           navigate("/dashboard-admin"); 
 
         }else if (userRoles.includes('teacher')){
-          navigate('/dashbordTeacher');
+          navigate('/dashboard-teacher');
         } 
         else if (userRoles.includes('student') || userRoles.includes('parent')) {
 
-            navigate("/dashbordStudent");
+            navigate("/dashboard-student");
         }
 
       }
