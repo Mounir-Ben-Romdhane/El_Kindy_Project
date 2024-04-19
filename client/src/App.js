@@ -28,6 +28,11 @@ import AddClassPage from "../src/scenes/Classe/AddClassPage";
 import Category from "../src/scenes/CategoryHome";
 import InscriptionPage from "./scenes/Inscriptions/InscriptionPage";
 import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
+import EditAllClass from "../src/scenes/AllClass/EditAllClass";
+import ListAllClass from "../src/scenes/AllClass/ListAllClass";
+import AddAllClass from "../src/scenes/AllClass/AddAllClass";
+
+
 
 import MeetingHomeStudent from "./scenes/PlatformStudent/MeetingHomeStudent";
 import DashbordTeacher from "./scenes/PlatformTeacher/DashbordTeacher";
@@ -448,9 +453,7 @@ function App() {
         />
 
 
-        <Route path="/listReservation"
-          element={isAuth ? <AdminReservation /> : <Navigate to="/" />}
-        />
+       
 
 
 
@@ -498,6 +501,33 @@ function App() {
             <PrivateRoute
               element={<PlanningStudent />}
               requiredRoles={["superAdmin", "student"]}
+            />
+          }
+        />
+        <Route
+          path="/ListAllClasse"
+          element={
+            <PrivateRoute
+              element={<ListAllClass />}
+              requiredRoles={["superAdmin","admin"]}
+            />
+          }
+        />
+         <Route
+          path="/EditAllClasse/:id"
+          element={
+            <PrivateRoute
+              element={<EditAllClass />}
+              requiredRoles={["superAdmin","admin"]}
+            />
+          }
+        />
+         <Route
+          path="/AddAllClasse"
+          element={
+            <PrivateRoute
+              element={<AddAllClass />}
+              requiredRoles={["superAdmin","admin"]}
             />
           }
         />

@@ -49,9 +49,7 @@ function Index() {
       {/* **************** MAIN CONTENT START **************** */}
       <main>
 
-
-      
-        <SideBar />
+    <SideBar />
         {/* Page content START */}
         <div className="page-content">
           <TopBarBack />

@@ -2,7 +2,7 @@ import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { blockUser, getAdmins, removeUser, unblockUser } from "services/usersService/api";
+import { blockUser, getUsers, removeUser, unblockUser } from "services/usersService/api";
 import AddUser from "../userCrud/addUser";
 import UpdateUser from "../userCrud/updateUser";
 
@@ -18,11 +18,23 @@ function AdminsDashboard() {
     setShowForm(!showForm);
     setShowFormUpdate(false); // Close the update form when toggling the add form
   };
+
+  const close = () => {
+    setShowForm(false);
+    setShowFormUpdate(false);
+  }
   
+  
+
   const handleToggleFormUpdate = (admin) => {
-    setAdmin(admin);
-    setShowFormUpdate(!showFormUpdate);
-    setShowForm(false); // Close the add form when toggling the update form
+    // If the update form is already shown, only change the teacher
+    if (showFormUpdate) {
+        setAdmin(admin);
+    } else {
+        setAdmin(admin);
+        setShowFormUpdate(true);
+        setShowForm(false); // Close the add form when toggling the update form
+    }
   };
   
 
@@ -67,7 +79,7 @@ function AdminsDashboard() {
 
   const fetchData = async () => {
     try {
-      const response = await getAdmins("admin");
+      const response = await getUsers("admin");
       setAdmins(response.data.data);
       setLoading(false);
     } catch (error) {
@@ -86,6 +98,7 @@ function AdminsDashboard() {
       // Call the removeUser function from your service
       await removeUser(userId);
       fetchData();
+      close();
     } catch (error) {
       console.error("Error removing user:", error);
       // Handle errors as needed
@@ -375,9 +388,9 @@ function AdminsDashboard() {
             </div>
           )}
 
-          {showForm && <AddUser onClose={handleToggleForm} fetchData={fetchData} />}
+          {showForm && <AddUser onClose={close} fetchData={fetchData} />}
 
-          {showFormUpdate && <UpdateUser user={admin} onClose={handleToggleFormUpdate} fetchData={fetchData} />}
+          {showFormUpdate && <UpdateUser user={admin} onClose={close} fetchData={fetchData} />}
 
         </div>
 
