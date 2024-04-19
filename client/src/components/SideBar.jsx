@@ -20,8 +20,6 @@ import {
   faBriefcase,
   faSchool,
 } from "@fortawesome/free-solid-svg-icons";
-import { faTicketAlt } from '@fortawesome/free-solid-svg-icons';
-
 function SideBar() {
   const accessToken = useSelector((state) => state.accessToken);
   const dispatch = useDispatch();
