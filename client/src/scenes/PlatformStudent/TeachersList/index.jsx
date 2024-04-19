@@ -19,6 +19,9 @@ function Index() {
   const [reciveeeeeerId, setReciveeeeeerId] = useState("");
   const axiosPrivate = useAxiosPrivate();
   const dispatch = useDispatch();
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [currentChat, setCurrentChat] = useState(null);
+  const [sendMessage, setSendMessage] = useState(null);
   const [receivedMessage, setReceivedMessage] = useState(null);
   const socket = useRef();
 
@@ -31,20 +34,23 @@ function Index() {
         const response = await axiosPrivate.get(`/auth/getAllUserByRole/teacher`, {
           signal: controller.signal
         });
-        setUsers(response.data);
+        console.log(response.data); // Log response data to see if it contains the list of teachers
+        setUsers(response.data.data); // Update the state with the array of teachers directly
       } catch (err) {
         if (!controller.signal.aborted) {
           console.error(err);
         }
       }
     }
-
+    
+  
     getUsers();
+    
     return () => {
       controller.abort();
     }
-  }, [accessToken, dispatch]);
-
+  }, [axiosPrivate]);
+  console.log("rrrrrrrrrrrrrr",users);
   // Dans votre composant Index
   const handleContact = async (id) => {
     try {
@@ -107,7 +113,7 @@ function Index() {
             <SideBarStudent />
             <div className="container col-md-9 mt-3">
               <div className="row">
-                {users.map((user) => (
+                {users?.map((user) => (
                   <div className="col-lg-6" key={user._id}>
                     <div className="card shadow p-2 mb-3">
                       <div className="row g-0">

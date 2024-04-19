@@ -26,7 +26,7 @@ function SideBar() {
   const location = useLocation();
   const [activeNavItem, setActiveNavItem] = useState("");
 
-  const isMembersActive = ["/admins", "/teachers", "/students", "/parents"].includes(activeNavItem);
+  const isMembersActive = ["/admins", "/teachers", "/students"].includes(activeNavItem);
 
   const logoutHandler = () => {
     dispatch(setLogout());
@@ -44,9 +44,9 @@ function SideBar() {
     setActiveNavItem(item === activeNavItem ? "" : item);
   };
 
-  return (
-    <div>
-      {/* Sidebar START */}
+  return (    
+    <div> 
+          {/* Sidebar START */}
       <nav className="navbar sidebar navbar-expand-xl navbar-dark bg-dark">
         {/* Navbar brand for xl START */}
         <div className="d-flex align-items-center justify-content-center">
@@ -67,6 +67,7 @@ function SideBar() {
           id="offcanvasSidebar"
         >
           <div className="offcanvas-body sidebar-content d-flex flex-column bg-dark">
+            <div className="fares">
             {/* Sidebar menu START */}
             <ul className="navbar-nav flex-column" id="navbar-sidebar">
               {/* Menu item 1 */}
@@ -144,19 +145,7 @@ function SideBar() {
                     </Link>
                   </li>
 
-                  <li className="nav-item">
-                    {" "}
-                    <Link 
-                    to="/parents" 
-                    className={`nav-link ${activeNavItem === "/parents" ? "active" : ""}`}
-                    onClick={() => handleNavItemClick("/parents")}>
-                      <FontAwesomeIcon
-                        icon={faUserTie}
-                        className="fa-fw me-1"
-                      />{" "}
-                      {/* Parent */}Parents
-                    </Link>
-                  </li>
+                  
                 </ul>
               </li>
               {/* Menu item inscriptions */}
@@ -240,13 +229,13 @@ function SideBar() {
                     icon={faTicketAlt}
                     className="fa-fw me-1"
                   />{" "}
-                  Reservations
+                  Event Reservations
                 </Link>
               </li>
               
-{/* menu item Reservation Stage*/}
-<li className="nav-item">
-                <Link
+            {/* menu item Reservation Stage*/}
+            <li className="nav-item">
+                            <Link
                 to="/AdminReservationStage" 
                 className={`nav-link ${activeNavItem === "/AdminReservationStage" ? "active" : ""}`}
                 onClick={() => handleNavItemClick("/AdminReservationStage")}>
@@ -304,7 +293,7 @@ function SideBar() {
                 </a>
               </li>
             </ul>
-            {/* Sidebar menu end */}
+            {/* Sidebar menu end */}</div>
             {/* Sidebar footer START */}
             <div className="px-3 mt-auto pt-3">
               <div className="d-flex align-items-center justify-content-between text-primary-hover">
