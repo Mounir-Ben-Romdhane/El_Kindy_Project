@@ -638,10 +638,6 @@ function App() {
           element={isAuth ? <EditClassPage /> : <Navigate to="/" />}
         />
 
-        <Route
-          path="/chat"
-          element={isAuth ? <Chat /> : <Navigate to="../auth" />}
-        />
 
         <Route path="/about" element={<AboutPage />} />
         <Route

@@ -1,9 +1,17 @@
 import react from  'react';
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setLogout } from "state";
 
 const  Index = () => {
+    const logoutHandler = () => {
+        dispatch(setLogout());
+        navigate("/");
+      };
 
-
+      const dispatch = useDispatch();
+      const navigate = useNavigate();
+      const location = useLocation();
    return (
        <>
 {/* Left sidebar START */}
@@ -30,8 +38,14 @@ const  Index = () => {
                    <Link className="list-group-item" to="/TeachersList"  > <i className="bi bi-people fa-fw me-2" />Teachers</Link>
                    
                    <a className="list-group-item" href="instructor-edit-profile.html"><i className="bi bi-pencil-square fa-fw me-2" />Edit Profile</a>
-                   <a className="list-group-item text-danger bg-danger-soft-hover" href="sign-in.html"><i className="fas fa-sign-out-alt fa-fw me-2" />Sign Out</a>
-               </div>
+                   <a
+                    className="list-group-item text-danger bg-danger-soft-hover"
+                    href="#"
+                    onClick={logoutHandler}
+                  >
+                    <i className="fas fa-sign-out-alt fa-fw me-2" />
+                    Sign Out
+                  </a>               </div>
            </div>
        </div>
    </div>

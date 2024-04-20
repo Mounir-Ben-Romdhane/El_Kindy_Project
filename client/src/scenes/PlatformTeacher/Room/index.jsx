@@ -150,7 +150,8 @@ const Room = () => {
   return (
     <div>
       {/* **************** MAIN CONTENT START **************** */}
-      <main>    <NavBar />
+      <main>   
+         <NavBar />
 
         {/* hedha l partie l fou9aneya  */}
         <TopBarTeacherStudent />
