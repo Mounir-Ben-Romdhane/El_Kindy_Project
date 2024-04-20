@@ -48,6 +48,8 @@ function Index() {
       <main>
         <NavBar />
         {/* hedha l partie l fou9aneya  */}
+        <NavBar />
+
         <TopBarTeacherStudent />
         {/* =======================
                 Page content START */}

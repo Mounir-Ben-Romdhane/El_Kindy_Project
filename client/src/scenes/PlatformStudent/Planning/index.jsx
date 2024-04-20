@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Calendar, momentLocalizer } from "react-big-calendar";
@@ -175,12 +173,12 @@ const MyCalendar = () => {
   const MyEvent = ({ event }) => {
     const teacher = teachers.find((t) => t._id === event.teacherId);
     const student = students.find((s) => s._id === event.studentId);
-    const teacherName = teacher ? `${teacher.firstName} ${teacher.lastName}` : "Enseignant inconnu";
+    {/*const teacherName = teacher ? `${teacher.firstName} ${teacher.lastName}`: "Enseignant inconnu";*/}
 
     return (
       <div>
         <strong>{event.title}</strong>
-        <div>Teacher: {teacherName}</div>
+        {/*<div>Teacher: {teacherName}</div>*/}
       </div>
     );
   };
@@ -228,7 +226,7 @@ const MyCalendar = () => {
                               startAccessor="start"
                               endAccessor="end"
                               dayLayoutAlgorithm={'overlap'} // Ajustez la taille des cases en fonction des événements qui se chevauchent
-                              style={{ height: '2500px', width: "70%"  }} // Augmentez la hauteur du calendrier pour afficher plus de cases
+                              style={{ height: '700px', width: "70%"  }} // Augmentez la hauteur du calendrier pour afficher plus de cases
                                                         formats={formats}
                               eventPropGetter={(event) => ({
                                 style: { backgroundColor: event.color },
@@ -258,11 +256,11 @@ const MyCalendar = () => {
             </div>
           </div>
         </section>
+        <Footer />
+
       </main>
     </div>
   );
 };
 
 export default MyCalendar;
-
-
