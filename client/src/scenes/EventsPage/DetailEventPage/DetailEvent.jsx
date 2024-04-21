@@ -145,7 +145,7 @@ function DetailEvents() {
   const initiatePayment = async () => {
     try {
 
-      const totalAmount = eventDetails.price * reservation.numberOfReservations;
+      const totalAmount = eventDetails.price * reservation.numberOfReservations * 1000;
 
       const paymentData = {
         amount: totalAmount,

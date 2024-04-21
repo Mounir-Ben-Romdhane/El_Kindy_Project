@@ -85,16 +85,26 @@ export const createReservation = async (req, res) => {
 
     // Calculate payment amount based on event price and numberOfReservations
 
-    const eventPrice = parseFloat(eventDetails.price); // Convert to float
-    const numReservations = parseInt(numberOfReservations, 10); // Convert to integer
+    const eventPrice = parseFloat(eventDetails.price); 
 
-    const amountInMillimes = eventPrice * 1000 * numReservations; // Validate expected result
+    // Check for NaN (Not a Number) in the parsed event price
+    if (isNaN(eventPrice)) {
+  throw new Error("Invalid event price. Please check the data source.");
+  }
+
+  // Parse the number of reservations with base 10 and validate
+const numReservations = parseInt(numberOfReservations, 10);
+if (isNaN(numReservations)) {
+    throw new Error("Invalid number of reservations. Please check the input.");
+}
+
+    const amountInMillimes = eventPrice * 1000 * numReservations; 
 
     console.log("Event Price:", eventPrice); // Should match expected event price
   console.log("Number of Reservations:", numReservations); // Should match expected count
   console.log("Amount in Millimes:", amountInMillimes); // Should reflect correct calculation
     // Prepare payment payload including numberOfReservations
-    const paymentPayload = { amount: amountinMillimes };
+    const paymentPayload = { amount: amountInMillimes };
 
     // Make payment request
     axios.post('http://localhost:3001/payment/payment', paymentPayload)
