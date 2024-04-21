@@ -4,7 +4,8 @@ import Reservation from "../models/Reservation.js";
 
 // Add a new reservation
 export async function Add(req, res) {
-    const { eventId, userName, userEmail, phoneNumber, amount } = req.body;
+    const { eventId, userName, userEmail, phoneNumber, amount , numberOfReservations} = req.body;
+    console.log("Received request body:", req.body);
     const payload = {
         "app_token": "a1e02adf-ac26-42dd-ac2c-bcce4039c770",
         "app_secret": process.env.flouci_secret,
@@ -27,9 +28,10 @@ export async function Add(req, res) {
             userEmail,
             phoneNumber,
             status: 'pending',
-            paymentId
+            paymentId,
+            numberOfReservations
         });
-        console.log("Payload to save reservation:", { eventId, userName, userEmail, phoneNumber, paymentId });
+        console.log("Payload to save reservation:", { eventId, userName, userEmail, phoneNumber, paymentId,numberOfReservations });
         await tempReservation.save();
 
 

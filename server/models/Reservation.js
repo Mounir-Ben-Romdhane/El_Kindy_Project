@@ -12,7 +12,7 @@ const reservationSchema = new mongoose.Schema({
     default: 'pending' 
   },
   paymentId: { type: String }, 
-  numberOfReservations: { type: Number, default: 1 },                                     
+  numberOfReservations: { type: Number, required: true, min: 1 },                                    
 });
 
 const Reservation = mongoose.model("Reservation", reservationSchema);
