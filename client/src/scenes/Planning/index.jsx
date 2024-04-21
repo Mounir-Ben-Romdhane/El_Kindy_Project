@@ -124,6 +124,8 @@ const MyEvent = ({ event }) => {
     // Vérifier d'abord si les noms des enseignants et des étudiants sont disponibles
     const teacher = teachers.find((t) => t._id === event.teacherId);
     const student = students.find((s) => s._id === event.studentId);
+    const course = courses.data.find((s) => s._id === event.courseId);
+
     const classe = Array.isArray(classes) ? classes.find((s) => s._id === event.classId) : null;
 
     // Si les noms des enseignants et des étudiants ne sont pas disponibles, affichez "Loading..."
@@ -133,6 +135,8 @@ const MyEvent = ({ event }) => {
     // Les noms des enseignants et des étudiants sont disponibles, construisez le composant avec les noms
     const teacherName = teacher ? `${teacher.firstName} ${teacher.lastName}` : "";
     const studentName = student ? `${student.firstName} ${student.lastName}` : "";
+    const courseName = course ? `${course.title}` : "";
+
     const displayStudent = event.studentId && studentName ? `Student: ${studentName}` : "";
 
     // Afficher "Teacher :" si l'enseignant est sélectionné, sinon afficher "Student :"
@@ -143,7 +147,7 @@ const MyEvent = ({ event }) => {
 
     return (
         <div>
-            <strong>{event.title}</strong>
+            <strong>{courseName}</strong>
             <div>{displayLabel} {event.teacherId ? teacherName : studentName}</div>
 
             {displayClass && <div>{displayClass}</div>}
@@ -269,6 +273,9 @@ axios.get(`http://localhost:3001/auth/getTeacher/${teacherId}`)
             color, // Stockez la couleur avec l'événement
             teacherId: event.selectedTeacherId,
             studentId: event.selectedStudentId,
+            courseId: event.courseId,
+
+            
             id: event._id,
 
           };
@@ -315,10 +322,10 @@ axios.get(`http://localhost:3001/auth/getTeacher/${teacherId}`)
     setShowModal(false);
     const roomId = event.roomId;
     const roomExists = rooms.some((room) => room._id === roomId);
+   
     const selectedCourse = courses.data.find(
       (course) => course._id === event.courseId
     );
-  
     // Vérifiez si selectedCourse est défini avant d'accéder à sa propriété title
     const courseTitle = selectedCourse
       ? selectedCourse.title
@@ -334,6 +341,7 @@ axios.get(`http://localhost:3001/auth/getTeacher/${teacherId}`)
       teacherId: event.teacherId || null,
       classId: event.classId || null,
       studentId: event.studentId || null,
+      courseId: event.courseId || null,
 
       // Assurez-vous que la valeur de teacherId ou classId soit correctement définie en fonction de la logique de votre application
     };
@@ -375,11 +383,12 @@ axios.get(`http://localhost:3001/auth/getTeacher/${teacherId}`)
   const addOrUpdateEvent = async (event) => {
     setShowModal(false);
     const roomId = event.resourceId;
-  
+    const courseId = event.courseId; // Assurez-vous que cette ligne est présente et correcte
+
     if (editEventDetails) {
       await updateEvent(event); // Passer l'ID de l'événement ici
     } else {
-      await addNewEvent({ ...event, id: Math.random().toString() });
+      await addNewEvent({ ...event, id: Math.random().toString(), courseId });
     }
     setEditEventDetails(null);
   };
