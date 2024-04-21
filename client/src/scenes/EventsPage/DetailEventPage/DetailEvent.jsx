@@ -43,6 +43,7 @@ function DetailEvents() {
     name: "",
     email: "",
     phoneNumber: "",
+    numberOfReservations: 1,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -83,9 +84,16 @@ function DetailEvents() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setReservation((reservation) => ({
-      ...reservation,
+    setReservation((prev) => ({
+      ...prev,
       [name]: value,
+    }));
+  };
+
+  const incrementDecrementReservation = (increment = true) => {
+    setReservation(prev => ({
+      ...prev,
+      numberOfReservations: increment ? prev.numberOfReservations + 1 : Math.max(1, prev.numberOfReservations - 1),
     }));
   };
 
@@ -95,7 +103,7 @@ function DetailEvents() {
     setIsSubmitting(true);
   
     try {
-      if (!eventDetails.price || parseFloat(eventDetails.price) === 0) {
+      if (!eventDetails.price) {
         // Event is free, submit reservation directly
         await submitReservation();
       } else {
@@ -117,6 +125,8 @@ function DetailEvents() {
         userName: reservation.name,
         userEmail: reservation.email,
         phoneNumber: reservation.phoneNumber,
+        numberOfReservations: reservation.numberOfReservations,
+        amount: parseFloat(eventDetails.price || 0) === 0 ? 0 : eventDetails.price * reservation.numberOfReservations,
       };
       const response = await axios.post(url, dataToSend);
       console.log("Reservation response:", response.data);
@@ -125,6 +135,7 @@ function DetailEvents() {
         autoClose: 2000,
       });
     } catch (error) {
+      console.error("Reservation failed:", error.response ? error.response.data : error.message);
       throw new Error("Failed to submit reservation.");
     }
   }; 
@@ -133,8 +144,11 @@ function DetailEvents() {
   
   const initiatePayment = async () => {
     try {
+
+      const totalAmount = eventDetails.price * reservation.numberOfReservations;
+
       const paymentData = {
-        amount: eventDetails.price,
+        amount: totalAmount,
         userName: reservation.name,
         userEmail: reservation.email,
         phoneNumber: reservation.phoneNumber,

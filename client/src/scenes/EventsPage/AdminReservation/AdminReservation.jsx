@@ -155,6 +155,7 @@ function Index() {
                         <th scope="col" className="border-0">
                           Phone Number
                         </th>
+                        <th scope="col" className="border-0">Number of Reservations</th> {/* Added new column header */}
                         <th scope="col" className="border-0">
                           Status
                         </th>
@@ -174,6 +175,7 @@ function Index() {
                           <td>{reservation.userName}</td>
                           <td>{reservation.userEmail}</td>
                           <td>{reservation.phoneNumber}</td>
+                          <td>{reservation.numberOfReservations}</td>
                           <td>
                             {reservation.status === "pending" && (
                               <span className="badge bg-warning bg-opacity-15 text-warning">
