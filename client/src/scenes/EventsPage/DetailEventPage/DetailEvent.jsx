@@ -152,7 +152,7 @@ function DetailEvents() {
         userName: reservation.name,
         userEmail: reservation.email,
         phoneNumber: reservation.phoneNumber,
-        eventId: eventDetails.id,
+        eventId: eventDetails._id,
       };
       const response = await axios.post(
         `http://localhost:3001/payment/payment`,

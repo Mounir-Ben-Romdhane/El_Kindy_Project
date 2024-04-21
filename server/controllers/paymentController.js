@@ -29,6 +29,7 @@ export async function Add(req, res) {
             status: 'pending',
             paymentId
         });
+        console.log("Payload to save reservation:", { eventId, userName, userEmail, phoneNumber, paymentId });
         await tempReservation.save();
 
 
