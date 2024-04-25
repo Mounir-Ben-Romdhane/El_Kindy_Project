@@ -7,7 +7,6 @@ import { jwtDecode } from "jwt-decode";
 import { loadScripts } from "../scriptLoader";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGraduationCap, faTags, faCalendarAlt, faUsers, faClipboardList, faEnvelope, faBriefcase } from '@fortawesome/free-solid-svg-icons';
-import { jwtDecode } from "jwt-decode";
 
 
 

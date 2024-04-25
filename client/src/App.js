@@ -77,6 +77,8 @@ import DetailsCourse from "scenes/Courses/frontOffice/detailsCourse";
 import PlanningTeacher from "./scenes/PlatformTeacher/Planning";
 import PlanningStudent from "./scenes/PlatformStudent/Planning";
 import Planning from "./scenes/Planning";
+import Assignment from "./scenes/PlatformTeacher/Assignment";
+import AssignmentStudent from "./scenes/PlatformStudent/Assignment";
 
 
 function App() {
@@ -534,6 +536,25 @@ function App() {
             <PrivateRoute
               element={<PlanningStudent />}
               requiredRoles={["superAdmin", "student"]}
+            />
+          }
+        />
+        
+        <Route
+          path="/assignmentStudent"
+          element={
+            <PrivateRoute
+              element={<AssignmentStudent />}
+              requiredRoles={["superAdmin", "student"]}
+            />
+          }
+        />
+         <Route
+          path="/assignments"
+          element={
+            <PrivateRoute
+              element={<Assignment />}
+              requiredRoles={["superAdmin", "teacher", "student"]}
             />
           }
         />
