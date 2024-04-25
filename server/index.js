@@ -11,6 +11,8 @@ import { fileURLToPath } from "url";
 import { addNewCourse, updateCourse } from "./controllers/courseController.js";
 import { addNewEvent,updateEvent } from "./controllers/event.js";
 import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
+import  { createShop, updateShop }  from "./controllers/ShopController.js"; // Import des routes de shop
+import shopRoute from "./routes/ShopRoute.js";
 import eventRoutes from "./routes/Event.js";
 import classRoute from "./routes/ClassRoutes.js";
 
@@ -89,6 +91,10 @@ app.use("/planning", planningRoutes);
 app.post("/api/categories", upload.single("picture"), createCategorie);
 app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
 
+
+app.post("/shops", upload.single("picture"), createShop);
+app.put("/shops/:id", upload.single("picture"), updateShop);
+
 app.post("/api/stage", upload.single("picture"), createStage);
 app.patch("/api/stage/:id", upload.single("picture"),updateStage );
 
@@ -122,6 +128,7 @@ app.use("/auth",authRoutes);
 app.use("/api/categories", categorieRoutes); 
 app.use("/stage",stageRouter);
 app.use('/classes', classRoute);
+app.use('/shops', shopRoute);
 
 app.use('/event', eventRoutes);
 app.use("/course",courseRoute);

@@ -19,6 +19,7 @@ import {
   faCalendarAlt,
   faBriefcase,
   faSchool,
+  faBasketShopping
 } from "@fortawesome/free-solid-svg-icons";
 function SideBar() {
   const accessToken = useSelector((state) => state.accessToken);
@@ -204,6 +205,19 @@ function SideBar() {
                     className="fa-fw me-1"
                   />{" "}
                   Courses
+                </Link>
+              </li>
+              {/* menu item courses */}
+              <li className="nav-item">
+                <Link 
+                to="/BackListShop" 
+                className={`nav-link ${activeNavItem === "/BackListShop" ? "active" : ""}`}
+                onClick={() => handleNavItemClick("/BackListShop")}>
+                  <FontAwesomeIcon
+                    icon={faBasketShopping}
+                    className="fa-fw me-1"
+                  />{" "}
+                  Shop 
                 </Link>
               </li>
 

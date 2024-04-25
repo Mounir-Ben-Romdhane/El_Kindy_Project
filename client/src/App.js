@@ -32,8 +32,7 @@ import EditAllClass from "../src/scenes/AllClass/EditAllClass";
 import ListAllClass from "../src/scenes/AllClass/ListAllClass";
 import AddAllClass from "../src/scenes/AllClass/AddAllClass";
 
-
-
+import ListShop from "../src/scenes/Shop/ShopHome/ListShop";
 import MeetingHomeStudent from "./scenes/PlatformStudent/MeetingHomeStudent";
 import DashbordTeacher from "./scenes/PlatformTeacher/DashbordTeacher";
 import HomePagee from "../src/scenes/PlatformTeacher/HomePagee";
@@ -42,7 +41,8 @@ import Room from "../src/scenes/PlatformTeacher/Room";
 
 import TeachersList from "../src/scenes/PlatformStudent/TeachersList";
 import Chat from "../src/scenes/Chat/Chat";
-
+import BackListShop from "../src/scenes/Shop/BackShop/BackListShop";
+import BackDetailsShop from "../src/scenes/Shop/BackShop/BackDetailsShop"
 import ListMeetingTeacher from 'scenes/PlatformTeacher/ListMeetingTeacher'
 
 
@@ -161,8 +161,8 @@ function App() {
           element={isAuth ? <TeachersList /> : <Navigate to="/" />}
 />
           
-            
-          
+
+
         
 
         <Route
@@ -372,6 +372,33 @@ function App() {
             />
           }
         />
+         <Route
+          path="/ListShop"
+          element={
+            <PrivateRoute
+              element={<ListShop />}
+              requiredRoles={["superAdmin", "student", "teacher","admin"]}
+            />
+          }
+        />
+        <Route
+          path="/BackListShop"
+          element={
+            <PrivateRoute
+              element={<BackListShop />}
+              requiredRoles={["superAdmin", "student", "teacher","admin"]}
+            />
+          }
+        />  
+        <Route
+          path="/BackDetailsShop/:id"
+          element={
+            <PrivateRoute
+              element={<BackDetailsShop />}
+              requiredRoles={["superAdmin", "student", "teacher","admin"]}
+            />
+          }
+        /> 
 
         <Route
           path="/planningTeacher"
