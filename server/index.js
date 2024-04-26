@@ -15,7 +15,6 @@ import  { createShop, updateShop }  from "./controllers/ShopController.js"; // I
 import shopRoute from "./routes/ShopRoute.js";
 import eventRoutes from "./routes/Event.js";
 import classRoute from "./routes/ClassRoutes.js";
-
 import salleRoutes from "./routes/salle.js";
 import inscriptionRoutes from "./routes/inscriptionRoutes.js";
 import stageRouter  from "./routes/stageRoute.js";
@@ -43,7 +42,7 @@ import paymentRouter from "./routes/paymentRouter.js";
 
 import planningRoutes from "./routes/planningRoutes.js";
 
-
+import ReservationStage from "./routes/ReservationStage.js";
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -57,7 +56,6 @@ app.use(morgan("common"));
 app.use(bodyParser.json({limit: "30mb", extended: true}));
 app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
 
-app.use(cors());
 
 // Configure CORS to allow requests from http://localhost:3000
 app.use(cors({
@@ -128,22 +126,24 @@ app.use("/auth",authRoutes);
 app.use("/api/categories", categorieRoutes); 
 app.use("/stage",stageRouter);
 app.use('/classes', classRoute);
+<<<<<<< HEAD
 app.use('/shops', shopRoute);
 
+=======
+>>>>>>> 790e46656f6e028ff70d64dee2215109ebad9a5c
 app.use('/event', eventRoutes);
 app.use("/course",courseRoute);
 app.use("/salle",salleRoutes);
 app.use("/inscription", inscriptionRoutes);
-
-app.use('/chat', ChatRoute)
-app.use('/message', MessageRoute)
+app.use('/chat', ChatRoute);
+app.use('/message', MessageRoute);
 app.use('/meeting', meetingRoutes);
 app.use("/events",reservationRoutes);
 
 app.use("/payment",paymentRouter);
 
 
-
+app.use("/reservationstage", ReservationStage);
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
 mongoose.connect(process.env.MONGO_URL, {

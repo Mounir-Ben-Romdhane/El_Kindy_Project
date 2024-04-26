@@ -1,4 +1,4 @@
-import { axiosPrivate, axiosPublic } from "api/axios";
+import {  axiosPublic } from "api/axios";
 
 export const getUsers = async (role) => {
     const reponse = await axiosPublic.get(`/auth/getAllUserByRole/${role}`);
