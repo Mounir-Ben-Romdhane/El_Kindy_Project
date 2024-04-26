@@ -19,6 +19,8 @@ import {
   faCalendarAlt,
   faBriefcase,
   faSchool,
+  faBasketShopping
+
 } from "@fortawesome/free-solid-svg-icons";
 
 function SideBar() {
@@ -122,6 +124,22 @@ function SideBar() {
                     <li className="nav-item">
                       {" "}
                       <Link
+
+                      {" "}
+                      <Link
+                        to="/admins"
+                        className={`nav-link ${activeNavItem === "/admins" ? "active" : ""}`}
+                        onClick={() => handleNavItemClick("/admins")}>
+                        <FontAwesomeIcon
+                          icon={faUserShield}
+                          className="fa-fw me-1"
+                        />{" "}
+                        {/* Admin */}Admins
+                      </Link>
+                    </li>
+                    <li className="nav-item">
+                      {" "}
+                      <Link
                         to="/teachers"
                         className={`nav-link ${activeNavItem === "/teachers" ? "active" : ""}`}
                         onClick={() => handleNavItemClick("/teachers")}>
@@ -196,10 +214,103 @@ function SideBar() {
                     Courses
                   </Link>
                 </li>
+                {/* menu item courses */}
+              <li className="nav-item">
+                <Link 
+                to="/BackListShop" 
+                className={`nav-link ${activeNavItem === "/BackListShop" ? "active" : ""}`}
+                onClick={() => handleNavItemClick("/BackListShop")}>
+                  <FontAwesomeIcon
+                    icon={faBasketShopping}
+                    className="fa-fw me-1"
+                  />{" "}
+                  Shop 
+                </Link>
+              </li>
 
                 {/* menu item events */}
                 <li className="nav-item">
                   <Link
+                    to="/ListStage"
+                    className={`nav-link ${activeNavItem === "/ListStage" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/ListStage")}>
+                    <FontAwesomeIcon icon={faBriefcase} className="fa-fw me-1" />{" "}
+                    Internship
+
+                  </ul>
+                </li>
+                {/* Menu item inscriptions */}
+                <li className="nav-item">
+                  {" "}
+                  <Link
+                    to="/inscriptionsList"
+                    className={`nav-link ${activeNavItem === "/inscriptionsList" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/inscriptionsList")}>
+                    <FontAwesomeIcon
+                      icon={faClipboardList}
+                      className="fa-fw me-1"
+                    />{" "}
+                    {/* Preinscription */}Inscriptions
+                  </Link>
+                </li>
+                {/* menu item category */}
+                <li className="nav-item">
+                  <Link
+                    to="/listCategories"
+                    className={`nav-link ${activeNavItem === "/listCategories" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/listCategories")}>
+                    <FontAwesomeIcon icon={faTags} className="fa-fw me-1" />{" "}
+                    {/* Category Courses */}Category
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link
+                    to="/Planning"
+                    className={`nav-link ${activeNavItem === "/Planning" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/Planning")}>
+                    <FontAwesomeIcon icon={faTags} className="fa-fw me-1" />{" "}
+                    {/* Category Courses */}Planning
+                  </Link>
+                </li>
+                {/* menu item courses */}
+                <li className="nav-item">
+                  <Link
+                    to="/listCourses"
+                    className={`nav-link ${activeNavItem === "/listCourses" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/listCourses")}>
+                    <FontAwesomeIcon
+                      icon={faGraduationCap}
+                      className="fa-fw me-1"
+                    />{" "}
+                    Courses
+                  </Link>
+                </li>
+
+                {/* menu item events */}
+                <li className="nav-item">
+                  <Link
+                    to="/listEvents"
+                    className={`nav-link ${activeNavItem === "/listEvents" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/listEvents")}>
+                    <FontAwesomeIcon
+                      icon={faCalendarAlt}
+                      className="fa-fw me-1"
+                    />{" "}
+                    Events
+                  </Link>
+                </li>
+                {/* menu item Reservation */}
+                <li className="nav-item">
+                  <Link
+                    to="/listReservation"
+                    className={`nav-link ${activeNavItem === "/listReservation" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/listReservation")}>
+                    <FontAwesomeIcon
+                      icon={faTicketAlt}
+                      className="fa-fw me-1"
+                    />{" "}
+                    Event Reservations
+
                     to="/ListStage"
                     className={`nav-link ${activeNavItem === "/ListStage" ? "active" : ""}`}
                     onClick={() => handleNavItemClick("/ListStage")}>
@@ -234,6 +345,18 @@ function SideBar() {
                     Event Reservations
                   </Link>
                 </li>
+
+                {/* menu item Reservation */}
+                <li className="nav-item">
+                  <Link
+                    to="/listReservation"
+                    className={`nav-link ${activeNavItem === "/listReservation" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/listReservation")}>
+
+                    {/* menu item Reservation Stage*/}
+                  
+
+
 
 
                 {/* menu item Reservation */}
