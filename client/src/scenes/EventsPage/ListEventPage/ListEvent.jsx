@@ -1,38 +1,87 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import BannerStart from "components/BannerStart";
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
+import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-notifications/lib/notifications.css";
-import { Link, useNavigate, useParams } from "react-router-dom";
 
-function Index() {
-  const [sortBy, setSortBy] = useState(null);
-  const [events, setEvents] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    entriesPerPage: 8,
+import { Link, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+
+function EditEvent() {
+  const [formState, setFormState] = useState({
+    title: "",
+    description: "",
+    price: "",
+    dateDebut: "",
+    dateFin: "",
   });
 
-  const handleSortChange = (e) => {
-    setSortBy(e.target.value);
-    console.log(e.target.value);
-  };
+  const [imageName, setImageName] = useState(null);
+  const [previewImageUrl, setPreviewImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState(null);
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const fetchEvents = async () => {
-    try {
-      const response = await axios.get("http://localhost:3001/event/events");
-      const sortedEvents = sortEvents(response.data);
-      setEvents([...sortedEvents]);
-    } catch (error) {
-      console.error("Error Fetching Events:", error);
+  const handleImageSelect = (event) => {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+        setImageName(selectedFile.name);
+        setImageFile(selectedFile);
+        const tempUrl = URL.createObjectURL(selectedFile);
+        setPreviewImageUrl(tempUrl); 
     }
+};
+
+const handleRemoveImage = () => {
+  setImageName(null);
+  setImageFile(null);
+  setPreviewImageUrl(""); // Clear the preview image URL
+  document.getElementById("picture").value = ""; // Reset the file input
+};
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/event/events/${id}`
+        );
+
+        const eventData = response.data;
+        setFormState({
+          title: eventData.title,
+          description: eventData.description,
+          price: eventData.price,
+          dateDebut: formatDate(eventData.dateDebut),
+          dateFin: formatDate(eventData.dateFin),
+        });
+        if (eventData.picturePath) { 
+          setPreviewImageUrl(`http://localhost:3001/assets/${eventData.picturePath}`);
+          setImageName(eventData.picturePath); 
+        }
+      } catch (error) {
+        console.error("Error Fetching Event:", error);
+      }
+    };
+    fetchEvent();
+  }, [id]);
+
+  const handleEventChange = (event) => {
+    const { name, value } = event.target;
+    setFormState((prevState) => ({
+        ...prevState,
+        [name]: value,
+    }));
+};
+
+  // Function to format date to "yyyy-MM-dd"
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
 
   const sortEvents = (events) => {
@@ -57,107 +106,156 @@ function Index() {
     } else {
       console.log("No sorting");
       return events;
-    }
-  };
 
-  const deleteEvents = async (id) => {
+  const handleFormSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("title", formState.title);
+    formData.append("description", formState.description);
+    formData.append("price", formState.price);
+    formData.append("dateDebut", formatDate(formState.dateDebut));
+    formData.append("dateFin", formatDate(formState.dateFin));
+    if (imageFile) {
+      formData.append("picture", imageFile);
+    }
+    
     try {
-      await axios.delete(`http://localhost:3001/event/events/${id}`);
-      const updatedEvents = events.filter((event) => event._id !== id);
-      setEvents(updatedEvents);
-      toast.success("Event Deleted successfully !!", {
-        autoClose: 1500,
-        style: { color: "green" },
-      });
+      const response = await axios.patch(
+        `http://localhost:3001/event/update/${id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (response.status === 200) {
+        toast.success("Event updated successfully !!", {
+          autoClose: 1500,
+          style: { color: "green" },
+        });
+        navigate("/listEvents");
+      } else {
+        toast.error("Failed to update event");
+      }
     } catch (error) {
-      console.error("Error deleting event:", error);
-      alert("Failed to delete event");
+      console.error("Error Updating Event:", error);
+      toast.error("Failed to update event");
     }
-  };
-
-  // Filter events based on search query
-  const filteredEvents = events.filter(
-    (event) =>
-      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.dateDebut.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.dateFin.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (event.price && event.price.toString().includes(searchQuery))
-  );
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setPagination({ ...pagination, currentPage: 1 }); // Reset pagination to first page when search query changes
-  };
-
-  const indexOfLastEntry = pagination.currentPage * pagination.entriesPerPage;
-  const indexOfFirstEntry = indexOfLastEntry - pagination.entriesPerPage;
-  const currentEntries = filteredEvents.slice(
-    indexOfFirstEntry,
-    indexOfLastEntry
-  );
-  const navigate = useNavigate();
-
-  const editEvents = (id) => {
-    navigate(`/editEvent/${id}`);
   };
 
   return (
     <div>
+      <SideBar />
       <main>
-        <SideBar />
         <div className="page-content">
           <TopBarBack />
           <ToastContainer />
           <div className="page-content-wrapper border">
-            <div className="row mb-3">
-              <div className="col-12 d-sm-flex justify-content-between align-items-center">
-                <h1 className="h3 mb-2 mb-sm-0">Events</h1>
-                {/* Adjust the href to your event creation route */}
-                <a href="/addEvent" className="btn btn-sm btn-primary mb-0">
-                  Create an Event
-                </a>
+            <BannerStart
+              title="Edit Event"
+              description="Edit event details below"
+            />
+            <div className="card bg-transparent border rounded-3 mt-4">
+              <div className="card-header bg-light border-bottom px-lg-3">
+                <h2 className="p-2 " style={{ color: "#1d3b53" }}>
+                  Event Details
+                </h2>
               </div>
-            </div>
-
-            <div className="card bg-transparent border">
-              <div className="card-header bg-light border-bottom">
-                {/* Search and select START */}
-                <div className="row g-3 align-items-center justify-content-between">
-                  {/* Search bar */}
-                  <div className="col-md-8">
-                    <form className="rounded position-relative">
-                      <input
-                        className="form-control bg-body"
-                        type="search"
-                        placeholder="Search"
-                        aria-label="Search"
-                        onChange={handleSearchChange}
-                      />
-                      <button
-                        className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-                        type="submit"
-                      >
-                        <i className="fas fa-search fs-6 " />
-                      </button>
-                    </form>
+              <form onSubmit={handleFormSubmit} className="m-4">
+                <div className="row g-4">
+                  <div className="col-12">
+                    <label className="form-label">Event Title</label>
+                    <input
+                      className="form-control"
+                      type="text"
+                      name="title"
+                      value={formState.title}
+                      onChange={handleEventChange}
+                      placeholder="Enter Event title"
+                      required
+                    />
                   </div>
-                  {/* Select option */}
-                  <div className="col-md-3">
-                    {/* Short by filter */}
-                    <form>
-                      <select
-                        className="form-select  border-0 z-index-9"
-                        aria-label=".form-select-sm"
-                        value={sortBy}
-                        onChange={handleSortChange}>
-                        <option value="">Sort by</option>
-                        <option value="Newest">Newest</option>
-                        <option value="Oldest">Oldest</option>
-                        <option value="Accepted">Accepted</option>
-                        <option value="Rejected">Rejected</option>
-                      </select>
-                    </form>
+                  <div className="col-12">
+                    <label className="form-label">Short Description</label>
+                    <textarea
+                      className="form-control"
+                      name="description"
+                      value={formState.description}
+                      onChange={handleEventChange}
+                      rows={2}
+                      placeholder="Short description of the event"
+                      required
+                    />
                   </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Start Date</label>
+                    <input
+                      className="form-control"
+                      type="date"
+                      name="dateDebut"
+                      value={formState.dateDebut}
+                      onChange={handleEventChange}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">End Date</label>
+                    <input
+                      className="form-control"
+                      type="date"
+                      name="dateFin"
+                      value={formState.dateFin}
+                      onChange={handleEventChange}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Event Price</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      name="price"
+                      value={formState.price}
+                      onChange={handleEventChange}
+                      placeholder={formState.price ? "Enter Event Price" : "Free Event"}
+                    />
+                  </div>
+                  {/* Upload image START */}
+                  <div className="m-4">
+                    {/* Image */}
+                    <div className="col-12">
+  <div className="mb-3">
+    <label htmlFor="picture" className="form-label">Event Image</label>
+    {/* Image Preview or Current Image Display */}
+    {previewImageUrl && (
+      <div className="text-center mb-3">
+        <img
+          src={previewImageUrl}
+          alt="Preview"
+          style={{ maxWidth: "300px", maxHeight: "300px" }}
+        />
+        <div className="mt-2">
+          <button type="button" className="btn btn-danger btn-sm" onClick={handleRemoveImage}>Remove Image</button>
+        </div>
+      </div>
+    )}
+    {/* Image Upload Input */}
+    <input
+      type="file"
+      className="form-control"
+      id="picture"
+      name="picture"
+      accept="image/*"
+      onChange={handleImageSelect}
+    />
+    <p className="small mt-2">
+      <b>Note:</b> Only JPG, JPEG, and PNG formats are supported. Our suggested dimensions are 600px * 450px. Larger images will be cropped to fit our thumbnails/previews.
+    </p>
+  </div>
+</div>
+                  </div>
+                  {/* Upload image END */}
                 </div>
                 {/* Search and select END */}
               </div>
@@ -296,11 +394,19 @@ function Index() {
                 </div>
                 {/* Pagination END */}
               </div>
+                <div className="d-md-flex justify-content-end align-items-start mt-4">
+                  <button
+                    type="submit"
+                    className="btn btn-success mb-2 mb-sm-0"
+                  >
+                    Update Event
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
       </main>
     </div>
   );
 }
-
-export default Index;
+export default EditEvent;

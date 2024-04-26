@@ -37,7 +37,7 @@ console.log("eventassad",eventDetails)
   const [selectedRoomId, setSelectedRoomId] = useState(
     eventDetails.resourceId || ""
   ); // Use the current room as the initial value
-  const [selectedCourseId, setselectedCourseId] = useState(
+  const [selectedCourseId, setSelectedCourseId] = useState(
     eventDetails.courseId || ""
   );
   const handleOptionChange = (e) => {
@@ -54,6 +54,15 @@ console.log("eventassad",eventDetails)
     const isValidRoom = rooms.find((room) => room._id === roomId);
     if (isValidRoom) {
       setSelectedRoomId(roomId);
+    } else {
+      alert("The selected room does not exist. Please select a valid room.");
+    }
+  };
+  const handleCourseChange = (e) => {
+    const courseId = e.target.value;
+    const isValidRoom = courses.data.find((course) => course._id === courseId);
+    if (isValidRoom) {
+      setSelectedCourseId(courseId);
     } else {
       alert("The selected room does not exist. Please select a valid room.");
     }
@@ -98,20 +107,9 @@ console.log("eventassad",eventDetails)
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    const { courseId } = course;
+   
   
-    if (!courseId) {
-      alert("Please select a course.");
-      return;
-    }
-  
-    const selectedCourse = courses.data.find((c) => c._id === courseId);
-  
-    if (!selectedCourse) {
-      alert("The selected course is not valid.");
-      return;
-    }
-  
+ 
     const isValidRoom = rooms.find((room) => room._id === selectedRoomId);
   
     if (!isValidRoom) {
@@ -122,7 +120,7 @@ console.log("eventassad",eventDetails)
     const updatedEvent = {
       ...eventDetails,
       ...course,
-      title: selectedCourse.title,
+      title: selectedCourseId.title,
       color,
       teacherId: selectedTeacherId,
       studentId: selectedStudentId || null,
@@ -165,8 +163,8 @@ console.log("eventassad",eventDetails)
           Select a course:
         </label>
         <select
-              value={courses.data.courseId}
-              onChange={handleInputChange}
+              value={selectedCourseId}
+              onChange={handleCourseChange}
               style={{
                 marginBottom: "16px",
                 width: "100%",

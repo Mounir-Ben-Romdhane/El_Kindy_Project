@@ -3,18 +3,58 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogout } from "../state";
 import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 import { loadScripts } from "../scriptLoader";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGraduationCap, faTags, faCalendarAlt, faUsers, faClipboardList, faEnvelope, faBriefcase } from '@fortawesome/free-solid-svg-icons';
 import { faBasketShopping } from '@fortawesome/free-solid-svg-icons';
 
 function NavBar({ cartItems }) {
+
+
+function NavBar() {
   const accessToken = useSelector((state) => state.accessToken);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const [activeNavItem, setActiveNavItem] = useState("");
+  const userRole = useSelector((state) => state.userRole);
+  const role = accessToken ? jwtDecode(accessToken).roles : null;
 
+  const user = accessToken ? jwtDecode(accessToken) : "";
+
+  const getAvatarSrc = () => {
+    
+    if (user && user.picturePath !== "" && !user.authSource === "local") {
+      // If user has a custom picture path
+      return `http://localhost:3001/assets/${user.picturePath}`;
+    } else if (user && user.authSource === "local" && user.gender !== "") {
+
+      // If user has no custom picture but has a gender
+      return user.gender === 'male' ? '/assets/images/element/01.jpg' : '/assets/images/element/02.jpg';
+    } else {
+      // Default avatar if no picture path or gender is available
+      return user.picturePath;
+    }
+  };
+
+
+
+  const getDashboardLink = () => {
+    if (!role) return "/"; // Default link if role is not available
+  
+    // Check each role individually
+    if (role.includes("student")) {
+      return "/dashboard-student";
+    } else if (role.includes("teacher")) {
+      return "/dashboard-teacher";
+    } else if (role.includes("admin") || role.includes("superAdmin")) {
+      return "/dashboard-admin";
+    } else {
+      return "/"; // Default link if role does not match any of the specified roles
+    }
+  };
+  
   const logoutHandler = () => {
     dispatch(setLogout());
 
@@ -280,7 +320,7 @@ function NavBar({ cartItems }) {
                 >
                   <img
                     className="avatar-img rounded-circle"
-                    src={accessToken?.picturePath}
+                    src={getAvatarSrc()}
                     alt="avatar"
                   />
                 </a>
@@ -295,20 +335,30 @@ function NavBar({ cartItems }) {
                       <div className="avatar me-3">
                         <img
                           className="avatar-img rounded-circle shadow"
-                          src={accessToken?.picturePath}
+                          src={getAvatarSrc()}
                           alt="avatar"
                         />
                       </div>
                       <div>
                         <a className="h6 mt-2 mt-sm-0" href="#">
-                          {accessToken?.firstName} {accessToken?.lastName}
+                        {user?.fullName}
                         </a>
-                        <p className="small m-0">{accessToken?.email}</p>
+                        <p className="small m-0">{user?.email}</p>
                       </div>
                     </div>
                     <hr />
                   </li>
                   {/* Links */}
+                  <li>
+  <Link
+    to={getDashboardLink()}
+    className="dropdown-item"
+  >
+    <i className="bi bi-grid-fill fa-fw me-1" /> {/* Replace "bi-person" with "bi-house-door" for a dashboard icon */}
+    Dashboard
+  </Link>
+</li>
+
                   <li>
                     <a className="dropdown-item" href="#">
                       <i className="bi bi-person fa-fw me-2" />
