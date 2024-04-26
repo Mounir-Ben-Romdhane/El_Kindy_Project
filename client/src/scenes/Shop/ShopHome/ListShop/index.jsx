@@ -185,80 +185,76 @@ Page Banner START */}
                   </div>
                   {/* Search option END */}
                   {/* Main content START */}
+                  {/* Main content START */}
                   <section className="py-5">
-                  <div className="container">
-  <div className="row g-4">
-    {/* Parcours des shops et génération dynamique des cartes */}
-    {shops.map((shop) => (
-      <div key={shop._id} className="col-sm-6 col-lg-4 col-xl-3">
-        <div className="card h-100 shadow zoom border-2s position-relative" style={{ backgroundColor: 'white' }}>
-          {/* Bouton panier en haut à droite avec espace */}
-          <a
-            className="btn btn-light btn-round mb-0 position-absolute top-0 end-0 me-2 mt-2"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            data-bs-auto-close="outside"
-          >
-            <i className="bi bi-cart3 fa-fw" />
-          </a>
-          {/* Image */}
-          <img
-            src={`http://localhost:3001/assets/${shop.picturePath}`}
-            className="card-img-top"
-            alt="shop image"
-            style={{ width: '100%', height: '300px', objectFit: 'cover' }}
-          />
-          {/* Card body */}
-          <div className="card-body px-3">
-            {/* Title */}
-            <h5 className="card-title mb-0">
-              <a href="#" className="stretched-link">{shop.name}</a>
-            </h5>
-          </div>
-          
-          {/* Card footer */}
-          <div className="card-footer pt-0 px-3">
-            <div className="d-flex justify-content-between align-items-center">
-              <span className="h6 fw-light mb-0">By {shop.marque} <br /> </span>           
-            </div>
-          </div>
-          <div className="card-footer  pt-0 px-3">
-               {/* Conditionally render price with or without discount */}
-               {shop.remise !== null ? (
-                <div className="d-flex justify-content-end align-items-center me-2">
-                  <li className="list-inline-item">
-                    <label className="btn btn-success-soft-check" htmlFor={`option_${shop._id}`}>
-                      {/* Price and discount */}
-                      <span className="d-flex align-items-center">
-                        <span className="mb-0 h5 me-2 text-success">{shop.price}dt</span>
-                        {/* Placeholder for discount */}
-                        <span className="text-decoration-line-through fs-6 mb-0 me-2">{shop.oldPrice}100 dt</span>
-                        {/* Placeholder for discount percentage */}
-                        <span className="badge bg-dark text-white mb-0">{shop.remise}% off</span>
-                      </span>
-                    </label>
-                  </li>
-                </div>
-              ) : (
-                <h5 className="text-success mb-0">{shop.price} dt</h5>
-              )}
-            </div>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
+                    <div className="container">
+                      <div className="row g-4">
+                        {/* Parcours des shops et génération dynamique des cartes */}
+                        {shops.map((shop) => (
+                          <div key={shop._id} className="col-sm-6 col-lg-4 col-xl-3">
+                            <Link to={`/DetailShopFront/${shop._id}`} className="text-decoration-none">
+                              <div className="cardd h-100 shadow zoom border-2s position-relative" style={{ backgroundColor: 'white' }}>
+                                {/* Bouton panier en haut à droite avec espace */}
+                                
+                                {/* Image */}
+                                <img
+                                  src={`http://localhost:3001/assets/${shop.picturePath}`}
+                                  className="card-img-top"
+                                  alt="shop image"
+                                  style={{ width: '100%', height: '300px', objectFit: 'cover' }}
+                                />
+                                {/* Card body */}
+                                <div className="card-body px-3">
+                                  {/* Title */}
+                                  <h5 className="card-title mb-0">
+                                    <a href={`/shop-details/${shop._id}`} className="stretched-link">{shop.name}</a>
+                                  </h5>
+                                </div>
 
+                                {/* Card footer */}
+                                <div className="card-footer pt-0 px-3">
+                                  <div className="d-flex justify-content-between align-items-center">
+                                    <span className="h6 fw-light mb-0">By {shop.marque} <br /> </span>
+                                  </div>
+                                </div>
+                                <div className="card-footer  pt-0 px-3">
+                                  {/* Conditionally render price with or without discount */}
+                                  {shop.remise !== null ? (
+                                    <div className="d-flex justify-content-end align-items-center me-2">
+                                      <li className="list-inline-item">
+                                        <label className="btn btn-success-soft-check" htmlFor={`option_${shop._id}`}>
+                                          {/* Price and discount */}
+                                          <span className="d-flex align-items-center">
+                                            <span className="mb-0 h5 me-2 text-success">{(shop.price - (shop.price * shop.remise) / 100).toFixed(2)} dt</span>
+                                            {/* Placeholder for discount */}
+                                            <span className="text-decoration-line-through fs-6 mb-0 me-2">{shop.price}dt</span>
+                                            {/* Placeholder for discount percentage */}
+                                            <span className="badge bg-danger text-white mb-0">{shop.remise}% off</span>
+                                          </span>
+                                        </label>
+                                      </li>
+                                    </div>
+                                  ) : (
+                                    <div className="d-flex justify-content-end align-items-center me-2">
 
+                                      <li className="list-inline-item">
+                                        <label className="btn btn-success-soft-check" htmlFor={`option_${shop._id}`}>
 
-
-
-
-
-
+                                          <h5 className="text-success mb-0">{shop.price} dt</h5>
+                                        </label>
+                                      </li>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </Link>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </section>
+                  {/* Main content END */}
+
                   {/* Main content END */}
                   {/* Pagination START */}
                   <div className="col-12">
@@ -282,11 +278,10 @@ Page Banner START */}
           {/* =======================
 Page content END */}
 
-          {/* Add course modal START */}
           <div className={`modal fade ${popupVisible ? 'show' : ''}`} id="addShop" tabIndex={-1} aria-labelledby="addShopLabel" aria-hidden={!popupVisible}>
             <div className={`modal-dialog modal-dialog-centered ${popupVisible ? 'show' : ''}`}>
               <div className="modal-content">
-                <div className="modal-header bg-dark">
+                <div className="modal-header bg-primary">
                   <h5 className="modal-title text-white" id="addShopLabel">Add New Instrument</h5>
                   <button type="button" className="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i className="bi bi-x-lg" /></button>
                 </div>
@@ -295,17 +290,17 @@ Page content END */}
                     {/* Answer options START */}
                     <div className="col-6">
                       <label className="form-label">Instrument name </label>
-                      <input className="form-control" name="name" type="text" placeholder="Write name" />
+                      <input className="form-control" name="name" type="text" placeholder="Write name" required />
                     </div>
                     {/* Answer options START */}
                     <div className="col-6">
                       <label className="form-label">brand</label>
-                      <input className="form-control" name="marque" type="text" placeholder="Write the brand" />
+                      <input className="form-control" name="marque" type="text" placeholder="Write the brand" required />
                     </div>
 
                     <div className="col-6">
                       <label className="form-label">Price</label>
-                      <input className="form-control" name="price" type="number" placeholder="Write the price" />
+                      <input className="form-control" name="price" type="number" placeholder="Write the price" required />
                     </div>
                     <div className="col-6">
                       <label className="form-label">discount</label>
@@ -313,12 +308,12 @@ Page content END */}
                     </div>
                     <div className="col-6">
                       <label className="form-label">Phone number </label>
-                      <input className="form-control" name="phoneNumber" type="number" placeholder="Write the number" />
+                      <input className="form-control" name="phoneNumber" type="number" placeholder="Write the number" required />
                     </div>
                     {/* Question */}
                     <div className="col-12">
                       <label className="form-label">Description</label>
-                      <input className="form-control" name="description" type="text" placeholder="Write description" />
+                      <input className="form-control" name="description" type="text" placeholder="Write description" required />
                     </div>
                     {/* Course category */}
 
@@ -352,6 +347,7 @@ Page content END */}
                               id="image"
                               accept="image/gif, image/jpeg, image/png"
                               onChange={handleImageSelect}
+                              required // Champ requis pour l'image
                             />
                             {/* Note */}
                             <p className="small mb-0 mt-2"><b>Note:</b> Only JPG, JPEG, and PNG formats are supported. Our suggested dimensions are 600px * 450px. Larger images will be cropped to fit our thumbnails/previews.</p>
@@ -384,7 +380,7 @@ Page content END */}
               </div>
             </div>
           </div>
-          {/* Add course modal START */}
+
 
         </div>
 

@@ -1,8 +1,8 @@
-.card {
+.cardd{
     transition: transform 0.2s ease-in-out;
   }
   
-  .card:hover {
+  .cardd:hover {
     transform: scale(1.05);
   }
   

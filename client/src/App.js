@@ -43,6 +43,7 @@ import TeachersList from "../src/scenes/PlatformStudent/TeachersList";
 import Chat from "../src/scenes/Chat/Chat";
 import BackListShop from "../src/scenes/Shop/BackShop/BackListShop";
 import BackDetailsShop from "../src/scenes/Shop/BackShop/BackDetailsShop"
+import DetailShopFront from "../src/scenes/Shop/ShopHome/DetailShopFront"
 import ListMeetingTeacher from 'scenes/PlatformTeacher/ListMeetingTeacher'
 
 
@@ -95,6 +96,7 @@ function App() {
       "/assets/vendor/glightbox/js/glightbox.js",
       "/assets/vendor/purecounterjs/dist/purecounter_vanilla.js",
       "/assets/js/functions.js",
+      "assets/vendor/sticky-js/sticky.min.js"
     ];
 
     if (!scriptsLoaded.current) {
@@ -377,6 +379,15 @@ function App() {
           element={
             <PrivateRoute
               element={<ListShop />}
+              requiredRoles={["superAdmin", "student", "teacher","admin"]}
+            />
+          }
+        />
+<Route
+          path="/DetailShopFront/:id"
+          element={
+            <PrivateRoute
+              element={<DetailShopFront />}
               requiredRoles={["superAdmin", "student", "teacher","admin"]}
             />
           }

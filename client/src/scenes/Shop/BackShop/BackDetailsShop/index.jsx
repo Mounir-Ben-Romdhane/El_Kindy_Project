@@ -134,13 +134,13 @@ function Index() {
                           <li className="list-group-item">
                             <span>Price:</span>
                             <span className="h6 mb-0">
-                              {shop.price}
+                              {shop.price} dt
                             </span>
                           </li>
                           <li className="list-group-item">
                             <span>Discount:</span>
                             <span className="h6 mb-0">
-                              {shop.remise}
+                              {shop.remise} %
                             </span>
                           </li>
                           <li className="list-group-item">
