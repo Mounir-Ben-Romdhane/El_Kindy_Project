@@ -8,12 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 
 function Index() {
-    const [cartItems, setCartItems] = useState(0);
-
-    // Fonction pour ajouter un article au panier
-    const addToCart = () => {
-      setCartItems(cartItems + 1);
-    };
+   
     const { id } = useParams();
     const [shop, setShop] = useState("");
     const navigate = useNavigate();
@@ -39,7 +34,7 @@ function Index() {
     };
     return (
         <>
-            <NavBar cartItems={cartItems}/>
+            <NavBar />
             {/* **************** MAIN CONTENT START **************** */}
             <main>
                 <ToastContainer />
@@ -73,7 +68,7 @@ Page content START */}
                                                     {/* Buttons and price */}
                                                     <div className="text-center">
                                                         {/* Buttons */}
-                                                        <a href="#" className="btn btn-success-soft mb-2 mb-sm-0 me-00 me-sm-3" onClick={addToCart}><i className="bi bi-cart3 me-2" />Add to Cart</a>
+                                                        <a href="#" className="btn btn-success-soft mb-2 mb-sm-0 me-00 me-sm-3"><i className="bi bi-cart3 me-2" />Add to Cart</a>
                                                         <a href="#" className="btn btn-light mb-0"><i className="bi bi-bookmark me-2" />Add wishlist</a>
                                                     </div>
                                                 </div>

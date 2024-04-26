@@ -62,7 +62,7 @@ import ListEventUser from "./scenes/EventsPage/EventFront/EventFront";
 
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
-import ContactPage from "scenes/ContactPage";
+import ContactPage from "scenes/ContactPage/ContactFront";
 import AdminsDashboard from "scenes/UsersAdmin/Admins";
 import TeachersDashboard from "scenes/UsersAdmin/Teachers";
 import StudentsDashboard from "scenes/UsersAdmin/Students";

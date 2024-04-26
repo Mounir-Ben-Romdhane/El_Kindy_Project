@@ -254,55 +254,7 @@ function NavBar() {
             </div>
             {/* Main navbar START */}
             <div>
-              {/* Cart dropdown START */}
-              <div className="me-2 me-md-3 dropdown">
-                {/* Cart button */}
-                <a className="btn btn-light btn-round mb-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                  <i className="bi bi-cart3 fa-fw" />
-                </a>
-                {/* badge */}
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-dark mt-xl-2 ms-n1">
-                {cartItems}
-
-                  <span className="visually-hidden">unread messages</span>
-                </span>
-                {/* Cart dropdown menu START */}
-                <div className="dropdown-menu dropdown-animation dropdown-menu-end dropdown-menu-size-md p-0 shadow-lg border-0">
-                  <div className="card bg-transparent">
-                    <div className="card-header bg-transparent border-bottom py-4">
-                      <h5 className="m-0">Cart items</h5>
-                    </div>
-                    <div className="card-body p-0">
-                      {/* Cart item START */}
-                      <div className="row p-3 g-2">
-                        {/* Image */}
-                        <div className="col-3">
-                          <img className="rounded-2" src="assets/images/book/02.jpg" alt="avatar" />
-                        </div>
-                        <div className="col-9">
-                          {/* Title */}
-                          <div className="d-flex justify-content-between">
-                            <h6 className="m-0">Angular 4 Tutorial in audio (Compact Disk)</h6>
-                            <a href="#" className="small text-primary-hover"><i className="bi bi-x-lg" /></a>
-                          </div>
-                          
-                        </div>
-                      </div>
-                      {/* Cart item END */}
-                      {/* Divider */}
-                      <hr className="m-0" />
-                      
-                    </div>
-                    {/* Button */}
-                    <div className="card-footer bg-transparent border-top py-3 text-center d-flex justify-content-between position-relative">
-                      <a href="#" className="btn btn-sm btn-light mb-0">View Cart</a>
-                      <a href="#" className="btn btn-sm btn-success mb-0">Checkout</a>
-                    </div>
-                  </div>
-                </div>
-                {/* Cart dropdown menu END */}
-              </div>
-              {/* Cart dropdown END */}
+              
             </div>
             {/* Main navbar END */}
             {/* Profile START */}
