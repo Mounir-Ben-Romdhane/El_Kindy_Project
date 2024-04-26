@@ -166,20 +166,7 @@ Page Banner START */}
                       <h5 className="mb-0">All instruments listed </h5>
                     </div>
 
-                    {/* Select option */}
-                    <div className="col-md-8 mt-12 mt-xl-0 d-flex align-items-end justify-content-end">
-                      <form className="border-bottom p-2 input-borderless">
-                        <select className="js-choice">
-                          <option value>Select category</option>
-                          <option>Software</option>
-                          <option>Finance</option>
-                          <option>Web design</option>
-                          <option>Web Development</option>
-                          <option>Information technology</option>
-                          <option>Science</option>
-                        </select>
-                      </form>
-                    </div>
+                  
 
 
                   </div>

@@ -16,6 +16,7 @@ import shopRoute from "./routes/ShopRoute.js";
 import eventRoutes from "./routes/Event.js";
 import classRoute from "./routes/ClassRoutes.js";
 import salleRoutes from "./routes/salle.js";
+import ContactRoutes from "./routes/ContactRoute.js"
 import inscriptionRoutes from "./routes/inscriptionRoutes.js";
 import stageRouter  from "./routes/stageRoute.js";
 import authRoutes from "./routes/auth.js";
@@ -130,6 +131,8 @@ app.use('/shops', shopRoute);
 
 app.use('/event', eventRoutes);
 app.use("/course",courseRoute);
+
+app.use("/contact",ContactRoutes);
 app.use("/salle",salleRoutes);
 app.use("/inscription", inscriptionRoutes);
 app.use('/chat', ChatRoute);
