@@ -126,11 +126,8 @@ app.use("/auth",authRoutes);
 app.use("/api/categories", categorieRoutes); 
 app.use("/stage",stageRouter);
 app.use('/classes', classRoute);
-<<<<<<< HEAD
 app.use('/shops', shopRoute);
 
-=======
->>>>>>> 790e46656f6e028ff70d64dee2215109ebad9a5c
 app.use('/event', eventRoutes);
 app.use("/course",courseRoute);
 app.use("/salle",salleRoutes);
