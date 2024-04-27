@@ -63,6 +63,8 @@ import ListEventUser from "./scenes/EventsPage/EventFront/EventFront";
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
 import ContactPage from "scenes/ContactPage/ContactFront";
+import ContactBack from "scenes/ContactPage/ContactBack";
+
 import AdminsDashboard from "scenes/UsersAdmin/Admins";
 import TeachersDashboard from "scenes/UsersAdmin/Teachers";
 import StudentsDashboard from "scenes/UsersAdmin/Students";
@@ -181,7 +183,15 @@ function App() {
             />
           }
         />
-
+<Route
+          path="/ContactBack"
+          element={
+            <PrivateRoute
+              element={<ContactBack />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
         <Route
           path="/inscriptionDetails/:id"
           element={
