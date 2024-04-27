@@ -31,8 +31,11 @@
     "nodemailer": "^6.9.9",
     "passport-facebook": "^3.0.0",
     "passport-facebook-token": "^4.0.0",
+    "pdfjs-dist": "^4.1.392",
     "pdfmake": "^0.2.10",
+    "qrcode": "^1.5.3",
     "socket.io": "^4.7.4",
+    "speakeasy": "^2.0.0",
     "twilio": "^4.23.0"
   },
   "devDependencies": {

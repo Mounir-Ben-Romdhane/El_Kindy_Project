@@ -313,43 +313,53 @@ function StudentsDashboard() {
                                   {/* Additional information */}
                                   {studentDetails[student._id] && (
                                     <div className="m-1">
-                                    {/* Classes */}
-                                    <p className="mb-1">
-                                      <i className="bi bi-people me-2 text-primary" />
-                                      <strong>Classes:</strong>{" "}
-                                      {student.studentInfo.classLevel.className}
-                                    </p>
-                                    {/* Courses Enrolled */}
-                                    <p className="mb-1">
-                                      <i className="bi bi-journal-text me-2 text-primary" />
-                                      <strong>Courses Enrolled:</strong>{" "}
-                                      {student.studentInfo.coursesEnrolled.length > 0 ? (
-                                        student.studentInfo.coursesEnrolled.map((course) => (
-                                          <span key={course._id}>{course.title}, </span>
-                                        ))
-                                      ) : (
-                                        "None"
-                                      )}
-                                    </p>
-                                    {/* Parent Information */}
-                                    <p className="mb-1">
-                                      <i className="bi bi-person me-2 text-primary" />
-                                      <strong>Parent Name:</strong>{" "}
-                                      {student.studentInfo.parentName || "Not available"}
-                                    </p>
-                                    <p className="mb-1">
-                                      <i className="bi bi-envelope me-2 text-primary" />
-                                      <strong>Parent Email:</strong>{" "}
-                                      {student.studentInfo.parentEmail || "Not available"}
-                                    </p>
-                                    <p className="mb-1">
-                                      <i className="bi bi-phone me-2 text-primary" />
-                                      <strong>Parent Phone:</strong>{" "}
-                                      {student.studentInfo.parentPhone || "Not available"}
-                                    </p>
-                                    {/* Other additional information can go here */}
-                                  </div>
-                                  
+                                      {/* Classes */}
+                                      <p className="mb-1">
+                                        <i className="bi bi-people me-2 text-primary" />
+                                        <strong>Classes:</strong>{" "}
+                                        {student.studentInfo.classLevel
+                                          ?.className ?? "Not available yet"}
+                                      </p>
+                                      {/* Courses Enrolled */}
+                                      <p className="mb-1">
+                                        <i className="bi bi-journal-text me-2 text-primary" />
+                                        <strong>Courses Enrolled:</strong>{" "}
+                                        {student.studentInfo.coursesEnrolled
+                                          ?.length > 0
+                                          ? student.studentInfo.coursesEnrolled.map(
+                                              (course) => (
+                                                <span key={course._id}>
+                                                  {course.title},{" "}
+                                                </span>
+                                              )
+                                            )
+                                          : "None Courses"}
+                                      </p>
+                                      {/* Parent Information */}
+                                      <p className="mb-1">
+                                        <i className="bi bi-person me-2 text-primary" />
+                                        <strong>Parent Name:</strong>{" "}
+                                        {student.studentInfo.parentName
+                                          ? student.studentInfo.parentName
+                                          : "Not available"}
+                                      </p>
+                                      <p className="mb-1">
+                                        <i className="bi bi-envelope me-2 text-primary" />
+                                        <strong>Parent Email:</strong>{" "}
+                                        {student.studentInfo.parentEmail
+                                          ? student.studentInfo.parentEmail
+                                          : "Not available"}
+                                      </p>
+                                      <p className="mb-1">
+                                        <i className="bi bi-phone me-2 text-primary" />
+                                        <strong>Parent Phone:</strong>{" "}
+                                        {student.studentInfo.parentPhone
+                                          ? student.studentInfo.parentPhone
+                                          : "Not available"}
+                                      </p>
+
+                                      {/* Other additional information can go here */}
+                                    </div>
                                   )}
                                 </div>
                               </div>

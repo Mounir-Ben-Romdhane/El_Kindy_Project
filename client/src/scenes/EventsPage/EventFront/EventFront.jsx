@@ -6,7 +6,6 @@ import kendy from "../../../../src/assetss/images/kendy.png";
 import Navbar  from "components/NavBar";
 import Footer from "components/Footer";
 import '../../Style.css';
-import './EventFront.css';
 import BannerStartHome from "components/BannerStartHome";
 
 function ListEventUser() {

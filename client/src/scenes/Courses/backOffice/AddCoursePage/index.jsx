@@ -104,7 +104,7 @@ const handleRemoveImage = () => {
 const navigate = useNavigate();
 
 const addCourse = async (values, onSubmitProps) => {
-    console.log("values",values);
+    //console.log("values",values);
     // this allow us to send form info with image
     const formData = new FormData();
     for (let value in values) {
@@ -113,6 +113,7 @@ const addCourse = async (values, onSubmitProps) => {
     formData.append('picturePath', values.picture.name);
     console.log("formData",formData);
     console.log("picture name", values.picture.name);
+    console.log("Values",formData);
     
     try {
       const response = await axiosPrivate.post("/course/add", formData);
@@ -146,7 +147,7 @@ const handleFormSubmit = async (values, onSubmitProps) => {
   const formData = new FormData(values.target); // Create FormData object from form
   formData.append('fullDescription', fullDescription); // Append full description to form data
   const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
-  console.log("Values",formValues);
+  
   await addCourse(formValues, onSubmitProps);
 };
 

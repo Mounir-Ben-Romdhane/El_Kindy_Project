@@ -7,7 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import { loadScripts } from "../scriptLoader";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGraduationCap, faTags, faCalendarAlt, faUsers, faClipboardList, faEnvelope, faBriefcase } from '@fortawesome/free-solid-svg-icons';
-import { jwtDecode } from "jwt-decode";
+
 
 
 
@@ -208,13 +208,14 @@ function NavBar() {
                 </li>
                 
 
-                {/* Nav item 4 Component*/}
+                {/* Nav item 4 Component
                 <li className="nav-item ">
                   <a className="nav-link" href="docs/alerts.html">
-                  <FontAwesomeIcon icon={faUsers} className="fa-fw me-1" /> {/* Testimonials */}
+                  <FontAwesomeIcon icon={faUsers} className="fa-fw me-1" /> 
                     Témoignags
                   </a>
                 </li>
+                */}
                 {/* Nav item 4 Component*/}
                 <li className="nav-item ">
                   <Link className={`nav-link ${activeNavItem === "/inscription" ? "active" : ""}`}
@@ -285,8 +286,8 @@ function NavBar() {
                           alt="avatar"
                         />
                       </div>
-                      <div>
-                        <a className="h6 mt-2 mt-sm-0" href="#">
+                      <div className="flex-grow-1">
+                        <a className="h6 mt-2 mt-sm-0 text-truncate" href="#">
                         {user?.fullName}
                         </a>
                         <p className="small m-0">{user?.email}</p>

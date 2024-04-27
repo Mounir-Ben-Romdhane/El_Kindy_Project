@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { setLogout } from "state";
 
+
 const Index = () => {
   //const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -78,6 +79,15 @@ const Index = () => {
                     <i className="bi bi-basket fa-fw me-2" />
                     Planning                  </Link>
 
+                    <Link 
+                  className={`list-group-item ${activeNavItem === "/assignments" || activeNavItem.startsWith("/assignments") ? "active" : ""}`}
+                  to="/assignments"
+                  onClick={() => handleNavItemClick("/assignments")}>
+                    <i className="bi bi-basket fa-fw me-2" />
+                    Assignment                  </Link>
+
+                    
+
                   <Link 
                   className={`list-group-item ${activeNavItem === "/messages" ? "active" : ""}`}
                   to="/messages"
@@ -85,6 +95,8 @@ const Index = () => {
                     <i className="bi bi-chat-dots-fill fa-fw me-2" />
                     Messages
                   </Link>
+
+
 
 
                   <Link 
@@ -95,14 +107,22 @@ const Index = () => {
                     Students Grades
                   </Link>
 
+                  <Link 
+                  className={`list-group-item ${activeNavItem === "/time-slots" ? "active" : ""}`}
+                  to="/time-slots"
+                  onClick={() => handleNavItemClick("/time-slots")}>
+                    <i className="bi bi-clock fa-fw me-2" />
+                    Time Slots
+                  </Link>
 
-                  <a
-                    className="list-group-item"
-                    href="instructor-edit-profile.html"
-                  >
-                    <i className="bi bi-pencil-square fa-fw me-2" />
+                  <Link 
+                  className={`list-group-item ${activeNavItem === "/profile-teacher" ? "active" : ""}`}
+                  to="/profile-teacher"
+                  onClick={() => handleNavItemClick("/profile-teacher")}>
+                <i className="bi bi-person-lines-fill fa-fw me-2" />
                     Edit Profile
-                  </a>
+                  </Link>
+
 
                   <a
                     className="list-group-item text-danger bg-danger-soft-hover"

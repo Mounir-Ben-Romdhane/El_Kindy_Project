@@ -29,16 +29,16 @@ function UpdateStudent({ student, onClose, fetchData }) {
       lastName: student.lastName || '',
       email: student.email || '',
       password: student.passwordDecoded || '',
-      classLevel: student.studentInfo.classLevel._id || '', // Add classLevel for student
-      coursesEnrolled: student.studentInfo.coursesEnrolled.map(course => course._id) || [],
+      classLevel: student.studentInfo?.classLevel?._id || '', // Add classLevel for student
+      coursesEnrolled: student.studentInfo?.coursesEnrolled?.map(course => course._id) || [],
       dateOfBirth: student.dateOfBirth ? student.dateOfBirth.split('T')[0] : '',
       address: student.address || '',
       gender: student.gender || '',
       phoneNumber1: student.phoneNumber1 || '',
       phoneNumber2: student.phoneNumber2 || '',
-      parentName: student.studentInfo.parentName || '',
-      parentEmail: student.studentInfo.parentEmail || '',
-      parentPhone: student.studentInfo.parentPhone || '',
+      parentName: student.studentInfo?.parentName || '',
+      parentEmail: student.studentInfo?.parentEmail || '',
+      parentPhone: student.studentInfo?.parentPhone || '',
       disponibilite: student.disponibilite || [] // Availability slots
     });
     setSelectedTimeSlots(student.disponibilite || []);
@@ -281,9 +281,9 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         className="form-select"
                       >
                         <option value="">Select class</option>
-                        {classes.map((classItem) => (
-                          <option key={classItem._id} value={classItem._id}>
-                            {classItem.className}
+                        {classes?.map((classItem) => (
+                          <option key={classItem?._id} value={classItem?._id}>
+                            {classItem?.className}
                           </option>
                         ))}
                       </select>
@@ -300,19 +300,19 @@ function UpdateStudent({ student, onClose, fetchData }) {
                     </div>
                     <div className="col-lg-8">
                     <div className="row row-cols-3">
-                      {courses.map((course) => (
-                        <div key={course._id} className="form-check">
+                      {courses?.map((course) => (
+                        <div key={course?._id} className="form-check">
                           <input
                             className="form-check-input"
                             type="checkbox"
-                            id={course._id}
-                            value={course._id}
-                            checked={formData.coursesEnrolled.includes(course._id)}
+                            id={course?._id}
+                            value={course?._id}
+                            checked={formData.coursesEnrolled?.includes(course?._id)}
                             onChange={handleChange}
                             name="coursesEnrolled"
                           />
-                          <label className="form-check-label" htmlFor={course._id}>
-                            {course.title}
+                          <label className="form-check-label" htmlFor={course?._id}>
+                            {course?.title}
                           </label>
                         </div>
                       ))}
