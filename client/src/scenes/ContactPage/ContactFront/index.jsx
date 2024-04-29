@@ -2,11 +2,63 @@ import { width } from '@mui/system'
 import BannerStartHome from 'components/BannerStartHome'
 import Footer from 'components/Footer'
 import NavBar from 'components/NavBar'
-import React from 'react'
+import React , { useState } from 'react'
 import { Link } from "react-router-dom";
-import '../../scenes/Style.css' 
+import axios from 'axios'; // Importez axios pour effectuer des requêtes HTTP
+import Swal from 'sweetalert2'; // Importez SweetAlert2
 
 function ContactPage() {
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    message: ''
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async () => {
+    // Vérifier manuellement si l'e-mail est valide
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+  
+    if (!isValidEmail) {
+      // Afficher un message d'erreur avec SweetAlert2 si l'e-mail n'est pas valide
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Email',
+        text: 'Please enter a valid email address.',
+      });
+      return; // Arrêter l'exécution de la fonction si l'e-mail n'est pas valide
+    }
+  
+    try {
+      const response = await axios.post('http://localhost:3001/contact', formData);
+      console.log(response.data);
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Your message has been received.',
+      });
+      setFormData({
+        fullName: '',
+        email: '',
+        message: ''
+      });
+    } catch (error) {
+      console.error('Error sending message:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong!',
+      });
+    }
+  };
+  
   return (
         <>
       <NavBar />
@@ -153,21 +205,30 @@ Image and contact form START */}
             {/* Name */}
             <div className="mb-4 bg-light-input">
               <label htmlFor="yourName" className="form-label">Your name *</label>
-              <input type="text" className="form-control form-control-lg" id="yourName" />
+              <input name="fullName" value={formData.fullName} onChange={handleInputChange} type="text" className="form-control form-control-lg" id="yourName" required />
             </div>
             {/* Email */}
             <div className="mb-4 bg-light-input">
               <label htmlFor="emailInput" className="form-label">Email address *</label>
-              <input type="email" className="form-control form-control-lg" id="emailInput" />
+              <input
+  type="email"
+  name="email"
+  value={formData.email}
+  onChange={handleInputChange}
+  className="form-control form-control-lg"
+  id="emailInput"
+  required
+  pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" // Add the pattern for email validation
+/>
             </div>
             {/* Message */}
             <div className="mb-4 bg-light-input">
               <label htmlFor="textareaBox" className="form-label">Message *</label>
-              <textarea className="form-control" id="textareaBox" rows={4} defaultValue={""} />
+              <textarea name="message" value={formData.message} onChange={handleInputChange} className="form-control" id="textareaBox" rows={4} defaultValue={""} required/>
             </div>
             {/* Button */}
             <div className="d-grid">
-              <button className="btn btn-lg btn-primary mb-0" type="button">Send Message</button>
+              <button className="btn btn-lg btn-primary mb-0" onClick={handleSubmit} type="button">Send Message</button>
             </div>	
           </form>
         </div>

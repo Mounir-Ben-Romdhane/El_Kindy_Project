@@ -98,8 +98,9 @@ function TeacherView() {
                     },
                 });
 
+    
                 setAssignments([...assignments, response.data]);
-
+    
                 setNewAssignment({
                     title: '',
                     courseId: '',

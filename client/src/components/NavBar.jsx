@@ -7,8 +7,9 @@ import { jwtDecode } from "jwt-decode";
 import { loadScripts } from "../scriptLoader";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGraduationCap, faTags, faCalendarAlt, faUsers, faClipboardList, faEnvelope, faBriefcase } from '@fortawesome/free-solid-svg-icons';
-import { jwtDecode } from "jwt-decode";
+import { faBasketShopping } from '@fortawesome/free-solid-svg-icons';
 
+function NavBar({ cartItems }) {
 
 
 
@@ -141,7 +142,7 @@ function NavBar() {
               <ul className="navbar-nav navbar-nav-scroll mx-auto">
                 {/* Nav HOME*/}
                 <li className="nav-item ">
-                  <Link 
+                  <Link
                     className={`nav-link ${activeNavItem === "/home" ? "active" : ""}`}
                     to="/home"
                     onClick={() => handleNavItemClick("/home")}>
@@ -152,62 +153,63 @@ function NavBar() {
                 {/* CORSUS */}
                 <li className="nav-item dropdown">
                   <a
-                    className={`nav-link dropdown-toggle ${activeNavItem === "/category" || activeNavItem === "/courses" || activeNavItem === "/stage" ? "active" : ""}`}
+                    className={`nav-link dropdown-toggle ${activeNavItem === "/category" || activeNavItem === "/courses" ? "active" : ""}`}
                     href="#"
                     id="demoMenu"
                     data-bs-toggle="dropdown"
                     aria-haspopup="true"
                     aria-expanded="false"
                   >
-                    <FontAwesomeIcon icon={faGraduationCap} className="fa-fw me-1" /> 
+                    <FontAwesomeIcon icon={faGraduationCap} className="fa-fw me-1" />
                     Corsus
                   </a>
                   <ul className="dropdown-menu" aria-labelledby="demoMenu">
                     <li>
                       {" "}
-                      <Link 
-                         className={`dropdown-item ${activeNavItem === "/category" ? "active" : ""}`}
-                         to="/category"
-                         onClick={() => handleNavItemClick("/category")}>
-                       <FontAwesomeIcon icon={faTags} className="fa-fw me-1" /> {/* Category Courses */}
+                      <Link
+                        className={`dropdown-item ${activeNavItem === "/category" ? "active" : ""}`}
+                        to="/category"
+                        onClick={() => handleNavItemClick("/category")}>
+                        <FontAwesomeIcon icon={faTags} className="fa-fw me-1" /> {/* Category Courses */}
                         Category
                       </Link>
                     </li>
                     <li>
                       {" "}
-                      <Link 
-                         className={`dropdown-item ${activeNavItem === "/courses" ? "active" : ""}`}
-                         to="/courses"
-                         onClick={() => handleNavItemClick("/courses")}>
-                      <FontAwesomeIcon icon={faGraduationCap} className="fa-fw me-1" /> 
+                      <Link
+                        className={`dropdown-item ${activeNavItem === "/courses" ? "active" : ""}`}
+                        to="/courses"
+                        onClick={() => handleNavItemClick("/courses")}>
+                        <FontAwesomeIcon icon={faGraduationCap} className="fa-fw me-1" />
                         Courses
                       </Link>
                     </li>
                     <li>
                       {" "}
-                      
-                      <Link 
-                         className={`dropdown-item ${activeNavItem === "/stage" ? "active" : ""}`}
-                         to="/stage"
-                         onClick={() => handleNavItemClick("/stage")}>
-                      <FontAwesomeIcon icon={faGraduationCap} className="fa-fw me-1" /> 
-                      Internship
-                      </Link>
+                      <a className="dropdown-item" href="index-2.html">
+                        <FontAwesomeIcon icon={faBriefcase} className="fa-fw me-1" /> {/* Stages */}
+                        InternalShip
+                      </a>
                     </li>
                   </ul>
                 </li>
-                
+
                 {/* Nav item 4 Component*/}
                 <li className="nav-item ">
-                  <Link 
-                         className={`nav-link ${activeNavItem === "/listEventUser" ? "active" : ""}`}
-                         to="/listEventUser"
-                         onClick={() => handleNavItemClick("/listEventUser")}>
-                      <FontAwesomeIcon icon={faCalendarAlt} className="fa-fw me-1" /> 
-                      Events
-                      </Link>
+                  <Link
+                    className={`nav-link ${activeNavItem === "/listEventUser" ? "active" : ""}`}
+                    to="/listEventUser"
+                    onClick={() => handleNavItemClick("/listEventUser")}>
+                    <FontAwesomeIcon icon={faCalendarAlt} className="fa-fw me-1" />
+                    Events
+                  </Link>
                 </li>
-                
+                {/* PRODUCT*/}
+                <li className="nav-item">
+                  <Link className={`nav-link ${activeNavItem === "/ListShop" ? "active" : ""}`} to="/ListShop" onClick={() => handleNavItemClick("/ListShop")}>
+                    <FontAwesomeIcon icon={faBasketShopping} className="fa-fw me-1" /> Shop
+                  </Link>
+                </li>
 
                 {/* Nav item 4 Component
                 <li className="nav-item ">
@@ -217,21 +219,26 @@ function NavBar() {
                   </a>
                 </li>
                 */}
+                    <FontAwesomeIcon icon={faUsers} className="fa-fw me-1" /> {/* Testimonials */}
+                    Témoignags
+                  </a>
+                </li>
+
                 {/* Nav item 4 Component*/}
                 <li className="nav-item ">
                   <Link className={`nav-link ${activeNavItem === "/inscription" ? "active" : ""}`}
                     to="/inscription"
                     onClick={() => handleNavItemClick("/inscription")}>
-                      <FontAwesomeIcon icon={faClipboardList} className="fa-fw me-1" /> {/* Preinscription */}
+                    <FontAwesomeIcon icon={faClipboardList} className="fa-fw me-1" /> {/* Preinscription */}
                     Inscription
                   </Link>
                 </li>
                 {/* Nav item 4 Component*/}
                 <li className="nav-item ">
-                  <Link 
-                  className={`nav-link ${activeNavItem === "/contact-us" ? "active" : ""}`}
-                  to="/contact-us"
-                  onClick={() => handleNavItemClick("/contact-us")}>
+                  <Link
+                    className={`nav-link ${activeNavItem === "/contact-us" ? "active" : ""}`}
+                    to="/contact-us"
+                    onClick={() => handleNavItemClick("/contact-us")}>
                     <FontAwesomeIcon icon={faEnvelope} className="fa-fw me-1" /> {/* Contact */}
                     Contact
                   </Link>
@@ -240,7 +247,7 @@ function NavBar() {
               {/* Nav Main menu END */}
               {/* Dark mode switch */}
               {
-                !accessToken && 
+                !accessToken &&
                 <div className="navbar-nav my-2 ms-2">
                   <div className="modeswitch-wrap" id="darkModeSwitch">
                     <div className="modeswitch-item">
@@ -249,10 +256,13 @@ function NavBar() {
                   </div>
                 </div>
               }
-            
+
+            </div>
+            {/* Main navbar START */}
+            <div>
+              
             </div>
             {/* Main navbar END */}
-            
             {/* Profile START */}
             {accessToken ? (
               <div className="dropdown ms-1 ms-lg-0">
@@ -352,7 +362,7 @@ function NavBar() {
               </div>
             ) : (
               <div class="navbar-nav">
-                
+
                 {/* Signout button  */}
                 <div className="navbar-nav d-lg-inline-block">
                   <button className="btn btn-orange-soft mb-0 rounded-pill" onClick={handleSignIn}><i className="fas fa-sign-in-alt me-2" />Sign In</button>

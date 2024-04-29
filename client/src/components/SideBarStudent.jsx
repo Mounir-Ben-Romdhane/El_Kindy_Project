@@ -83,6 +83,7 @@ const Index = () => {
                     <i className="bi bi-basket fa-fw me-2" />
                     Planning
                   </Link>
+                   <Link className="list-group-item" to="/assignmentStudent"><i className="bi bi-basket fa-fw me-2" />Assignment</Link>
 
                   <Link 
                   className={`list-group-item ${activeNavItem === "/assignmentStudent" || activeNavItem.startsWith("/assignments") ? "active" : ""}`}
