@@ -39,7 +39,12 @@ import meetingRoutes from './routes/meetingRoutes.js';
 import reservationRoutes  from "./routes/Reservation.js";
 
 import paymentRouter from "./routes/paymentRouter.js";
+
 import assignmentRoute from "./routes/assignmentRoutes.js";
+
+import textAnalytics from "./routes/textAnalytics.js";
+
+
 
 import planningRoutes from "./routes/planningRoutes.js";
 
@@ -151,6 +156,7 @@ app.use("/events",reservationRoutes);
 
 app.use("/payment",paymentRouter);
 
+
 app.use('/api', assignmentRoute);
 
 
@@ -158,6 +164,10 @@ app.use("/reservationstage", ReservationStage);
 
 
 
+
+
+// azure ai :
+app.use("/azure",textAnalytics);
 
 
 /* MONGOOSE SETUP */

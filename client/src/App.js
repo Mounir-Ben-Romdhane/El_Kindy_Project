@@ -59,7 +59,14 @@ import AdminReservationStage from "scenes/Stage/AdminReservationStage";
 
 import EditCourse from "scenes/Courses/backOffice/EditCoursePage";
 
-import ListEventUser from "./scenes/EventsPage/EventFront/EventFront";
+
+import ListEventUser from './scenes/EventsPage/EventFront/EventFront'
+import Review from './scenes/ReviewPage/Review'
+import Dashboard from './scenes/ReviewPage/Dashboard'
+import Reservationbyid from './scenes/EventsPage/ReservationListbyId/ReservationListbyId'
+
+
+
 
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
@@ -617,7 +624,21 @@ function App() {
 
         <Route path="/success" element={<Success />} />
 
+
         <Route path="/fail" element={<Fail />} />
+
+<Route
+          path="/review"
+          element={ <Review /> }
+        />
+
+
+
+          path="/dashboardReview"
+          element={ <Dashboard /> }
+        />    
+
+
 
         <Route
           path="/dashboard-student"
@@ -778,9 +799,21 @@ function App() {
           path="/stage"
           element={<Stage />}
         />
+
         <Route
           path="/ListStage"
           element={<ListStage />}
+
+
+<Route
+          path="/events/reservation/:eventId"
+          element={
+            <PrivateRoute
+              element={<Reservationbyid />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+
         />
 
         <Route
