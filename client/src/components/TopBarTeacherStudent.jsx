@@ -64,8 +64,6 @@ import { jwtDecode } from "jwt-decode";
 </li>
 
                                                     </ul>
-                                                    <li className="list-inline-item h6 fw-light me-3 mb-1 mb-sm-0"><i className="fas fa-user-graduate text-orange me-2" /> Enrolled Teacher</li>
-                                                </ul>
                                             </div>
                                             
                                         </div>

@@ -46,7 +46,6 @@ import ListMeetingTeacher from "scenes/PlatformTeacher/ListMeetingTeacher";
 import BackListShop from "../src/scenes/Shop/BackShop/BackListShop";
 import BackDetailsShop from "../src/scenes/Shop/BackShop/BackDetailsShop"
 import DetailShopFront from "../src/scenes/Shop/ShopHome/DetailShopFront"
-import ListMeetingTeacher from 'scenes/PlatformTeacher/ListMeetingTeacher'
 
 import MessageProf from "../src/scenes/PlatformTeacher/MessageProf";
 import StudentsGrades from "../src/scenes/PlatformTeacher/StudentsGrades";
@@ -87,8 +86,6 @@ import EditProfileStudent from "scenes/PlatformStudent/editProfileStudent";
 import Assignment from "./scenes/PlatformTeacher/Assignment";
 import AssignmentStudent from "./scenes/PlatformStudent/Assignment";
 
-import Assignment from "./scenes/PlatformTeacher/Assignment";
-import AssignmentStudent from "./scenes/PlatformStudent/Assignment";
 
 function App() {
   const isAuth = Boolean(useSelector((state) => state.accessToken));
