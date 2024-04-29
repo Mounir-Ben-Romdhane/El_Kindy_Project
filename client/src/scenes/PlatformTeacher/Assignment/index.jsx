@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import NavBar from 'components/NavBar';
@@ -84,13 +83,13 @@ function TeacherView() {
             formData.append('title', newAssignment.title);
             formData.append('courseId', newAssignment.courseId);
             formData.append('picturePath', newAssignment.picturePath);
-    
+
             const response = await axios.post('http://localhost:3001/api/add', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-    
+
             if (response.status === 201) {
                 toast.success("Class added successfully !!", {
                     autoClose: 1500,
@@ -98,6 +97,7 @@ function TeacherView() {
                         color: 'green',
                     },
                 });
+
     
                 setAssignments([...assignments, response.data]);
     
@@ -107,7 +107,7 @@ function TeacherView() {
                     picturePath: null,
                     description: ''
                 });
-    
+
             } else {
                 toast.error("Failed to add class", {
                     autoClose: 5000,

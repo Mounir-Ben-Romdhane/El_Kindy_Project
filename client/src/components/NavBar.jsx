@@ -12,6 +12,7 @@ import { faBasketShopping } from '@fortawesome/free-solid-svg-icons';
 function NavBar({ cartItems }) {
 
 
+
 function NavBar() {
   const accessToken = useSelector((state) => state.accessToken);
   const dispatch = useDispatch();
@@ -210,9 +211,14 @@ function NavBar() {
                   </Link>
                 </li>
 
-                {/* Nav item 4 Component*/}
+                {/* Nav item 4 Component
                 <li className="nav-item ">
                   <a className="nav-link" href="docs/alerts.html">
+                  <FontAwesomeIcon icon={faUsers} className="fa-fw me-1" /> 
+                    Témoignags
+                  </a>
+                </li>
+                */}
                     <FontAwesomeIcon icon={faUsers} className="fa-fw me-1" /> {/* Testimonials */}
                     Témoignags
                   </a>
@@ -291,8 +297,8 @@ function NavBar() {
                           alt="avatar"
                         />
                       </div>
-                      <div>
-                        <a className="h6 mt-2 mt-sm-0" href="#">
+                      <div className="flex-grow-1">
+                        <a className="h6 mt-2 mt-sm-0 text-truncate" href="#">
                         {user?.fullName}
                         </a>
                         <p className="small m-0">{user?.email}</p>

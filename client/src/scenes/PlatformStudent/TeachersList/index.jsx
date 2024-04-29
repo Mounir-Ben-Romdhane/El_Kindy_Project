@@ -26,6 +26,8 @@ function Index() {
   const [receivedMessage, setReceivedMessage] = useState(null);
   const socket = useRef();
 
+  
+
   const userId = accessToken ? jwtDecode(accessToken).id : "";
 
   useEffect(() => {
@@ -70,7 +72,7 @@ function Index() {
         }
 
       } else {
-        const res = await createChat({ senderId: userId, receiverId: id });
+        const res = await createChat({ senderId: userId, receiverId: id}, axiosPrivate);
         if (res.status === 201 && res.data) {
           setCreatedChatId(res.data._id);
 
@@ -163,7 +165,6 @@ function Index() {
         </div>
 
       </section>
-      <Footer />
 
     </div>
   )

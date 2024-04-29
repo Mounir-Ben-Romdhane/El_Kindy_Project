@@ -98,7 +98,7 @@ const handleRemoveImage = () => {
     
     try {
       const response = await axios.patch(
-        `http://localhost:3001/event/update/${id}`,
+        ` http://localhost:3001/event/update/${id}`,
         formData,
         {
           headers: {

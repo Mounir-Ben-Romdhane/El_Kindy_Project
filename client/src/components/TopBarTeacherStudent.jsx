@@ -58,6 +58,12 @@ import { jwtDecode } from "jwt-decode";
                                             <div>
                                                 <h1 className="my-1 fs-4">{user?.fullName} <i className="bi bi-patch-check-fill text-info small" /></h1>
                                                 <ul className="list-inline mb-0">
+                                                <li className="list-inline-item h6 fw-light me-3 mb-1 mb-sm-0">
+  <i className="fas fa-user-graduate text-orange me-2" />
+  {user.roles.includes('teacher') ? 'Teacher' : 'Student'}
+</li>
+
+                                                    </ul>
                                                     <li className="list-inline-item h6 fw-light me-3 mb-1 mb-sm-0"><i className="fas fa-user-graduate text-orange me-2" /> Enrolled Teacher</li>
                                                 </ul>
                                             </div>

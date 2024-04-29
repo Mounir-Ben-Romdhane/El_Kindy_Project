@@ -41,17 +41,19 @@ import Room from "../src/scenes/PlatformTeacher/Room";
 
 import TeachersList from "../src/scenes/PlatformStudent/TeachersList";
 import Chat from "../src/scenes/Chat/Chat";
+
+import ListMeetingTeacher from "scenes/PlatformTeacher/ListMeetingTeacher";
 import BackListShop from "../src/scenes/Shop/BackShop/BackListShop";
 import BackDetailsShop from "../src/scenes/Shop/BackShop/BackDetailsShop"
 import DetailShopFront from "../src/scenes/Shop/ShopHome/DetailShopFront"
 import ListMeetingTeacher from 'scenes/PlatformTeacher/ListMeetingTeacher'
 
-import MessageProf from '../src/scenes/PlatformTeacher/MessageProf'
-import StudentsGrades from '../src/scenes/PlatformTeacher/StudentsGrades'
+import MessageProf from "../src/scenes/PlatformTeacher/MessageProf";
+import StudentsGrades from "../src/scenes/PlatformTeacher/StudentsGrades";
 
-import AdminReservation from './scenes/EventsPage/AdminReservation/AdminReservation'
-import DetailEvents from './scenes/EventsPage/DetailEventPage/DetailEvent'
-import EditEventPage from './scenes/EventsPage/EditEventPage/EditEvent'
+import AdminReservation from "./scenes/EventsPage/AdminReservation/AdminReservation";
+import DetailEvents from "./scenes/EventsPage/DetailEventPage/DetailEvent";
+import EditEventPage from "./scenes/EventsPage/EditEventPage/EditEvent";
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
 import StageDetail from "scenes/Stage/StageDetail";
 import AdminReservationStage from "scenes/Stage/AdminReservationStage";
@@ -78,9 +80,15 @@ import DetailsCourse from "scenes/Courses/frontOffice/detailsCourse";
 import PlanningTeacher from "./scenes/PlatformTeacher/Planning";
 import PlanningStudent from "./scenes/PlatformStudent/Planning";
 import Planning from "./scenes/Planning";
+import EditProfile from "scenes/PlatformTeacher/editProfileTeacher";
+import TimeSlots from "scenes/PlatformTeacher/TimeSlots";
+import TimeSlotsStudent from "./scenes/PlatformStudent/TimeSlots/index";
+import EditProfileStudent from "scenes/PlatformStudent/editProfileStudent";
 import Assignment from "./scenes/PlatformTeacher/Assignment";
 import AssignmentStudent from "./scenes/PlatformStudent/Assignment";
 
+import Assignment from "./scenes/PlatformTeacher/Assignment";
+import AssignmentStudent from "./scenes/PlatformStudent/Assignment";
 
 function App() {
   const isAuth = Boolean(useSelector((state) => state.accessToken));
@@ -135,6 +143,7 @@ function App() {
           element={<EmailVerify />}
         />
 
+
         {/* public routes */}
         <Route path="/" element={<Navigate to="/home" />} />
         <Route path="/home" element={<HomePage />} />
@@ -143,7 +152,10 @@ function App() {
         <Route path="/category" element={<Category />} />
 
         <Route path="/courses" element={<ListCourses />} />
+        <Route path="/StageDetail/:id" element={<StageDetail />} />
+        <Route path="/courses" element={<ListCourses />} />
         <Route
+
           path="/StageDetail/:id"
           element={<StageDetail />}
         />
@@ -202,6 +214,7 @@ function App() {
               requiredRoles={["superAdmin", "admin"]}
             />
           }
+
         />
 
         <Route
@@ -282,6 +295,97 @@ function App() {
           path="/courses"
           element={<ListCourses />}
         />
+
+        <Route
+          path="/admins"
+          element={
+            <PrivateRoute
+              element={<AdminsDashboard />}
+              requiredRoles={["superAdmin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/assignmentStudent"
+          element={
+            <PrivateRoute
+              element={<AssignmentStudent />}
+              requiredRoles={["superAdmin", "student"]}
+            />
+          }
+        />
+        <Route
+          path="/assignments"
+          element={
+            <PrivateRoute
+              element={<Assignment />}
+              requiredRoles={["superAdmin", "teacher", "student"]}
+            />
+          }
+        />
+
+        <Route
+          path="/teachers"
+          element={
+            <PrivateRoute
+              element={<TeachersDashboard />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/students"
+          element={
+            <PrivateRoute
+              element={<StudentsDashboard />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/parents"
+          element={
+            <PrivateRoute
+              element={<ParentsDashboard />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/dashbordTeacher"
+          element={
+            <PrivateRoute
+              element={<DashbordTeacher />}
+              requiredRoles={["superAdmin", "admin", "teacher"]}
+            />
+          }
+        />
+        <Route
+          path="/messages"
+          element={
+            <PrivateRoute
+              element={<MessageProf />}
+              requiredRoles={["superAdmin", "admin", "teacher"]}
+            />
+          }
+        />
+
+        <Route
+          path="/StudentsGrades"
+          element={
+            <PrivateRoute
+              element={<StudentsGrades />}
+              requiredRoles={["superAdmin", "admin", "teacher"]}
+            />
+          }
+        />
+        <Route path="/category" element={<Category />} />
+
+        <Route path="/courses" element={<ListCourses />} />
         <Route
           path="/TeachersList"
           element={isAuth ? <TeachersList /> : <Navigate to="/" />}
@@ -299,7 +403,6 @@ function App() {
             />
           }
         />
-
 
         <Route
           path="/inscriptionsList"
@@ -338,7 +441,6 @@ function App() {
             <PrivateRoute
               element={<AdminHomePage />}
               requiredRoles={["superAdmin", "admin"]}
-
             />
           }
         />
@@ -413,8 +515,6 @@ function App() {
         />
 
 
-
-
         <Route
           path="/dashboard-teacher"
           element={
@@ -426,17 +526,54 @@ function App() {
         />
 
         <Route
+          path="/profile-teacher"
+          element={
+            <PrivateRoute
+              element={<EditProfile />}
+              requiredRoles={["superAdmin", "admin", "teacher"]}
+            />
+          }
+        />
+
+        <Route
+          path="/profile-student"
+          element={
+            <PrivateRoute
+              element={<EditProfileStudent />}
+              requiredRoles={["superAdmin", "admin", "student"]}
+            />
+          }
+        />
+
+        <Route
+          path="/time-slots"
+          element={
+            <PrivateRoute
+              element={<TimeSlots />}
+              requiredRoles={["superAdmin", "admin", "teacher"]}
+            />
+          }
+        />
+
+        <Route
+          path="/time-slots-student"
+          element={
+            <PrivateRoute
+              element={<TimeSlotsStudent />}
+              requiredRoles={["superAdmin", "admin", "student"]}
+            />
+          }
+        />
+
+        <Route
           path="/listMeeting"
           element={
             <PrivateRoute
               element={<ListMeetingTeacher />}
               requiredRoles={["superAdmin", "teacher"]}
-
-
             />
           }
         />
-
 
 
         <Route
@@ -478,23 +615,12 @@ function App() {
               element={<Payment />}
               requiredRoles={["superAdmin", "student"]}
             />
-          } 
-          /> 
-
-<Route
-          path="/success"
-          element={ <Success />}
+          }
         />
 
+        <Route path="/success" element={<Success />} />
 
-<Route
-          path="/fail"
-          element={ <Fail />}
-        />
-
-
-          
-
+        <Route path="/fail" element={<Fail />} />
 
         <Route
           path="/dashboard-student"
@@ -566,7 +692,7 @@ function App() {
           element={
             <PrivateRoute
               element={<Planning />}
-              requiredRoles={["superAdmin"]}
+              requiredRoles={["superAdmin", "admin"]}
             />
           }
         />
@@ -626,14 +752,12 @@ function App() {
           }
         />
 
-
         <Route
           path="/room/:roomId"
           element={
             <PrivateRoute
               element={<Room />}
               requiredRoles={["superAdmin", "student", "teacher"]}
-
             />
           }
         />
@@ -652,6 +776,7 @@ function App() {
           path="/EditStage/:id"
           element={isAuth ? <EditStage /> : <Navigate to="/" />}
         />
+
         <Route
           path="/stage"
           element={<Stage />}
@@ -670,14 +795,14 @@ function App() {
           element={isAuth ? <AddEventPage /> : <Navigate to="/" />}
         />
 
-        <Route path="/editEvent/:id" element={isAuth ? <EditEventPage /> : <Navigate to="/" />} />
+        <Route
+          path="/editEvent/:id"
+          element={isAuth ? <EditEventPage /> : <Navigate to="/" />}
+        />
 
-        <Route path="/detailEvent/:id"
-          element={<DetailEvents />} />
+        <Route path="/detailEvent/:id" element={<DetailEvents />} />
 
-        <Route path="/listEventUser"
-          element={<ListEventUser />} />
-
+        <Route path="/listEventUser" element={<ListEventUser />} />
 
         <Route path="/listEventUser" element={<ListEventUser />} />
 

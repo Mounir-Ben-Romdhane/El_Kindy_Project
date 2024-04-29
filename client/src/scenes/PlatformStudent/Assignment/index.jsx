@@ -48,7 +48,7 @@ const AssignmentsComponent = () => {
         setLoading(false);
       }
     };
-  
+
     const fetchTeachers = async () => {
       try {
         const response = await axios.get('http://localhost:3001/auth/teachers'); 
@@ -71,13 +71,13 @@ const AssignmentsComponent = () => {
         setError('Error fetching courses');
       }
     };
-    
+
     if (accessToken && decodeToken) {
       fetchAssignments();
       fetchTeachers();
       fetchCourses();
     }
-  
+
     return () => {
       // Clean up if necessary
     };
@@ -91,7 +91,7 @@ const AssignmentsComponent = () => {
   const handleCourseChange = (selectedOption) => {
     setSelectedCourse(selectedOption.value);
   };
-  
+
   const courseOptions = courses.map(course => ({
     value: course._id,
     label: course.title
@@ -148,5 +148,6 @@ const AssignmentsComponent = () => {
     </div>
   );
 }
+
 
 export default AssignmentsComponent;

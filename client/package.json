@@ -28,6 +28,7 @@
     "formik": "^2.4.5",
     "google-auth-library": "^9.6.3",
     "jwt-decode": "^4.0.0",
+    "pdfjs-dist": "^4.1.392",
     "popper.js": "^1.16.1",
     "react": "^18.2.0",
     "react-alert": "^7.0.3",
