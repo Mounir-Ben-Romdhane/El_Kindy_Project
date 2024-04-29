@@ -37,6 +37,29 @@ function ListEventUser() {
 
   const navigateToDetailPage = (eventId) => {
     navigate(`/detailEvent/${eventId}`);
+  const sortEvents = (events) => {
+    console.log("Sorting events by:", sortBy);
+
+    if (sortBy === "Newest") {
+      console.log("Sorting by Newest");
+      return events.slice().sort(
+        (a, b) => new Date(b.dateDebut) - new Date(a.dateDebut)
+      );
+    } else if (sortBy === "Oldest") {
+      console.log("Sorting by Oldest");
+      return events.slice().sort(
+        (a, b) => new Date(a.dateDebut) - new Date(b.dateDebut)
+      );
+    } else if (sortBy === "Accepted") {
+      console.log("Sorting by Accepted");
+      return events;
+    } else if (sortBy === "Rejected") {
+      console.log("Sorting by Rejected");
+      return events;
+    } else {
+      console.log("No sorting");
+      return events;
+    }
   };
 
   return ( 
@@ -291,6 +314,187 @@ Footer END */}
   {/* Template Functions */}
 </div>
 
+
+            <div className="card bg-transparent border">
+              <div className="card-header bg-light border-bottom">
+                {/* Search and select START */}
+                <div className="row g-3 align-items-center justify-content-between">
+                  {/* Search bar */}
+                  <div className="col-md-8">
+                    <form className="rounded position-relative">
+                      <input
+                        className="form-control bg-body"
+                        type="search"
+                        placeholder="Search"
+                        aria-label="Search"
+                        onChange={handleSearchChange}
+                      />
+                      <button
+                        className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                        type="submit"
+                      >
+                        <i className="fas fa-search fs-6 " />
+                      </button>
+                    </form>
+                  </div>
+                  {/* Select option */}
+                  <div className="col-md-3">
+                    {/* Short by filter */}
+                    <form>
+                      <select
+                        className="form-select  border-0 z-index-9"
+                        aria-label=".form-select-sm"
+                        value={sortBy}
+                        onChange={handleSortChange}>
+                        <option value="">Sort by</option>
+                        <option value="Newest">Newest</option>
+                        <option value="Oldest">Oldest</option>
+                        <option value="Accepted">Accepted</option>
+                        <option value="Rejected">Rejected</option>
+                      </select>
+                    </form>
+                  </div>
+                </div>
+                {/* Search and select END */}
+              </div>
+              <div className="card-body">
+                <div className="table-responsive border-0 rounded-3">
+                  <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col" className="border-0 rounded-start">
+                          Event Title
+                        </th>
+                        <th scope="col" className="border-0">
+                          Start Date
+                        </th>
+                        <th scope="col" className="border-0">
+                          End Date
+                        </th>
+
+                        <th scope="col" className="border-0">
+                          Place
+                        </th>
+                        <th scope="col" className="border-0">
+                          Time From
+                        </th>
+                        <th scope="col" className="border-0">
+                          Time To
+                        </th>
+                        <th scope="col" className="border-0">
+                          Price
+                        </th>
+                        <th scope="col" className="border-0 rounded-end">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredEvents.map((event, index) => (
+                        <tr key={index}>
+                          <td>{event.title}</td>
+                          <td>{new Date(event.dateDebut).toLocaleDateString()}</td>
+                          <td>{new Date(event.dateFin).toLocaleDateString()}</td>
+                          <td>{event.place}</td>
+                          <td>{event.timeFrom}</td>
+                          <td>{event.timeTo}</td>
+                          <td>{event.price ? `${event.price} TND` : "Free"}</td>
+                          <td>
+                            {/* Actions */}
+                            <a
+                              onClick={() => editEvents(event._id)}
+                              className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+                            >
+                              <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <button
+                              onClick={() => deleteEvents(event._id)}
+                              className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
+                            >
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    {filteredEvents.map((event, index) => (
+                      <tr key={index}>
+                        <td>{event.name}</td>
+                        <td>
+                          {new Date(event.dateDebut).toLocaleDateString()}
+                        </td>
+                        <td>
+                          {new Date(event.dateFin).toLocaleDateString()}
+                        </td>
+                        <td>{event.price || "Free"}</td>
+                        <td>
+                          {/* Actions */}
+                          <a
+                            onClick={() => editEvents(event._id)}
+                            className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0">
+                            <i class="bi bi-pencil-square"></i>
+                          </a>
+                          <button
+                            onClick={() => deleteEvents(event._id)}
+
+                            className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"><i class="bi bi-trash"></i>
+</button>
+                        </td>
+                      </tr>
+                    ))}
+
+
+                          </table>
+                        </div>
+                      </div>
+              {/* Pagination can be added here */ }
+              {/* Pagination START */ }
+                      < div className = "d-sm-flex justify-content-sm-between align-items-sm-center" >
+                      {/* Content */ }
+                      < p className = "mb-0 text-center text-sm-start" >
+                      Showing { indexOfFirstEntry + 1} to{" "}
+                    {Math.min(indexOfLastEntry, filteredEvents.length)} of{" "}
+                    {filteredEvents.length} entries
+                  </p>
+                  {/* Pagination */}
+                  <nav
+                    className="d-flex justify-content-center mb-0"
+                    aria-label="navigation"
+                  >
+                    <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
+                      <li className="page-item mb-0">
+                        <a className="page-link" href="#" tabIndex={-1}>
+                          <i className="fas fa-angle-left" />
+                        </a>
+                      </li>
+                      <li className="page-item mb-0">
+                        <a className="page-link" href="#">
+                          1
+                        </a>
+                      </li>
+                      <li className="page-item mb-0 active">
+                        <a className="page-link" href="#">
+                          2
+                        </a>
+                      </li>
+                      <li className="page-item mb-0">
+                        <a className="page-link" href="#">
+                          3
+                        </a>
+                      </li>
+                      <li className="page-item mb-0">
+                        <a className="page-link" href="#">
+                          <i className="fas fa-angle-right" />
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+                {/* Pagination END */}
+              </div>
+            </div>
+          </div>
+      </main>
     </div>
   );
   

@@ -147,6 +147,17 @@ function App() {
         <Route path="/StageDetail/:id" element={<StageDetail />} />
         <Route path="/courses" element={<ListCourses />} />
         <Route
+
+          path="/StageDetail/:id"
+          element={<StageDetail />}
+        />
+        <Route
+          path="/courses"
+          element={<ListCourses />}
+        />
+        <Route
+
+
           path="/TeachersList"
           element={isAuth ? <TeachersList /> : <Navigate to="/" />}
         />
@@ -162,6 +173,7 @@ function App() {
             <PrivateRoute
               element={<AdminHomePage />}
               requiredRoles={["superAdmin", "admin"]}
+
             />
           }
         />
@@ -194,6 +206,86 @@ function App() {
               requiredRoles={["superAdmin", "admin"]}
             />
           }
+
+        />
+
+        <Route
+          path="/admins"
+          element={
+            <PrivateRoute
+              element={<AdminsDashboard />}
+              requiredRoles={["superAdmin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/teachers"
+          element={
+            <PrivateRoute
+              element={<TeachersDashboard />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/students"
+          element={
+            <PrivateRoute
+              element={<StudentsDashboard />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+        <Route
+          path="/parents"
+          element={
+            <PrivateRoute
+              element={<ParentsDashboard />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
+
+
+        <Route
+          path="/dashbordTeacher"
+          element={
+            <PrivateRoute
+              element={<DashbordTeacher />}
+              requiredRoles={["superAdmin", "admin", "teacher"]}
+            />
+          }
+        />
+        <Route
+          path="/messages"
+          element={
+            <PrivateRoute
+              element={<MessageProf />}
+              requiredRoles={["superAdmin", "admin", "teacher"]}
+            />
+          }
+        />
+
+        <Route
+          path="/StudentsGrades"
+          element={
+            <PrivateRoute
+              element={<StudentsGrades />}
+              requiredRoles={["superAdmin", "admin", "teacher"]}
+            />
+          }
+        />
+        <Route
+          path="/category"
+          element={<Category />}
+        />
+
+        <Route
+          path="/courses"
+          element={<ListCourses />}
         />
 
         <Route
@@ -291,11 +383,12 @@ function App() {
           element={isAuth ? <TeachersList /> : <Navigate to="/" />}
         />
 
-        <Route
+<Route
           path="/listReservation"
           element={
             <PrivateRoute
-              element={<AdminReservation />}
+              element={<AdminReservation
+                />}
               requiredRoles={["superAdmin", "admin"]}
             />
           }
@@ -411,6 +504,7 @@ function App() {
           }
         />
 
+
         <Route
           path="/dashboard-teacher"
           element={
@@ -471,6 +565,7 @@ function App() {
           }
         />
 
+
         <Route
           path="/listCourses"
           element={
@@ -501,9 +596,11 @@ function App() {
           }
         />
 
-        <Route
-          path="/payment"
-          element={
+
+
+
+
+         <Route path="/payment" element={
             <PrivateRoute
               element={<Payment />}
               requiredRoles={["superAdmin", "student"]}
@@ -605,6 +702,7 @@ function App() {
           element={isAuth ? <EditCourse /> : <Navigate to="/" />}
         />
 
+
         <Route
           path="/AddStage"
           element={isAuth ? <AddStage /> : <Navigate to="/" />}
@@ -613,8 +711,15 @@ function App() {
           path="/EditStage/:id"
           element={isAuth ? <EditStage /> : <Navigate to="/" />}
         />
-        <Route path="/stage" element={<Stage />} />
-        <Route path="/ListStage" element={<ListStage />} />
+
+        <Route
+          path="/stage"
+          element={<Stage />}
+        />
+        <Route
+          path="/ListStage"
+          element={<ListStage />}
+        />
 
         <Route
           path="/listEvents"
