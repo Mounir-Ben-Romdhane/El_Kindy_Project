@@ -34,6 +34,7 @@ import MessageRoute from './routes/MessageRoute.js'
 import meetingRoutes from './routes/meetingRoutes.js';
 import reservationRoutes  from "./routes/Reservation.js";
 import paymentRouter from "./routes/paymentRouter.js";
+import textAnalytics from "./routes/textAnalytics.js";
 
 
 /* CONFIGURATION */
@@ -126,7 +127,8 @@ app.use("/events",reservationRoutes);
 
 app.use("/payment",paymentRouter);
 
-
+// azure ai :
+app.use("/azure",textAnalytics);
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;

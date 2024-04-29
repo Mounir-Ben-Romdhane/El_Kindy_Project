@@ -191,3 +191,44 @@ export const getUser = async (req, res) => {
       res.status(500).json(error);
     }
   };
+
+
+  // get teacher by ahmed 
+  export const getTeachers = async (req, res) => {
+    try {
+        const teachers = await User.find({ roles: 'teacher' });
+        res.status(200).json(teachers);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+  };
+
+
+
+export const getAllUserByRole = async (req, res) => {
+  const role = req.params.role;
+  try {
+      let users;
+
+      // Check if role is "admin"
+     // if (role === 'admin') {
+          // Retrieve all users without populating any fields
+          users = await User.find({ roles: role });
+    /*   } else {
+          // For other roles, determine the fields to populate
+          let populateFields = '';
+          if (role === 'teacher') {
+              populateFields = 'teacherInfo.coursesTaught teacherInfo.classesTeaching';
+          } else if (role === 'student') {
+              populateFields = 'studentInfo.classLevel studentInfo.coursesEnrolled';
+          }
+
+          // Populate the specified fields
+          users = await User.find({ roles: role }).populate(populateFields.split(' '));
+      } */
+
+      res.status(200).json({ data: users });
+  } catch (error) {
+      res.status(500).json(error);
+  }
+};

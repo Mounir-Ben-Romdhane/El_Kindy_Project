@@ -53,7 +53,9 @@ import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetail
 import EditCourse from "scenes/Courses/backOffice/EditCoursePage";
 
 import ListEventUser from './scenes/EventsPage/EventFront/EventFront'
-
+import Review from './scenes/ReviewPage/Review'
+import Dashboard from './scenes/ReviewPage/Dashboard'
+import Reservationbyid from './scenes/EventsPage/ReservationListbyId/ReservationListbyId'
 
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
@@ -295,7 +297,16 @@ function App() {
         />
 
 
-          
+<Route
+          path="/review"
+          element={ <Review /> }
+        />
+
+
+<Route
+          path="/dashboardReview"
+          element={ <Dashboard /> }
+        />    
 
 
         <Route
@@ -358,6 +369,15 @@ function App() {
           element={<Stage /> }
         />
 
+<Route
+          path="/events/reservation/:eventId"
+          element={
+            <PrivateRoute
+              element={<Reservationbyid />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
 
         <Route
           path="/listEvents"

@@ -1,5 +1,5 @@
 import express from "express";
-import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord, verifyAccount,getUser } from "../controllers/auth.js"
+import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord, verifyAccount,getUser,getTeachers,getAllUserByRole } from "../controllers/auth.js"
 import { verifyToken } from '../middleware/auth.js';
 import googleAuth from "../controllers/googleAuth.js";
 import { facebooklogin } from "../controllers/passport-facebook.js";
@@ -17,5 +17,10 @@ router.post("/facebooklogin", facebooklogin);
 router.get('/getAll', getAllUsers);
 router.post("/googleAuth", googleAuth);
 router.get('/:id', getUser);
+
+
+//added by ahmed
+router.get('/teachers', getTeachers);
+router.get('/getAllUserByRole/:role',getAllUserByRole);
 
 export default router;
