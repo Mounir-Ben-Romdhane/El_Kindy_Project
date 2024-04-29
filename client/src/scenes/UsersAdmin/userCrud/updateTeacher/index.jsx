@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getAllClasses } from 'services/classesService/api';
 import { getAllCourses } from 'services/courseService/api';
-import { updateTeacher } from 'services/usersService/api';
+import { getUsers, updateTeacher } from 'services/usersService/api';
 import '../../../../App.css';
 
 function UpdateTeacher({ teacher, onClose, fetchData }) {
@@ -12,6 +12,7 @@ function UpdateTeacher({ teacher, onClose, fetchData }) {
     password: teacher.password || '',
     coursesTaught: teacher.coursesTaught || [],
     classesTeaching: teacher.classesTeaching || [],
+    studentsTaught: teacher.studentsTaught || [],
     dateOfBirth: teacher.dateOfBirth ? teacher.dateOfBirth.split('T')[0] : '',
     address: teacher.address || '',
     gender: teacher.gender || '',
@@ -30,7 +31,8 @@ useEffect(() => {
     email: teacher.email || '',
     password: teacher.passwordDecoded || '',
     coursesTaught: teacher.teacherInfo.coursesTaught.map(course => course._id) || [],
-    classesTeaching: teacher.teacherInfo.classesTeaching.map(classe => classe._id) || [], 
+    classesTeaching: teacher.teacherInfo.classesTeaching.map(classe => classe._id) || [],
+    studentsTaught: teacher.teacherInfo.studentsTaught.map(student => student._id) || [], 
     dateOfBirth: teacher.dateOfBirth ? teacher.dateOfBirth.split('T')[0] : '',
     address: teacher.address || '',
     gender: teacher.gender || '',
@@ -42,11 +44,14 @@ useEffect(() => {
     // Add other necessary fields here
   });
   setSelectedTimeSlots(teacher.disponibilite || []);
+  setFormChanged(false); // Reset form changed state
 }, [teacher]);
 
   //table time
   const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
+  const [formChanged, setFormChanged] = useState(false);
+
 
   // Function to handle cell click
   const handleCellClick = (day, startTime, endTime) => {
@@ -118,6 +123,10 @@ useEffect(() => {
 
   const [courses, setCourses] = useState([]);
   const [classes, setClasses] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [errors, setErrors] = useState({});
+
+
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -138,13 +147,27 @@ useEffect(() => {
       }
     };
 
+    // Fetch students data
+    const fetchStudents = async () => {
+      try {
+        // Make an API call to fetch students data
+         const response = await getUsers("student");
+        // Set the fetched students data to the state
+        setStudents(response.data.data);
+      } catch (error) {
+        console.error('Error fetching students:', error);
+      }
+    }
+
+
+    fetchStudents();
     fetchCourses();
     fetchClasses();
   }, []);
 
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
-    if (name === 'coursesTaught' || name === 'classesTeaching') {
+    if (name === 'coursesTaught' || name === 'classesTeaching' || name === 'studentsTaught') {
       const selectedValue = value;
       const isChecked = checked;
       setFormData((prevFormData) => ({
@@ -153,16 +176,81 @@ useEffect(() => {
           ? [...prevFormData[name], selectedValue]
           : prevFormData[name].filter((id) => id !== selectedValue),
       }));
+      validateField(name, value);
+
+      setFormChanged(true); // Set form changed state to true
     } else {
       setFormData({ ...formData, [name]: value });
+      setFormChanged(true); // Set form changed state to true
+      validateField(name, value);
+
     }
+  };
+
+  const validateField = (name, value) => {
+    let error = '';
+    switch (name) {
+      case 'firstName':
+        error = value.trim() === '' ? 'Please enter teacher first name !' : '';
+        break;
+      case 'lastName':
+        error = value.trim() === '' ? 'Please enter teacher last name !' : '';
+        break;
+      case 'email':
+        error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Please enter a valid email address !';
+        break;
+      case 'password':
+        error = value.length < 6 ? 'Password must be at least 6 characters long !' : '';
+        break;
+      case 'address':
+        error = value.trim() === '' || value.length < 6 ? 'Please enter teacher full address !' : '';
+        break;
+      case 'gender':
+        error = value === '' ? 'Please select teacher gender !' : '';
+        break;
+      case 'phoneNumber1':
+        error = /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(value) ? '' : 'Please enter a valid phone number !';
+        break;
+      case 'phoneNumber2':
+        // Validate phone number 2 only if a value is provided
+        if (value.trim() !== '') {
+          error = /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(value) ? '' : 'Please enter a valid phone number !';
+        }
+        break;
+      case 'dateOfBirth':
+        // Calculate 3 years ago date
+        const minDate = new Date();
+        minDate.setFullYear(minDate.getFullYear() - 3);
+        const selectedDate = new Date(value);
+        error = selectedDate > minDate ? 'Date of birth must be at least 3 years ago!' : '';
+        break;
+      case 'qualifications':
+        error = value < 6 ? 'Please select teacher qualifications !' : '';
+        break;
+      case 'experienceYears':
+        error = value < 0 ? 'Please select teacher experience years !' : '';
+        break;
+      default:
+        break;
+    }
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
   };
   
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     formData.disponibilite = selectedTimeSlots;
-    console.log("formDta : ",formData);
+    const formErrors = {};
+    Object.keys(formData).forEach((key) => {
+      validateField(key, formData[key]);
+      if (errors[key]) {
+        formErrors[key] = errors[key];
+      }
+    });
+    
+    if (Object.keys(formErrors).length > 0) {
+      return;
+    }
     try {
       const response = await updateTeacher(teacher._id, formData);
       if (response.status === 200) {
@@ -178,6 +266,10 @@ useEffect(() => {
   };
 
   // Include the code for handling time slots here...
+  const isFormDisabled = () => {
+    // Check if any field in the form data is different from the corresponding field in the original user data
+    return Object.keys(formData).every((key) => formData[key] === teacher[key]);
+  };
 
   return (
     <div className="page-content-wrapper border">
@@ -209,9 +301,10 @@ useEffect(() => {
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleChange}
-                        className="form-control"
-                      />
-                    </div>
+                        className={`form-control ${errors.firstName ? 'is-invalid' : ''}`}
+                        />
+                        {errors.firstName && <div className="invalid-feedback">{errors.firstName}</div>}
+                       </div>
                   </div>
                 </div>
                 {/* Last name */}
@@ -228,9 +321,10 @@ useEffect(() => {
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleChange}
-                        className="form-control"
-                      />
-                    </div>
+                        className={`form-control ${errors.lastName ? 'is-invalid' : ''}`}
+                        />
+                        {errors.lastName && <div className="invalid-feedback">{errors.lastName}</div>}
+                      </div>
                   </div>
                 </div>
                 {/* Email */}
@@ -247,9 +341,10 @@ useEffect(() => {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="form-control"
-                      />
-                    </div>
+                        className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                        />
+                                                {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+</div>
                   </div>
                 </div>
                 {/* Password */}
@@ -266,9 +361,10 @@ useEffect(() => {
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
-                        className="form-control"
-                      />
-                    </div>
+                        className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                        />
+                        {errors.password && <div className="invalid-feedback">{errors.password}</div>}
+                      </div>
                   </div>
                 </div>
                 {/* Courses taught */}
@@ -331,6 +427,37 @@ useEffect(() => {
                     </div>
                   </div>
                 </div>
+
+                {/* Students taught */}
+<div className="col-12">
+  <div className="row g-xl-0 align-items-center">
+    <div className="col-lg-4">
+      <h6 className="mb-lg-0">
+        Students Taught{' '}
+        <span className="text-danger">*</span>
+      </h6>
+    </div>
+    <div className="col-lg-8">
+      {students.map((student) => (
+        <div key={student._id} className="form-check form-check-inline">
+          <input
+            type="checkbox"
+            name="studentsTaught"
+            value={student._id}
+            checked={formData.studentsTaught.includes(student._id)}
+            onChange={handleChange}
+            className="form-check-input"
+            id={student._id}
+          />
+          <label className="form-check-label" htmlFor={student._id}>
+            {student.firstName} {student.lastName}
+          </label>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
                 {/* Date of Birth */}
                 <div className="col-12">
                   <div className="row g-xl-0 align-items-center">
@@ -343,9 +470,10 @@ useEffect(() => {
                         name="dateOfBirth"
                         value={formData.dateOfBirth}
                         onChange={handleChange}
-                        className="form-control"
-                      />
-                    </div>
+                        className={`form-control ${errors.dateOfBirth ? 'is-invalid' : ''}`}
+                        />
+                        {errors.dateOfBirth && <div className="invalid-feedback">{errors.dateOfBirth}</div>}
+                       </div>
                   </div>
                 </div>
                 {/* Address */}
@@ -360,9 +488,10 @@ useEffect(() => {
                         name="address"
                         value={formData.address}
                         onChange={handleChange}
-                        className="form-control"
-                      />
-                    </div>
+                        className={`form-control ${errors.address ? 'is-invalid' : ''}`}
+                        />
+                        {errors.address && <div className="invalid-feedback">{errors.address}</div>}
+</div>
                   </div>
                 </div>
                 {/* Gender */}
@@ -376,12 +505,14 @@ useEffect(() => {
                         name="gender"
                         value={formData.gender}
                         onChange={handleChange}
-                        className="form-select"
-                      >
+                        className={`form-select ${errors.gender ? 'is-invalid' : ''}`}
+                        >
                         <option value="">Select gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                       </select>
+                      {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
+
                     </div>
                   </div>
                 </div>
@@ -399,9 +530,10 @@ useEffect(() => {
                         name="phoneNumber1"
                         value={formData.phoneNumber1}
                         onChange={handleChange}
-                        className="form-control"
-                      />
-                    </div>
+                        className={`form-control ${errors.phoneNumber1 ? 'is-invalid' : ''}`}
+                        />
+                        {errors.phoneNumber1 && <div className="invalid-feedback">{errors.phoneNumber1}</div>}
+                      </div>
                   </div>
                 </div>
                 {/* Phone Number 2 */}
@@ -416,9 +548,10 @@ useEffect(() => {
                         name="phoneNumber2"
                         value={formData.phoneNumber2}
                         onChange={handleChange}
-                        className="form-control"
-                      />
-                    </div>
+                        className={`form-control ${errors.phoneNumber2 ? 'is-invalid' : ''}`}
+                          />
+                          {errors.phoneNumber2 && <div className="invalid-feedback">{errors.phoneNumber2}</div>}
+                        </div>
                   </div>
                 </div>
                 {/* Qualifications */}
@@ -433,9 +566,10 @@ useEffect(() => {
                         name="qualifications"
                         value={formData.qualifications}
                         onChange={handleChange}
-                        className="form-control"
-                      />
-                    </div>
+                        className={`form-control ${errors.qualifications ? 'is-invalid' : ''}`}
+                        />
+                        {errors.qualifications && <div className="invalid-feedback">{errors.qualifications}</div>}
+                     </div>
                   </div>
                 </div>
                 {/* Experience Years */}
@@ -450,9 +584,10 @@ useEffect(() => {
                         name="experienceYears"
                         value={formData.experienceYears}
                         onChange={handleChange}
-                        className="form-control"
-                      />
-                    </div>
+                        className={`form-control ${errors.experienceYears ? 'is-invalid' : ''}`}
+                        />
+                        {errors.experienceYears && <div className="invalid-feedback">{errors.experienceYears}</div>}
+                       </div>
                   </div>
                 </div>
                 {/* Add other necessary fields here */}
@@ -561,7 +696,7 @@ useEffect(() => {
             </div>
           </div>
           <div className="text-center">
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary" disabled={!formChanged || isFormDisabled()}>
               Update
             </button>
           </div>

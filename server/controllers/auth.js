@@ -2,6 +2,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { sendEmail } from '../utils/sendMailer.js';
+import speakeasy from "speakeasy";
+import Assignment from "../models/Assignment.js";
+import Course from "../models/Course.js";
 
 /* REGISTER USER */
 export const register = async (req, res) => {
@@ -44,7 +47,7 @@ export const register = async (req, res) => {
 /* LOGGING IN */
 export const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, tokens } = req.body;
         const user = await User.findOne({ email: email });
         const isMatch = await bcrypt.compare(password, user.password);
 
@@ -58,7 +61,7 @@ export const login = async (req, res) => {
         await user.save();
 
         const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
-         roles: user.roles,  email : user.email, picturePath: user.picturePath, authSource: user.authSource, gender: user.gender }, process.env.JWT_SECRET, {expiresIn:"30m"});
+        roles: user.roles,  email : user.email, picturePath: user.picturePath, authSource: user.authSource, gender: user.gender , course : user.studentInfo.coursesEnrolled }, process.env.JWT_SECRET, {expiresIn:"30m"});
         
      
 
@@ -163,12 +166,29 @@ export const login = async (req, res) => {
             return res.status(401).json({status: false, message: "An email sent to your account ! please verify !"});
         }
 
+        // Check if TwoFactorAuthentication is enabled for the user
+        
+        if (user.TwoFactorAuthentication) {
+          // Verify the user's token
+          const verified = speakeasy.totp.verify({
+            secret: user.secret,
+            encoding: 'base32',
+            token: tokens,
+            window: 1,
+          });
+
+          if (!verified) {
+            return res.status(401).json({ error: 'Invalid token for 2FA' });
+          }
+        }
+
         delete user.password;
         res.status(200).json({ accessToken, refreshToken: user.refreshToken });
     }catch (err) {
         res.status(500).json({ error: err.message });
     }
 }
+
 export const refreshToken = async (req, res) => {
     try {
         const { refreshToken } = req.body;
@@ -289,9 +309,6 @@ export const getUser = async (req, res) => {
     }
   };
 
-
-
-
 // Get a User
 export const getUserById = async (req, res) => {
   const id = req.params.id;
@@ -300,7 +317,7 @@ export const getUserById = async (req, res) => {
     const user = await User.findById(id);
     if (user) {
 
-      res.status(200).json(user);
+      res.status(200).json({user});
     } else {
       res.status(404).json("No such User");
     }
@@ -314,7 +331,6 @@ export const getTeacherById = async (req, res) => {
   try {
     const user = await User.findById(id).populate("teacherInfo.classesTeaching");
     if (user) {
-
       res.status(200).json(user);
     } else {
       res.status(404).json("No such User");
@@ -325,6 +341,31 @@ export const getTeacherById = async (req, res) => {
 };
 //Get all User by Role
 export const getAllUserByRole = async (req, res) => {
+  const role = req.params.role;
+  try {
+      let users;
+
+      // Check if role is "admin"
+      if (role === 'admin') {
+          // Retrieve all users without populating any fields
+          users = await User.find({ roles: role });
+      } else {
+          // For other roles, determine the fields to populate
+          let populateFields = '';
+          if (role === 'teacher') {
+              populateFields = 'teacherInfo.coursesTaught teacherInfo.classesTeaching teacherInfo.studentsTaught';
+          } else if (role === 'student') {
+              populateFields = 'studentInfo.classLevel studentInfo.coursesEnrolled';
+          }
+
+          // Populate the specified fields
+          users = await User.find({ roles: role }).populate(populateFields.split(' '));
+      }
+
+      res.status(200).json({ data: users });
+  } catch (error) {
+      res.status(500).json(error);
+  }
 };
 
 
@@ -346,6 +387,60 @@ export const getStudents = async (req, res) => {
       res.status(200).json(students);
   } catch (error) {
       res.status(500).json({ message: error.message });
+  }
+};
+
+export const getAssignmentsByCourseIdForStudent = async (req, res) => {
+  try {
+    // Pas besoin de convertir studentId en ObjectId
+    const studentId = req.params.studentId;
+    const courseIds = req.params.courseId.split(','); // Diviser la chaîne en un tableau d'identifiants de cours
+
+    // Trouver l'utilisateur dans la base de données
+    const user = await User.findById(studentId);
+ 
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Vérifier que l'utilisateur est un étudiant
+    if (!user.roles.includes('student')) {
+      return res.status(403).json({ error: 'User is not a student' });
+    }
+
+    // Rechercher les affectations correspondant aux ID des cours
+    const assignments = await Assignment.find({ courseId: { $in: courseIds } });
+    
+    // Renvoyer les affectations trouvées sous forme de réponse JSON
+    res.json(assignments);
+  } catch (error) {
+    console.error('Error fetching assignments by course ID for student:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+
+export const getCoursesByStudentId = async (req, res) => {
+  const studentId = req.params.studentId;
+
+  try {
+    const user = await User.findById(studentId);
+    if (!user) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const courses = user.studentInfo.coursesEnrolled;
+
+    if (courses.length > 0) {
+      // Utiliser une méthode de projection pour retourner uniquement l'ID et le nom du cours
+      const coursesWithNames = await Course.find({ _id: { $in: courses } }, { _id: 1, title: 1 });
+      return res.status(200).json(coursesWithNames);
+    } else {
+      return res.status(404).json({ message: "No courses found for this student" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
 

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { Link } from 'react-router-dom';
-
+import Footer from "components/Footer";
+import NavBar from "components/NavBar";
 import SideBarTeacher from "components/SideBarTeacher";
 import { useSelector } from "react-redux";
 import TopBarTeacherStudent from "components/TopBarTeacherStudent";
@@ -149,7 +150,8 @@ const Room = () => {
   return (
     <div>
       {/* **************** MAIN CONTENT START **************** */}
-      <main>
+      <main>    <NavBar />
+
         {/* hedha l partie l fou9aneya  */}
         <TopBarTeacherStudent />
         {/* =======================
@@ -280,7 +282,7 @@ const Room = () => {
                                 type="submit"
                                 className="btn btn-lg btn-primary mb-0"
                               >
-                                Book a class
+                                spread
                               </button>
 
 
@@ -302,7 +304,7 @@ const Room = () => {
           </div>
         </section>
         {/* =======================
-  Page content END */}
+  Page content END */}<Footer />
       </main>
       {/* **************** MAIN CONTENT END **************** */}
     </div>

@@ -139,6 +139,14 @@ function Index() {
                           aria-label="Search"
                           onChange={handleSearchChange}
                         />
+                        {searchQuery === "" && ( // Check if the search query is empty
+      <button
+        className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+        onClick={(event) => event.preventDefault()}
+      >
+        <i className="fas fa-search fs-6 " />
+      </button>
+    )}
                       </form>
                     </div>
                     {/* Select option */}

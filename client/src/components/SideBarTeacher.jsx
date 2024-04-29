@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { setLogout } from "state";
 
+
 const Index = () => {
   //const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -56,9 +57,9 @@ const Index = () => {
                 {/* Dashboard menu */}
                 <div className="list-group list-group-dark list-group-borderless">
                   <Link
-                    className={`list-group-item ${activeNavItem === "/dashbordTeacher" ? "active" : ""}`}
-                    to="/dashbordTeacher"
-                    onClick={() => handleNavItemClick("/dashbordTeacher")}
+                    className={`list-group-item ${activeNavItem === "/dashboard-teacher" ? "active" : ""}`}
+                    to="/dashboard-teacher"
+                    onClick={() => handleNavItemClick("/dashboard-teacher")}
                   >
                     <i className="bi bi-ui-checks-grid fa-fw me-2" />
                     Dashboard
@@ -77,6 +78,22 @@ const Index = () => {
                   onClick={() => handleNavItemClick("/planningTeacher")}>
                     <i className="bi bi-basket fa-fw me-2" />
                     Planning                  </Link>
+                    <Link 
+                  className={`list-group-item ${activeNavItem === "/assignments" || activeNavItem.startsWith("/assignments") ? "active" : ""}`}
+                  to="/assignments"
+                  onClick={() => handleNavItemClick("/assignments")}>
+                    <i className="bi bi-basket fa-fw me-2" />
+                    Assignment                  </Link>
+
+
+                    <Link 
+                  className={`list-group-item ${activeNavItem === "/assignments" || activeNavItem.startsWith("/assignments") ? "active" : ""}`}
+                  to="/assignments"
+                  onClick={() => handleNavItemClick("/assignments")}>
+                    <i className="bi bi-basket fa-fw me-2" />
+                    Assignment                  </Link>
+
+                    
 
                   <Link 
                   className={`list-group-item ${activeNavItem === "/messages" ? "active" : ""}`}
@@ -86,21 +103,33 @@ const Index = () => {
                     Messages
                   </Link>
 
-                  <a
-                    className="list-group-item"
-                    href="instructor-studentlist.html"
-                  >
-                    <i className="bi bi-people fa-fw me-2" />
-                    Students
-                  </a>
 
-                  <a
-                    className="list-group-item"
-                    href="instructor-edit-profile.html"
-                  >
-                    <i className="bi bi-pencil-square fa-fw me-2" />
+
+
+                  <Link 
+                  className={`list-group-item ${activeNavItem === "/StudentsGrades" ? "active" : ""}`}
+                  to="/StudentsGrades"
+                  onClick={() => handleNavItemClick("/StudentsGrades")}>
+                    <i className="bi bi-people fa-fw me-2" />
+                    Students Grades
+                  </Link>
+
+                  <Link 
+                  className={`list-group-item ${activeNavItem === "/time-slots" ? "active" : ""}`}
+                  to="/time-slots"
+                  onClick={() => handleNavItemClick("/time-slots")}>
+                    <i className="bi bi-clock fa-fw me-2" />
+                    Time Slots
+                  </Link>
+
+                  <Link 
+                  className={`list-group-item ${activeNavItem === "/profile-teacher" ? "active" : ""}`}
+                  to="/profile-teacher"
+                  onClick={() => handleNavItemClick("/profile-teacher")}>
+                <i className="bi bi-person-lines-fill fa-fw me-2" />
                     Edit Profile
-                  </a>
+                  </Link>
+
 
                   <a
                     className="list-group-item text-danger bg-danger-soft-hover"
