@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { sendEmail } from '../utils/sendMailer.js';
 import speakeasy from "speakeasy";
+import Assignment from "../models/Assignment.js";
+import Course from "../models/Course.js";
 
 /* REGISTER USER */
 export const register = async (req, res) => {
@@ -59,7 +61,7 @@ export const login = async (req, res) => {
         await user.save();
 
         const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
-        roles: user.roles,  email : user.email, picturePath: user.picturePath, authSource: user.authSource, gender: user.gender }, process.env.JWT_SECRET, {expiresIn:"5s"});
+        roles: user.roles,  email : user.email, picturePath: user.picturePath, authSource: user.authSource, gender: user.gender , course : user.studentInfo.coursesEnrolled }, process.env.JWT_SECRET, {expiresIn:"30m"});
         
      
 
@@ -393,18 +395,19 @@ export const getAssignmentsByCourseIdForStudent = async (req, res) => {
     // Pas besoin de convertir studentId en ObjectId
     const studentId = req.params.studentId;
     const courseIds = req.params.courseId.split(','); // Diviser la chaîne en un tableau d'identifiants de cours
- 
+
     // Trouver l'utilisateur dans la base de données
     const user = await User.findById(studentId);
+ 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
- 
+
     // Vérifier que l'utilisateur est un étudiant
     if (!user.roles.includes('student')) {
       return res.status(403).json({ error: 'User is not a student' });
     }
- 
+
     // Rechercher les affectations correspondant aux ID des cours
     const assignments = await Assignment.find({ courseId: { $in: courseIds } });
     
@@ -414,19 +417,21 @@ export const getAssignmentsByCourseIdForStudent = async (req, res) => {
     console.error('Error fetching assignments by course ID for student:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
- };
+};
 
- export const getCoursesByStudentId = async (req, res) => {
+
+
+export const getCoursesByStudentId = async (req, res) => {
   const studentId = req.params.studentId;
- 
+
   try {
     const user = await User.findById(studentId);
     if (!user) {
       return res.status(404).json({ message: "Student not found" });
     }
- 
+
     const courses = user.studentInfo.coursesEnrolled;
- 
+
     if (courses.length > 0) {
       // Utiliser une méthode de projection pour retourner uniquement l'ID et le nom du cours
       const coursesWithNames = await Course.find({ _id: { $in: courses } }, { _id: 1, title: 1 });
@@ -437,7 +442,7 @@ export const getAssignmentsByCourseIdForStudent = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: "Internal server error", error: error.message });
   }
- };
+};
 
 
 

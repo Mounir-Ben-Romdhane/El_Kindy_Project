@@ -11,6 +11,9 @@ import { addAdmin, addStudentAndParent, addTeacher, ajouter2FA, blockUser, getDi
 
 const router = express.Router();
 router.get('/teachers', getTeachers);
+router.get('/course/:studentId', getCoursesByStudentId);
+
+router.get("/assignments/:courseId/:studentId", getAssignmentsByCourseIdForStudent);
 
 // Route pour récupérer tous les étudiants
 router.get('/students', getStudents);
@@ -59,9 +62,6 @@ router.put('/updatePassword/:id', verifyToken, updatePassword);
 router.put('/updateTimeSlots/:id', verifyToken, updateTimeSlots);
 router.post('/ajouter2FA/:email',verifyToken, ajouter2FA);
 
-router.get('/course/:studentId', getCoursesByStudentId);
-
-router.get("/assignments/:courseId/:studentId", getAssignmentsByCourseIdForStudent);
 
 
 export default router;
