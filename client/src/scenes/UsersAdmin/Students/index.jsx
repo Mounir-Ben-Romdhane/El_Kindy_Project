@@ -19,6 +19,10 @@ function StudentsDashboard() {
   const [showForm, setShowForm] = useState(false);
   const [showFormUpdate, setShowFormUpdate] = useState(false);
   const [studentDetails, setStudentDetails] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [studentsPerPage] = useState(6);
+
 
   const handleToggleMore = (studentId) => {
     setStudentDetails((prevState) => ({
@@ -115,6 +119,32 @@ function StudentsDashboard() {
     }
   };
 
+  // Search functionality
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // Reset current page when searching
+  };
+
+ 
+
+  const filteredStudents = students.filter((teacher) =>
+  Object.values(teacher).some(
+    (value) =>
+      typeof value === "string" &&
+      value.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+);
+
+  // Pagination
+  const indexOfLastStudent = currentPage * studentsPerPage;
+  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
+  const currentStudents = filteredStudents.slice(
+    indexOfFirstStudent,
+    indexOfLastStudent
+  );
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <div>
       <main>
@@ -142,13 +172,17 @@ function StudentsDashboard() {
                           type="search"
                           placeholder="Search"
                           aria-label="Search"
+                          value={searchTerm}
+                          onChange={handleSearchChange}
                         />
-                        <button
-                          className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-                          type="submit"
-                        >
-                          <i className="fas fa-search fs-6 " />
-                        </button>
+                        {searchTerm === "" && (
+                          <button
+                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                            onClick={(event) => event.preventDefault()}
+                          >
+                            <i className="fas fa-search fs-6 " />
+                          </button>
+                        )}
                       </form>
                     </div>
                     <div className="col-md-4 text-end">
@@ -168,8 +202,12 @@ function StudentsDashboard() {
                       id="nav-preview-tab-1"
                     >
                       <div className="row g-4">
-                        {students.map((student) => (
-                          <div key={student._id} className="col-md-6 col-xxl-4">
+                        {currentStudents.map((student) => (
+                          <div
+                            key={student._id}
+                            className="col-md-6 col-xxl-4"
+                          >
+                            {/* Student card JSX */}
                             <div className="card bg-transparent border h-100">
                               <div className="card-header bg-transparent border-bottom d-flex justify-content-between">
                                 <div className="d-sm-flex align-items-center">
@@ -439,7 +477,12 @@ function StudentsDashboard() {
                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                   {/* Content */}
                   <p className="mb-0 text-center text-sm-start">
-                    Showing 1 to 8 of 20 entries
+                    Showing {indexOfFirstStudent + 1} to{" "}
+                    {Math.min(
+                      indexOfLastStudent,
+                      filteredStudents.length
+                    )}{" "}
+                    of {filteredStudents.length} entries
                   </p>
                   {/* Pagination */}
                   <nav
@@ -447,28 +490,20 @@ function StudentsDashboard() {
                     aria-label="navigation"
                   >
                     <ul className="pagination pagination-sm pagination-primary-soft mb-0 pb-0 px-0">
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#" tabIndex={-1}>
+                      <li className={`page-item ${currentPage === 1 && 'disabled'}`}>
+                        <a className="page-link" href="#" onClick={() => paginate(currentPage - 1)} tabIndex={-1}>
                           <i className="fas fa-angle-left" />
                         </a>
                       </li>
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#">
-                          1
-                        </a>
-                      </li>
-                      <li className="page-item mb-0 active">
-                        <a className="page-link" href="#">
-                          2
-                        </a>
-                      </li>
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#">
-                          3
-                        </a>
-                      </li>
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#">
+                      {Array.from({ length: Math.ceil(filteredStudents.length / studentsPerPage) }, (_, i) => (
+                        <li key={i} className={`page-item ${currentPage === i + 1 && 'active'}`}>
+                          <a className="page-link" href="#" onClick={() => paginate(i + 1)}>
+                            {i + 1}
+                          </a>
+                        </li>
+                      ))}
+                      <li className={`page-item ${currentPage === Math.ceil(filteredStudents.length / studentsPerPage) && 'disabled'}`}>
+                        <a className="page-link" href="#" onClick={() => paginate(currentPage + 1)}>
                           <i className="fas fa-angle-right" />
                         </a>
                       </li>
@@ -478,6 +513,7 @@ function StudentsDashboard() {
                 {/* Pagination END */}
               </div>
               {/* Card footer END */}
+
             </div>
           )}
 

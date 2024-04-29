@@ -43,6 +43,7 @@ function Index() {
   const fetchCategories = async () => {
     try {
       const response = await axiosPrivate.get('/api/categories');
+      console.log("response : ", response.data);
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);

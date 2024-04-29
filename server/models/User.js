@@ -102,6 +102,10 @@ const UserSchema = new mongoose.Schema(
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'Classe',
                 }],
+                studentsTaught: [{
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'User', // Reference the User model
+                }],
                 qualifications: {
                     type: String,
                     default: ""

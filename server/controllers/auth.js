@@ -59,7 +59,7 @@ export const login = async (req, res) => {
         await user.save();
 
         const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
-         roles: user.roles,  email : user.email, picturePath: user.picturePath, authSource: user.authSource, gender: user.gender }, process.env.JWT_SECRET, {expiresIn:"30m"});
+        roles: user.roles,  email : user.email, picturePath: user.picturePath, authSource: user.authSource, gender: user.gender }, process.env.JWT_SECRET, {expiresIn:"5s"});
         
      
 
@@ -329,7 +329,6 @@ export const getTeacherById = async (req, res) => {
   try {
     const user = await User.findById(id).populate("teacherInfo.classesTeaching");
     if (user) {
-
       res.status(200).json(user);
     } else {
       res.status(404).json("No such User");
@@ -352,7 +351,7 @@ export const getAllUserByRole = async (req, res) => {
           // For other roles, determine the fields to populate
           let populateFields = '';
           if (role === 'teacher') {
-              populateFields = 'teacherInfo.coursesTaught teacherInfo.classesTeaching';
+              populateFields = 'teacherInfo.coursesTaught teacherInfo.classesTeaching teacherInfo.studentsTaught';
           } else if (role === 'student') {
               populateFields = 'studentInfo.classLevel studentInfo.coursesEnrolled';
           }

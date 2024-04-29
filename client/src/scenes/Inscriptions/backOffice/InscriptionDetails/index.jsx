@@ -17,7 +17,7 @@ function Index() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const inscription = await getInscription(id);
+        const inscription = await getInscription(id, axiosPrivate);
         console.log("inscription", inscription.data);
         setInscription(inscription.data);
         setDisponibilite(inscription.data.disponibilite);

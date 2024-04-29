@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom"; // Assurez-vous d'importer Link depuis react-router-dom
-import withReactContent from "sweetalert2-react-content";
-import "react-confirm-alert/src/react-confirm-alert.css"; // Importez les styles CSS
+import { Link } from "react-router-dom";
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import { ToastContainer, toast } from "react-toastify";
-import Swal from "sweetalert2"; // Importez SweetAlert2
 import useAxiosPrivate from "hooks/useAxiosPrivate";
+import { BASE_URL } from "api/axios";
 
 function Index() {
-  const [inscription, setInscription] = useState([]);
-    //refresh token
-    const axiosPrivate = useAxiosPrivate();
+  const [inscriptions, setInscriptions] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortStatus, setSortStatus] = useState(""); // Sorting status: 'accepted', 'refused', 'pending', or ''
+  const entriesPerPage = 10;
 
+  // Refresh token
+  const axiosPrivate = useAxiosPrivate();
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axiosPrivate.get("/inscription/all");
         if (response.status === 200) {
-          setInscription(response.data.data);
+          setInscriptions(response.data.data);
         } else {
           throw new Error("Failed to fetch inscriptions");
         }
@@ -27,61 +31,92 @@ function Index() {
         // Handle error
       }
     };
-  
-    useEffect(() => {
-      fetchData();
-    }, []);
-  
-    const handleDelete = async (id) => {
-      try {
-        const response = await axiosPrivate.delete(`/inscription/delete/${id}`);
-  
-        if (response.status === 200) {
-          toast.success("Inscription deleted successfully !!", {
-            autoClose: 1500,
-            style: {
-              color: "green", // Text color
-            },
-          });
-          setInscription((prevInscriptions) =>
-            prevInscriptions.filter((inscription) => inscription._id !== id)
-          ); // Assuming `_id` is the unique identifier
-        } else {
-          throw new Error("Failed to delete inscription");
-        }
-      } catch (error) {
-        console.error("Error deleting inscription:", error);
+
+    fetchData();
+  }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await axiosPrivate.delete(`/inscription/delete/${id}`);
+
+      if (response.status === 200) {
+        toast.success("Inscription deleted successfully !!", {
+          autoClose: 1500,
+          style: {
+            color: "green",
+          },
+        });
+        setInscriptions((prevInscriptions) =>
+          prevInscriptions.filter((inscription) => inscription._id !== id)
+        );
+      } else {
+        throw new Error("Failed to delete inscription");
       }
-    };
+    } catch (error) {
+      console.error("Error deleting inscription:", error);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
+
+  const handleSort = (e) => {
+    setSortStatus(e.target.value);
+  };
+
+  // Filter inscriptions based on search query
+  const filteredInscriptions = inscriptions.filter((inscription) =>
+    Object.values(inscription).some(
+      (value) =>
+        value &&
+        value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
+
+  // Sorting
+  let sortedInscriptions = [...filteredInscriptions];
+  if (sortStatus) {
+    sortedInscriptions = sortedInscriptions.filter(
+      (inscription) => inscription.status === sortStatus
+    );
+  }
+
+  // Pagination
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentEntries = sortedInscriptions.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div>
-      {/* **************** MAIN CONTENT START **************** */}
+      {/* Main content */}
       <main>
         <SideBar />
-        {/* Page content START */}
         <div className="page-content">
           <TopBarBack />
-
-          {/* Page main content START */}
           <div className="page-content-wrapper border">
             <ToastContainer />
-            {/* Title */}
             <div className="row mb-3">
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
                 <h1 className="h3 mb-2 mb-sm-0">Inscriptions</h1>
               </div>
             </div>
 
-            {/* Render text if courses array is empty */}
-            {inscription.length === 0 && <h2>No isncriptions available.</h2>}
+            
+
+            {/* Render text if inscriptions array is empty */}
+            {inscriptions.length === 0 && <h2>No inscriptions available.</h2>}
 
             {/* Card START */}
-            {inscription.length != 0 && (
+            {inscriptions.length !== 0 && (
               <div className="card bg-transparent border">
-                {/* Card header START */}
                 <div className="card-header bg-light border-bottom">
-                  {/* Search and select START */}
                   <div className="row g-3 align-items-center justify-content-between">
                     {/* Search bar */}
                     <div className="col-md-8">
@@ -91,36 +126,38 @@ function Index() {
                           type="search"
                           placeholder="Search"
                           aria-label="Search"
+                          onChange={handleSearchChange}
                         />
+                        {searchQuery === "" && ( // Check if the search query is empty
+      <button
+        className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+        type="submit"
+      >
+        <i className="fas fa-search fs-6 " />
+      </button>
+    )}
                       </form>
                     </div>
                     {/* Select option */}
                     <div className="col-md-3">
-                      {/* Short by filter */}
                       <form>
                         <select
-                          className="form-select  border-0 z-index-9"
+                          className="form-select border-0 z-index-9"
                           aria-label=".form-select-sm"
+                          onChange={handleSort}
                         >
-                          <option value>Sort by</option>
-                          <option>Newest</option>
-                          <option>Oldest</option>
-                          <option>Accepted</option>
-                          <option>Rejected</option>
+                          <option value="">Sort by Status</option>
+                          <option value="accepted">Accepted</option>
+                          <option value="refused">Refused</option>
+                          <option value="pending">Pending</option>
                         </select>
                       </form>
                     </div>
                   </div>
-                  {/* Search and select END */}
                 </div>
-                {/* Card header END */}
-                {/* Card body START */}
                 <div className="card-body">
-                  {/* Course table START */}
                   <div className="table-responsive border-0 rounded-3">
-                    {/* Table START */}
                     <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
-                      {/* Table head */}
                       <thead style={{ whiteSpace: "nowrap" }}>
                         <tr>
                           <th scope="col" className="border-0 rounded-start">
@@ -143,26 +180,16 @@ function Index() {
                           </th>
                         </tr>
                       </thead>
-                      {/* Table body START */}
                       <tbody style={{ whiteSpace: "nowrap" }}>
                         {/* Table row */}
-                        {inscription.map((inscription) => (
-                          <tr key={inscription.id}>
+                        {currentEntries.map((inscription) => (
+                          <tr key={inscription._id}>
                             <td>
                               {inscription.firstName} {inscription.lastName}
                             </td>
                             <td>{inscription.email}</td>
                             <td>{inscription.parentName}</td>
                             <td>{inscription.phoneNumber1}</td>
-                            {/* 
-                          <td>
-                            <select >
-                              {inscription.likedCourses.map(course => (
-                                <option key={course.id}>{course.title}</option>
-                              ))}
-                            </select>
-                          </td>*/}
-
                             <td>
                               {inscription.status === "pending" && (
                                 <span className="badge bg-warning bg-opacity-15 text-warning">
@@ -180,88 +207,108 @@ function Index() {
                                 </span>
                               )}
                             </td>
-
                             <td>
                               <Link
                                 to={`/inscriptionDetails/${inscription._id}`}
                                 className="btn btn-info-soft btn-round mb-1 me-1 mb-md-0"
                               >
-                                <i class="bi bi-eye"></i>
+                                <i className="bi bi-eye"></i>
                               </Link>
-
                               <button
-                                class="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
+                                className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
                                 data-bs-toggle="tooltip"
                                 data-bs-placement="top"
                                 title=""
                                 data-bs-original-title="Delete"
                                 onClick={() => handleDelete(inscription._id)}
                               >
-                                <i class="bi bi-trash"></i>
+                                <i className="bi bi-trash"></i>
                               </button>
                             </td>
                           </tr>
                         ))}
                       </tbody>
-                      {/* Table body END */}
                     </table>
-                    {/* Table END */}
                   </div>
-                  {/* Course table END */}
                 </div>
-                {/* Card body END */}
-                {/* Card ffooter START */}
                 <div className="card-footer bg-transparent pt-0">
-                  {/* Pagination START */}
                   <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
-                    {/* Content */}
-
-                    {/* Pagination */}
+                    <p className="mb-0 text-center text-sm-start">
+                      Showing {indexOfFirstEntry + 1} to{" "}
+                      {Math.min(
+                        indexOfLastEntry,
+                        sortedInscriptions.length
+                      )}{" "}
+                      of {sortedInscriptions.length} entries
+                    </p>
                     <nav
                       className="d-flex justify-content-center mb-0"
                       aria-label="navigation"
                     >
                       <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
                         <li className="page-item mb-0">
-                          <a className="page-link" href="#" tabIndex={-1}>
+                          <button
+                            className="page-link"
+                            onClick={() => paginate(currentPage - 1)}
+                            disabled={currentPage === 1}
+                          >
                             <i className="fas fa-angle-left" />
-                          </a>
+                          </button>
                         </li>
-                        <li className="page-item mb-0">
-                          <a className="page-link" href="#">
-                            1
-                          </a>
-                        </li>
-                        <li className="page-item mb-0 active">
-                          <a className="page-link" href="#">
-                            2
-                          </a>
-                        </li>
-                        <li className="page-item mb-0">
-                          <a className="page-link" href="#">
-                            3
-                          </a>
-                        </li>
-                        <li className="page-item mb-0">
-                          <a className="page-link" href="#">
+                        {Array.from(
+                          {
+                            length: Math.ceil(
+                              sortedInscriptions.length / entriesPerPage
+                            ),
+                          },
+                          (_, index) => (
+                            <li
+                              key={index}
+                              className={`page-item ${
+                                index + 1 === currentPage ? "active" : ""
+                              }`}
+                            >
+                              <button
+                                className="page-link"
+                                onClick={() => paginate(index + 1)}
+                              >
+                                {index + 1}
+                              </button>
+                            </li>
+                          )
+                        )}
+                        <li
+                          className={`page-item ${
+                            currentPage ===
+                            Math.ceil(
+                              sortedInscriptions.length / entriesPerPage
+                            )
+                              ? "disabled"
+                              : ""
+                          }`}
+                        >
+                          <button
+                            className="page-link"
+                            onClick={() => paginate(currentPage + 1)}
+                            disabled={
+                              currentPage ===
+                              Math.ceil(
+                                sortedInscriptions.length / entriesPerPage
+                              )
+                            }
+                          >
                             <i className="fas fa-angle-right" />
-                          </a>
+                          </button>
                         </li>
                       </ul>
                     </nav>
                   </div>
-                  {/* Pagination END */}
                 </div>
-                {/* Card footer END */}
               </div>
             )}
-            {/* Card END */}
           </div>
-          {/* Page main content END */}
         </div>
-        {/* Page content END */}
       </main>
-      {/* **************** MAIN CONTENT END **************** */}
     </div>
   );
 }

@@ -13,6 +13,7 @@ import axios from 'axios';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import 'react-quill/dist/quill.bubble.css';
+import useAxiosPrivate from 'hooks/useAxiosPrivate';
 
 const  modules  = {
   toolbar: [
@@ -31,6 +32,8 @@ const  modules  = {
 function EditCourse() {
 
     const [dataTheme, setDataTheme] = useState('');
+    //refresh token
+  const axiosPrivate = useAxiosPrivate();
       
   // Inside your component function
 const [fullDescription, setFullDescription] = useState('');
@@ -51,7 +54,7 @@ const [fullDescription, setFullDescription] = useState('');
   const [categories, setCategories] = useState([]);
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/categories");
+      const response = await axiosPrivate.get("/api/categories");
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);

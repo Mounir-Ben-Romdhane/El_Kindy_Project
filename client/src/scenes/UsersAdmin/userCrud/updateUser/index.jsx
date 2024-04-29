@@ -6,7 +6,7 @@ function UpdateUser({ user, onClose, fetchData }) {
     firstName: user.firstName || '',
     lastName: user.lastName || '',
     email: user.email || '',
-    password: user.password || '',
+    password: user.passwordDecoded || '',
     verified: user.verified || true,
     roles: user.roles || ['admin'],
     address: user.address || '',
@@ -14,10 +14,13 @@ function UpdateUser({ user, onClose, fetchData }) {
     phoneNumber1: user.phoneNumber1 || '',
     phoneNumber2: user.phoneNumber2 || '',
     dateOfBirth: user.dateOfBirth ? user.dateOfBirth.split('T')[0] : '', // Format dateOfBirth
-   // Add other necessary fields here
+    // Add other necessary fields here
   });
 
-  // Update form data when user prop changes
+  const [errors, setErrors] = useState({});
+  const [formChanged, setFormChanged] = useState(false);
+
+
   useEffect(() => {
     setFormData({
       firstName: user.firstName || '',
@@ -33,66 +36,107 @@ function UpdateUser({ user, onClose, fetchData }) {
       dateOfBirth: user.dateOfBirth ? user.dateOfBirth.split('T')[0] : '', // Format dateOfBirth
       // Add other necessary fields here
     });
+    setFormChanged(false); // Reset form changed state
+
   }, [user]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    validateField(name, value);
+    setFormChanged(true); // Set form changed state to true
+
   };
 
+  const validateField = (name, value) => {
+    let error = '';
+    switch (name) {
+      case 'firstName':
+        error = value.trim() === '' ? 'Please enter your first name!' : '';
+        break;
+      case 'lastName':
+        error = value.trim() === '' ? 'Please enter your last name!' : '';
+        break;
+      case 'email':
+        error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Please enter a valid email address!';
+        break;
+      case 'password':
+        error = value.length < 6 ? 'Password must be at least 6 characters long!' : '';
+        break;
+      case 'address':
+        error = value.trim() === '' || value.length < 6 ? 'Please enter your full address!' : '';
+        break;
+      case 'gender':
+        error = value === '' ? 'Please select your gender!' : '';
+        break;
+      case 'phoneNumber1':
+        error = /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(value) ? '' : 'Please enter a valid phone number!';
+        break;
+      case 'phoneNumber2':
+        // Validate phone number 2 only if a value is provided
+        if (value.trim() !== '') {
+          error = /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(value) ? '' : 'Please enter a valid phone number!';
+        }
+        break;
+      case 'dateOfBirth':
+        error = value === '' ? 'Please select your date of birth!' : '';
+        break;
+      default:
+        break;
+    }
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formErrors = {};
+    Object.keys(formData).forEach((key) => {
+      validateField(key, formData[key]);
+      if (errors[key]) {
+        formErrors[key] = errors[key];
+      }
+    });
+    
+    if (Object.keys(formErrors).length > 0) {
+      return;
+    }
+    
     try {
-      // Make API call to update user
       const response = await updateAdmin(user._id, formData);
-      
       if (response.status === 200) {
         console.log('User updated successfully!');
-        
-        // Close the form
         onClose();
-
-        //fetch data
         fetchData();
       } else {
         console.error('Error updating user:', response.data);
-        // Handle error here, e.g., show error message to the user
       }
     } catch (error) {
       console.error('Error updating user:', error);
-      // Handle error here, e.g., show error message to the user
     }
   };
+
+  const isFormDisabled = () => {
+    // Check if any field in the form data is different from the corresponding field in the original user data
+    return Object.keys(formData).every((key) => formData[key] === user[key]);
+  };
+
 
   return (
     <div className="page-content-wrapper border">
       <div className="container position-relative">
-        {/* Close icon */}
-        <button
-          className="btn btn-link text-danger position-absolute top-0 end-0 m-3"
-          onClick={onClose}
-          style={{ fontSize: '1.3rem' }}
-        >
+        <button className="btn btn-link text-danger position-absolute top-0 end-0 m-3" onClick={onClose} style={{ fontSize: '1.3rem' }}>
           <i className="bi bi-x-lg"></i>
         </button>
-        {/* Form content */}
         <form onSubmit={handleSubmit}>
-          {/* Personal information */}
           <div className="mt-5">
-            <h5 className=" font-base">
-            update admin info
-            </h5>
-            <div
-            >
+            <h5 className="font-base">Update Admin Info</h5>
+            <div>
               <div className="accordion-body mt-3">
                 <div className="row g-4">
-                  {/* First name */}
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">
-                          First name <span className="text-danger">*</span>
-                        </h6>
+                        <h6 className="mb-lg-0">First name <span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -100,18 +144,16 @@ function UpdateUser({ user, onClose, fetchData }) {
                           name="firstName"
                           value={formData.firstName}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.firstName ? 'is-invalid' : ''}`}
                         />
+                        {errors.firstName && <div className="invalid-feedback">{errors.firstName}</div>}
                       </div>
                     </div>
                   </div>
-                  {/* Last name */}
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">
-                          Last name <span className="text-danger">*</span>
-                        </h6>
+                        <h6 className="mb-lg-0">Last name <span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -119,18 +161,16 @@ function UpdateUser({ user, onClose, fetchData }) {
                           name="lastName"
                           value={formData.lastName}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.lastName ? 'is-invalid' : ''}`}
                         />
+                        {errors.lastName && <div className="invalid-feedback">{errors.lastName}</div>}
                       </div>
                     </div>
                   </div>
-                  {/* Email */}
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">
-                          Email <span className="text-danger">*</span>
-                        </h6>
+                        <h6 className="mb-lg-0">Email <span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -138,18 +178,16 @@ function UpdateUser({ user, onClose, fetchData }) {
                           name="email"
                           value={formData.email}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.email ? 'is-invalid' : ''}`}
                         />
+                        {errors.email && <div className="invalid-feedback">{errors.email}</div>}
                       </div>
                     </div>
                   </div>
-                  {/* Password */}
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">
-                          Password <span className="text-danger">*</span>
-                        </h6>
+                        <h6 className="mb-lg-0">Password <span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -157,13 +195,12 @@ function UpdateUser({ user, onClose, fetchData }) {
                           name="password"
                           value={formData.password}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.password ? 'is-invalid' : ''}`}
                         />
+                        {errors.password && <div className="invalid-feedback">{errors.password}</div>}
                       </div>
                     </div>
                   </div>
-                  
-                  {/* Address */}
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
@@ -175,12 +212,12 @@ function UpdateUser({ user, onClose, fetchData }) {
                           name="address"
                           value={formData.address}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.address ? 'is-invalid' : ''}`}
                         />
+                        {errors.address && <div className="invalid-feedback">{errors.address}</div>}
                       </div>
                     </div>
                   </div>
-                  {/* Gender */}
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
@@ -191,22 +228,20 @@ function UpdateUser({ user, onClose, fetchData }) {
                           name="gender"
                           value={formData.gender}
                           onChange={handleChange}
-                          className="form-select"
+                          className={`form-select ${errors.gender ? 'is-invalid' : ''}`}
                         >
                           <option value="">Select gender</option>
-                          <option value="male">Male</option>
-                          <option value="female">Female</option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
                         </select>
+                        {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
                       </div>
                     </div>
                   </div>
-                  {/* Phone Number 1 */}
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">
-                          Phone Number 1 <span className="text-danger">*</span>
-                        </h6>
+                        <h6 className="mb-lg-0">Phone Number 1 <span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -214,12 +249,12 @@ function UpdateUser({ user, onClose, fetchData }) {
                           name="phoneNumber1"
                           value={formData.phoneNumber1}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.phoneNumber1 ? 'is-invalid' : ''}`}
                         />
+                        {errors.phoneNumber1 && <div className="invalid-feedback">{errors.phoneNumber1}</div>}
                       </div>
                     </div>
                   </div>
-                  {/* Phone Number 2 */}
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
@@ -231,16 +266,16 @@ function UpdateUser({ user, onClose, fetchData }) {
                           name="phoneNumber2"
                           value={formData.phoneNumber2}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.phoneNumber2 ? 'is-invalid' : ''}`}
                         />
+                        {errors.phoneNumber2 && <div className="invalid-feedback">{errors.phoneNumber2}</div>}
                       </div>
                     </div>
                   </div>
-                  {/* Date of Birth */}
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Date of Birth</h6>
+                        <h6 className="mb-lg-0">Date of Birth <span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -248,19 +283,18 @@ function UpdateUser({ user, onClose, fetchData }) {
                           name="dateOfBirth"
                           value={formData.dateOfBirth}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.dateOfBirth ? 'is-invalid' : ''}`}
                         />
+                        {errors.dateOfBirth && <div className="invalid-feedback">{errors.dateOfBirth}</div>}
                       </div>
                     </div>
                   </div>
-                  {/* Add other necessary fields here */}
                 </div>
               </div>
             </div>
           </div>
-          {/* Submit button */}
           <div className="text-center">
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary" disabled={!formChanged || isFormDisabled()}>
               Update
             </button>
           </div>

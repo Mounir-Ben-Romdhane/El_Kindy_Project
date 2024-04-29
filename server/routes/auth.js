@@ -4,7 +4,7 @@ import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord,
 import { verifyToken } from '../middleware/auth.js';
 import googleAuth from "../controllers/googleAuth.js";
 import { facebooklogin } from "../controllers/passport-facebook.js";
-import { addAdmin, addStudentAndParent, addTeacher, ajouter2FA, blockUser, removeUser, unblockUser, updateEmail, updatePassword, updateStudent, updateTeacher, updateTimeSlots, updateUser } from "../controllers/users.js";
+import { addAdmin, addStudentAndParent, addTeacher, ajouter2FA, blockUser, getDispo, removeUser, unblockUser, updateEmail, updatePassword, updateStudent, updateTeacher, updateTimeSlots, updateUser } from "../controllers/users.js";
 
 
 
@@ -39,6 +39,9 @@ router.delete("/removeUser/:userId", removeUser);
 
 //get user
 router.get("/userById/:id", getUserById);
+
+//get disponibilite
+router.get( "/teacher/disponibility" , getDispo );
 
 // Update user
 router.put("/updateAdmin/:userId", updateUser);

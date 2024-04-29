@@ -17,6 +17,7 @@ const addTeacher = async (req, res) => {
           password, 
           coursesTaught, 
           classesTeaching, // Updated field name
+          studentsTaught,
           dateOfBirth, 
           address, 
           gender, 
@@ -49,6 +50,7 @@ const addTeacher = async (req, res) => {
           teacherInfo: {
               coursesTaught,
               classesTeaching, // Updated field name
+              studentsTaught,
               qualifications,
               experienceYears
           }
@@ -566,6 +568,7 @@ const updateTeacher = async (req, res) => {
           'disponibilite': teacherData.disponibilite,
           'teacherInfo.coursesTaught': teacherData.coursesTaught,
           'teacherInfo.classesTeaching': teacherData.classesTeaching,
+          'teacherInfo.studentsTaught': teacherData.studentsTaught,
           'teacherInfo.qualifications': teacherData.qualifications,
           'teacherInfo.experienceYears': teacherData.experienceYears
         }
@@ -636,6 +639,8 @@ const updateStudent = async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
 
 
 
@@ -1061,9 +1066,33 @@ const ajouter2FA = async (req, res) => {
 };
 
 
+// Define the route for getting teacher availability
+const getDispo = async (req, res) => {
+  try {
+    // Find all teachers with their disponibilite
+    const teachers = await User.find({ roles: "teacher" }, { disponibilite: 1 });
+
+    // Extract disponibilite from each teacher and create a combined list
+    const availabilityList = teachers.reduce((acc, teacher) => {
+      acc.push(...teacher.disponibilite);
+      return acc;
+    }, []);
+
+    // Remove duplicates from the availability list
+    const uniqueAvailabilityList = Array.from(new Set(availabilityList.map(JSON.stringify)), JSON.parse);
+
+    return res.status(200).json(uniqueAvailabilityList);
+  } catch (error) {
+    console.error("Error fetching teacher availability:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 
 // Export the route handler
 export { addStudentAndParent, addTeacher, addAdmin, removeUser, 
   updateUser, updateTeacher, updateStudent,  blockUser, unblockUser,
-   editUserProfile, updateEmail, updatePassword, updateTimeSlots, ajouter2FA };
+   editUserProfile, updateEmail, updatePassword, updateTimeSlots, ajouter2FA
+  ,getDispo };
 

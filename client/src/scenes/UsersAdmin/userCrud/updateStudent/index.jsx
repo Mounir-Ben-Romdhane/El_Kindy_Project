@@ -1,51 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import { getAllClasses } from 'services/classesService/api';
-import { updateStudent } from 'services/usersService/api';
-import '../../../../App.css';
-import { getAllCourses } from 'services/courseService/api';
+import React, { useEffect, useState } from "react";
+import { getAllClasses } from "services/classesService/api";
+import { updateStudent } from "services/usersService/api";
+import "../../../../App.css";
+import { getAllCourses } from "services/courseService/api";
 
 function UpdateStudent({ student, onClose, fetchData }) {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    classLevel: '', // Add classLevel for student
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    classLevel: "", // Add classLevel for student
     coursesEnrolled: [],
-    dateOfBirth: '',
-    address: '',
-    gender: '',
-    phoneNumber1: '',
-    phoneNumber2: '',
-    parentName: '',
-    parentEmail: '',
-    parentPhone: '',
-    disponibilite: [] // Availability slots
+    dateOfBirth: "",
+    address: "",
+    gender: "",
+    phoneNumber1: "",
+    phoneNumber2: "",
+    parentName: "",
+    parentEmail: "",
+    parentPhone: "",
+    disponibilite: [], // Availability slots
   });
 
   useEffect(() => {
     setFormData({
-      firstName: student.firstName || '',
-      lastName: student.lastName || '',
-      email: student.email || '',
-      password: student.passwordDecoded || '',
-      classLevel: student.studentInfo?.classLevel?._id || '', // Add classLevel for student
-      coursesEnrolled: student.studentInfo?.coursesEnrolled?.map(course => course._id) || [],
-      dateOfBirth: student.dateOfBirth ? student.dateOfBirth.split('T')[0] : '',
-      address: student.address || '',
-      gender: student.gender || '',
-      phoneNumber1: student.phoneNumber1 || '',
-      phoneNumber2: student.phoneNumber2 || '',
-      parentName: student.studentInfo?.parentName || '',
-      parentEmail: student.studentInfo?.parentEmail || '',
-      parentPhone: student.studentInfo?.parentPhone || '',
-      disponibilite: student.disponibilite || [] // Availability slots
+      firstName: student.firstName || "",
+      lastName: student.lastName || "",
+      email: student.email || "",
+      password: student.passwordDecoded || "",
+      classLevel: student.studentInfo?.classLevel?._id || "", // Add classLevel for student
+      coursesEnrolled:
+        student.studentInfo?.coursesEnrolled?.map((course) => course._id) || [],
+      dateOfBirth: student.dateOfBirth ? student.dateOfBirth.split("T")[0] : "",
+      address: student.address || "",
+      gender: student.gender || "",
+      phoneNumber1: student.phoneNumber1 || "",
+      phoneNumber2: student.phoneNumber2 || "",
+      parentName: student.studentInfo?.parentName || "",
+      parentEmail: student.studentInfo?.parentEmail || "",
+      parentPhone: student.studentInfo?.parentPhone || "",
+      disponibilite: student.disponibilite || [], // Availability slots
     });
     setSelectedTimeSlots(student.disponibilite || []);
+    setFormChanged(false); // Reset form changed state
   }, [student]);
 
-
-  
   //table time
   const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
@@ -118,15 +118,16 @@ function UpdateStudent({ student, onClose, fetchData }) {
 
   const [classes, setClasses] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [formChanged, setFormChanged] = useState(false);
 
   useEffect(() => {
-    
     const fetchCourses = async () => {
       try {
         const response = await getAllCourses();
         setCourses(response.data.data);
       } catch (error) {
-        console.error('Error fetching courses:', error);
+        console.error("Error fetching courses:", error);
       }
     };
 
@@ -135,7 +136,7 @@ function UpdateStudent({ student, onClose, fetchData }) {
         const response = await getAllClasses();
         setClasses(response.data);
       } catch (error) {
-        console.error('Error fetching classes:', error);
+        console.error("Error fetching classes:", error);
       }
     };
 
@@ -145,7 +146,7 @@ function UpdateStudent({ student, onClose, fetchData }) {
 
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
-    if (name === 'coursesEnrolled') {
+    if (name === "coursesEnrolled") {
       const selectedValue = value;
       const isChecked = checked;
       setFormData((prevFormData) => ({
@@ -154,26 +155,137 @@ function UpdateStudent({ student, onClose, fetchData }) {
           ? [...prevFormData[name], selectedValue]
           : prevFormData[name].filter((id) => id !== selectedValue),
       }));
+      setFormChanged(true); // Set form changed state to true
+      validateField(name, value);
+
     } else {
       setFormData({ ...formData, [name]: value });
+      setFormChanged(true); // Set form changed state to true
+      validateField(name, value);
+
     }
+  };
+
+  const validateField = (name, value) => {
+    let error = "";
+    switch (name) {
+      case "firstName":
+        error = value.trim() === "" ? "Please enter student first name!" : "";
+        break;
+      case "lastName":
+        error = value.trim() === "" ? "Please enter student last name!" : "";
+        break;
+      case "email":
+        error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+          ? ""
+          : "Please enter a valid email address!";
+        break;
+      case "password":
+        error =
+          value.length < 6
+            ? "Password must be at least 6 characters long!"
+            : "";
+        break;
+      case "address":
+        error =
+          value.trim() === "" || value.length < 6
+            ? "Please enter student full address !"
+            : "";
+        break;
+      case "classLevel":
+        error =
+          formData.classLevel.length === 0
+            ? "Please enter student class level !"
+            : "";
+        break;
+      case "dateOfBirth":
+        // Calculate 3 years ago date
+        const minDate = new Date();
+        minDate.setFullYear(minDate.getFullYear() - 3);
+        const selectedDate = new Date(value);
+        error =
+          selectedDate > minDate || value.trim() === ""
+            ? "Date of birth must be at least 3 years ago!"
+            : "";
+        break;
+      case "gender":
+        error = value === "" ? "Please select student gender!" : "";
+        break;
+      case "phoneNumber1":
+        error =
+          /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(
+            value
+          )
+            ? ""
+            : "Please enter a valid phone number!";
+        break;
+      case "phoneNumber2":
+        // Validate phone number 2 only if a value is provided
+        if (value.trim() !== "") {
+          error =
+            /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(
+              value
+            )
+              ? ""
+              : "Please enter a valid phone number!";
+        }
+        break;
+      case "parentName":
+        error = value.trim() === "" ? "Please enter parent name!" : "";
+        break;
+      case "parentEmail":
+        error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+          ? ""
+          : "Please enter a valid parent email address!";
+        break;
+      case "parentPhone":
+        error =
+          /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(
+            value
+          )
+            ? ""
+            : "Please enter a valid parent phone number!";
+        break;
+      default:
+        break;
+    }
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     formData.disponibilite = selectedTimeSlots;
-    try {
-      const response = await updateStudent(student._id, formData);
-      if (response.status === 200) {
-        console.log('Student updated successfully!');
-        onClose();
-        fetchData();
-      } else {
-        console.error('Error updating student:', response.data);
+
+    const formErrors = {};
+    Object.keys(formData).forEach((key) => {
+      validateField(key, formData[key]);
+      if (errors[key]) {
+        formErrors[key] = errors[key];
       }
-    } catch (error) {
-      console.error('Error updating student:', error);
+    });
+
+    if (Object.keys(formErrors).length > 0) {
+      return;
+    } else {
+      try {
+        const response = await updateStudent(student._id, formData);
+        if (response.status === 200) {
+          console.log("Student updated successfully!");
+          onClose();
+          fetchData();
+        } else {
+          console.error("Error updating student:", response.data);
+        }
+      } catch (error) {
+        console.error("Error updating student:", error);
+      }
     }
+  };
+
+  // Include the code for handling time slots here...
+  const isFormDisabled = () => {
+    // Check if any field in the form data is different from the corresponding field in the original user data
+    return Object.keys(formData).every((key) => formData[key] === student[key]);
   };
 
   return (
@@ -182,7 +294,7 @@ function UpdateStudent({ student, onClose, fetchData }) {
         <button
           className="btn btn-link text-danger position-absolute top-0 end-0 m-3"
           onClick={onClose}
-          style={{ fontSize: '1.3rem' }}
+          style={{ fontSize: "1.3rem" }}
         >
           <i className="bi bi-x-lg"></i>
         </button>
@@ -205,8 +317,15 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleChange}
-                        className="form-control"
+                        className={`form-control ${
+                          errors.firstName ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.firstName && (
+                        <div className="invalid-feedback">
+                          {errors.firstName}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -224,8 +343,15 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleChange}
-                        className="form-control"
+                        className={`form-control ${
+                          errors.lastName ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.lastName && (
+                        <div className="invalid-feedback">
+                          {errors.lastName}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -243,8 +369,13 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="form-control"
+                        className={`form-control ${
+                          errors.email ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.email && (
+                        <div className="invalid-feedback">{errors.email}</div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -262,8 +393,15 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
-                        className="form-control"
+                        className={`form-control ${
+                          errors.password ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.password && (
+                        <div className="invalid-feedback">
+                          {errors.password}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -278,7 +416,9 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         name="classLevel"
                         value={formData.classLevel}
                         onChange={handleChange}
-                        className="form-select"
+                        className={`form-control ${
+                          errors.classLevel ? "is-invalid" : ""
+                        }`}
                       >
                         <option value="">Select class</option>
                         {classes?.map((classItem) => (
@@ -286,7 +426,12 @@ function UpdateStudent({ student, onClose, fetchData }) {
                             {classItem?.className}
                           </option>
                         ))}
-                      </select>
+                      </select>{" "}
+                      {errors.classLevel && (
+                        <div className="invalid-feedback">
+                          {errors.classLevel}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -297,26 +442,32 @@ function UpdateStudent({ student, onClose, fetchData }) {
                       <h6 className="mb-lg-0">
                         Courses Enrolled <span className="text-danger">*</span>
                       </h6>
+                      <p>Please select at least one course!</p>
                     </div>
                     <div className="col-lg-8">
-                    <div className="row row-cols-3">
-                      {courses?.map((course) => (
-                        <div key={course?._id} className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            id={course?._id}
-                            value={course?._id}
-                            checked={formData.coursesEnrolled?.includes(course?._id)}
-                            onChange={handleChange}
-                            name="coursesEnrolled"
-                          />
-                          <label className="form-check-label" htmlFor={course?._id}>
-                            {course?.title}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
+                      <div className="row row-cols-3">
+                        {courses?.map((course) => (
+                          <div key={course?._id} className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              id={course?._id}
+                              value={course?._id}
+                              checked={formData.coursesEnrolled?.includes(
+                                course?._id
+                              )}
+                              onChange={handleChange}
+                              name="coursesEnrolled"
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor={course?._id}
+                            >
+                              {course?.title}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -324,7 +475,9 @@ function UpdateStudent({ student, onClose, fetchData }) {
                 <div className="col-12">
                   <div className="row g-xl-0 align-items-center">
                     <div className="col-lg-4">
-                      <h6 className="mb-lg-0">Date of Birth</h6>
+                      <h6 className="mb-lg-0">
+                        Date of Birth <span className="text-danger">*</span>
+                      </h6>
                     </div>
                     <div className="col-lg-8">
                       <input
@@ -332,8 +485,15 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         name="dateOfBirth"
                         value={formData.dateOfBirth}
                         onChange={handleChange}
-                        className="form-control"
+                        className={`form-control ${
+                          errors.dateOfBirth ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.dateOfBirth && (
+                        <div className="invalid-feedback">
+                          {errors.dateOfBirth}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -341,7 +501,9 @@ function UpdateStudent({ student, onClose, fetchData }) {
                 <div className="col-12">
                   <div className="row g-xl-0 align-items-center">
                     <div className="col-lg-4">
-                      <h6 className="mb-lg-0">Address</h6>
+                      <h6 className="mb-lg-0">
+                        Address <span className="text-danger">*</span>
+                      </h6>
                     </div>
                     <div className="col-lg-8">
                       <input
@@ -349,8 +511,15 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         name="address"
                         value={formData.address}
                         onChange={handleChange}
-                        className="form-control"
+                        className={`form-control ${
+                          errors.address ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.address && (
+                        <div className="invalid-feedback">
+                          {errors.address}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -358,19 +527,23 @@ function UpdateStudent({ student, onClose, fetchData }) {
                 <div className="col-12">
                   <div className="row g-xl-0 align-items-center">
                     <div className="col-lg-4">
-                      <h6 className="mb-lg-0">Gender</h6>
+                      <h6 className="mb-lg-0">
+                        Gender <span className="text-danger">*</span>
+                      </h6>
                     </div>
                     <div className="col-lg-8">
                       <select
                         name="gender"
                         value={formData.gender}
                         onChange={handleChange}
-                        className="form-select"
-                      >
+                        className={`form-control ${errors.gender ? 'is-invalid' : ''}`}
+                        >
                         <option value="">Select gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                       </select>
+                      {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
+
                     </div>
                   </div>
                 </div>
@@ -388,8 +561,15 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         name="phoneNumber1"
                         value={formData.phoneNumber1}
                         onChange={handleChange}
-                        className="form-control"
+                        className={`form-control ${
+                          errors.phoneNumber1 ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.phoneNumber1 && (
+                        <div className="invalid-feedback">
+                          {errors.phoneNumber1}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -405,8 +585,15 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         name="phoneNumber2"
                         value={formData.phoneNumber2}
                         onChange={handleChange}
-                        className="form-control"
+                        className={`form-control ${
+                          errors.phoneNumber2 ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.phoneNumber2 && (
+                        <div className="invalid-feedback">
+                          {errors.phoneNumber2}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -414,7 +601,9 @@ function UpdateStudent({ student, onClose, fetchData }) {
                 <div className="col-12">
                   <div className="row g-xl-0 align-items-center">
                     <div className="col-lg-4">
-                      <h6 className="mb-lg-0">Parent Name</h6>
+                      <h6 className="mb-lg-0">
+                        Parent Name <span className="text-danger">*</span>
+                      </h6>
                     </div>
                     <div className="col-lg-8">
                       <input
@@ -422,8 +611,15 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         name="parentName"
                         value={formData.parentName}
                         onChange={handleChange}
-                        className="form-control"
+                        className={`form-control ${
+                          errors.parentName ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.parentName && (
+                        <div className="invalid-feedback">
+                          {errors.parentName}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -431,7 +627,9 @@ function UpdateStudent({ student, onClose, fetchData }) {
                 <div className="col-12">
                   <div className="row g-xl-0 align-items-center">
                     <div className="col-lg-4">
-                      <h6 className="mb-lg-0">Parent Email</h6>
+                      <h6 className="mb-lg-0">
+                        Parent Email <span className="text-danger">*</span>
+                      </h6>
                     </div>
                     <div className="col-lg-8">
                       <input
@@ -439,8 +637,15 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         name="parentEmail"
                         value={formData.parentEmail}
                         onChange={handleChange}
-                        className="form-control"
+                        className={`form-control ${
+                          errors.parentEmail ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.parentEmail && (
+                        <div className="invalid-feedback">
+                          {errors.parentEmail}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -448,7 +653,9 @@ function UpdateStudent({ student, onClose, fetchData }) {
                 <div className="col-12">
                   <div className="row g-xl-0 align-items-center">
                     <div className="col-lg-4">
-                      <h6 className="mb-lg-0">Parent Phone</h6>
+                      <h6 className="mb-lg-0">
+                        Parent Phone <span className="text-danger">*</span>
+                      </h6>
                     </div>
                     <div className="col-lg-8">
                       <input
@@ -456,55 +663,56 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         name="parentPhone"
                         value={formData.parentPhone}
                         onChange={handleChange}
-                        className="form-control"
+                        className={`form-control ${
+                          errors.parentPhone ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.parentPhone && (
+                        <div className="invalid-feedback">
+                          {errors.parentPhone}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
                 {/* Availability */}
-                  <div className="mb-3">
-                    <h6
-                      className="mb-lg-0"
-                      id="heading-3"
-                    >
-                      AVAILABLE TIME SLOTS
-                    </h6>
-                    <div
-                      
-                    >
-                      <div className=" mt-3">
-                        <div className="table-responsive">
-                          <table className="calendar-table">
-                            <thead>
-                              <tr>
-                                <th className="time-column"></th>
-                                {dayNames.map((day) => (
-                                  <th key={day}>{day}</th>
-                                ))}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {[...Array(20)].map((_, index) => {
-                                const startHour =
-                                  Math.floor(index / 2) + 10;
-                                const startMinute =
-                                  index % 2 === 0 ? "00" : "30";
-                                const endHour =
-                                  Math.floor((index + 1) / 2) + 10;
-                                const endMinute =
-                                  (index + 1) % 2 === 0 ? "00" : "30";
-                                const startTime = `${startHour}:${startMinute}`;
-                                const endTime = `${endHour}:${endMinute}`;
+                <div className="mb-3">
+                  <h6 className="mb-lg-0" id="heading-3">
+                    AVAILABLE TIME SLOTS <span className="text-danger">*</span>
+                  </h6>
+                  <p>Please select at least 3 disponibilité !</p>
 
-                                return (
-                                  <tr key={index}>
-                                    <td className="time-column">
-                                      {startTime} - {endTime}
-                                    </td>
-                                    {dayNames.map((day, dayIndex) => (
-                                      <td
-                                        key={dayIndex}
-                                        className={`
+                  <div>
+                    <div className=" mt-3">
+                      <div className="table-responsive">
+                        <table className="calendar-table">
+                          <thead>
+                            <tr>
+                              <th className="time-column"></th>
+                              {dayNames.map((day) => (
+                                <th key={day}>{day}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[...Array(20)].map((_, index) => {
+                              const startHour = Math.floor(index / 2) + 10;
+                              const startMinute = index % 2 === 0 ? "00" : "30";
+                              const endHour = Math.floor((index + 1) / 2) + 10;
+                              const endMinute =
+                                (index + 1) % 2 === 0 ? "00" : "30";
+                              const startTime = `${startHour}:${startMinute}`;
+                              const endTime = `${endHour}:${endMinute}`;
+
+                              return (
+                                <tr key={index}>
+                                  <td className="time-column">
+                                    {startTime} - {endTime}
+                                  </td>
+                                  {dayNames.map((day, dayIndex) => (
+                                    <td
+                                      key={dayIndex}
+                                      className={`
                       ${
                         !isSelectable(day, startHour, parseInt(startMinute))
                           ? "non-selectable-cell"
@@ -521,52 +729,44 @@ function UpdateStudent({ student, onClose, fetchData }) {
                           : ""
                       }
                     `}
-                                        onClick={() =>
-                                          isSelectable(
-                                            day,
-                                            startHour,
-                                            parseInt(startMinute)
-                                          ) &&
-                                          handleCellClick(
-                                            day,
-                                            startTime,
-                                            endTime
-                                          )
-                                        }
-                                        onMouseEnter={() =>
-                                          isSelectable(
-                                            day,
-                                            startHour,
-                                            parseInt(startMinute)
-                                          ) &&
-                                          handleCellHover(
-                                            day,
-                                            startTime,
-                                            endTime
-                                          )
-                                        }
-                                        onMouseDown={() =>
-                                          setIsMouseDown(true)
-                                        }
-                                        onMouseUp={() =>
-                                          setIsMouseDown(false)
-                                        }
-                                      ></td>
-                                    ))}
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </div>
+                                      onClick={() =>
+                                        isSelectable(
+                                          day,
+                                          startHour,
+                                          parseInt(startMinute)
+                                        ) &&
+                                        handleCellClick(day, startTime, endTime)
+                                      }
+                                      onMouseEnter={() =>
+                                        isSelectable(
+                                          day,
+                                          startHour,
+                                          parseInt(startMinute)
+                                        ) &&
+                                        handleCellHover(day, startTime, endTime)
+                                      }
+                                      onMouseDown={() => setIsMouseDown(true)}
+                                      onMouseUp={() => setIsMouseDown(false)}
+                                    ></td>
+                                  ))}
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                   </div>
+                </div>
               </div>
             </div>
           </div>
           <div className="text-center">
-            <button type="submit" className="btn btn-primary">
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={!formChanged || isFormDisabled()}
+            >
               Update
             </button>
           </div>
