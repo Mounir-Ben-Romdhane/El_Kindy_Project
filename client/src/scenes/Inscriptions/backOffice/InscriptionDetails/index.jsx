@@ -45,6 +45,19 @@ function Index() {
     }
   };
 
+  const activateuser = async (id) => {
+    try {
+      const response = await axiosPrivate.patch(
+        `/inscription/${id}/approve`
+      );
+      if (response.status === 200) {
+        navigate("/inscriptionsList");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const rejectInscription = async (id) => {
     try {
       const response = await axiosPrivate.patch(
@@ -197,17 +210,24 @@ function Index() {
                         >
                           <button
                             className="btn btn-sm btn-success-soft"
-                            style={{ width: "120px" }}
+                            style={{ width: "130px" }}
                             onClick={() => approveInscription(inscription._id)}
                           >
-                            Approve
+                            Payment Request
                           </button>
                           <button
                             className="btn btn-sm btn-danger-soft"
                             style={{ width: "120px" }}
                             onClick={() => rejectInscription(inscription._id)}
                           >
-                            Reject
+                            Reject Request
+                          </button>
+                          <button
+                            className="btn btn-sm btn-info-soft"
+                            style={{ width: "120px" }}
+                            onClick={() => activateuser(inscription._id)}
+                          >
+                            Activate user
                           </button>
                         </div>
                       )}

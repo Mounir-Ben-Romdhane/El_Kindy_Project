@@ -196,16 +196,16 @@ function Index() {
                               )}
                               {inscription.status === "confirmed" && (
                                 <span className="badge bg-success bg-opacity-15 text-success">
-                                  confirmed
+                                  payment confirmed
                                 </span>
                               )}
-                              {inscription.status === "refused" && (
-                                <span className="badge bg-danger bg-opacity-15 text-danger">
-                                  Refused
+                               {inscription.status === "active" && (
+                                <span className="badge bg-danger bg-opacity-15 text-primary">
+                                  active user
                                 </span>
-                              )}
+                              )} 
                               {inscription.status === "not paid" && (
-                                <span className="badge bg-info bg-opacity-15 text-info">
+                                <span className="badge bg-info bg-opacity-15 text-danger ">
                                   Not Paid
                                 </span>
                               )}

@@ -57,7 +57,7 @@ const inscriptionSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'not paid', 'confirmed', 'refused'],
+    enum: ['pending', 'not paid', 'confirmed', 'refused','active'],
     default: 'pending'
   },
   paymentId: {
