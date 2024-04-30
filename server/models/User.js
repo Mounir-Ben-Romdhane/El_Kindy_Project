@@ -78,6 +78,7 @@ const UserSchema = new mongoose.Schema(
             type: Array,
             default: []
         },
+  
         // Additional attributes for specific roles
         teacherInfo: {
             type: {

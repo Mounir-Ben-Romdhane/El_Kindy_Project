@@ -1,5 +1,5 @@
 import express from "express";
-import { getAll, addInscription, getInscriptionById, removeInscription, approveInscription, rejectInscription } from '../controllers/inscriptionController.js';
+import { getAll, addInscription, getInscriptionById, removeInscription, approveInscription, rejectInscription,getMostEnrolledCourse,studentsCount , getTopEnrolledCourses  } from '../controllers/inscriptionController.js';
 
 const router = express.Router();
 
@@ -13,5 +13,14 @@ router.patch('/:id/approve', approveInscription);
 // Route for rejecting inscription
 router.patch('/:id/reject', rejectInscription);
 
+
+// Route to get the most enrolled course
+router.get("/all/mostEnrolledCourse", getMostEnrolledCourse);
+
+router.get("/all/TopEnrolledCourses", getTopEnrolledCourses);
+
+
+// Route for getting the number of students enrolled in a course by its ID
+router.get('/courses/:id/studentsCount', studentsCount);
 
 export default router;

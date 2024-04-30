@@ -37,10 +37,7 @@ import ChatRoute from './routes/ChatRoute.js'
 import MessageRoute from './routes/MessageRoute.js'
 import meetingRoutes from './routes/meetingRoutes.js';
 import reservationRoutes  from "./routes/Reservation.js";
-
 import paymentRouter from "./routes/paymentRouter.js";
-
-
 import planningRoutes from "./routes/planningRoutes.js";
 
 import ReservationStage from "./routes/ReservationStage.js";
@@ -101,6 +98,7 @@ app.post("/addMessage", upload.single("picture"), addMessage);
 
 
 
+
 /*Twilio */
 dotenv.config();
 export const sendSms = (toPhoneNumber) => {
@@ -131,6 +129,7 @@ app.use('/shops', shopRoute);
 
 app.use('/event', eventRoutes);
 app.use("/course",courseRoute);
+
 
 app.use("/contact",ContactRoutes);
 app.use("/salle",salleRoutes);

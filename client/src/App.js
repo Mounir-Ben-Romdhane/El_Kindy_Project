@@ -45,7 +45,6 @@ import BackListShop from "../src/scenes/Shop/BackShop/BackListShop";
 import BackDetailsShop from "../src/scenes/Shop/BackShop/BackDetailsShop"
 import DetailShopFront from "../src/scenes/Shop/ShopHome/DetailShopFront"
 import ListMeetingTeacher from 'scenes/PlatformTeacher/ListMeetingTeacher'
-
 import MessageProf from '../src/scenes/PlatformTeacher/MessageProf'
 import StudentsGrades from '../src/scenes/PlatformTeacher/StudentsGrades'
 
@@ -102,7 +101,9 @@ function App() {
       "/assets/vendor/glightbox/js/glightbox.js",
       "/assets/vendor/purecounterjs/dist/purecounter_vanilla.js",
       "/assets/js/functions.js",
-      "assets/vendor/sticky-js/sticky.min.js"
+      "/assets/vendor/sticky-js/sticky.min.js",
+      "/assets/vendor/apexcharts/js/apexcharts.min.js"
+
     ];
 
     if (!scriptsLoaded.current) {
@@ -532,6 +533,7 @@ function App() {
             />
           }
         />
+         
 <Route
           path="/DetailShopFront/:id"
           element={

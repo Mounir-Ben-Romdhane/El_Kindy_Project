@@ -44,7 +44,7 @@ const  Index = () => {
            <div className="bg-dark border rounded-3 pb-0 p-3 w-100">
                {/* Dashboard menu */}
                <div className="list-group list-group-dark list-group-borderless">
-                   <Link className="list-group-item active" to="/dashbordStudent"><i className="bi bi-ui-checks-grid fa-fw me-2" />Dashboard</Link>
+                   <Link className="list-group-item active" to="/dashboard-student"><i className="bi bi-ui-checks-grid fa-fw me-2" />Dashboard</Link>
                    <Link className="list-group-item" to="/meetingHomeS"><i className="bi bi-basket fa-fw me-2" />Meeting En Ligne</Link>
 
                    <Link className="list-group-item" to="/planningStudent"><i className="bi bi-basket fa-fw me-2" />Planning</Link>

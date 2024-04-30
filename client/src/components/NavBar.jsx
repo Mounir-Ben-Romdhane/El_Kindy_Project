@@ -164,12 +164,20 @@ function NavBar({ cartItems }) {
                   </Link>
                 </li>
                 {/* PRODUCT*/}
-                <li className="nav-item">
-                  <Link className={`nav-link ${activeNavItem === "/ListShop" ? "active" : ""}`} to="/ListShop" onClick={() => handleNavItemClick("/ListShop")}>
-                    <FontAwesomeIcon icon={faBasketShopping} className="fa-fw me-1" /> Shop
+
+                {/* Nav item 4 Component*/}
+                <li className="nav-item ">
+                  <Link
+                    className={`nav-link ${activeNavItem === "/ListShop" ? "active" : ""}`}
+                    to="/ListShop"
+                    onClick={() => handleNavItemClick("/ListShop")}>
+                    <FontAwesomeIcon icon={faBasketShopping} className="fa-fw me-1" />
+                    Instruments Shop
                   </Link>
                 </li>
+                {/* PRODUCT*/}
 
+               
                 {/* Nav item 4 Component*/}
                 <li className="nav-item ">
                   <a className="nav-link" href="docs/alerts.html">
@@ -214,7 +222,7 @@ function NavBar({ cartItems }) {
             </div>
             {/* Main navbar START */}
             <div>
-              
+
             </div>
             {/* Main navbar END */}
             {/* Profile START */}

@@ -1,4 +1,32 @@
 import Shop from "../models/Shop.js";
+import { sendEmail } from '../utils/sendMailer.js';
+import User from "../models/User.js";
+
+export const deleteLikedShops = async (req, res) => {
+    try {
+        // Recherche tous les magasins likés
+        const likedShops = await Shop.find({ likedShop: 1 });
+
+        // Supprime tous les magasins likés
+        await Shop.deleteMany({ likedShop: 1 });
+
+        res.status(200).json({ success: true, message: "All liked shops deleted successfully." });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+export const getAllLikedShops = async (req, res) => {
+    try {
+        // Recherche tous les magasins likés avec likedShop égal à 1
+        const likedShops = await Shop.find({ likedShop: 1 }); // Use populate() to populate all fields
+
+        res.status(200).json(likedShops);
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+
 
 export const createShop = async (req, res) => {
 
@@ -96,6 +124,33 @@ export const approveShop = async (req, res) => {
             return res.status(404).json({ success: false, error: "Shop not found." });
         }
 
+        const body = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Approval</title>
+  <style>
+    /* CSS styles here */
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="content">
+      <p>Dear ${shop.fullName},</p>
+      <p>Your shop ${shop.name} has been approved and is now active on our platform.</p>
+      <p>Thank you for choosing us!</p>
+      <p>Best regards,</p>
+      <p>The Admin Team</p>
+    </div>
+    <div class="footer">
+      © 2024 Your Website. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>`;
+
+        await sendEmail(shop.email, "Shop Approved", body);
         return res.status(200).json({ success: true, data: shop });
     } catch (err) {
         console.error(err);
@@ -113,10 +168,36 @@ export const rejectShop = async (req, res) => {
             return res.status(404).json({ success: false, error: "Shop not found." });
         }
 
+        const body = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Rejection</title>
+  <style>
+    /* CSS styles here */
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="content">
+      <p>Dear ${shop.fullName},</p>
+      <p>We regret to inform you that your shop ${shop.name} has been rejected.</p>
+      <p>If you have any questions or need further assistance, please contact our support team.</p>
+      <p>Best regards,</p>
+      <p>The Admin Team</p>
+    </div>
+    <div class="footer">
+      © 2024 Your Website. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>`;
+
+        await sendEmail(shop.mail, "Shop Rejected", body);
         return res.status(200).json({ success: true, data: shop });
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
-

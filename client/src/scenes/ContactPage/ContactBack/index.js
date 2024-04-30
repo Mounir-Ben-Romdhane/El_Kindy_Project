@@ -7,7 +7,6 @@ import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import Swal from 'sweetalert2'; // Importez SweetAlert2
 const MySwal = withReactContent(Swal);
-
 function Index() {
   const [contacts, setContacts] = useState([]);
   useEffect(() => {
