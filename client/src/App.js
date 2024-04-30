@@ -78,6 +78,8 @@ import ParentsDashboard from "scenes/UsersAdmin/Parents";
 import ListCourses from "scenes/Courses/frontOffice/listCourses";
 
 import Success from "scenes/Payment/Success";
+import SuccessInscription from "scenes/Payment/SucessInscription";
+
 import Fail from "scenes/Payment/Fail";
 import Payment from "scenes/Payment/Payment";
 
@@ -626,6 +628,8 @@ function App() {
 
 
         <Route path="/fail" element={<Fail />} />
+
+        <Route path="/successInscription" element={<SuccessInscription />} />
 
 <Route
           path="/review"

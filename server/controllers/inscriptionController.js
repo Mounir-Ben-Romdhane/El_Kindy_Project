@@ -28,25 +28,40 @@ export const getAll = async (req, res) => {
 
 export const addInscription = async (req, res) => {
     try {
-        console.log("Body : ",req.body);
-        const { firstName, lastName, gender, dateOfBirth, email, city, niveauEtude, parentName, parentProfession, phoneNumber1, phoneNumber2, likedCourses } = req.body;
-
-        const newInscription = new Inscription({
-            firstName,
-            lastName,
-            gender,
-            dateOfBirth,
-            email,
-            city,
-            niveauEtude,
-            parentName,
-            parentProfession,
-            phoneNumber1,
-            phoneNumber2,
-            likedCourses
-        });
-
-        const savedInscription = await newInscription.save();
+      console.log("Body : ", req.body);
+      const {
+        firstName,
+        lastName,
+        gender,
+        dateOfBirth,
+        email,
+        city,
+        niveauEtude,
+        parentName,
+        parentProfession,
+        phoneNumber1,
+        phoneNumber2,
+        likedCourses,
+        disponibilite,
+      } = req.body;
+  
+      const newInscription = new Inscription({
+        firstName,
+        lastName,
+        gender,
+        dateOfBirth,
+        email,
+        city,
+        niveauEtude,
+        parentName,
+        parentProfession,
+        phoneNumber1,
+        phoneNumber2,
+        likedCourses,
+        disponibilite,
+      });
+  
+      const savedInscription = await newInscription.save();
 
         return res.status(201).json({
             success: true,
@@ -248,7 +263,7 @@ export const approveInscription = async (req, res) => {
   };
   
 
-// Method to reject inscription
+
 // Method to reject inscription
 export const rejectInscription = async (req, res) => {
     try {
