@@ -31,14 +31,14 @@ function Index() {
   const approveInscription = async (id) => {
     try {
       const response = await axiosPrivate.patch(
-        `/inscription/${id}/approve`
+        `/inscription/${id}/approvepayment`
       );
       if (response.status === 200) {
         navigate("/inscriptionsList");
       }else {
         // Handle other response statuses here
-        const errorMessage = response.data.message; // Assuming there's an error message returned in the response data
-        alert(errorMessage); // Display the error message in an alert
+        const errorMessage = response.data.message; 
+        alert(errorMessage); 
       }
     } catch (error) {
       console.error(error);
