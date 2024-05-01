@@ -1,6 +1,7 @@
+// Your modified code here
+import React, { useEffect, useState } from "react";
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
-import React, { useEffect, useState } from "react";
 import AddTeacher from "../userCrud/addTeacher";
 import UpdateTeacher from "../userCrud/updateTeacher";
 import {
@@ -12,22 +13,36 @@ import {
 
 function TeachersDashboard() {
   const [teachers, setTeachers] = useState([]);
-  const [teacher, setTeacher] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [showFormUpdate, setShowFormUpdate] = useState(false);
-  const [showMore, setShowMore] = useState(false);
+  const [teacher, setTeacher] = useState(null);
   const [teacherDetails, setTeacherDetails] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [teachersPerPage] = useState(6);
 // pagination
 const [searchQuery, setSearchQuery] = useState("");
 const [currentPage, setCurrentPage] = useState(1);
 const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
 const entriesPerPage = 8; // Number of entries to display per page
 
-  const handleShowMore = () => {
-    setShowMore(!showMore);
+  const fetchData = async () => {
+    try {
+      const response = await getUsers("teacher");
+      setTeachers(response.data.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching teachers:", error);
+      setError("Error fetching teachers. Please try again later.");
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleToggleMore = (teacherId) => {
     setTeacherDetails((prevState) => ({
@@ -38,7 +53,7 @@ const entriesPerPage = 8; // Number of entries to display per page
 
   const handleToggleForm = () => {
     setShowForm(!showForm);
-    setShowFormUpdate(false); // Close the update form when toggling the add form
+    setShowFormUpdate(false);
   };
 
   const close = () => {
@@ -47,53 +62,39 @@ const entriesPerPage = 8; // Number of entries to display per page
   };
 
   const handleToggleFormUpdate = (teacher) => {
-    // If the update form is already shown, only change the teacher
-    if (showFormUpdate) {
-      setTeacher(teacher);
-    } else {
-      setTeacher(teacher);
-      setShowFormUpdate(true);
-      setShowForm(false); // Close the add form when toggling the update form
-    }
+    setTeacher(teacher);
+    setShowFormUpdate(true);
+    setShowForm(false);
   };
 
   const handleBlockTeacher = async (teacherId) => {
     try {
-      // Make API call to block teacher
       const response = await blockUser(teacherId);
-
       if (response.status === 200) {
         console.log("Teacher blocked successfully!");
-        // Perform any additional actions if needed
         fetchData();
       } else {
         console.error("Error blocking teacher:", response.data);
-        // Handle error here, e.g., show error message to the user
       }
     } catch (error) {
       console.error("Error blocking teacher:", error);
-      // Handle error here, e.g., show error message to the user
     }
   };
 
   const handleUnblockTeacher = async (teacherId) => {
     try {
-      // Make API call to unblock teacher
       const response = await unblockUser(teacherId);
-
       if (response.status === 200) {
         console.log("Teacher unblocked successfully!");
-        // Perform any additional actions if needed
         fetchData();
       } else {
         console.error("Error unblocking teacher:", response.data);
-        // Handle error here, e.g., show error message to the user
       }
     } catch (error) {
       console.error("Error unblocking teacher:", error);
-      // Handle error here, e.g., show error message to the user
     }
   };
+
 
   const fetchData = async () => {
     try {
@@ -114,15 +115,35 @@ const entriesPerPage = 8; // Number of entries to display per page
   // Function to handle teacher removal
   const handleRemoveTeacher = async (teacherId) => {
     try {
-      // Call the removeTeacher function from your service
       await removeUser(teacherId);
       fetchData();
       close();
     } catch (error) {
       console.error("Error removing teacher:", error);
-      // Handle errors as needed
     }
   };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+    setCurrentPage(1);
+  };
+
+  const filteredTeachers = teachers.filter((teacher) =>
+    Object.values(teacher).some(
+      (value) =>
+        typeof value === "string" &&
+        value.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
+
+  const indexOfLastTeacher = currentPage * teachersPerPage;
+  const indexOfFirstTeacher = indexOfLastTeacher - teachersPerPage;
+  const currentTeachers = filteredTeachers.slice(
+    indexOfFirstTeacher,
+    indexOfLastTeacher
+  );
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div>
@@ -151,13 +172,17 @@ const entriesPerPage = 8; // Number of entries to display per page
                           type="search"
                           placeholder="Search"
                           aria-label="Search"
+                          value={searchQuery}
+                          onChange={handleSearchChange}
                         />
-                        <button
-                          className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-                          type="submit"
-                        >
-                          <i className="fas fa-search fs-6 " />
-                        </button>
+                        {searchQuery === "" && (
+                          <button
+                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                            onClick={(event) => event.preventDefault()}
+                          >
+                            <i className="fas fa-search fs-6 " />
+                          </button>
+                        )}
                       </form>
                     </div>
                     <div className="col-md-4 text-end">
@@ -170,6 +195,31 @@ const entriesPerPage = 8; // Number of entries to display per page
                     </div>
                   </div>
                 </div>
+              </div>
+              <div className="card-body px-0">
+                <div className="tab-content">
+                  <div
+                    className="tab-pane fade show active"
+                    id="nav-preview-tab-1"
+                  >
+                    <div className="row g-4">
+                      {currentTeachers.map((teacher) => (
+                        <div
+                          key={teacher._id}
+                          className="col-md-6 col-xxl-4"
+                        >
+                          <div className="card bg-transparent border h-100">
+                            <div className="card-header bg-transparent border-bottom d-flex justify-content-between">
+                              <div className="d-sm-flex align-items-center">
+                                <div className="avatar avatar-md flex-shrink-0">
+                                  <img
+                                    className="avatar-img rounded-circle"
+                                    src={
+                                      teacher.picturePath ||
+                                      "assets/images/element/02.jpg"
+                                    }
+                                    alt="avatar"
+                                  />
                 <div className="card-body px-0">
                   <div className="tab-content">
                     <div
@@ -269,96 +319,173 @@ const entriesPerPage = 8; // Number of entries to display per page
                                     <strong>Address:</strong> {teacher.address}
                                   </p>
                                 </div>
-                                <div>
-                                  <p className="mb-1">
-                                    <i className="bi bi-gender-male me-2 text-primary" />
-                                    <strong>Gender:</strong>{" "}
-                                    {teacher.gender || "Not available"}
-                                  </p>
-                                  <p className="mb-1">
-                                    <i className="bi bi-telephone me-2 text-primary" />
-                                    <strong>Phone Number:</strong>{" "}
-                                    {teacher.phoneNumber1 || "Not available"}
-                                  </p>
-                                  <p className="mb-1">
-                                    {teacher.blocked ? (
-                                      <i className="bi bi-lock me-2 text-primary" />
+                                <div className="ms-0 ms-sm-2 mt-2 mt-sm-0">
+                                  <h6 className="mb-0">
+                                    {teacher.firstName} {teacher.lastName}
+                                    {teacher.verified ? (
+                                      <i className="bi bi-check-circle-fill text-success ms-2" />
                                     ) : (
-                                      <i className="bi bi-check2-circle me-2 text-primary" />
+                                      <i className="bi bi-exclamation-circle-fill text-warning ms-2" />
                                     )}
-                                    <strong>State:</strong>{" "}
-                                    {teacher.blocked ? (
-                                      <span className="state-badge blocked">
-                                        Blocked
+                                  </h6>
+                                  <span className="text-body small">
+                                    {teacher.email}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="dropdown text-end">
+                                <a
+                                  href="#"
+                                  className="btn btn-sm btn-light btn-round small mb-0"
+                                  role="button"
+                                  id="dropdownShare2"
+                                  data-bs-toggle="dropdown"
+                                  aria-expanded="false"
+                                >
+                                  <i className="bi bi-three-dots fa-fw" />
+                                </a>
+                                <ul
+                                  className="dropdown-menu dropdown-w-sm dropdown-menu-end min-w-auto shadow rounded"
+                                  aria-labelledby="dropdownShare2"
+                                >
+                                  <li>
+                                    <a
+                                      className="dropdown-item"
+                                      href="#"
+                                      onClick={() =>
+                                        handleToggleFormUpdate(teacher)
+                                      }
+                                    >
+                                      <span className="text-primary">
+                                        <i className="bi bi-pencil-square fa-fw me-2" />
+                                        Edit
                                       </span>
+                                    </a>
+                                  </li>
+                                  <li>
+                                    <a
+                                      className="dropdown-item"
+                                      href="#"
+                                      onClick={() =>
+                                        handleRemoveTeacher(teacher._id)
+                                      }
+                                    >
+                                      <span className="text-danger">
+                                        <i className="bi bi-trash fa-fw me-2" />
+                                        Remove
+                                      </span>
+                                    </a>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                            <div className="card-body">
+                              <div>
+                                <p className="mb-1">
+                                  <i className="bi bi-calendar-check me-2 text-primary" />
+                                  <strong>Date of Birth:</strong>{" "}
+                                  {teacher.dateOfBirth
+                                    ? new Date(
+                                        teacher.dateOfBirth
+                                      ).toLocaleDateString()
+                                    : "Not available"}
+                                </p>
+                                <p className="mb-1">
+                                  <i className="bi bi-geo-alt me-2 text-primary" />
+                                  <strong>Address:</strong> {teacher.address}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="mb-1">
+                                  <i className="bi bi-gender-male me-2 text-primary" />
+                                  <strong>Gender:</strong>{" "}
+                                  {teacher.gender || "Not available"}
+                                </p>
+                                <p className="mb-1">
+                                  <i className="bi bi-telephone me-2 text-primary" />
+                                  <strong>Phone Number:</strong>{" "}
+                                  {teacher.phoneNumber1 || "Not available"}
+                                </p>
+                                <p className="mb-1">
+                                  {teacher.blocked ? (
+                                    <i className="bi bi-lock me-2 text-primary" />
+                                  ) : (
+                                    <i className="bi bi-check2-circle me-2 text-primary" />
+                                  )}
+                                  <strong>State:</strong>{" "}
+                                  {teacher.blocked ? (
+                                    <span className="state-badge blocked">
+                                      Blocked
+                                    </span>
+                                  ) : (
+                                    <span className="state-badge">
+                                      Active
+                                    </span>
+                                  )}
+                                </p>
+                                <div className="teacher-more">
+                                  <a
+                                    className="p-0 mb-0 mt-2 btn-more d-flex align-items-center"
+                                    onClick={() =>
+                                      handleToggleMore(teacher._id)
+                                    }
+                                  >
+                                    {teacherDetails[teacher._id] ? (
+                                      <>
+                                        See less{" "}
+                                        <i className="fas fa-angle-up ms-2" />
+                                      </>
                                     ) : (
-                                      <span className="state-badge">
-                                        Active
-                                      </span>
+                                      <>
+                                        See{" "}
+                                        <span className="see-more ms-1">
+                                          more
+                                        </span>
+                                        <i className="fas fa-angle-down ms-2" />
+                                      </>
                                     )}
-                                  </p>
-                                  <div className="teacher-more">
-            <a
-              className="p-0 mb-0 mt-2 btn-more d-flex align-items-center"
-              onClick={() => handleToggleMore(teacher._id)}
-            >
-              {teacherDetails[teacher._id] ? (
-                <>
-                  See less{" "}
-                  <i className="fas fa-angle-up ms-2" />
-                </>
-              ) : (
-                <>
-                  See{" "}
-                  <span className="see-more ms-1">more</span>
-                  <i className="fas fa-angle-down ms-2" />
-                </>
-              )}
-            </a>
-            {teacherDetails[teacher._id] && (
-              <div className="m-1">
-                {/* Display additional information for the teacher */}
-                {/* Courses Taught */}
-                <p className="mb-1">
-                                          <i className="bi bi-journal-text me-2 text-primary" />{" "}
-                                          {/* Icon for Courses Taught */}
-                                          <strong>Courses Taught:</strong>{" "}
-                                          {/* Heading for Courses Taught */}
-                                          {/* Display coursesTaught */}
-                                          {teacher.teacherInfo.coursesTaught
-                                            .length > 0
-                                            ? teacher.teacherInfo.coursesTaught.map(
-                                                (course) => (
-                                                  <span key={course._id}>
-                                                    {course.title},{" "}
-                                                  </span>
-                                                )
+                                  </a>
+                                  {teacherDetails[teacher._id] && (
+                                    <div className="m-1">
+                                      {/* Display additional information for the teacher */}
+                                      {/* Courses Taught */}
+                                      <p className="mb-1">
+                                        <i className="bi bi-journal-text me-2 text-primary" />{" "}
+                                        {/* Icon for Courses Taught */}
+                                        <strong>Courses Taught:</strong>{" "}
+                                        {/* Heading for Courses Taught */}
+                                        {/* Display coursesTaught */}
+                                        {teacher.teacherInfo.coursesTaught
+                                          .length > 0
+                                          ? teacher.teacherInfo.coursesTaught.map(
+                                              (course) => (
+                                                <span key={course._id}>
+                                                  {course.title},{" "}
+                                                </span>
                                               )
-                                            : "None"}
-                                        </p>
-                                        {/* Classes Teaching */}
-                                        <p className="mb-1">
-                                          <i className="bi bi-people me-2 text-primary" />{" "}
-                                          {/* Icon for Classes Teaching */}
-                                          <strong>
-                                            Classes Teaching:
-                                          </strong>{" "}
-                                          {/* Heading for Classes Teaching */}
-                                          {/* Display classesTeaching */}
-                                          {teacher.teacherInfo.classesTeaching
-                                            .length > 0
-                                            ? teacher.teacherInfo.classesTeaching.map(
-                                                (classItem) => (
-                                                  <span key={classItem._id}>
-                                                    {classItem.className},{" "}
-                                                  </span>
-                                                )
+                                            )
+                                          : "None"}
+                                      </p>
+                                      {/* Classes Teaching */}
+                                      <p className="mb-1">
+                                        <i className="bi bi-people me-2 text-primary" />{" "}
+                                        {/* Icon for Classes Teaching */}
+                                        <strong>Classes Teaching:</strong>{" "}
+                                        {/* Heading for Classes Teaching */}
+                                        {/* Display classesTeaching */}
+                                        {teacher.teacherInfo.classesTeaching
+                                          .length > 0
+                                          ? teacher.teacherInfo.classesTeaching.map(
+                                              (classItem) => (
+                                                <span key={classItem._id}>
+                                                  {classItem.className},{" "}
+                                                </span>
                                               )
-                                            : "None"}
-                                        </p>
-              </div>
-            )}
-          </div>
+                                            )
+                                          : "None"}
+                                      </p>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                               {/* Card footer */}
@@ -367,7 +494,9 @@ const entriesPerPage = 8; // Number of entries to display per page
                                   {/* Rating star */}
                                   <h6 className="mb-2 mb-sm-0">
                                     <i className="bi bi-calendar fa-fw text-orange me-2" />
-                                    <span className="text-body">Join at:</span>{" "}
+                                    <span className="text-body">
+                                      Join at:
+                                    </span>{" "}
                                     {new Date(
                                       teacher.createdAt
                                     ).toLocaleDateString()}
@@ -424,8 +553,8 @@ const entriesPerPage = 8; // Number of entries to display per page
                               </div>
                             </div>
                           </div>
-                        ))}
-                      </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -435,6 +564,42 @@ const entriesPerPage = 8; // Number of entries to display per page
               <div className="card-footer bg-transparent pt-0 px-0 mt-4">
                 {/* Pagination START */}
                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
+                  {/* Content */}
+                  <p className="mb-0 text-center text-sm-start">
+                    Showing {indexOfFirstTeacher + 1} to{" "}
+                    {Math.min(
+                      indexOfLastTeacher,
+                      filteredTeachers.length
+                    )}{" "}
+                    of {filteredTeachers.length} entries
+                  </p>
+                  {/* Pagination */}
+                  <nav
+                    className="d-flex justify-content-center mb-0"
+                    aria-label="navigation"
+                  >
+                    <ul className="pagination pagination-sm pagination-primary-soft mb-0 pb-0 px-0">
+                      <li className={`page-item ${currentPage === 1 && 'disabled'}`}>
+                        <a className="page-link" href="#" onClick={() => paginate(currentPage - 1)} tabIndex={-1}>
+                          <i className="fas fa-angle-left" />
+                        </a>
+                      </li>
+                      {Array.from({ length: Math.ceil(filteredTeachers.length / teachersPerPage) }, (_, i) => (
+                        <li key={i} className={`page-item ${currentPage === i + 1 && 'active'}`}>
+                          <a className="page-link" href="#" onClick={() => paginate(i + 1)}>
+                            {i + 1}
+                          </a>
+                        </li>
+                      ))}
+                      <li className={`page-item ${currentPage === Math.ceil(filteredTeachers.length / teachersPerPage) && 'disabled'}`}>
+                        <a className="page-link" href="#" onClick={() => paginate(currentPage + 1)}>
+                          <i className="fas fa-angle-right" />
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+
                     {/* Content */}
                     <p className="mb-0 text-center text-sm-start">Showing {(currentPage - 1) * 8 + 1} to {Math.min(currentPage * 8, totalEntries)} of {totalEntries} entries</p>
                     {/* Pagination */}

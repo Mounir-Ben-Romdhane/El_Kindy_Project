@@ -11,9 +11,12 @@ import { fileURLToPath } from "url";
 import { addNewCourse, updateCourse } from "./controllers/courseController.js";
 import { addNewEvent,updateEvent } from "./controllers/event.js";
 import  { createCategorie, updateCategorie }  from "./controllers/categorieController.js"; // Import des routes de catégorie
+import  { createShop, updateShop }  from "./controllers/ShopController.js"; // Import des routes de shop
+import shopRoute from "./routes/ShopRoute.js";
 import eventRoutes from "./routes/Event.js";
 import classRoute from "./routes/ClassRoutes.js";
 import salleRoutes from "./routes/salle.js";
+import ContactRoutes from "./routes/ContactRoute.js"
 import inscriptionRoutes from "./routes/inscriptionRoutes.js";
 import stageRouter  from "./routes/stageRoute.js";
 import authRoutes from "./routes/auth.js";
@@ -34,14 +37,20 @@ import ChatRoute from './routes/ChatRoute.js'
 import MessageRoute from './routes/MessageRoute.js'
 import meetingRoutes from './routes/meetingRoutes.js';
 import reservationRoutes  from "./routes/Reservation.js";
+
 import gradeRoutes from "./routes/gradeRoutes.js";
 import ficheEleveRoutes from "./routes/ficheEleveRoutes.js";
 import paymentRouter from "./routes/paymentRouter.js";
 
+import assignmentRoute from "./routes/assignmentRoutes.js";
+
+import textAnalytics from "./routes/textAnalytics.js";
 
 import planningRoutes from "./routes/planningRoutes.js";
 
 import ReservationStage from "./routes/ReservationStage.js";
+import { editUserProfile } from "./controllers/users.js";
+import { createAssignment, uploadAssignmentFile } from "./controllers/assignmentController.js";
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -84,6 +93,13 @@ app.post("/event/add",upload.single("picture"),addNewEvent);
 app.patch("/event/update/:id",upload.single("picture"),updateEvent);
 app.use("/planning", planningRoutes);
 
+
+app.post("/api/categories/add", verifyToken, upload.single("picture"), createCategorie);
+app.put("/api/categories/update/:id", verifyToken, upload.single("picture"), updateCategorie);
+
+
+app.post("/shops", upload.single("picture"), createShop);
+app.put("/shops/:id", upload.single("picture"), updateShop);
 app.use("/grades", gradeRoutes);
 app.post("/api/categories", upload.single("picture"), createCategorie);
 app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
@@ -92,6 +108,14 @@ app.post("/api/stage", upload.single("picture"), createStage);
 app.patch("/api/stage/:id", upload.single("picture"),updateStage );
 
 app.post("/addMessage", upload.single("picture"), addMessage);
+
+app.patch("/user/edit/:id", upload.single("picture"), verifyToken, editUserProfile);
+
+
+
+app.post("/api/add", upload.single("picturePath"), createAssignment);
+router.post('/api/upload/:assignmentId', upload.single('picturePath'), uploadAssignmentFile);
+
 
 
 
@@ -121,8 +145,13 @@ app.use("/auth",authRoutes);
 app.use("/api/categories", categorieRoutes); 
 app.use("/stage",stageRouter);
 app.use('/classes', classRoute);
+app.use('/shops', shopRoute);
+
 app.use('/event', eventRoutes);
 app.use("/course",courseRoute);
+
+
+app.use("/contact",ContactRoutes);
 app.use("/salle",salleRoutes);
 app.use("/inscription", inscriptionRoutes);
 app.use('/chat', ChatRoute);
@@ -133,7 +162,19 @@ app.use("/ficheEleve",ficheEleveRoutes)
 app.use("/payment",paymentRouter);
 
 
+app.use('/api', assignmentRoute);
+
+
 app.use("/reservationstage", ReservationStage);
+
+
+
+
+
+// azure ai :
+app.use("/azure",textAnalytics);
+
+
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
 mongoose.connect(process.env.MONGO_URL, {

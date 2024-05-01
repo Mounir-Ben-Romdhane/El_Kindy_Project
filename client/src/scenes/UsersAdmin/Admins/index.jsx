@@ -13,6 +13,9 @@ function AdminsDashboard() {
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [showFormUpdate, setShowFormUpdate] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage] = useState(6);
 
   // pagination
   const [searchQuery, setSearchQuery] = useState("");
@@ -112,6 +115,31 @@ function AdminsDashboard() {
     }
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
+
+  // Filter admins based on search query
+  const filteredAdmins = admins.filter((admin) =>
+    Object.values(admin).some(
+      (value) =>
+        value &&
+        value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
+
+  // Pagination
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentAdmins = filteredAdmins.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+
   return (
     <div>
       <main>
@@ -139,13 +167,18 @@ function AdminsDashboard() {
                           type="search"
                           placeholder="Search"
                           aria-label="Search"
+                          value={searchQuery}
+                          onChange={handleSearchChange}
                         />
-                        <button
-                          className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-                          type="submit"
-                        >
-                          <i className="fas fa-search fs-6 " />
-                        </button>
+                        {searchQuery === "" && ( // Check if the search query is empty
+      <button
+        className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+        onClick={(event) => event.preventDefault()}
+
+      >
+        <i className="fas fa-search fs-6 " />
+      </button>
+    )}
                       </form>
                     </div>
                     <div className="col-md-4 text-end">
@@ -158,13 +191,16 @@ function AdminsDashboard() {
                     </div>
                   </div>
                 </div>
-                <div className="card-body px-0">
+                </div>
+              <div className="card-body px-0">
                   <div className="tab-content">
                     <div
                       className="tab-pane fade show active"
                       id="nav-preview-tab-1"
                     >
                       <div className="row g-4">
+                        {currentAdmins.map((admin) => (
+                          <div key={admin._id} className="col-md-6 col-xxl-4">
                       {admins
   .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
   .map((admin) => (                          <div key={admin._id} className="col-md-6 col-xxl-4">
@@ -261,7 +297,6 @@ function AdminsDashboard() {
                                     <i className="bi bi-telephone me-2 text-primary" />
                                     <strong>Phone Number:</strong>{" "}
                                     {admin.phoneNumber1 || "Not available"}
-                                    
                                   </p>
                                   <p className="mb-1">
                                     {admin.blocked ? (
@@ -276,15 +311,11 @@ function AdminsDashboard() {
                                       <span className="state-badge">Active</span>
                                     )}
                                   </p>
-
-
                                 </div>
                               </div>
                               {/* Card footer */}
                               <div className="card-footer bg-transparent border-top">
                                 <div className="d-sm-flex justify-content-between align-items-center">
-                                        
-                                  {/* Rating star */}
                                   <h6 className="mb-2 mb-sm-0">
                                     <i className="bi bi-calendar fa-fw text-orange me-2" />
                                     <span className="text-body">Join at:</span>{" "}
@@ -292,51 +323,47 @@ function AdminsDashboard() {
                                       admin.createdAt
                                     ).toLocaleDateString()}
                                   </h6>
-                                  {/* Buttons */}
                                   <div className="text-end text-primary-hover">
-                                      {/* Message button */}
-                                      <a
-                                        href="#"
-                                        className="btn btn-link text-body p-0 mb-0 me-2"
+                                    <a
+                                      href="#"
+                                      className="btn btn-link text-body p-0 mb-0 me-2"
+                                      data-bs-toggle="tooltip"
+                                      data-bs-placement="top"
+                                      title="Message"
+                                      aria-label="Message"
+                                    >
+                                      <span className="text-primary">
+                                        <i className="bi bi-envelope-fill me-1" />
+                                      </span>
+                                    </a>
+                                    {admin.blocked ? (
+                                      <button
+                                        className="btn btn-link text-body p-0 mb-0"
                                         data-bs-toggle="tooltip"
                                         data-bs-placement="top"
-                                        title="Message"
-                                        aria-label="Message"
+                                        title="Unblock"
+                                        aria-label="Unblock"
+                                        onClick={() => handleUnblockUser(admin._id)}
                                       >
-                                        <span className="text-primary">
-                                          <i className="bi bi-envelope-fill me-1" />
+                                        <span className="text-danger">
+                                          <i className="bi bi-lock-fill me-1" />
                                         </span>
-                                      </a>
-                                      {/* Block/Unblock button */}
-                                      {admin.blocked ? (
-                                        <button
-                                          className="btn btn-link text-body p-0 mb-0"
-                                          data-bs-toggle="tooltip"
-                                          data-bs-placement="top"
-                                          title="Unblock"
-                                          aria-label="Unblock"
-                                          onClick={() => handleUnblockUser(admin._id)}
-                                        >
-                                          <span className="text-danger">
-                                            <i className="bi bi-lock-fill me-1" />
-                                          </span>
-                                        </button>
-                                      ) : (
-                                        <button
-                                          className="btn btn-link text-body p-0 mb-0"
-                                          data-bs-toggle="tooltip"
-                                          data-bs-placement="top"
-                                          title="Block"
-                                          aria-label="Block"
-                                          onClick={() => handleBlockUser(admin._id)}
-                                        >
-                                          <span className="text-danger">
-                                            <i className="bi bi-unlock-fill me-1" />
-                                          </span>
-                                        </button>
-                                      )}
-                                    </div>
-
+                                      </button>
+                                    ) : (
+                                      <button
+                                        className="btn btn-link text-body p-0 mb-0"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="Block"
+                                        aria-label="Block"
+                                        onClick={() => handleBlockUser(admin._id)}
+                                      >
+                                        <span className="text-danger">
+                                          <i className="bi bi-unlock-fill me-1" />
+                                        </span>
+                                      </button>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -346,12 +373,46 @@ function AdminsDashboard() {
                     </div>
                   </div>
                 </div>
-              </div>
 
               {/* Card footer START */}
               <div className="card-footer bg-transparent pt-0 px-0 mt-4">
                 {/* Pagination START */}
                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
+                  {/* Content */}
+                  <p className="mb-0 text-center text-sm-start">
+                    Showing {indexOfFirstEntry + 1} to{" "}
+                    {Math.min(
+                      indexOfLastEntry,
+                      filteredAdmins.length
+                    )}{" "}
+                    of {filteredAdmins.length} entries
+                  </p>
+                  {/* Pagination */}
+                  <nav
+                    className="d-flex justify-content-center mb-0"
+                    aria-label="navigation"
+                  >
+                    <ul className="pagination pagination-sm pagination-primary-soft mb-0 pb-0 px-0">
+                      <li className={`page-item ${currentPage === 1 && 'disabled'}`}>
+                        <a className="page-link" href="#" onClick={() => paginate(currentPage - 1)} tabIndex={-1}>
+                          <i className="fas fa-angle-left" />
+                        </a>
+                      </li>
+                      {Array.from({ length: Math.ceil(filteredAdmins.length / entriesPerPage) }, (_, i) => (
+                        <li key={i} className={`page-item ${currentPage === i + 1 && 'active'}`}>
+                          <a className="page-link" href="#" onClick={() => paginate(i + 1)}>
+                            {i + 1}
+                          </a>
+                        </li>
+                      ))}
+                      <li className={`page-item ${currentPage === Math.ceil(filteredAdmins.length / entriesPerPage) && 'disabled'}`}>
+                        <a className="page-link" href="#" onClick={() => paginate(currentPage + 1)}>
+                          <i className="fas fa-angle-right" />
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
                     {/* Content */}
                     <p className="mb-0 text-center text-sm-start">Showing {(currentPage - 1) * 8 + 1} to {Math.min(currentPage * 8, totalEntries)} of {totalEntries} entries</p>
                     {/* Pagination */}

@@ -12,6 +12,17 @@ import axios from "axios";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 function Index() {
+  // Custom hook to get Axios instance with authentication
+  const axiosPrivate = useAxiosPrivate();
+
+  // State variables
+  const [courses, setCourses] = useState([]); // State to hold the list of courses
+  const [searchQuery, setSearchQuery] = useState(""); // State to hold the search query
+  const [sortOption, setSortOption] = useState(""); // State to hold the sorting option
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    entriesPerPage: 8,
+  });
   const dispatch = useDispatch();
   const accessToken = useSelector((state) => state.accessToken);
   const refreshTokenState = useSelector((state) => state.refreshToken);
@@ -25,8 +36,19 @@ function Index() {
   const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
   const entriesPerPage = 8; // Number of entries to display per page
 
+  // Fetch courses from the server when component mounts
   useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axiosPrivate.get("/course/all"); // Fetch courses from the server
+        setCourses(response.data.data); // Update the courses state with the fetched data
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
 
+    fetchCourses(); // Call the fetchCourses function
+  }, [axiosPrivate]); // Only re-run effect if axiosPrivate changes
 
 
     const controller = new AbortController();
@@ -54,35 +76,53 @@ function Index() {
 
   console.log("courses : ", courses);
 
+  // Function to handle course deletion
   const handleDelete = async (id) => {
     try {
-      /*await fetch(`http://localhost:3001/course/delete/${id}`, {
-        method: "DELETE",
-      });*/
-      await axiosPrivate.delete(`/course/delete/${id}`);
-
+      await axiosPrivate.delete(`/course/delete/${id}`); // Delete the course with the specified id
       toast.success("Course deleted successfully !!", {
         autoClose: 1500,
         style: {
-          color: "green", // Text color
+          color: "green",
         },
       });
-      // Filter out the deleted stage from the state
-      setCourses((prevStages) =>
-        prevStages.filter((course) => course._id !== id)
-      ); // Assuming `_id` is the unique identifier
+      setCourses((prevCourses) =>
+        prevCourses.filter((course) => course._id !== id)
+      ); // Update courses state after deletion
     } catch (error) {
-      console.error("Error deleting stage:", error);
+      console.error("Error deleting course:", error);
     }
+  };
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value); // Update search query state
   };
 
   // Filter courses based on search query
-  const filteredCourses = courses.filter(
-    (course) =>
-      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredCourses = courses.filter((course) => {
+    const lowerCaseQuery = searchQuery.toLowerCase();
+    return (
+      course.title.toLowerCase().includes(lowerCaseQuery) ||
+      course.description.toLowerCase().includes(lowerCaseQuery) ||
+      course.courseLevel.toLowerCase().includes(lowerCaseQuery) ||
+      course.courseCategory.name.toLowerCase().includes(lowerCaseQuery)
+    );
+  });
 
+  // Sort courses based on the selected sorting option
+  const sortedCourses = filteredCourses.sort((a, b) => {
+    switch (sortOption) {
+      case "Newest":
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      case "Oldest":
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      // Add other sorting options as needed
+      default:
+        return 0;
+    }
+  });
+
+  const indexOfLastEntry = pagination.currentPage * pagination.entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - pagination.entriesPerPage;
   const handleSearchChange = (e) => {
     e.preventDefault();
     console.log("searchQuery :", e.target.value);
@@ -130,24 +170,33 @@ function Index() {
                           className="form-control bg-body"
                           type="search"
                           placeholder="Search"
-                          aria-label="Search"
+                          value={searchQuery}
                           onChange={handleSearchChange}
                         />
+                        {searchQuery === "" && ( // Check if the search query is empty
+                          <button
+                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                            onClick={(event) => event.preventDefault()}
+                          >
+                            <i className="fas fa-search fs-6 " />
+                          </button>
+                        )}
                       </form>
                     </div>
                     {/* Select option */}
                     <div className="col-md-3">
                       {/* Short by filter */}
                       <form>
+                        {/* Sorting dropdown */}
                         <select
                           className="form-select  border-0 z-index-9"
-                          aria-label=".form-select-sm"
+                          value={sortOption}
+                          onChange={(e) => setSortOption(e.target.value)}
                         >
-                          <option value>Sort by</option>
-                          <option>Newest</option>
-                          <option>Oldest</option>
-                          <option>Accepted</option>
-                          <option>Rejected</option>
+                          <option value="">Sort by</option>
+                          <option value="Newest">Newest</option>
+                          <option value="Oldest">Oldest</option>
+                          {/* Add other sorting options here */}
                         </select>
                       </form>
                     </div>
@@ -187,6 +236,63 @@ function Index() {
                       </thead>
                       {/* Table body START */}
                       <tbody>
+                        {/* Table row */}
+                        {sortedCourses.map((course) => (
+                          <tr key={course.id}>
+                            <td>{course.title}</td>
+                            <td>{course.description}</td>
+                            <td>
+                              {/* Affichage de l'image */}
+                              {course.picturePath ? (
+                                <img
+                                  src={`http://localhost:3001/assets/${course.picturePath}`}
+                                  alt="Course"
+                                  style={{ width: "130px", height: "110px", borderRadius: "15%" }} // Adjust size and border radius as needed
+                                />
+                              ) : (
+                                <span>No Image</span>
+                              )}
+                            </td>
+
+                            <td>
+                              {course.courseLevel === "Beginner" && (
+                                <span className="badge bg-primary text-white">
+                                  Beginner
+                                </span>
+                              )}
+                              {course.courseLevel === "Intermediate" && (
+                                <span className="badge bg-purple text-white">
+                                  Intermediate
+                                </span>
+                              )}
+                              {course.courseLevel === "All level" && (
+                                <span className="badge bg-orange text-white">
+                                  All level
+                                </span>
+                              )}
+                              {course.courseLevel === "Advance" && (
+                                <span className="badge bg-warning text-white">
+                                  Advance
+                                </span>
+                              )}
+                            </td>
+                            <td>{course.courseCategory.name}</td>
+                            <td>
+                              <Link
+                                to={`/edit-course/${course._id}`}
+                                className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+                              >
+                                <i class="bi bi-pencil-square"></i>
+                              </Link>
+                              <button
+                                onClick={() => handleDelete(course._id)}
+                                className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
+                              >
+                                <i class="bi bi-trash"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
                         {filteredCourses
                           .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
                           .map((course) => (

@@ -283,7 +283,7 @@ const Room = () => {
                                 type="submit"
                                 className="btn btn-lg btn-primary mb-0"
                               >
-                                Book a class
+                                spread
                               </button>
 
 

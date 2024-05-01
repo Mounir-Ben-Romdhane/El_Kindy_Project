@@ -19,6 +19,10 @@ function StudentsDashboard() {
   const [showForm, setShowForm] = useState(false);
   const [showFormUpdate, setShowFormUpdate] = useState(false);
   const [studentDetails, setStudentDetails] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [studentsPerPage] = useState(6);
+
 // pagination
 const [searchQuery, setSearchQuery] = useState("");
 const [currentPage, setCurrentPage] = useState(1);
@@ -121,6 +125,32 @@ const entriesPerPage = 8; // Number of entries to display per page
     }
   };
 
+  // Search functionality
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // Reset current page when searching
+  };
+
+ 
+
+  const filteredStudents = students.filter((teacher) =>
+  Object.values(teacher).some(
+    (value) =>
+      typeof value === "string" &&
+      value.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+);
+
+  // Pagination
+  const indexOfLastStudent = currentPage * studentsPerPage;
+  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
+  const currentStudents = filteredStudents.slice(
+    indexOfFirstStudent,
+    indexOfLastStudent
+  );
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <div>
       <main>
@@ -148,13 +178,17 @@ const entriesPerPage = 8; // Number of entries to display per page
                           type="search"
                           placeholder="Search"
                           aria-label="Search"
+                          value={searchTerm}
+                          onChange={handleSearchChange}
                         />
-                        <button
-                          className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-                          type="submit"
-                        >
-                          <i className="fas fa-search fs-6 " />
-                        </button>
+                        {searchTerm === "" && (
+                          <button
+                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                            onClick={(event) => event.preventDefault()}
+                          >
+                            <i className="fas fa-search fs-6 " />
+                          </button>
+                        )}
                       </form>
                     </div>
                     <div className="col-md-4 text-end">
@@ -174,6 +208,12 @@ const entriesPerPage = 8; // Number of entries to display per page
                       id="nav-preview-tab-1"
                     >
                       <div className="row g-4">
+                        {currentStudents.map((student) => (
+                          <div
+                            key={student._id}
+                            className="col-md-6 col-xxl-4"
+                          >
+                            {/* Student card JSX */}
                       {students
   .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
   .map((student) => (                             <div key={student._id} className="col-md-6 col-xxl-4">
@@ -320,43 +360,53 @@ const entriesPerPage = 8; // Number of entries to display per page
                                   {/* Additional information */}
                                   {studentDetails[student._id] && (
                                     <div className="m-1">
-                                    {/* Classes */}
-                                    <p className="mb-1">
-                                      <i className="bi bi-people me-2 text-primary" />
-                                      <strong>Classes:</strong>{" "}
-                                      {student.studentInfo.classLevel.className}
-                                    </p>
-                                    {/* Courses Enrolled */}
-                                    <p className="mb-1">
-                                      <i className="bi bi-journal-text me-2 text-primary" />
-                                      <strong>Courses Enrolled:</strong>{" "}
-                                      {student.studentInfo.coursesEnrolled.length > 0 ? (
-                                        student.studentInfo.coursesEnrolled.map((course) => (
-                                          <span key={course._id}>{course.title}, </span>
-                                        ))
-                                      ) : (
-                                        "None"
-                                      )}
-                                    </p>
-                                    {/* Parent Information */}
-                                    <p className="mb-1">
-                                      <i className="bi bi-person me-2 text-primary" />
-                                      <strong>Parent Name:</strong>{" "}
-                                      {student.studentInfo.parentName || "Not available"}
-                                    </p>
-                                    <p className="mb-1">
-                                      <i className="bi bi-envelope me-2 text-primary" />
-                                      <strong>Parent Email:</strong>{" "}
-                                      {student.studentInfo.parentEmail || "Not available"}
-                                    </p>
-                                    <p className="mb-1">
-                                      <i className="bi bi-phone me-2 text-primary" />
-                                      <strong>Parent Phone:</strong>{" "}
-                                      {student.studentInfo.parentPhone || "Not available"}
-                                    </p>
-                                    {/* Other additional information can go here */}
-                                  </div>
-                                  
+                                      {/* Classes */}
+                                      <p className="mb-1">
+                                        <i className="bi bi-people me-2 text-primary" />
+                                        <strong>Classes:</strong>{" "}
+                                        {student.studentInfo.classLevel
+                                          ?.className ?? "Not available yet"}
+                                      </p>
+                                      {/* Courses Enrolled */}
+                                      <p className="mb-1">
+                                        <i className="bi bi-journal-text me-2 text-primary" />
+                                        <strong>Courses Enrolled:</strong>{" "}
+                                        {student.studentInfo.coursesEnrolled
+                                          ?.length > 0
+                                          ? student.studentInfo.coursesEnrolled.map(
+                                              (course) => (
+                                                <span key={course._id}>
+                                                  {course.title},{" "}
+                                                </span>
+                                              )
+                                            )
+                                          : "None Courses"}
+                                      </p>
+                                      {/* Parent Information */}
+                                      <p className="mb-1">
+                                        <i className="bi bi-person me-2 text-primary" />
+                                        <strong>Parent Name:</strong>{" "}
+                                        {student.studentInfo.parentName
+                                          ? student.studentInfo.parentName
+                                          : "Not available"}
+                                      </p>
+                                      <p className="mb-1">
+                                        <i className="bi bi-envelope me-2 text-primary" />
+                                        <strong>Parent Email:</strong>{" "}
+                                        {student.studentInfo.parentEmail
+                                          ? student.studentInfo.parentEmail
+                                          : "Not available"}
+                                      </p>
+                                      <p className="mb-1">
+                                        <i className="bi bi-phone me-2 text-primary" />
+                                        <strong>Parent Phone:</strong>{" "}
+                                        {student.studentInfo.parentPhone
+                                          ? student.studentInfo.parentPhone
+                                          : "Not available"}
+                                      </p>
+
+                                      {/* Other additional information can go here */}
+                                    </div>
                                   )}
                                 </div>
                               </div>
@@ -434,6 +484,42 @@ const entriesPerPage = 8; // Number of entries to display per page
               <div className="card-footer bg-transparent pt-0 px-0 mt-4">
                 {/* Pagination START */}
                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
+                  {/* Content */}
+                  <p className="mb-0 text-center text-sm-start">
+                    Showing {indexOfFirstStudent + 1} to{" "}
+                    {Math.min(
+                      indexOfLastStudent,
+                      filteredStudents.length
+                    )}{" "}
+                    of {filteredStudents.length} entries
+                  </p>
+                  {/* Pagination */}
+                  <nav
+                    className="d-flex justify-content-center mb-0"
+                    aria-label="navigation"
+                  >
+                    <ul className="pagination pagination-sm pagination-primary-soft mb-0 pb-0 px-0">
+                      <li className={`page-item ${currentPage === 1 && 'disabled'}`}>
+                        <a className="page-link" href="#" onClick={() => paginate(currentPage - 1)} tabIndex={-1}>
+                          <i className="fas fa-angle-left" />
+                        </a>
+                      </li>
+                      {Array.from({ length: Math.ceil(filteredStudents.length / studentsPerPage) }, (_, i) => (
+                        <li key={i} className={`page-item ${currentPage === i + 1 && 'active'}`}>
+                          <a className="page-link" href="#" onClick={() => paginate(i + 1)}>
+                            {i + 1}
+                          </a>
+                        </li>
+                      ))}
+                      <li className={`page-item ${currentPage === Math.ceil(filteredStudents.length / studentsPerPage) && 'disabled'}`}>
+                        <a className="page-link" href="#" onClick={() => paginate(currentPage + 1)}>
+                          <i className="fas fa-angle-right" />
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+
                     {/* Content */}
                     <p className="mb-0 text-center text-sm-start">Showing {(currentPage - 1) * 8 + 1} to {Math.min(currentPage * 8, totalEntries)} of {totalEntries} entries</p>
                     {/* Pagination */}
@@ -464,6 +550,7 @@ const entriesPerPage = 8; // Number of entries to display per page
                 {/* Pagination END */}
               </div>
               {/* Card footer END */}
+
             </div>
           )}
 
