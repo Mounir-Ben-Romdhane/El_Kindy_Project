@@ -187,7 +187,20 @@ function SideBar() {
                     <FontAwesomeIcon icon={faTags} className="fa-fw me-1" />{" "}
                     {/* Category Courses */}{t("sidebar.Planning")}
                   </Link>
+
                 </li>
+                <li className="nav-item">
+                <Link
+                    to="/anniversaire"
+                    className={`nav-link ${activeNavItem === "/anniversaire" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/anniversaire")}>
+                    <FontAwesomeIcon icon={faTags} className="fa-fw me-1" />{" "}
+                    {/* Category Courses */}Anniversaire
+                  </Link>
+
+                </li>
+
+            
                 {/* menu item courses */}
                 <li className="nav-item">
                   <Link
