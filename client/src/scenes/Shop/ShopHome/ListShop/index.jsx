@@ -28,7 +28,7 @@ function Index() {
     setImageFile(null);
     // Reset the input field value to allow selecting the same file again
     document.getElementById('image').value = '';
-  };
+  }; 
   // Function to handle selecting an image
   const handleImageSelect = (event) => {
     // Get the selected file
@@ -163,12 +163,8 @@ Page Banner START */}
                   <div className="row mb-4 align-items-center">
                     {/* Title */}
                     <div className="col-md-4">
-                      <h5 className="mb-0">All instruments listed </h5>
+                      <h5 className="mb-2 mb-sm-0"> We have {shops.length} Instruments in our shop</h5>
                     </div>
-
-                  
-
-
                   </div>
                   {/* Search option END */}
                   {/* Main content START */}

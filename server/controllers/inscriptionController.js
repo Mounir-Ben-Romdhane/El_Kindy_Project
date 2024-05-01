@@ -3,7 +3,7 @@ import { sendEmail } from "../utils/sendMailer.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-
+import Course from "../models/Course.js"
 function generateRandomPassword(length) {
   const charset =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
@@ -201,6 +201,74 @@ export const getInscriptionById = async (req, res) => {
     res.status(200).json(inscription);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+
+
+export const getMostEnrolledCourse = async (req, res) => {
+  try {
+      // Group inscriptions by likedCourses and count the number of occurrences
+      const courseCounts = await Inscription.aggregate([
+          { $unwind: '$likedCourses' },
+          { $group: { _id: '$likedCourses', count: { $sum: 1 } } },
+          { $sort: { count: -1 } },
+          { $limit: 1 } // Get the course with the highest count
+      ]);
+
+      if (!courseCounts || !courseCounts.length) {
+          throw 'No course enrollment data found!';
+      }
+
+      // Assuming courseCounts[0]._id is the course ID with the highest count
+      const courseId = courseCounts[0]._id;
+
+      // Fetch the course details using its ID
+      const course = await Course.findById(courseId);
+
+      // Return the course ID and title
+      res.status(200).json({ success: true, courseId, courseTitle: course.title });
+  } catch (err) {
+      console.log(err);
+      res.status(500).json({ success: false, error: err.message });
+  }
+};
+export const getTopEnrolledCourses = async (req, res) => {
+  try {
+    const topCourses = await Inscription.aggregate([
+      { $unwind: '$likedCourses' },
+      { $group: { _id: '$likedCourses', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 5 } // Get the top 5 most enrolled courses
+    ]);
+
+    if (!topCourses || !topCourses.length) {
+      throw 'No course enrollment data found!';
+    }
+
+    const courseIds = topCourses.map(course => course._id);
+
+    // Fetch the course details using their IDs
+    const courses = await Course.find({ _id: { $in: courseIds } });
+
+    res.status(200).json({ success: true, courses });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+
+export const studentsCount = async (req, res) => {
+  const { courseId } = req.params;
+
+  try {
+    // Count the number of students who have liked the specified course
+    const studentss = await Inscription.countDocuments({ likedCourses: courseId });
+
+    res.status(200).json({ success: true, studentss});
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false, error: err.message });
   }
 };
 
@@ -476,3 +544,5 @@ export const rejectInscription = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
