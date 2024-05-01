@@ -11,28 +11,6 @@ const Index = () => {
   const [activeNavItem, setActiveNavItem] = useState("");
 
   const { t, i18n } = useTranslation();
-const  Index = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [activeNavItem, setActiveNavItem] = useState("");
-  
-    const logoutHandler = () => {
-      dispatch(setLogout());
-      navigate("/");
-    };
-  
-  
-    useEffect(() => {
-      // Set activeNavItem based on current location
-      const pathname = location.pathname;
-      setActiveNavItem(pathname);
-    }, [location]);
-  
-    const handleNavItemClick = (item) => {
-      setActiveNavItem(item === activeNavItem ? "" : item);
-    };
-  
 
 
   const logoutHandler = () => {
@@ -149,12 +127,6 @@ const  Index = () => {
                    {t("sidebarStudent.Edit Profile")}  
                   </Link>{" "}
                   <a
-                   <Link className="list-group-item" to="/TeachersList"  > <i className="bi bi-people fa-fw me-2" />Teachers</Link>
-                   <Link className="list-group-item" to="/GradeStudent"><i className="bi bi-basket fa-fw me-2" />GradeStudent</Link>
-
-                   
-                   <a className="list-group-item" href="instructor-edit-profile.html"><i className="bi bi-pencil-square fa-fw me-2" />Edit Profile</a>
-                   <a
                     className="list-group-item text-danger bg-danger-soft-hover"
                     href="#"
                     onClick={logoutHandler}
@@ -174,5 +146,3 @@ const  Index = () => {
   );
 };
 export default Index;
-
-       

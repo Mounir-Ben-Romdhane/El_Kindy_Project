@@ -3,6 +3,8 @@ import SideBarTeacher from 'components/SideBarTeacher';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
 import NavBar from 'components/NavBar';
 import Footer from 'components/Footer';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBook } from '@fortawesome/free-solid-svg-icons';
 
 
 function Index() {

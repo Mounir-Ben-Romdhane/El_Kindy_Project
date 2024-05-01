@@ -15,20 +15,11 @@ function Index() {
   const [sortOption, setSortOption] = useState("");
 
   const axiosPrivate = useAxiosPrivate();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
-  const entriesPerPage = 8; // Number of entries to display per page
-
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    entriesPerPage: 8,
-  });
 
   const fetchCategories = async () => {
     try {
       const response = await axiosPrivate.get("/api/categories");
       setCategories(response.data);
-      setTotalEntries(response.data.length); // Update the totalEntries state
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -184,18 +175,6 @@ function Index() {
                     <tbody>
   {filteredAndSortedCategories.map((category, index) => (
     <tr key={index}>
-  <tr>
-    <th scope="col" className="border-0 rounded-start">Category Name</th>
-    <th scope="col" className="border-0">Description</th>
-    <th scope="col" className="border-0">Image</th> {/* Nouvelle colonne pour l'image */}
-    <th scope="col" className="border-0 rounded-end">Action</th>
-  </tr>
-</thead>
-<tbody>
-  {categories
-    .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
-    .map((category, index) => (
-      <tr key={index}>
       <td>{category.name}</td>
       <td>
         {category.description
@@ -255,31 +234,40 @@ function Index() {
                 {/* Pagination START */}
                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                   {/* Content */}
-                  <p className="mb-0 text-center text-sm-start">Showing {(currentPage - 1) * 8 + 1} to {Math.min(currentPage * 8, totalEntries)} of {totalEntries} entries</p>
+                  <p className="mb-0 text-center text-sm-start">
+                    Showing 1 to 8 of 20 entries
+                  </p>
                   {/* Pagination */}
-                  <nav className="d-flex justify-content-center mb-0" aria-label="navigation">
+                  <nav
+                    className="d-flex justify-content-center mb-0"
+                    aria-label="navigation"
+                  >
                     <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
-                  {/* Previous page button */}
-<li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-  <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>
-    <i className="fas fa-angle-left" />
-  </button>
-</li>
-
-{/* Page numbers */}
-{Array.from({ length: Math.ceil(totalEntries / entriesPerPage) }, (_, index) => (
-  <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-    <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
-  </li>
-))}
-
-{/* Next page button */}
-<li className={`page-item ${currentPage * entriesPerPage >= totalEntries ? 'disabled' : ''}`}>
-  <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
-    <i className="fas fa-angle-right" />
-  </button>
-</li>
-
+                      <li className="page-item mb-0">
+                        <a className="page-link" href="#" tabIndex={-1}>
+                          <i className="fas fa-angle-left" />
+                        </a>
+                      </li>
+                      <li className="page-item mb-0">
+                        <a className="page-link" href="#">
+                          1
+                        </a>
+                      </li>
+                      <li className="page-item mb-0 active">
+                        <a className="page-link" href="#">
+                          2
+                        </a>
+                      </li>
+                      <li className="page-item mb-0">
+                        <a className="page-link" href="#">
+                          3
+                        </a>
+                      </li>
+                      <li className="page-item mb-0">
+                        <a className="page-link" href="#">
+                          <i className="fas fa-angle-right" />
+                        </a>
+                      </li>
                     </ul>
                   </nav>
                 </div>
