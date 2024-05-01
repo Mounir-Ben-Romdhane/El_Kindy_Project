@@ -108,8 +108,6 @@ function Index() {
               </div>
             </div>
 
-            
-
             {/* Render text if inscriptions array is empty */}
             {inscriptions.length === 0 && <h2>No inscriptions available.</h2>}
 
@@ -129,13 +127,13 @@ function Index() {
                           onChange={handleSearchChange}
                         />
                         {searchQuery === "" && ( // Check if the search query is empty
-      <button
-        className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-        type="submit"
-      >
-        <i className="fas fa-search fs-6 " />
-      </button>
-    )}
+                          <button
+                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                            type="submit"
+                          >
+                            <i className="fas fa-search fs-6 " />
+                          </button>
+                        )}
                       </form>
                     </div>
                     {/* Select option */}
@@ -196,14 +194,19 @@ function Index() {
                                   Pending
                                 </span>
                               )}
-                              {inscription.status === "accepted" && (
+                              {inscription.status === "confirmed" && (
                                 <span className="badge bg-success bg-opacity-15 text-success">
-                                  Accepted
+                                  payment confirmed
                                 </span>
                               )}
-                              {inscription.status === "refused" && (
-                                <span className="badge bg-danger bg-opacity-15 text-danger">
-                                  Refused
+                               {inscription.status === "active" && (
+                                <span className="badge bg-danger bg-opacity-15 text-primary">
+                                  active user
+                                </span>
+                              )} 
+                              {inscription.status === "not paid" && (
+                                <span className="badge bg-info bg-opacity-15 text-danger ">
+                                  Not Paid
                                 </span>
                               )}
                             </td>
@@ -235,11 +238,8 @@ function Index() {
                   <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                     <p className="mb-0 text-center text-sm-start">
                       Showing {indexOfFirstEntry + 1} to{" "}
-                      {Math.min(
-                        indexOfLastEntry,
-                        sortedInscriptions.length
-                      )}{" "}
-                      of {sortedInscriptions.length} entries
+                      {Math.min(indexOfLastEntry, sortedInscriptions.length)} of{" "}
+                      {sortedInscriptions.length} entries
                     </p>
                     <nav
                       className="d-flex justify-content-center mb-0"

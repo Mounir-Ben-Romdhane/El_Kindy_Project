@@ -42,7 +42,6 @@ import Room from "../src/scenes/PlatformTeacher/Room";
 import TeachersList from "../src/scenes/PlatformStudent/TeachersList";
 import Chat from "../src/scenes/Chat/Chat";
 
-import ListMeetingTeacher from "scenes/PlatformTeacher/ListMeetingTeacher";
 import BackListShop from "../src/scenes/Shop/BackShop/BackListShop";
 import BackDetailsShop from "../src/scenes/Shop/BackShop/BackDetailsShop"
 import DetailShopFront from "../src/scenes/Shop/ShopHome/DetailShopFront"
@@ -81,6 +80,8 @@ import ParentsDashboard from "scenes/UsersAdmin/Parents";
 import ListCourses from "scenes/Courses/frontOffice/listCourses";
 
 import Success from "scenes/Payment/Success";
+import SuccessInscription from "scenes/Payment/SucessInscription";
+
 import Fail from "scenes/Payment/Fail";
 import Payment from "scenes/Payment/Payment";
 
@@ -640,13 +641,15 @@ function App() {
 
         <Route path="/fail" element={<Fail />} />
 
+        <Route path="/successInscription" element={<SuccessInscription />} />
+
 <Route
           path="/review"
           element={ <Review /> }
         />
 
 
-
+<Route
           path="/dashboardReview"
           element={ <Dashboard /> }
         />    
@@ -817,7 +820,7 @@ function App() {
         <Route
           path="/ListStage"
           element={<ListStage />}
-
+        />
 
 <Route
           path="/events/reservation/:eventId"

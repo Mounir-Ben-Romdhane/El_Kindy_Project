@@ -214,7 +214,7 @@ function SideBar() {
                 </li>
 
                 {/* menu item events */}
-                <li className="nav-item">
+               {/*  <li className="nav-item">
                   <Link
                     to="/listEvents"
                     className={`nav-link ${activeNavItem === "/listEvents" ? "active" : ""}`}
@@ -225,7 +225,7 @@ function SideBar() {
                     />{" "}
                     {t("sidebar.Events")}
                   </Link>
-                </li>
+                </li> */}
                 {/* menu item Reservation */}
                 <li className="nav-item">
                   <Link
