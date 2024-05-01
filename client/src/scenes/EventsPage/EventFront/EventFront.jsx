@@ -7,9 +7,12 @@ import Navbar  from "components/NavBar";
 import Footer from "components/Footer";
 import '../../Style.css';
 import BannerStartHome from "components/BannerStartHome";
+import { useDispatch, useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 
 function ListEventUser() {
   const [events, setEvents] = useState([]);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     // Fetch events when the component mounts
@@ -35,9 +38,24 @@ function ListEventUser() {
 
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+  const accessToken = useSelector((state) => state.accessToken);
+  const userRoles = accessToken ? jwtDecode(accessToken).roles : [];
+
+  
+
   const navigateToDetailPage = (eventId) => {
+
+    console.log("User Roles:", userRoles);
+
+    // If user is authenticated and has required roles, render the element
+  if (accessToken && userRoles.some(role => ["admin", "superAdmin"].includes(role))) {
+    navigate(`/events/reservation/${eventId}`);
+  } else {
     navigate(`/detailEvent/${eventId}`);
-  };
+  }}
+
+
 
   return ( 
     <div>
