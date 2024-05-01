@@ -1,12 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-import Classe from "../models/ClassModel.js";
 import { sendEmail } from '../utils/sendMailer.js';
 import speakeasy from "speakeasy";
 import Assignment from "../models/Assignment.js";
 import Course from "../models/Course.js";
-import mongoose from 'mongoose';
 
 /* REGISTER USER */
 export const register = async (req, res) => {
@@ -87,21 +85,8 @@ export const login = async (req, res) => {
       res.status(500).json({ error: err.message });
   }
 }
-export const getStudentById = async (req, res) => {
-  const { studentId } = req.params; // Récupérez l'ID de l'étudiant à partir des paramètres de la requête
-  try {
-      const student = await User.findById(studentId); // Recherchez l'étudiant par son ID dans la base de données
-      if (!student) {
-        // Si aucun étudiant n'est trouvé avec cet ID, renvoyez une réponse 404 (Not Found)
-        return res.status(404).json({ message: 'Student not found' });
-      }
-      // Si un étudiant est trouvé, renvoyez ses détails dans la réponse
-      res.status(200).json(student);
-  } catch (error) {
-      // Si une erreur se produit pendant la recherche, renvoyez une réponse 500 (Internal Server Error)
-      res.status(500).json({ message: error.message });
-  }
-};
+
+
 export const refreshToken = async (req, res) => {
     try {
         const { refreshToken } = req.body;
@@ -244,6 +229,7 @@ export const getTeacherById = async (req, res) => {
   try {
     const user = await User.findById(id).populate("teacherInfo.classesTeaching");
     if (user) {
+
       res.status(200).json(user);
     } else {
       res.status(404).json("No such User");
@@ -252,6 +238,7 @@ export const getTeacherById = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
 //Get all User by Role
 export const getAllUserByRole = async (req, res) => {
   const role = req.params.role;
@@ -282,6 +269,8 @@ export const getAllUserByRole = async (req, res) => {
 };
 
 
+
+
 //planning
 export const getTeachers = async (req, res) => {
   try {
@@ -301,25 +290,38 @@ export const getStudents = async (req, res) => {
       res.status(500).json({ message: error.message });
   }
 };
-
+export const getStudentById = async (req, res) => {
+  const { studentId } = req.params; // Récupérez l'ID de l'étudiant à partir des paramètres de la requête
+  try {
+      const student = await User.findById(studentId); // Recherchez l'étudiant par son ID dans la base de données
+      if (!student) {
+        // Si aucun étudiant n'est trouvé avec cet ID, renvoyez une réponse 404 (Not Found)
+        return res.status(404).json({ message: 'Student not found' });
+      }
+      // Si un étudiant est trouvé, renvoyez ses détails dans la réponse
+      res.status(200).json(student);
+  } catch (error) {
+      // Si une erreur se produit pendant la recherche, renvoyez une réponse 500 (Internal Server Error)
+      res.status(500).json({ message: error.message });
+  }
+};
 export const getAssignmentsByCourseIdForStudent = async (req, res) => {
   try {
     // Pas besoin de convertir studentId en ObjectId
     const studentId = req.params.studentId;
     const courseIds = req.params.courseId.split(','); // Diviser la chaîne en un tableau d'identifiants de cours
-
+ 
     // Trouver l'utilisateur dans la base de données
     const user = await User.findById(studentId);
- 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
+ 
     // Vérifier que l'utilisateur est un étudiant
     if (!user.roles.includes('student')) {
       return res.status(403).json({ error: 'User is not a student' });
     }
-
+ 
     // Rechercher les affectations correspondant aux ID des cours
     const assignments = await Assignment.find({ courseId: { $in: courseIds } });
     
@@ -329,21 +331,19 @@ export const getAssignmentsByCourseIdForStudent = async (req, res) => {
     console.error('Error fetching assignments by course ID for student:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-};
+ };
 
-
-
-export const getCoursesByStudentId = async (req, res) => {
+ export const getCoursesByStudentId = async (req, res) => {
   const studentId = req.params.studentId;
-
+ 
   try {
     const user = await User.findById(studentId);
     if (!user) {
       return res.status(404).json({ message: "Student not found" });
     }
-
+ 
     const courses = user.studentInfo.coursesEnrolled;
-
+ 
     if (courses.length > 0) {
       // Utiliser une méthode de projection pour retourner uniquement l'ID et le nom du cours
       const coursesWithNames = await Course.find({ _id: { $in: courses } }, { _id: 1, title: 1 });
@@ -354,195 +354,28 @@ export const getCoursesByStudentId = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: "Internal server error", error: error.message });
   }
-};
-
-
-
-
-
-// Function to get the list of courses in a class taught by a teacher
-export const getCoursesTaughtByTeacherInClass = async (req, res) => {
-  const { teacherId, classId } = req.params;
-
-  try {
-    // Find the teacher by ID and populate their coursesTaught
-    const teacher = await User.findById(teacherId).populate('teacherInfo.coursesTaught');
-
-    // Check if teacher or teacherInfo is null or empty coursesTaught array is empty  
-    if (!teacher || !teacher.teacherInfo || !teacher.teacherInfo.coursesTaught.length) {
-      return res.status(404).json({ error: "Teacher not found or missing coursesTaught." });
-    }
-
-    // Find the class by ID and populate its courses
-    const classe = await Classe.findById(classId).populate('courses');
-
-    // Extract the courses taught by the teacher
-    const teacherCourses = teacher.teacherInfo.coursesTaught.map(course => course._id.toString());
-
-    // Filter the courses in the class by those taught by the teacher and return the list of courses taught by the teacher in the class 
-    const coursesTaughtByTeacherInClass = classe.courses.filter(course =>
-      teacherCourses.includes(course._id.toString())
-    );
-
-    res.json(coursesTaughtByTeacherInClass);
-  } catch (error) {
-    console.error("Error fetching courses taught by teacher in class:", error);
-    res.status(500).json({ error: "Failed to fetch courses taught by teacher in class." });
-  } 
-}
-// FUNCTION TO GET THE LIST OF STUDENTS IN THAT CLASS THAT STUDY THAT SUBJECT TAUGHT BY THE TEACHER
-export const getStudentsInClassTaughtByTeacher = async (req, res) => {
-  const { teacherId, classId, courseId } = req.params;
-
-  try {
-    // Find the teacher by ID and populate their coursesTaught
-    const teacher = await User.findById(teacherId).populate('teacherInfo.coursesTaught');
-
-    // Check if teacher or teacherInfo is null or empty coursesTaught array is empty
-    if (!teacher || !teacher.teacherInfo || !teacher.teacherInfo.coursesTaught.length) {
-      return res.status(404).json({ error: "Teacher not found or missing coursesTaught." });
-    }
-
-    // Find the class by ID and populate its courses and students
-    const classe = await Classe.findById(classId).populate('courses students');
-
-    // Extract the courses taught by the teacher
-    const teacherCourses = teacher.teacherInfo.coursesTaught.map(course => course._id.toString());
-
-    // Filter the courses in the class by those taught by the teacher and return the list of courses taught by the teacher in the class
-    const coursesTaughtByTeacherInClass = classe.courses.filter(course =>
-      teacherCourses.includes(course._id.toString())
-    );
-
-    // Check if the provided course ID is among the courses taught by the teacher in the class
-    const isCourseTaughtByTeacherInClass = coursesTaughtByTeacherInClass.some(course =>
-      course._id.toString() === courseId
-    );
-
-    if (!isCourseTaughtByTeacherInClass) {
-      return res.status(404).json({ error: "Course is not taught by the teacher in this class." });
-    }
-
-    // Extract the students in the class
-    const studentsInClass = classe.students;
-
-    // Filter the students in the class by those who study the provided course taught by the teacher
-    const studentsInClassTaughtByTeacher = studentsInClass.filter(student =>
-      student.coursesEnrolled.includes(courseId)
-    );
-
-    res.json(studentsInClassTaughtByTeacher);
-  } catch (error) {
-    console.error("Error fetching students in class taught by teacher:", error);
-    res.status(500).json({ error: "Failed to fetch students in class taught by teacher." });
-  }
-}
-
-//i wanta function to get the students enrolled in a class and in a specific course
-export const getStudentsInClassByCourseAndClass = async (req, res) => {
-  const { classId, courseId } = req.params;
-
-  try {
-    // Find the students enrolled in the class
-    const students = await User.find({ roles: 'student', 'studentInfo.classLevel': classId });
-
-    // Filter the students by those enrolled in the provided course
-    const studentsByCourse = students.filter(student =>
-      student.studentInfo.coursesEnrolled.includes(courseId)
-    );
-
-    res.status(200).json(studentsByCourse);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-
-//FUNCTION TO GET THE STUDENTS THAT STUDY A PARTICULAR COURSE IN A CLASS WITHOUT USING THE TEACHER
-export const getStudentsInClassByCourseAndTeacher = async (req, res) => {
-  const { classId, courseId, teacherId } = req.params;
-
-  try {
-    // Find the class by ID and populate its courses and students
-    const classe = await Classe.findById(classId).populate('courses students');
-
-    // Extract the students in the class
-    const studentsInClass = classe.students;
-
-    // Find the teacher by ID and populate their coursesTaught
-    const teacher = await User.findById(teacherId).populate('teacherInfo.coursesTaught');
-
-    // Check if teacher or teacherInfo is null or empty coursesTaught array is empty
-    if (!teacher || !teacher.teacherInfo || !teacher.teacherInfo.coursesTaught.length) {
-      return res.status(404).json({ error: "Teacher not found or missing coursesTaught." });
-    }
-
-    // Extract the courses taught by the teacher
-    const teacherCourses = teacher.teacherInfo.coursesTaught.map(course => course._id.toString());
-
-    // Filter the courses in the class by those taught by the teacher and return the list of courses taught by the teacher in the class
-    const coursesTaughtByTeacherInClass = classe.courses.filter(course =>
-      teacherCourses.includes(course._id.toString())
-    );
-
-    // Check if the provided course ID is among the courses taught by the teacher in the class
-    const isCourseTaughtByTeacherInClass = coursesTaughtByTeacherInClass.some(course =>
-      course._id.toString() === courseId
-    );
-
-    if (!isCourseTaughtByTeacherInClass) {
-      return res.status(404).json({ error: "Course is not taught by the teacher in this class." });
-    }
-
-    // Filter the students in the class by those who study the provided course
-    const studentsInClassByCourse = studentsInClass.filter(student =>
-      student.coursesEnrolled.some(course => mongoose.Types.ObjectId(course).equals(courseId))
-    );
-
-    res.json(studentsInClassByCourse);
-  } catch (error) {
-    console.error("Error fetching students in class by course:", error);
-    res.status(500).json({ error: "Failed to fetch students in class by course." });
-  }
-}
-//get students by class 
-export const getStudentsEnrolledInClass = async (req, res) => {
-  const classId = req.params.classId;
-
-  try {
-      const students = await User.find({ roles: 'student', 'studentInfo.classLevel': classId });
-      res.status(200).json(students);
-  } catch (error) {
-      res.status(500).json({ message: error.message });
-  }
-};
-
-// FUNCTION TO GET THE CLASSES TAUGHT BY A TEACHER
-export const getClassesTaughtByTeacher = async (req, res) => {
-  const teacherId = req.params.teacherId;
-
-  try {
-      const teacher = await User.findById(teacherId).populate('teacherInfo.classesTeaching');
-      res.status(200).json(teacher.teacherInfo.classesTeaching);
-  } catch (error) {
-      res.status(500).json({ message: error.message });
-  }
-};
-
-
-// get class by student
-export const getClassByStudent = async (req, res) => {
-  const studentId = req.params.studentId;
-
-  try {
-      const student = await User.findById(studentId).populate('studentInfo.classLevel');
-      res.status(200).json(student.studentInfo.classLevel);
-  } catch (error) {
-      res.status(500).json({ message: error.message });
-  }
-};
-
-// get courses by student
+ };
+ export const getClassByStudent = async (req, res) => {
+   const studentId = req.params.studentId;
+ 
+   try {
+       const student = await User.findById(studentId).populate('studentInfo.classLevel');
+       res.status(200).json(student.studentInfo.classLevel);
+   } catch (error) {
+       res.status(500).json({ message: error.message });
+   }
+ };// FUNCTION TO GET THE CLASSES TAUGHT BY A TEACHER
+ export const getClassesTaughtByTeacher = async (req, res) => {
+   const teacherId = req.params.teacherId;
+ 
+   try {
+       const teacher = await User.findById(teacherId).populate('teacherInfo.classesTeaching');
+       res.status(200).json(teacher.teacherInfo.classesTeaching);
+   } catch (error) {
+       res.status(500).json({ message: error.message });
+   }
+ };
+ // get courses by student
 export const getCoursesByStudent = async (req, res) => {
   const studentId = req.params.studentId;
 
@@ -562,5 +395,37 @@ export const getCoursesTaughtByTeacher = async (req, res) => {
       res.status(200).json(teacher.teacherInfo.coursesTaught);
   } catch (error) {   
       res.status(500).json({ message: error.message });
+  }
+};
+// Function to get the list of courses in a class taught by a teacher
+export const getCoursesTaughtByTeacherInClass = async (req, res) => {
+}
+//get students by class 
+export const getStudentsEnrolledInClass = async (req, res) => {
+  const classId = req.params.classId;
+
+  try {
+      const students = await User.find({ roles: 'student', 'studentInfo.classLevel': classId });
+      res.status(200).json(students);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
+//i wanta function to get the students enrolled in a class and in a specific course
+export const getStudentsInClassByCourseAndClass = async (req, res) => {
+  const { classId, courseId } = req.params;
+
+  try {
+    // Find the students enrolled in the class
+    const students = await User.find({ roles: 'student', 'studentInfo.classLevel': classId });
+
+    // Filter the students by those enrolled in the provided course
+    const studentsByCourse = students.filter(student =>
+      student.studentInfo.coursesEnrolled.includes(courseId)
+    );
+
+    res.status(200).json(studentsByCourse);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
