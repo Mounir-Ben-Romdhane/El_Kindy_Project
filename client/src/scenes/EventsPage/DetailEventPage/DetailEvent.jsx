@@ -139,8 +139,6 @@ function DetailEvents() {
       throw new Error("Failed to submit reservation.");
     }
   }; 
-
-
   
   const initiatePayment = async () => {
     try {
@@ -530,4 +528,4 @@ Form and Tabs END */}
   );
 }
 
-export default DetailEvents;
+export default DetailEvents;  

@@ -23,6 +23,18 @@ function Index() {
     currentPage: 1,
     entriesPerPage: 8,
   });
+  const dispatch = useDispatch();
+  const accessToken = useSelector((state) => state.accessToken);
+  const refreshTokenState = useSelector((state) => state.refreshToken);
+  const [courses, setCourses] = useState([]);
+
+  //refresh token
+  const axiosPrivate = useAxiosPrivate();
+  // pagination
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
+  const entriesPerPage = 8; // Number of entries to display per page
 
   // Fetch courses from the server when component mounts
   useEffect(() => {
@@ -37,6 +49,32 @@ function Index() {
 
     fetchCourses(); // Call the fetchCourses function
   }, [axiosPrivate]); // Only re-run effect if axiosPrivate changes
+
+
+    const controller = new AbortController();
+
+    const getCourses = async () => {
+      try {
+        const response = await axiosPrivate.get('/course/all', {
+          signal: controller.signal
+        });
+        console.log(response.data);
+        setCourses(response.data.data);
+        setTotalEntries(response.data.data.length); // Update the totalEntries state
+      } catch (err) {
+        console.error(err);
+        //navigate('/login', { state: { from: location }, replace: true });
+      }
+    }
+
+    getCourses();
+
+    return () => {
+      controller.abort();
+    }
+  }, [accessToken, dispatch]);
+
+  console.log("courses : ", courses);
 
   // Function to handle course deletion
   const handleDelete = async (id) => {
@@ -85,6 +123,13 @@ function Index() {
 
   const indexOfLastEntry = pagination.currentPage * pagination.entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - pagination.entriesPerPage;
+  const handleSearchChange = (e) => {
+    e.preventDefault();
+    console.log("searchQuery :", e.target.value);
+    setSearchQuery(e.target.value);
+  };
+
+
 
   return (
     <div>
@@ -248,6 +293,67 @@ function Index() {
                             </td>
                           </tr>
                         ))}
+                        {filteredCourses
+                          .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
+                          .map((course) => (
+                            <tr key={course.id}>
+                              <td>{course.title}</td>
+                              <td>{course.description}</td>
+                              <td>
+                                {/* Affichage de l'image */}
+                                {course.picturePath ? (
+                                  <img
+                                    src={`http://localhost:3001/assets/${course.picturePath}`}
+                                    alt="Course"
+                                    style={{
+                                      width: "100px",
+                                      height: "auto",
+                                      borderRadius: "10%",
+                                    }} // Adjust size as needed
+                                  />
+                                ) : (
+                                  <span>No Image</span>
+                                )}
+                              </td>
+
+                              <td>
+                                {course.courseLevel === "Beginner" && (
+                                  <span className="badge bg-primary text-white">
+                                    Beginner
+                                  </span>
+                                )}
+                                {course.courseLevel === "Intermediate" && (
+                                  <span className="badge bg-purple text-white">
+                                    Intermediate
+                                  </span>
+                                )}
+                                {course.courseLevel === "All level" && (
+                                  <span className="badge bg-orange text-white">
+                                    All level
+                                  </span>
+                                )}
+                                {course.courseLevel === "Advance" && (
+                                  <span className="badge bg-warning text-white">
+                                    Advance
+                                  </span>
+                                )}
+                              </td>
+                              <td>{course.courseCategory.name}</td>
+                              <td>
+                                <Link
+                                  to={`/edit-course/${course._id}`}
+                                  className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+                                >
+                                  <i class="bi bi-pencil-square"></i>
+                                </Link>
+                                <button
+                                  onClick={() => handleDelete(course._id)}
+                                  className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0">
+                                  <i class="bi bi-trash"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
                       </tbody>
                       {/* Table body END */}
                     </table>
@@ -261,46 +367,34 @@ function Index() {
                   {/* Pagination START */}
                   <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                     {/* Content */}
-                    <p className="mb-0 text-center text-sm-start">
-                      Showing {indexOfFirstEntry + 1} to{" "}
-                      {Math.min(indexOfLastEntry, filteredCourses.length)} of{" "}
-                      {filteredCourses.length} entries
-                    </p>
+                    <p className="mb-0 text-center text-sm-start">Showing {(currentPage - 1) * 8 + 1} to {Math.min(currentPage * 8, totalEntries)} of {totalEntries} entries</p>
                     {/* Pagination */}
-                    <nav
-                      className="d-flex justify-content-center mb-0"
-                      aria-label="navigation"
-                    >
+                    <nav className="d-flex justify-content-center mb-0" aria-label="navigation">
                       <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
-                        <li className="page-item mb-0">
-                          <a className="page-link" href="#" tabIndex={-1}>
-                            <i className="fas fa-angle-left" />
-                          </a>
-                        </li>
-                        <li className="page-item mb-0">
-                          <a className="page-link" href="#">
-                            1
-                          </a>
-                        </li>
-                        <li className="page-item mb-0 active">
-                          <a className="page-link" href="#">
-                            2
-                          </a>
-                        </li>
-                        <li className="page-item mb-0">
-                          <a className="page-link" href="#">
-                            3
-                          </a>
-                        </li>
-                        <li className="page-item mb-0">
-                          <a className="page-link" href="#">
+                        {/* Previous page button */}
+                        <li className={`page-item ${currentPage * entriesPerPage >= totalEntries ? 'disabled' : ''}`}>
+                          <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
                             <i className="fas fa-angle-right" />
-                          </a>
+                          </button>
+                        </li>
+
+                        {/* Page numbers */}
+                        {Array.from({ length: Math.ceil(totalEntries / 8) }, (_, index) => (
+                          <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                            <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
+                          </li>
+                        ))}
+                        {/* Next page button */}
+                        <li className={`page-item ${currentPage * 8 >= totalEntries ? 'disabled' : ''}`}>
+                          <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                            <i className="fas fa-angle-right" />
+                          </button>
                         </li>
                       </ul>
                     </nav>
                   </div>
                   {/* Pagination END */}
+
                 </div>
                 {/* Card footer END */}
               </div>

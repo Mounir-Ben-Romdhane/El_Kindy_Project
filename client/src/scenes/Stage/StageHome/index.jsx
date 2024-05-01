@@ -102,11 +102,13 @@ function Index() {
             <div className="card-body">
             
               {/* Title */}
-              <h5 className="card-title">
+              <h5 className="card-title ">
                 
                 <a href="#">{stage.title}</a>
                 
               </h5>
+              <h4 className="mb-0">{stage.price ? `${stage.price} TND` : "Free"}</h4>
+
               <p className="text-truncate-2">{stage.description}</p>
               {/* Info */}
               <div className="d-flex justify-content-between " >

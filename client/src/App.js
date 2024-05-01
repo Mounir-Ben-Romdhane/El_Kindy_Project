@@ -38,7 +38,7 @@ import DashbordTeacher from "./scenes/PlatformTeacher/DashbordTeacher";
 import HomePagee from "../src/scenes/PlatformTeacher/HomePagee";
 import DashbordStudent from "./scenes/PlatformStudent/DashbordStudent";
 import Room from "../src/scenes/PlatformTeacher/Room";
-
+import successStage from "../src/scenes/Payment/SuccessStage";
 import TeachersList from "../src/scenes/PlatformStudent/TeachersList";
 import Chat from "../src/scenes/Chat/Chat";
 
@@ -56,6 +56,7 @@ import EditEventPage from "./scenes/EventsPage/EditEventPage/EditEvent";
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
 import StageDetail from "scenes/Stage/StageDetail";
 import AdminReservationStage from "scenes/Stage/AdminReservationStage";
+import FicheEleve from "scenes/PlatformTeacher/FicheEleve";
 
 import EditCourse from "scenes/Courses/backOffice/EditCoursePage";
 
@@ -78,6 +79,7 @@ import TeachersDashboard from "scenes/UsersAdmin/Teachers";
 import StudentsDashboard from "scenes/UsersAdmin/Students";
 import ParentsDashboard from "scenes/UsersAdmin/Parents";
 import ListCourses from "scenes/Courses/frontOffice/listCourses";
+import GradeStudent from "scenes/PlatformStudent/GradeStudent";
 
 import Success from "scenes/Payment/Success";
 import SuccessInscription from "scenes/Payment/SucessInscription";
@@ -274,6 +276,7 @@ function App() {
             />
           }
         />
+
 
 
         <Route
@@ -483,15 +486,6 @@ function App() {
           }
         />
 
-        <Route
-          path="/listCourses"
-          element={
-            <PrivateRoute
-              element={<ListCoursesPage />}
-              requiredRoles={["superAdmin", "admin"]}
-            />
-          }
-        />
 
         <Route
           path="/admins"
@@ -533,6 +527,17 @@ function App() {
         />
 
 
+<Route
+          path="/GradeStudent"
+          element={
+            <PrivateRoute
+              element={<GradeStudent />}
+              requiredRoles={["superAdmin", "admin", "student"]}
+            />
+          }
+        />
+
+
         <Route
           path="/dashboard-teacher"
           element={
@@ -542,6 +547,17 @@ function App() {
             />
           }
         />
+
+<Route
+          path="/FicheEleve"
+          element={
+            <PrivateRoute
+              element={<FicheEleve />}
+              requiredRoles={["superAdmin", "admin", "teacher"]}
+            />
+          }
+        />
+      
 
         <Route
           path="/profile-teacher"
@@ -595,16 +611,6 @@ function App() {
 
 
         <Route
-          path="/listCourses"
-          element={
-            <PrivateRoute
-              element={<ListCoursesPage />}
-              requiredRoles={["superAdmin", "admin"]}
-            />
-          }
-        />
-
-        <Route
           path="/AdminReservationStage"
           element={
             <PrivateRoute
@@ -642,6 +648,10 @@ function App() {
         <Route path="/fail" element={<Fail />} />
 
         <Route path="/successInscription" element={<SuccessInscription />} />
+<Route
+          path="/successStage"
+          element={ <successStage />}
+        />
 
 <Route
           path="/review"
@@ -871,10 +881,6 @@ function App() {
           element={isAuth ? <EditClassPage /> : <Navigate to="/" />}
         />
 
-        <Route
-          path="/chat"
-          element={isAuth ? <Chat /> : <Navigate to="../auth" />}
-        />
 
         <Route path="/about" element={<AboutPage />} />
         <Route

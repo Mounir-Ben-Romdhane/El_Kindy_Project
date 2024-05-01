@@ -17,6 +17,12 @@ function AdminsDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage] = useState(6);
 
+  // pagination
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
+  const entriesPerPage = 8; // Number of entries to display per page
+
   const handleToggleForm = () => {
     setShowForm(!showForm);
     setShowFormUpdate(false); // Close the update form when toggling the add form
@@ -84,6 +90,7 @@ function AdminsDashboard() {
     try {
       const response = await getUsers("admin");
       setAdmins(response.data.data);
+      setTotalEntries(response.data.data.length);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching admins:", error);
@@ -194,6 +201,9 @@ function AdminsDashboard() {
                       <div className="row g-4">
                         {currentAdmins.map((admin) => (
                           <div key={admin._id} className="col-md-6 col-xxl-4">
+                      {admins
+  .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
+  .map((admin) => (                          <div key={admin._id} className="col-md-6 col-xxl-4">
                             <div className="card bg-transparent border h-100">
                               <div className="card-header bg-transparent border-bottom d-flex justify-content-between">
                                 <div className="d-sm-flex align-items-center">
@@ -403,6 +413,33 @@ function AdminsDashboard() {
                     </ul>
                   </nav>
                 </div>
+                    {/* Content */}
+                    <p className="mb-0 text-center text-sm-start">Showing {(currentPage - 1) * 8 + 1} to {Math.min(currentPage * 8, totalEntries)} of {totalEntries} entries</p>
+                    {/* Pagination */}
+                    <nav className="d-flex justify-content-center mb-0" aria-label="navigation">
+                      <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
+                        {/* Previous page button */}
+                        <li className={`page-item ${currentPage * entriesPerPage >= totalEntries ? 'disabled' : ''}`}>
+                          <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                            <i className="fas fa-angle-right" />
+                          </button>
+                        </li>
+
+                        {/* Page numbers */}
+                        {Array.from({ length: Math.ceil(totalEntries / 8) }, (_, index) => (
+                          <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                            <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
+                          </li>
+                        ))}
+                        {/* Next page button */}
+                        <li className={`page-item ${currentPage * 8 >= totalEntries ? 'disabled' : ''}`}>
+                          <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                            <i className="fas fa-angle-right" />
+                          </button>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
                 {/* Pagination END */}
               </div>
               {/* Card footer END */}

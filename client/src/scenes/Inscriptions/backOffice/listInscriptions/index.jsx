@@ -16,6 +16,34 @@ function Index() {
 
   // Refresh token
   const axiosPrivate = useAxiosPrivate();
+  // pagination
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
+  const entriesPerPage = 8; // Number of entries to display per page
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/inscription/all", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setInscription(data.data);
+        setTotalEntries(data.data.length);
+      } else {
+        const errorMessage = await response.text();
+        //dispatch(setLogout()); // Log out user if token refresh fails
+        throw new Error(errorMessage);
+      }
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+      // Handle error
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -182,6 +210,9 @@ function Index() {
                         {/* Table row */}
                         {currentEntries.map((inscription) => (
                           <tr key={inscription._id}>
+                        {inscription
+    .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
+    .map((inscription) => (                          <tr key={inscription.id}>
                             <td>
                               {inscription.firstName} {inscription.lastName}
                             </td>
@@ -303,6 +334,42 @@ function Index() {
                       </ul>
                     </nav>
                   </div>
+
+                  {/* Pagination START */}
+                  {/* Pagination START */}
+                  <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
+                    {/* Content */}
+                    <p className="mb-0 text-center text-sm-start">Showing {(currentPage - 1) * 8 + 1} to {Math.min(currentPage * 8, totalEntries)} of {totalEntries} entries</p>
+                    {/* Pagination */}
+                    {/* Pagination */}
+<nav className="d-flex justify-content-center mb-0" aria-label="navigation">
+  <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
+    {/* Previous page button */}
+    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+      <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>
+        <i className="fas fa-angle-left" />
+      </button>
+    </li>
+
+    {/* Page numbers */}
+    {Array.from({ length: Math.ceil(totalEntries / entriesPerPage) }, (_, index) => (
+      <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+        <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
+      </li>
+    ))}
+
+    {/* Next page button */}
+    <li className={`page-item ${currentPage === Math.ceil(totalEntries / entriesPerPage) ? 'disabled' : ''}`}>
+      <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+        <i className="fas fa-angle-right" />
+      </button>
+    </li>
+  </ul>
+</nav>
+
+                  </div>
+                  {/* Pagination END */}
+                  {/* Pagination END */}
                 </div>
               </div>
             )}

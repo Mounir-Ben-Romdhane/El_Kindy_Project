@@ -2,8 +2,8 @@ import Classe from '../models/ClassModel.js';
 
 export const createClass = async (req, res) => {
   try {
-    const { className, capacity, ordre } = req.body;
-    const newClass = await Classe.create({ className, capacity, ordre });
+    const { className, capacity, ordre, courses } = req.body;
+    const newClass = await Classe.create({ className, capacity, ordre,courses });
     res.status(201).json(newClass);
   } catch (error) {
     res.status(500).json({ message: error.message });

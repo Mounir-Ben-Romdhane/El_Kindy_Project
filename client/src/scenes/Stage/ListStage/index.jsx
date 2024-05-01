@@ -123,10 +123,12 @@ function Index() {
                     <thead>
                       <tr>
                         <th scope="col" className="border-0 rounded-start">Internship Title</th>
-                        <th scope="col" className="border-0">Image</th>
-                        <th scope="col" className="border-0">Start Date</th>
-                        <th scope="col" className="border-0">Finish Date</th>
-                        <th scope="col" className="border-0">Description</th>
+
+                        <th scope="col" className="border-0">startDate</th>
+                        <th scope="col" className="border-0">finishDate</th>
+                        <th scope="col" className="border-0">Places</th>
+                        <th scope="col" className="border-0">Price</th>
+                        <th scope="col" className="border-0">description</th>
                         <th scope="col" className="border-0 rounded-end">Action</th>
                       </tr>
                     </thead>
@@ -160,6 +162,10 @@ function Index() {
               <br />
             </React.Fragment>
           ))}</td>
+                          <td>{stage.place}</td>
+                          <td>{stage.price ? `${stage.price} TND` : "Free"}</td>
+                          <td>{stage.description.length > 50 ? `${stage.description.substring(0, 50)}...` : stage.description}</td>
+
                           <td>
                             <Link to={`/EditStage/${stage._id}`} className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0">
                               <i className="bi bi-pencil-square" />
