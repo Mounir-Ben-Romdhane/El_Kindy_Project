@@ -109,6 +109,8 @@ function Index() {
                         <th scope="col" className="border-0">Image</th>
                         <th scope="col" className="border-0">startDate</th>
                         <th scope="col" className="border-0">finishDate</th>
+                        <th scope="col" className="border-0">Places</th>
+                        <th scope="col" className="border-0">Price</th>
                         <th scope="col" className="border-0">description</th>
                         <th scope="col" className="border-0 rounded-end">Action</th>
                       </tr>
@@ -143,6 +145,8 @@ function Index() {
                           </td>
                           <td>{stage.startDate}</td>
                           <td>{stage.finishDate}</td>
+                          <td>{stage.place}</td>
+                          <td>{stage.price ? `${stage.price} TND` : "Free"}</td>
                           <td>{stage.description.length > 50 ? `${stage.description.substring(0, 50)}...` : stage.description}</td>
 
                           <td>

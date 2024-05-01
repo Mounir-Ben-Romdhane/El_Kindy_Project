@@ -94,6 +94,13 @@ const Index = () => {
                     <i className="bi bi-people fa-fw me-2" />
                     Students Grades
                   </Link>
+                  <Link 
+                  className={`list-group-item ${activeNavItem === "/FicheEleve" ? "active" : ""}`}
+                  to="/FicheEleve"
+                  onClick={() => handleNavItemClick("/FicheEleve")}>
+                    <i className="bi bi-people fa-fw me-2" />
+                    Student Sheet
+                  </Link>
 
 
                   <a

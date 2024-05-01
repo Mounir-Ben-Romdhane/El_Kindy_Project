@@ -4,10 +4,6 @@ import { sendSms } from "../index.js"
 import axios from 'axios';
 import { generateInvoice } from './Pdf.js';
 
-
-
-
-
 export const createReservation = async (req, res) => {
   console.log("Initiating reservation:", req.params, req.body);
   const { eventId } = req.params;
@@ -43,9 +39,6 @@ export const createReservation = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 }
-
-
-
 
 
 export const listReservationsByid = async (req, res) => {

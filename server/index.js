@@ -34,7 +34,8 @@ import ChatRoute from './routes/ChatRoute.js'
 import MessageRoute from './routes/MessageRoute.js'
 import meetingRoutes from './routes/meetingRoutes.js';
 import reservationRoutes  from "./routes/Reservation.js";
-
+import gradeRoutes from "./routes/gradeRoutes.js";
+import ficheEleveRoutes from "./routes/ficheEleveRoutes.js";
 import paymentRouter from "./routes/paymentRouter.js";
 
 
@@ -83,7 +84,7 @@ app.post("/event/add",upload.single("picture"),addNewEvent);
 app.patch("/event/update/:id",upload.single("picture"),updateEvent);
 app.use("/planning", planningRoutes);
 
-
+app.use("/grades", gradeRoutes);
 app.post("/api/categories", upload.single("picture"), createCategorie);
 app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
 
@@ -128,7 +129,7 @@ app.use('/chat', ChatRoute);
 app.use('/message', MessageRoute);
 app.use('/meeting', meetingRoutes);
 app.use("/events",reservationRoutes);
-
+app.use("/ficheEleve",ficheEleveRoutes)
 app.use("/payment",paymentRouter);
 
 

@@ -50,6 +50,8 @@ const  Index = () => {
 
 
                    <Link className="list-group-item" to="/TeachersList"  > <i className="bi bi-people fa-fw me-2" />Teachers</Link>
+                   <Link className="list-group-item" to="/GradeStudent"><i className="bi bi-basket fa-fw me-2" />GradeStudent</Link>
+
                    
                    <a className="list-group-item" href="instructor-edit-profile.html"><i className="bi bi-pencil-square fa-fw me-2" />Edit Profile</a>
                    <a

@@ -18,7 +18,9 @@ function EditStage() {
     description: "",
     picturePath: "",
     startDate: "",
-    finishDate: ""
+    finishDate: "",
+    place:"",
+    price: ""
   });
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -285,6 +287,27 @@ function EditStage() {
                       />                  </div>
 
 
+                    {/* stage place */}
+                    <div className="col-md-6">
+                      <label className="form-label">stage place</label>
+                      <input
+                        className="form-control"
+                        type="number"
+                        name="place"
+                        value={stage.place}
+                        required
+                      />
+                    </div>
+                    {/* stage price */}
+                    <div className="col-md-6">
+                      <label className="form-label">stage price</label>
+                      <input
+                        className="form-control"
+                        type="number"
+                        name="price"
+                        value={stage.price}
+                      />
+                    </div>
 
 
                   </div>

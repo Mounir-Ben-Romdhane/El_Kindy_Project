@@ -219,6 +219,27 @@ const handleFormSubmit = async (values, onSubmitProps) => {
                       required
                     />
                   </div>
+                  {/*place Stage */}
+                  <div className="col-md-6">
+                    <label className="form-label">place</label>
+                    <input
+                      className="form-control"
+                      type="number"
+                      name="place"
+                      required
+                    />
+                  </div>
+                  {/*price Stage */}
+                  <div className="col-md-6">
+                    <label className="form-label">price</label>
+                    <input
+                      className="form-control"
+                      type="number"
+                      name="price"
+                      required
+                    />
+                  </div>
+
                   
               
                     

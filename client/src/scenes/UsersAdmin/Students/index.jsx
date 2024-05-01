@@ -19,6 +19,11 @@ function StudentsDashboard() {
   const [showForm, setShowForm] = useState(false);
   const [showFormUpdate, setShowFormUpdate] = useState(false);
   const [studentDetails, setStudentDetails] = useState({});
+// pagination
+const [searchQuery, setSearchQuery] = useState("");
+const [currentPage, setCurrentPage] = useState(1);
+const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
+const entriesPerPage = 8; // Number of entries to display per page
 
   const handleToggleMore = (studentId) => {
     setStudentDetails((prevState) => ({
@@ -90,6 +95,7 @@ function StudentsDashboard() {
     try {
       const response = await getUsers("student");
       setStudents(response.data.data);
+      setTotalEntries(response.data.data.length);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching students:", error);
@@ -168,8 +174,9 @@ function StudentsDashboard() {
                       id="nav-preview-tab-1"
                     >
                       <div className="row g-4">
-                        {students.map((student) => (
-                          <div key={student._id} className="col-md-6 col-xxl-4">
+                      {students
+  .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
+  .map((student) => (                             <div key={student._id} className="col-md-6 col-xxl-4">
                             <div className="card bg-transparent border h-100">
                               <div className="card-header bg-transparent border-bottom d-flex justify-content-between">
                                 <div className="d-sm-flex align-items-center">
@@ -427,44 +434,33 @@ function StudentsDashboard() {
               <div className="card-footer bg-transparent pt-0 px-0 mt-4">
                 {/* Pagination START */}
                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
-                  {/* Content */}
-                  <p className="mb-0 text-center text-sm-start">
-                    Showing 1 to 8 of 20 entries
-                  </p>
-                  {/* Pagination */}
-                  <nav
-                    className="d-flex justify-content-center mb-0"
-                    aria-label="navigation"
-                  >
-                    <ul className="pagination pagination-sm pagination-primary-soft mb-0 pb-0 px-0">
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#" tabIndex={-1}>
-                          <i className="fas fa-angle-left" />
-                        </a>
-                      </li>
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#">
-                          1
-                        </a>
-                      </li>
-                      <li className="page-item mb-0 active">
-                        <a className="page-link" href="#">
-                          2
-                        </a>
-                      </li>
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#">
-                          3
-                        </a>
-                      </li>
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#">
-                          <i className="fas fa-angle-right" />
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
-                </div>
+                    {/* Content */}
+                    <p className="mb-0 text-center text-sm-start">Showing {(currentPage - 1) * 8 + 1} to {Math.min(currentPage * 8, totalEntries)} of {totalEntries} entries</p>
+                    {/* Pagination */}
+                    <nav className="d-flex justify-content-center mb-0" aria-label="navigation">
+                      <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
+                        {/* Previous page button */}
+                        <li className={`page-item ${currentPage * entriesPerPage >= totalEntries ? 'disabled' : ''}`}>
+                          <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                            <i className="fas fa-angle-right" />
+                          </button>
+                        </li>
+
+                        {/* Page numbers */}
+                        {Array.from({ length: Math.ceil(totalEntries / 8) }, (_, index) => (
+                          <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                            <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
+                          </li>
+                        ))}
+                        {/* Next page button */}
+                        <li className={`page-item ${currentPage * 8 >= totalEntries ? 'disabled' : ''}`}>
+                          <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                            <i className="fas fa-angle-right" />
+                          </button>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
                 {/* Pagination END */}
               </div>
               {/* Card footer END */}
