@@ -1,44 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from 'axios';
-import withReactContent from 'sweetalert2-react-content';
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Importez les styles CSS
+import axios from "axios";
+import withReactContent from "sweetalert2-react-content";
+import "react-confirm-alert/src/react-confirm-alert.css"; // Importez les styles CSS
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
-import Swal from 'sweetalert2'; // Importez SweetAlert2
+import Swal from "sweetalert2"; // Importez SweetAlert2
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 const MySwal = withReactContent(Swal);
 
 function Index() {
   const [categories, setCategories] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOption, setSortOption] = useState("");
+
   const axiosPrivate = useAxiosPrivate();
 
-  /*
-  useEffect(() => {
-    // Fonction pour récupérer les catégories
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("http://localhost:3001/api/categories", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const data = await response.json();
-
-        if (data) {
-          setCategories(data); // Stocke les catégories dans l'état
-          console.log("categories", data);
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    fetchCategories();
-  }, []);*/
   const fetchCategories = async () => {
     try {
-      const response = await axiosPrivate.get("http://localhost:3001/api/categories");
+      const response = await axiosPrivate.get("/api/categories");
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -49,16 +29,15 @@ function Index() {
     fetchCategories();
   }, []);
 
-
   const handleDeleteCategory = (categoryId) => {
     MySwal.fire({
-      title: 'Êtes-vous sûr?',
+      title: "Êtes-vous sûr?",
       text: "Vous ne pourrez pas revenir en arrière!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Oui, supprimez-le!'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Oui, supprimez-le!",
     }).then((result) => {
       if (result.isConfirmed) {
         deleteCategory(categoryId);
@@ -68,22 +47,35 @@ function Index() {
 
   const deleteCategory = async (categoryId) => {
     try {
-      await axios.delete(`http://localhost:3001/api/categories/${categoryId}`);
+      await axiosPrivate.delete(`/api/categories/${categoryId}`);
       fetchCategories(); // Re-fetch categories to update the list after deletion
-      MySwal.fire(
-        'Supprimé!',
-        'La catégorie a été supprimée.',
-        'success'
-      )
+      MySwal.fire("Supprimé!", "La catégorie a été supprimée.", "success");
     } catch (error) {
       console.error("Error deleting category:", error);
-      MySwal.fire(
-        'Erreur!',
-        "La catégorie n'a pas été supprimée.",
-        'error'
-      )
+      MySwal.fire("Erreur!", "La catégorie n'a pas été supprimée.", "error");
     }
   };
+
+  const filteredAndSortedCategories = categories
+    .filter((category) => {
+      // Filter by search query
+      const matchesSearch = 
+        category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        category.description.toLowerCase().includes(searchQuery.toLowerCase());
+      // Return true if no search query or if category name or description matches search query
+      return !searchQuery || matchesSearch;
+    })
+    .sort((a, b) => {
+      // Sorting logic based on sortOption
+      if (sortOption === "Newest") {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      } else if (sortOption === "Oldest") {
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      }
+      // If no sorting option selected or default
+      return 0;
+    });
+
 
   return (
     <div>
@@ -100,8 +92,12 @@ function Index() {
             <div className="row mb-3">
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
                 <h1 className="h3 mb-2 mb-sm-0">Categories</h1>
-                <Link to="/add-category" className="btn btn-sm btn-primary me-1 mb-1 mb-md-0">Ajouter une catégorie</Link>
-
+                <Link
+                  to="/add-category"
+                  className="btn btn-sm btn-primary me-1 mb-1 mb-md-0"
+                >
+                  Ajouter une catégorie
+                </Link>
               </div>
             </div>
 
@@ -119,29 +115,33 @@ function Index() {
                         type="search"
                         placeholder="Search"
                         aria-label="Search"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                       />
-                      <button
-                        className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-                        type="submit"
-                      >
-                        <i className="fas fa-search fs-6 " />
-                      </button>
+                      {searchQuery === "" && ( // Check if the search query is empty
+                          <button
+                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                            type="submit"
+                          >
+                            <i className="fas fa-search fs-6 " />
+                          </button>
+                        )}
                     </form>
                   </div>
                   {/* Select option */}
                   <div className="col-md-3">
                     {/* Short by filter */}
                     <form>
-                      <select
-                        className="form-select  border-0 z-index-9"
-                        aria-label=".form-select-sm"
-                      >
-                        <option value>Sort by</option>
-                        <option>Newest</option>
-                        <option>Oldest</option>
-                        <option>Accepted</option>
-                        <option>Rejected</option>
-                      </select>
+                    <select
+            className="form-select  border-0 z-index-9"
+            aria-label=".form-select-sm"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+          >
+            <option value="">Sort by</option>
+            <option value="Newest">Newest</option>
+            <option value="Oldest">Oldest</option>
+          </select>
                     </form>
                   </div>
                 </div>
@@ -156,41 +156,71 @@ function Index() {
                   <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
                     {/* Table head */}
                     <thead>
-  <tr>
-    <th scope="col" className="border-0 rounded-start">Category Name</th>
-    <th scope="col" className="border-0">Description</th>
-    <th scope="col" className="border-0">Image</th> {/* Nouvelle colonne pour l'image */}
-    <th scope="col" className="border-0 rounded-end">Action</th>
-  </tr>
-</thead>
-<tbody>
-  {categories.map((category, index) => (
+                      <tr>
+                        <th scope="col" className="border-0 rounded-start">
+                          Category Name
+                        </th>
+                        <th scope="col" className="border-0">
+                          Description
+                        </th>
+                        <th scope="col" className="border-0">
+                          Image
+                        </th>{" "}
+                        {/* Nouvelle colonne pour l'image */}
+                        <th scope="col" className="border-0 rounded-end">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+  {filteredAndSortedCategories.map((category, index) => (
     <tr key={index}>
       <td>{category.name}</td>
-      <td>{category.description}</td>
       <td>
-        {/* Affichage de l'image */}
+        {category.description
+          .substring(0, 100)
+          .match(/.{1,30}/g)
+          .map((chunk, index, array) => (
+            <React.Fragment key={index}>
+              {chunk}
+              {index === array.length - 1 &&
+              category.description.length > 100
+                ? "..."
+                : ""}
+              <br />
+            </React.Fragment>
+          ))}
+      </td>
+      <td>
+        {/* Displaying the image */}
         {category.picturePath ? (
-        <img
-        src={`http://localhost:3001/assets/${category.picturePath}`}
-        alt="Category"
-        style={{ width: '100px', height: 'auto' }} // Adjust size as needed
-      />
-      
+          <img
+            src={`http://localhost:3001/assets/${category.picturePath}`}
+            alt="Category"
+            style={{ width: "130px", height: "110px", borderRadius: "15%" }} // Adjust size and border radius as needed
+            />
         ) : (
           <span>No Image</span>
         )}
       </td>
       <td>
-        <Link to={`/edit-category/${category._id}`} className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0">
-            <i class="bi bi-pencil-square"></i>
+        <Link
+          to={`/edit-category/${category._id}`}
+          className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+        >
+          <i className="bi bi-pencil-square"></i>
         </Link>
-        <button onClick={() => handleDeleteCategory(category._id)} 
-        className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"><i class="bi bi-trash"></i></button>
+        <button
+          onClick={() => handleDeleteCategory(category._id)}
+          className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
+        >
+          <i className="bi bi-trash"></i>
+        </button>
       </td>
     </tr>
   ))}
 </tbody>
+
 
                     {/* Table body END */}
                   </table>
@@ -257,15 +287,3 @@ function Index() {
 }
 
 export default Index;
-
-
-
-
-
-
-
-
-
-
-
-

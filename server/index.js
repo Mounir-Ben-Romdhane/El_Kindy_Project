@@ -38,9 +38,16 @@ import MessageRoute from './routes/MessageRoute.js'
 import meetingRoutes from './routes/meetingRoutes.js';
 import reservationRoutes  from "./routes/Reservation.js";
 import paymentRouter from "./routes/paymentRouter.js";
+
+import assignmentRoute from "./routes/assignmentRoutes.js";
+
+import textAnalytics from "./routes/textAnalytics.js";
+
 import planningRoutes from "./routes/planningRoutes.js";
 
 import ReservationStage from "./routes/ReservationStage.js";
+import { editUserProfile } from "./controllers/users.js";
+import { createAssignment, uploadAssignmentFile } from "./controllers/assignmentController.js";
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -84,8 +91,8 @@ app.patch("/event/update/:id",upload.single("picture"),updateEvent);
 app.use("/planning", planningRoutes);
 
 
-app.post("/api/categories", upload.single("picture"), createCategorie);
-app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
+app.post("/api/categories/add", verifyToken, upload.single("picture"), createCategorie);
+app.put("/api/categories/update/:id", verifyToken, upload.single("picture"), updateCategorie);
 
 
 app.post("/shops", upload.single("picture"), createShop);
@@ -95,6 +102,13 @@ app.post("/api/stage", upload.single("picture"), createStage);
 app.patch("/api/stage/:id", upload.single("picture"),updateStage );
 
 app.post("/addMessage", upload.single("picture"), addMessage);
+
+app.patch("/user/edit/:id", upload.single("picture"), verifyToken, editUserProfile);
+
+
+
+app.post("/api/add", upload.single("picturePath"), createAssignment);
+router.post('/api/upload/:assignmentId', upload.single('picturePath'), uploadAssignmentFile);
 
 
 
@@ -142,7 +156,19 @@ app.use("/events",reservationRoutes);
 app.use("/payment",paymentRouter);
 
 
+app.use('/api', assignmentRoute);
+
+
 app.use("/reservationstage", ReservationStage);
+
+
+
+
+
+// azure ai :
+app.use("/azure",textAnalytics);
+
+
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
 mongoose.connect(process.env.MONGO_URL, {

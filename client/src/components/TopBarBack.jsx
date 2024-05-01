@@ -1,31 +1,54 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
-import {  useNavigate } from 'react-router-dom';
+import {  Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import { setLogout } from '../state';
 import { jwtDecode } from "jwt-decode";
+import { getUserById } from 'services/usersService/api';
+import { useTranslation } from 'react-i18next';
 
 function TopBarBack() {
 
   //const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [userData, setUserData] = useState({});
+
 
   const accessToken = useSelector((state) => state.accessToken);
   const user = accessToken ? jwtDecode(accessToken) : "";
+  const role = accessToken ? jwtDecode(accessToken).roles : null;
+
+
+  const { t, i18n } = useTranslation();
+
+
+  
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const response = await getUserById(user.id);
+        setUserData(response.data.user);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getUser();
+  }, []);
 
   const getAvatarSrc = () => {
-    
-    if (user && user.picturePath !== "" && !user.authSource === "local") {
+    if (userData && userData.picturePath !== "" && userData.authSource === "local") {
       // If user has a custom picture path
-      return `http://localhost:3001/assets/${user.picturePath}`;
-    } else if (user && user.authSource === "local" && user.gender !== "") {
-
+      return `http://localhost:3001/assets/${userData.picturePath}`;
+    } else if (userData && userData.picturePath === "" && userData.gender !== "") {
       // If user has no custom picture but has a gender
-      return user.gender === 'male' ? '/assets/images/element/01.jpg' : '/assets/images/element/02.jpg';
+      return userData.gender === "Male"
+        ? "/assets/images/element/02.jpg"
+        : "/assets/images/element/01.jpg";
     } else {
       // Default avatar if no picture path or gender is available
-      return user.picturePath;
+      return userData.picturePath;
     }
   };
 
@@ -35,6 +58,28 @@ function TopBarBack() {
   );
   navigate("/");
   }
+
+  
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+    //console.log("lng", lng);
+  };
+
+
+  const getDashboardLink = () => {
+    if (!role) return "/"; // Default link if role is not available
+
+    // Check each role individually
+    if (role.includes("student")) {
+      return "/dashboard-student";
+    } else if (role.includes("teacher")) {
+      return "/dashboard-teacher";
+    } else if (role.includes("admin") || role.includes("superAdmin")) {
+      return "/dashboard-admin";
+    } else {
+      return "/"; // Default link if role does not match any of the specified roles
+    }
+  };
 
   return (
     <div>
@@ -130,6 +175,58 @@ function TopBarBack() {
                 {/* Top bar right START */}
                 <div className="ms-xl-auto">
                   <ul className="navbar-nav flex-row align-items-center">
+                    {/* Language Switcher */}
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle"
+                    href="#"
+                    id="language"
+                    data-bs-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    <i className="fas fa-globe me-2" />
+                    <span className="d-none d-lg-inline-block">
+                    {t("navbar.language")}
+                    </span>
+                  </a>
+                  <ul
+                    className="dropdown-menu dropdown-menu-end min-w-auto"
+                    aria-labelledby="language"
+                  >
+                    <li>
+                      <button
+                        className={`dropdown-item ${
+                          i18n.language === "en" ? "active" : ""
+                        }`}
+                        onClick={() => changeLanguage("en")}
+                      >
+                        <img
+                          className="fa-fw me-2"
+                          src="assets/images/flags/uk.svg"
+                          alt="English"
+                        />
+                        English
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className={`dropdown-item ${
+                          i18n.language === "fr" ? "active" : ""
+                        }`}
+                        onClick={() => changeLanguage("fr")}
+                      >
+                        <img
+                          className="fa-fw me-2"
+                          src="assets/images/flags/fr.svg"
+                          alt="French"
+                        />
+                        French
+                      </button>
+                    </li>
+                  </ul>
+                </li>
+
                     {/* Notification dropdown START */}
                     <li className="nav-item ms-2 ms-md-3 dropdown">
                       {/* Notification button */}
@@ -161,7 +258,7 @@ function TopBarBack() {
                           </div>
                           <div className="card-body p-0">
                             <ul className="list-group list-unstyled list-group-flush">
-                              {/* Notif item */}
+                              {/* Notif item
                               <li>
                                 <a
                                   href="#"
@@ -186,83 +283,7 @@ function TopBarBack() {
                                   </div>
                                 </a>
                               </li>
-                              {/* Notif item */}
-                              <li>
-                                <a
-                                  href="#"
-                                  className="list-group-item-action border-0 border-bottom d-flex p-3"
-                                >
-                                  <div className="me-3">
-                                    <div className="avatar avatar-md">
-                                      <img
-                                        className="avatar-img rounded-circle"
-                                        src="/assets/images/avatar/02.jpg"
-                                        alt="avatar"
-                                      />
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <h6 className="mb-1">
-                                      Larry Lawson Added a new course
-                                    </h6>
-                                    <p className="small text-body m-0">
-                                      What's new! Find out about new features
-                                    </p>
-                                    <u className="small">View detail</u>
-                                  </div>
-                                </a>
-                              </li>
-                              {/* Notif item */}
-                              <li>
-                                <a
-                                  href="#"
-                                  className="list-group-item-action border-0 border-bottom d-flex p-3"
-                                >
-                                  <div className="me-3">
-                                    <div className="avatar avatar-md">
-                                      <img
-                                        className="avatar-img rounded-circle"
-                                        src="/assets/images/avatar/05.jpg"
-                                        alt="avatar"
-                                      />
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <h6 className="mb-1">
-                                      New request to apply for Instructor
-                                    </h6>
-                                    <u className="small">View detail</u>
-                                  </div>
-                                </a>
-                              </li>
-                              {/* Notif item */}
-                              <li>
-                                <a
-                                  href="#"
-                                  className="list-group-item-action border-0 border-bottom d-flex p-3"
-                                >
-                                  <div className="me-3">
-                                    <div className="avatar avatar-md">
-                                      <img
-                                        className="avatar-img rounded-circle"
-                                        src="/assets/images/avatar/03.jpg"
-                                        alt="avatar"
-                                      />
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <h6 className="mb-1">
-                                      Update v2.3 completed successfully
-                                    </h6>
-                                    <p className="small text-body m-0">
-                                      What's new! Find out about new features
-                                    </p>
-                                    <small className="text-body">
-                                      5 min ago
-                                    </small>
-                                  </div>
-                                </a>
-                              </li>
+                               */}
                             </ul>
                           </div>
                           {/* Button */}
@@ -312,7 +333,7 @@ function TopBarBack() {
                               />
                             </div>
                             <div>
-                              <a className="h6 mt-2 mt-sm-0" href="#">
+                              <a className="h6 mt-2 mt-sm-0 text-truncate" href="#">
                                 {user?.fullName}
                               </a>
                               <p className="small m-0">{user?.email}</p>
@@ -322,46 +343,53 @@ function TopBarBack() {
                         </li>
                         {/* Links */}
                         <li>
-                          <a className="dropdown-item" href="#">
-                            <i className="bi bi-person fa-fw me-2" />
-                            Edit Profile
-                          </a>
-                        </li>
-                        <li>
-                          <a className="dropdown-item" href="#">
-                            <i className="bi bi-gear fa-fw me-2" />
-                            Account Settings
-                          </a>
-                        </li>
-                        <li>
-                          <a className="dropdown-item" href="#">
-                            <i className="bi bi-info-circle fa-fw me-2" />
-                            Help
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            className="dropdown-item bg-danger-soft-hover"
-                            onClick={logoutHandler}
-                          >
-                            <i className="bi bi-power fa-fw me-2" />
-                            Sign Out
-                          </a>
-                        </li>
-                        <li>
-                          {" "}
-                          <hr className="dropdown-divider" />
-                        </li>
-                        {/* Dark mode switch START */}
-                        <li>
-                          <div className="modeswitch-wrap" id="darkModeSwitch">
-                            <div className="modeswitch-item">
-                              <div className="modeswitch-icon" />
-                            </div>
-                            <span>Dark mode</span>
-                          </div>
-                        </li>
-                        {/* Dark mode switch END */}
+                    <Link to={getDashboardLink()} className="dropdown-item">
+                      <i className="bi bi-grid-fill fa-fw me-1" />{" "}
+                      {/* Replace "bi-person" with "bi-house-door" for a dashboard icon */}
+                      {t("navbar.Dashboard")}
+                      
+                    </Link>
+                  </li>
+
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      <i className="bi bi-person fa-fw me-2" />
+                      {t("navbar.Edit Profile")}
+                      
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      <i className="bi bi-gear fa-fw me-2" />
+                      {t("navbar.Account Settings")}
+                      
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item bg-danger-soft-hover"
+                      onClick={logoutHandler}
+                    >
+                      <i className="bi bi-power fa-fw me-2" />
+                      {t("navbar.Sign Out")}
+
+                      
+                    </a>
+                  </li>
+                  <li>
+                    {" "}
+                    <hr className="dropdown-divider" />
+                  </li>
+                  {/* Dark mode switch START */}
+                  <li>
+                    <div className="modeswitch-wrap" id="darkModeSwitch">
+                      <div className="modeswitch-item">
+                        <div className="modeswitch-icon" />
+                      </div>
+                      <span> {t("navbar.Dark mode")}</span>
+                    </div>
+                  </li>
+                  {/* Dark mode switch END */}
                       </ul>
                       {/* Profile dropdown END */}
                     </li>

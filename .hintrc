@@ -3,16 +3,7 @@
     "development"
   ],
   "hints": {
-    "compat-api/css": [
-      "default",
-      {
-        "ignore": [
-          "text-align: -webkit-match-parent",
-          "-webkit-text-size-adjust",
-          "-ms-filter"
-        ]
-      }
-    ],
+    "compat-api/css": "off",
     "disown-opener": "off",
     "axe/name-role-value": [
       "default",

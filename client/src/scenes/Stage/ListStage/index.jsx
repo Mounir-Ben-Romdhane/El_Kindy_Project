@@ -1,191 +1,199 @@
-import SideBar from 'components/SideBar'
-import TopBarBack from 'components/TopBarBack'
-import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-function Index() {
+import SideBar from 'components/SideBar';
+import TopBarBack from 'components/TopBarBack';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import useAxiosPrivate from 'hooks/useAxiosPrivate';
 
+function Index() {
+  const axiosPrivate = useAxiosPrivate();
   const [stages, setStages] = useState([]);
-  const [selectedStage, setSelectedStage] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOption, setSortOption] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
-  const entriesPerPage = 8; // Number of entries to display per page
+  const [totalEntries, setTotalEntries] = useState(0);
+  const entriesPerPage = 8;
 
   useEffect(() => {
     const fetchStages = async () => {
       try {
-        const response = await fetch("http://localhost:3001/stage");
-        const { stages } = await response.json();
-        setStages(stages);
-        setTotalEntries(stages.length); // Update the totalEntries state
+        const response = await axiosPrivate.get('/stage');
+        setStages(response.data.stages);
+        setTotalEntries(response.data.total);
       } catch (error) {
-        console.error("Error fetching stages:", error);
+        console.error('Error fetching stages:', error);
       }
     };
 
     fetchStages();
-  }, []);
-
-
-  const handleEditClick = (stage) => {
-    setSelectedStage(stage);
-  };
+  }, [axiosPrivate]);
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:3001/stage/${id}`, {
-        method: 'DELETE',
-      });
-      // Filter out the deleted stage from the state
-      setStages(prevStages => prevStages.filter(stage => stage._id !== id)); // Assuming `_id` is the unique identifier
+      await axiosPrivate.delete(`/stage/${id}`);
+      setStages(prevStages => prevStages.filter(stage => stage._id !== id));
     } catch (error) {
-      console.error("Error deleting stage:", error);
+      console.error('Error deleting stage:', error);
     }
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
+  const filteredStages = stages.filter((stage) => {
+    const lowerCaseQuery = searchQuery.toLowerCase();
+    return (
+      stage.title.toLowerCase().includes(lowerCaseQuery) ||
+      stage.description.toLowerCase().includes(lowerCaseQuery) ||
+      // Add additional fields for searching
+      stage.startDate.toLowerCase().includes(lowerCaseQuery) ||
+      stage.finishDate.toLowerCase().includes(lowerCaseQuery)
+    );
+  });
+
+  const sortedStages = filteredStages.sort((a, b) => {
+    switch (sortOption) {
+      case 'Newest':
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      case 'Oldest':
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      // Add other sorting options if needed
+      default:
+        return 0;
+    }
+  });
+
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
 
   return (
     <div>
-      {/* **************** MAIN CONTENT START **************** */}
       <main>
-
-    <SideBar />
-        {/* Page content START */}
+        <SideBar />
         <div className="page-content">
           <TopBarBack />
-
-          {/* Page main content START */}
           <div className="page-content-wrapper border">
-
-            {/* Title */}
             <div className="row mb-3">
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
-                <h1 className="h3 mb-2 mb-sm-0">Internship</h1>
-                <Link to="/addStage" className="btn btn-sm btn-primary mb-0">Create an Intership</Link>
+                <h1 className="h3 mb-2 mb-sm-0">Internships</h1>
+                <Link to="/addStage" className="btn btn-sm btn-primary mb-0">Create an Internship</Link>
               </div>
             </div>
-
-
-            {/* Card START */}
             <div className="card bg-transparent border">
-              {/* Card header START */}
               <div className="card-header bg-light border-bottom">
-                {/* Search and select START */}
                 <div className="row g-3 align-items-center justify-content-between">
-                  {/* Search bar */}
                   <div className="col-md-8">
                     <form className="rounded position-relative">
-                      <input className="form-control bg-body" type="search" placeholder="Search" aria-label="Search" />
-                      <button className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y" type="submit"><i className="fas fa-search fs-6 " /></button>
+                    <input
+                        className="form-control bg-body"
+                        type="search"
+                        placeholder="Search"
+                        aria-label="Search"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                      {searchQuery === "" && ( // Check if the search query is empty
+                          <button
+                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                            type="submit"
+                          >
+                            <i className="fas fa-search fs-6 " />
+                          </button>
+                        )}
                     </form>
                   </div>
-                  {/* Select option */}
                   <div className="col-md-3">
-                    {/* Short by filter */}
                     <form>
-                      <select className="form-select  border-0 z-index-9" aria-label=".form-select-sm">
-                        <option value>Sort by</option>
-                        <option>Newest</option>
-                        <option>Oldest</option>
-                        <option>Accepted</option>
-                        <option>Rejected</option>
+                      <select
+                        className="form-select border-0 z-index-9"
+                        onChange={(e) => setSortOption(e.target.value)}
+                      >
+                        <option value="">Sort by</option>
+                        <option value="Newest">Newest</option>
+                        <option value="Oldest">Oldest</option>
+                        {/* Add other sorting options */}
                       </select>
                     </form>
                   </div>
                 </div>
-                {/* Search and select END */}
               </div>
-              {/* Card header END */}
-              {/* Card body START */}
               <div className="card-body">
-                {/* Course table START */}
                 <div className="table-responsive border-0 rounded-3">
-                  {/* Table START */}
                   <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
-                    {/* Table head */}
                     <thead>
-                      <tr>{/*{stage.title}*/}
+                      <tr>
                         <th scope="col" className="border-0 rounded-start">Internship Title</th>
                         <th scope="col" className="border-0">Image</th>
-                        <th scope="col" className="border-0">startDate</th>
-                        <th scope="col" className="border-0">finishDate</th>
-                        <th scope="col" className="border-0">description</th>
+                        <th scope="col" className="border-0">Start Date</th>
+                        <th scope="col" className="border-0">Finish Date</th>
+                        <th scope="col" className="border-0">Description</th>
                         <th scope="col" className="border-0 rounded-end">Action</th>
                       </tr>
                     </thead>
-                    {/* Table body START */}
                     <tbody>
-
-                      {/* Table row */}
-                      {/* Table row */}
-                      {stages.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage).map((stage, index) => (
-                        <tr key={index}>
+                      {sortedStages.slice(indexOfFirstEntry, indexOfLastEntry).map((stage) => (
+                        <tr key={stage._id}>
+                          <td>{stage.title}</td>
                           <td>
-                            <div className="d-flex align-items-center position-relative">
-                              <h6 className="table-responsive-title mb-0 ms-2">{stage.title}</h6>
-                            </div>
-                          </td>
-                          <td>
-                            <div className="w-60px">
-                              <td>
-                                {/* Affichage de l'image */}
-                                {stage.picturePath ? (
-                                  <img
-                                    src={`http://localhost:3001/assets/${stage.picturePath}`}
-                                    alt=""
-                                    style={{ width: '30px', height: 'auto' }} // Adjust size as needed
-                                  />
-
-                                ) : (
-                                  <span>No Image</span>
-                                )}
-                              </td>                              </div>
+                            {stage.picturePath ? (
+                              <img
+                                src={`http://localhost:3001/assets/${stage.picturePath}`}
+                                alt="Stage"
+                                style={{ width: "100px", height: "80px", borderRadius: "15%" }} // Adjust size and border radius as needed
+                                />
+                            ) : (
+                              <span>No Image</span>
+                            )}
                           </td>
                           <td>{stage.startDate}</td>
                           <td>{stage.finishDate}</td>
-                          <td>{stage.description.length > 50 ? `${stage.description.substring(0, 50)}...` : stage.description}</td>
-
+                          <td>{stage.description
+          .substring(0, 100)
+          .match(/.{1,30}/g)
+          .map((chunk, index, array) => (
+            <React.Fragment key={index}>
+              {chunk}
+              {index === array.length - 1 &&
+              stage.description.length > 100
+                ? "..."
+                : ""}
+              <br />
+            </React.Fragment>
+          ))}</td>
                           <td>
-
-                          <Link to={`/EditStage/${stage._id}`}  className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"  onClick={() => handleEditClick(stage)}>
-                          <i class="bi bi-pencil-square"></i>
-        </Link>
-                           <button onClick={() => handleDelete(stage._id)} className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"><i class="bi bi-trash"></i></button>
-
+                            <Link to={`/EditStage/${stage._id}`} className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0">
+                              <i className="bi bi-pencil-square" />
+                            </Link>
+                            <button onClick={() => handleDelete(stage._id)} className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0">
+                              <i className="bi bi-trash" />
+                            </button>
                           </td>
                         </tr>
                       ))}
                     </tbody>
-                    {/* Table body END */}
                   </table>
-                  {/* Table END */}
                 </div>
-                {/* Course table END */}
               </div>
-              {/* Card body END */}
-              {/* Card footer START */}
               <div className="card-footer bg-transparent pt-0">
-                {/* Pagination START */}
                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
-                  {/* Content */}
-                  <p className="mb-0 text-center text-sm-start">Showing {(currentPage - 1) * 8 + 1} to {Math.min(currentPage * 8, totalEntries)} of {totalEntries} entries</p>
-                  {/* Pagination */}
+                  <p className="mb-0 text-center text-sm-start">
+                    Showing {indexOfFirstEntry + 1} to {Math.min(indexOfLastEntry, totalEntries)} of {totalEntries} entries
+                  </p>
                   <nav className="d-flex justify-content-center mb-0" aria-label="navigation">
                     <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
-                      {/* Previous page button */}
                       <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                         <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)} tabIndex={-1}>
                           <i className="fas fa-angle-left" />
                         </button>
                       </li>
-                      {/* Page numbers */}
-                      {Array.from({ length: Math.ceil(totalEntries / 8) }, (_, index) => (
+                      {Array.from({ length: Math.ceil(totalEntries / entriesPerPage) }, (_, index) => (
                         <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                          <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
+                          <button className="page-link" onClick={() => setCurrentPage(index + 1)}>
+                            {index + 1}
+                          </button>
                         </li>
                       ))}
-                      {/* Next page button */}
-                      <li className={`page-item ${currentPage * 8 >= totalEntries ? 'disabled' : ''}`}>
+                      <li className={`page-item ${indexOfLastEntry >= totalEntries ? 'disabled' : ''}`}>
                         <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
                           <i className="fas fa-angle-right" />
                         </button>
@@ -193,23 +201,13 @@ function Index() {
                     </ul>
                   </nav>
                 </div>
-                {/* Pagination END */}
-
               </div>
-              {/* Card footer END */}
             </div>
-            {/* Card END */}
-
-
           </div>
-          {/* Page main content END */}
-
         </div>
-        {/* Page content END */}
       </main>
-      {/* **************** MAIN CONTENT END **************** */}
     </div>
-  )
+  );
 }
 
-export default Index
+export default Index;

@@ -78,7 +78,19 @@ const UserSchema = new mongoose.Schema(
             type: Array,
             default: []
         },
-  
+        secret: {
+            type :String,
+            default: ""
+        },
+        TwoFactorAuthentication:{
+            type : Boolean,
+            default: false
+        },
+        qrCode: {
+            type: String,
+            default: ""
+        },
+
         // Additional attributes for specific roles
         teacherInfo: {
             type: {
@@ -90,6 +102,10 @@ const UserSchema = new mongoose.Schema(
                 classesTeaching: [{
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'Classe',
+                }],
+                studentsTaught: [{
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'User', // Reference the User model
                 }],
                 qualifications: {
                     type: String,
@@ -122,6 +138,10 @@ const UserSchema = new mongoose.Schema(
                     default: []
                 },
                 parentName: {
+                    type: String,
+                    default: ""
+                },
+                parentProfession: {
                     type: String,
                     default: ""
                 },
