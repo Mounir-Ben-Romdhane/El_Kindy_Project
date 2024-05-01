@@ -1,31 +1,47 @@
-import react from  'react';
+import react, { useEffect, useState } from  'react';
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 
 import { jwtDecode } from "jwt-decode";
+import { getUserById } from 'services/usersService/api';
 
  const  Index = () => {
 
       //const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [userData, setUserData] = useState({});
+
 
   const accessToken = useSelector((state) => state.accessToken);
   const user = accessToken ? jwtDecode(accessToken) : "";
 
-  const getAvatarSrc = () => {
-    
-    if (user && user.picturePath !== "" && !user.authSource === "local") {
-      // If user has a custom picture path
-      return `http://localhost:3001/assets/${user.picturePath}`;
-    } else if (user && user.authSource === "local" && user.gender !== "") {
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const response = await getUserById(user.id);
+        setUserData(response.data.user);
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
+    getUser();
+  }, []);
+
+  const getAvatarSrc = () => {
+    if (userData && userData.picturePath !== "" && userData.authSource === "local") {
+      // If user has a custom picture path
+      return `http://localhost:3001/assets/${userData.picturePath}`;
+    } else if (userData && userData.picturePath === "" && userData.gender !== "") {
       // If user has no custom picture but has a gender
-      return user.gender === 'male' ? '/assets/images/element/01.jpg' : '/assets/images/element/02.jpg';
+      return userData.gender === "Male"
+        ? "/assets/images/element/02.jpg"
+        : "/assets/images/element/01.jpg";
     } else {
       // Default avatar if no picture path or gender is available
-      return user.picturePath;
+      return userData.picturePath;
     }
   };
 
@@ -48,7 +64,7 @@ import { jwtDecode } from "jwt-decode";
                                             <div className="avatar avatar-xxl mt-n3">
                                             <img
                                                 className="avatar-img rounded-circle"
-                                                src={getAvatarSrc()|| "default.png"}
+                                                src={getAvatarSrc()}
                                                 alt="avatar"
                                                 />          
                                              </div>

@@ -37,14 +37,11 @@ import ChatRoute from './routes/ChatRoute.js'
 import MessageRoute from './routes/MessageRoute.js'
 import meetingRoutes from './routes/meetingRoutes.js';
 import reservationRoutes  from "./routes/Reservation.js";
-
 import paymentRouter from "./routes/paymentRouter.js";
 
 import assignmentRoute from "./routes/assignmentRoutes.js";
 
 import textAnalytics from "./routes/textAnalytics.js";
-
-
 
 import planningRoutes from "./routes/planningRoutes.js";
 
@@ -115,6 +112,7 @@ router.post('/api/upload/:assignmentId', upload.single('picturePath'), uploadAss
 
 
 
+
 /*Twilio */
 dotenv.config();
 export const sendSms = (toPhoneNumber) => {
@@ -145,6 +143,7 @@ app.use('/shops', shopRoute);
 
 app.use('/event', eventRoutes);
 app.use("/course",courseRoute);
+
 
 app.use("/contact",ContactRoutes);
 app.use("/salle",salleRoutes);

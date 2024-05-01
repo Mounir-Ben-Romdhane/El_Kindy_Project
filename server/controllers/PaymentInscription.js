@@ -3,6 +3,8 @@ import Inscription from "../models/Inscription.js";
 import { sendEmail } from "../utils/sendMailer.js";
 import User from "../models/User.js";
 
+
+
 // Add a new inscription with payment initialization
 export async function addInscriptionWithPayment(req, res) {
   const { id } = req.params;

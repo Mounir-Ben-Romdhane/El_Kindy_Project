@@ -2,12 +2,16 @@ import react, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogout } from "state";
+import { useTranslation } from "react-i18next";
 
 const Index = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const [activeNavItem, setActiveNavItem] = useState("");
+
+  const { t, i18n } = useTranslation();
+
 
   const logoutHandler = () => {
     dispatch(setLogout());
@@ -39,7 +43,7 @@ const Index = () => {
             {/* Offcanvas header */}
             <div className="offcanvas-header bg-light">
               <h5 className="offcanvas-title" id="offcanvasNavbarLabel">
-                My profile
+                {t("sidebarStudent.My profile")}
               </h5>
               <button
                 type="button"
@@ -61,7 +65,7 @@ const Index = () => {
                     onClick={() => handleNavItemClick("/dashboard-student")}
                   >
                     <i className="bi bi-ui-checks-grid fa-fw me-2" />
-                    Dashboard
+                     {t("sidebarStudent.Dashboard")}
                   </Link>
                   <Link
                     className={`list-group-item ${
@@ -71,7 +75,7 @@ const Index = () => {
                     onClick={() => handleNavItemClick("/meetingHomeS")}
                   >
                     <i className="bi bi-basket fa-fw me-2" />
-                    Meeting En Ligne
+                   {t("sidebarStudent.Meeting En Ligne")}
                   </Link>
                   <Link
                     className={`list-group-item ${
@@ -81,7 +85,7 @@ const Index = () => {
                     onClick={() => handleNavItemClick("/planningStudent")}
                   >
                     <i className="bi bi-basket fa-fw me-2" />
-                    Planning
+                    {t("sidebarStudent.Planning")}
                   </Link>
                    <Link className="list-group-item" to="/assignmentStudent"><i className="bi bi-basket fa-fw me-2" />Assignment</Link>
 
@@ -90,7 +94,7 @@ const Index = () => {
                   to="/assignmentStudent"
                   onClick={() => handleNavItemClick("/assignmentStudent")}>
                     <i className="bi bi-basket fa-fw me-2" />
-                    Assignment                  </Link>
+                      {t("sidebarStudent.Assignment")}                </Link>
 
                   <Link
                     className={`list-group-item ${
@@ -100,7 +104,7 @@ const Index = () => {
                     onClick={() => handleNavItemClick("/TeachersList")}
                   >
                     <i className="bi bi-people fa-fw me-2" />
-                    Teachers
+                     {t("sidebarStudent.Teachers")}  
                   </Link>
                   <Link
                     className={`list-group-item ${
@@ -110,7 +114,7 @@ const Index = () => {
                     onClick={() => handleNavItemClick("/time-slots-student")}
                   >
                     <i className="bi bi-clock fa-fw me-2" />
-                    Time Slots
+                    {t("sidebarStudent.Time Slots")}  
                   </Link>
                   <Link
                     className={`list-group-item ${
@@ -120,7 +124,7 @@ const Index = () => {
                     onClick={() => handleNavItemClick("/profile-student")}
                   >
                     <i className="bi bi-person-lines-fill fa-fw me-2" />
-                    Edit Profile
+                   {t("sidebarStudent.Edit Profile")}  
                   </Link>{" "}
                   <a
                     className="list-group-item text-danger bg-danger-soft-hover"
@@ -128,7 +132,7 @@ const Index = () => {
                     onClick={logoutHandler}
                   >
                     <i className="fas fa-sign-out-alt fa-fw me-2" />
-                    Sign Out
+                    {t("sidebarStudent.Sign Out")} 
                   </a>
                 </div>
               </div>

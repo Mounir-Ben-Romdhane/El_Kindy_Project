@@ -164,7 +164,8 @@ function Index() {
                 <div className="m-4">
                   <div className="row g-4">
                     <div className="col-12">
-                      <label className="form-label">Category title</label>
+                      <label className="form-label">Category title {" "}
+                                          <span className="text-danger">*</span></label>
                       <input
                         className={`form-control ${
                           errors.name ? "is-invalid" : ""
@@ -180,7 +181,8 @@ function Index() {
                       )}
                     </div>
                     <div className="col-12">
-                      <label className="form-label">Short description</label>
+                      <label className="form-label">Short description {" "}
+                                          <span className="text-danger">*</span></label>
                       <textarea
                         className={`form-control ${
                           errors.description ? "is-invalid" : ""
@@ -220,7 +222,8 @@ function Index() {
                                 className="text-primary"
                                 style={{ cursor: "pointer" }}
                               >
-                                Browse
+                                Browse {" "}
+                                          <span className="text-danger">*</span>
                               </span>
                             </h6>
                             <input

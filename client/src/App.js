@@ -42,13 +42,13 @@ import Room from "../src/scenes/PlatformTeacher/Room";
 import TeachersList from "../src/scenes/PlatformStudent/TeachersList";
 import Chat from "../src/scenes/Chat/Chat";
 
-import ListMeetingTeacher from "scenes/PlatformTeacher/ListMeetingTeacher";
 import BackListShop from "../src/scenes/Shop/BackShop/BackListShop";
 import BackDetailsShop from "../src/scenes/Shop/BackShop/BackDetailsShop"
 import DetailShopFront from "../src/scenes/Shop/ShopHome/DetailShopFront"
 
-import MessageProf from "../src/scenes/PlatformTeacher/MessageProf";
-import StudentsGrades from "../src/scenes/PlatformTeacher/StudentsGrades";
+import ListMeetingTeacher from 'scenes/PlatformTeacher/ListMeetingTeacher'
+import MessageProf from '../src/scenes/PlatformTeacher/MessageProf'
+import StudentsGrades from '../src/scenes/PlatformTeacher/StudentsGrades'
 
 import AdminReservation from "./scenes/EventsPage/AdminReservation/AdminReservation";
 import DetailEvents from "./scenes/EventsPage/DetailEventPage/DetailEvent";
@@ -71,6 +71,8 @@ import Reservationbyid from './scenes/EventsPage/ReservationListbyId/Reservation
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
 import ContactPage from "scenes/ContactPage/ContactFront";
+import ContactBack from "scenes/ContactPage/ContactBack";
+
 import AdminsDashboard from "scenes/UsersAdmin/Admins";
 import TeachersDashboard from "scenes/UsersAdmin/Teachers";
 import StudentsDashboard from "scenes/UsersAdmin/Students";
@@ -116,7 +118,9 @@ function App() {
       "/assets/vendor/glightbox/js/glightbox.js",
       "/assets/vendor/purecounterjs/dist/purecounter_vanilla.js",
       "/assets/js/functions.js",
-      "assets/vendor/sticky-js/sticky.min.js"
+      "/assets/vendor/sticky-js/sticky.min.js",
+      "/assets/vendor/apexcharts/js/apexcharts.min.js"
+
     ];
 
     if (!scriptsLoaded.current) {
@@ -201,7 +205,15 @@ function App() {
             />
           }
         />
-
+<Route
+          path="/ContactBack"
+          element={
+            <PrivateRoute
+              element={<ContactBack />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
         <Route
           path="/inscriptionDetails/:id"
           element={
@@ -672,6 +684,7 @@ function App() {
             />
           }
         />
+         
 <Route
           path="/DetailShopFront/:id"
           element={
