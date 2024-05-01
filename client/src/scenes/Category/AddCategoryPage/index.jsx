@@ -108,17 +108,17 @@ function Index() {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-
+  
     // Validate fields
     for (let [key, value] of Object.entries(formData)) {
       validateField(key, value);
     }
-
+  
     // Check if there are any errors
     if (Object.values(errors).some((error) => error !== "")) {
       return;
     }
-
+  
     // Check if an image is selected
     if (!formData.picture) {
       setErrors((prevErrors) => ({
@@ -129,9 +129,10 @@ function Index() {
       document.getElementById("image").parentElement.classList.add("border-danger");
       return;
     }
-
+  
     await addCategory();
   };
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;

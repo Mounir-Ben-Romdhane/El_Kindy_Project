@@ -17,7 +17,6 @@ function TeacherView() {
     const navigate = useNavigate();
     const [studentSubmissions, setStudentSubmissions] = useState([]);
     const [showSubmissionModal, setShowSubmissionModal] = useState(false);
-    const [resolvedStudentDetails, setResolvedStudentDetails] = useState([]);
 
     const [selectedCourse, setSelectedCourse] = useState("");
     const [courseImages, setCourseImages] = useState({});
@@ -28,31 +27,42 @@ function TeacherView() {
     const [selectedTime, setSelectedTime] = useState('');
     const accessToken = useSelector((state) => state.accessToken);
   const decodeToken = accessToken ? jwtDecode(accessToken) : "";
+  const StudentSubmissionDetails = ({ submission }) => {
+    const [studentDetails, setStudentDetails] = useState(null);
+
+    useEffect(() => {
+        const fetchDetails = async () => {
+            try {
+                const details = await fetchStudentDetails(submission.studentId); // Utilisez submission.studentId ici
+                console.log("Student ID:", details); // Ajoutez cette ligne pour afficher l'ID de l'étudiant
+
+                setStudentDetails(details);
+            } catch (error) {
+                console.error('Error fetching student details:', error);
+            }
+        };
+    
+        fetchDetails();
+    }, [submission.studentId]);
+    
+
+    return (
+        <>
+            <p>Student Name: {studentDetails ? `${studentDetails.firstName} ${studentDetails.lastName}` : 'Unknown'}</p>
+            <p>Title: {submission.title}</p>
+            <p>CourseId: {submission.courseId}</p>
+            <a href={`http://localhost:3001/assets/${submission.picturePath.split('/').slice(-1)[0]}`} download> Télécharger </a>
+
+
+                </>
+    );
+};
 
     // Créez une fonction de gestionnaire pour mettre à jour la date sélectionnée
     const handleDateChange = (date) => {
         setSelectedDate(date);
     };
-    useEffect(() => {
-        const fetchStudentDetailsAndResolve = async () => {
-            console.log(studentSubmissions)
 
-            const resolvedDetails = await Promise.all(
-                studentSubmissions.map(async (submission) => {
-                    const studentId = submission.studentId; // Assurez-vous que studentId est correctement extrait de submission
-                    const studentDetails = await fetchStudentDetails(studentId);
-                    return { submission, studentDetails };
-                })
-            );
-            setResolvedStudentDetails(resolvedDetails);
-        };
-        
-            // Call the function to fetch and resolve student details
-
-        // Call the function to fetch and resolve student details
-        fetchStudentDetailsAndResolve();
-    }, [studentSubmissions]);
-    
     // Créez une fonction de gestionnaire pour mettre à jour l'heure sélectionnée
     const handleTimeChange = (time) => {
         setSelectedTime(time);
@@ -107,7 +117,6 @@ function TeacherView() {
     const fetchStudentSubmissions = async (assignmentId) => {
         try {
             const response = await axios.get(`http://localhost:3001/api/assignment/${assignmentId}`);
-            console.log(response)
             if (response.data && typeof response.data === 'object') {
                 // Si la réponse est un objet, transformez-la en tableau
                 return [response.data];
@@ -161,18 +170,13 @@ function TeacherView() {
     };
     const fetchStudentDetails = async (studentId) => {
         try {
-            const response = await axios.get(`http://localhost:3001/auth/students/${studentId}`);
-            console.log("asa",response.data)
-            console.log("asaddd",response)
-
-            return response.data; // Assurez-vous que la réponse contient les détails de l'étudiant, y compris le nom
+            const response = await axios.get(`http://localhost:3001/auth/students/66323f1fe113d3b85a72881c`);
+            return response.data;
         } catch (error) {
             console.error('Error fetching student details:', error);
             return null;
         }
     };
-    
-    
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewAssignment(prevState => ({
@@ -473,29 +477,28 @@ function TeacherView() {
                     </form>
                 </Modal.Body>
             </Modal>
-            <Modal show={showSubmissionModal} onHide={() => setShowSubmissionModal(false)}>
+         
+    <Modal show={showSubmissionModal} onHide={() => setShowSubmissionModal(false)}>
     <Modal.Header closeButton>
         <Modal.Title>Student Submissions</Modal.Title>
     </Modal.Header>
     <Modal.Body>
-    {studentSubmissions.length === 0 ? (
-        <p>No submissions available</p>
-    ) : (
-        <ul>
-            {resolvedStudentDetails.map((resolvedSubmission, index) => (
-                <li key={index}>
-                    <p>Student Name: {resolvedSubmission.studentDetails ? `${resolvedSubmission.studentDetails.firstName} ${resolvedSubmission.studentDetails.lastName}` : 'Unknown'}</p>
-                    <p>Title: {resolvedSubmission.submission.title}</p>
-                    <p>CourseId: {resolvedSubmission.submission.courseId}</p>
-                    <p>PicturePath: {resolvedSubmission.submission.picturePath}</p>
-                    {/* Add other student submission details here if necessary */}
-                </li>
-            ))}
-        </ul>
-    )}
-</Modal.Body>
-
+        {studentSubmissions.length === 0 ? (
+            <p>No submissions available</p>
+        ) : (
+            <ul>
+                {studentSubmissions.map((submission, index) => (
+                    <li key={index}>
+                        <StudentSubmissionDetails submission={submission} />
+                    </li>
+                ))}
+            </ul>
+        )}
+    </Modal.Body>
 </Modal>
+
+
+
 
 
 
