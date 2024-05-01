@@ -287,6 +287,16 @@ function SideBar() {
                     {t("sidebar.Classes")}
                   </Link>
                 </li>
+                {/* menu item classess */}
+                <li className="nav-item">
+                  <Link
+                    to="/ContactBack"
+                    className={`nav-link ${activeNavItem === "/ContactBack" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/ContactBack")}>
+                    <FontAwesomeIcon icon={faSchool} className="fa-fw me-1" />{" "}
+                    claim
+                  </Link>
+                </li>
                 {/* Menu item 9 */}
                 <li className="nav-item">
                   {" "}

@@ -29,7 +29,11 @@
     "google-auth-library": "^9.6.3",
     "i18next": "^23.11.3",
     "jwt-decode": "^4.0.0",
+
     "pdfjs-dist": "^4.1.392",
+
+    "music-metadata-browser": "^2.5.10",
+
     "popper.js": "^1.16.1",
     "react": "^18.2.0",
     "react-alert": "^7.0.3",

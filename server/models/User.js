@@ -90,6 +90,7 @@ const UserSchema = new mongoose.Schema(
             type: String,
             default: ""
         },
+
         // Additional attributes for specific roles
         teacherInfo: {
             type: {
