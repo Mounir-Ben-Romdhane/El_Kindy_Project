@@ -97,6 +97,7 @@ function Index() {
           dispatch(setLogout()); // Logout on refresh token error
         }
       } else if (loggedInResponse.status === 200) {
+        console.log("accessToken", loggedIn.accessToken);
         console.log("logged successfully!!");
         setOpen(false);
         dispatch(

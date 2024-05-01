@@ -7,6 +7,9 @@ import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { getUserById } from "services/usersService/api";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
+import { useNavigate } from "react-router-dom";
+
+
 
 function EditProfile() {
   const accessToken = useSelector((state) => state.accessToken);
@@ -21,6 +24,9 @@ function EditProfile() {
 
   //refresh token
   const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+
+
 
   const [user, setUser] = useState({
     firstName: "",
@@ -121,18 +127,17 @@ function EditProfile() {
   const handleAjout2FA = async (e) => {
     e.preventDefault();
     try {
-
-      const response = await axiosPrivate.post(`/auth/ajouter2FA/${user.email}`);
-
+      const response = await axiosPrivate.post(
+        `/auth/ajouter2FA/${user.email}`
+      );
 
       if (response.status === 200) {
-          set2FAActivatedSuccess(true);
+        set2FAActivatedSuccess(true);
       } else {
-        console.error('2FA Activated failed with status:', response.status);
-
+        console.error("2FA Activated failed with status:", response.status);
       }
     } catch (error) {
-      console.error('Error 2FA Activated:', error);
+      console.error("Error 2FA Activated:", error);
     }
   };
 
@@ -172,11 +177,28 @@ function EditProfile() {
     // Reset the user's picturePath to the default avatar path
     setUser((prevUser) => ({
       ...prevUser,
-      picturePath:
-        prevUser.gender === "Male"
-          ? "/assets/images/element/01.jpg"
-          : "/assets/images/element/02.jpg",
+      picturePath: userData.picturePath,
     }));
+  };
+
+  const getAvatarSrc = () => {
+    if (imageFile) {
+      // If a new image is selected, return its URL
+      return URL.createObjectURL(imageFile);
+    } else if (user.picturePath !== "" && userData.authSource === "local") {
+      // If user has a custom picture path
+      return `http://localhost:3001/assets/${user.picturePath}`;
+    } else if (user.picturePath === "" && user.gender !== "") {
+      // If user has no custom picture but has a gender
+      return user.gender === "Male"
+        ? "/assets/images/element/02.jpg"
+        : "/assets/images/element/01.jpg";
+    } else {
+      // Default avatar if no picture path or gender is available
+      return user.gender === "Male"
+        ? "/assets/images/element/02.jpg"
+        : "/assets/images/element/01.jpg";
+    }
   };
 
   const updateUserProfile = async (userId, userData) => {
@@ -186,16 +208,22 @@ function EditProfile() {
     }
     // Append the image file to FormData if it exists
     if (imageFile) {
+      //console.log("changed");
       formData.append("picture", imageFile);
       formData.append("picturePath", imageName);
     }
+    //console.log("not changed");
+
     try {
-      console.log("formData", formData);
+      //console.log("formData", formData);
       const response = await axiosPrivate.patch(
         `/user/edit/${userId}`,
         formData
       );
-      console.log("status : ", response.status);
+      if (response.status === 200) {
+        // Navigate to the desired path
+        navigate("/dashboard-teacher");
+      }
       return response.data;
     } catch (error) {
       console.error("Error updating user:", error);
@@ -208,7 +236,7 @@ function EditProfile() {
     const formData = new FormData(values.target); // Create FormData object from form
 
     const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
-    console.log("Values", formValues);
+    //console.log("Values", formValues);
     try {
       // Your code to update user profile
       await updateUserProfile(tokenUser.id, formValues);
@@ -246,50 +274,30 @@ function EditProfile() {
                           <label className="form-label">Profile picture</label>
                           <div className="d-flex align-items-center">
                             <div className="position-relative me-4">
-                              {imageFile ? (
-                                <div>
-                                  <img
-                                    src={URL.createObjectURL(imageFile)}
-                                    alt="Uploaded image"
-                                    className="img-fluid mb-2"
-                                    style={{
-                                      width: "200px",
-                                      height: "200px",
-                                      borderRadius: "50%",
-                                    }}
-                                    required
-                                  />
-                                  <p className="mb-0">Uploaded image</p>
-                                </div>
-                              ) : (
-                                <div>
-                                  <img
-                                    id="uploadfile-1-preview"
-                                    className="avatar-img rounded-circle border border-white border-3 shadow"
-                                    src={
-                                      `http://localhost:3001/assets/${user.picturePath}` ||
-                                      (user.gender === "Male"
-                                        ? "/assets/images/element/01.jpg"
-                                        : "/assets/images/element/02.jpg")
-                                    }
-                                    style={{
-                                      width: "200px",
-                                      height: "200px",
-                                      borderRadius: "50%",
-                                    }}
-                                    alt="Profile"
-                                  />
-                                </div>
+                              {/* Display the profile image based on the result of getAvatarSrc */}
+                              <img
+                                id="uploadfile-1-preview"
+                                className="avatar-img rounded-circle border border-white border-3 shadow"
+                                src={getAvatarSrc()} // Use the getAvatarSrc function to determine the image source
+                                style={{
+                                  width: "200px",
+                                  height: "200px",
+                                  borderRadius: "50%",
+                                }}
+                                alt="Profile"
+                              />
+                              {/* Button to remove the selected image */}
+                              {imageName && (
+                                <button
+                                  type="button"
+                                  className="uploadremove"
+                                  onClick={handleRemoveImage}
+                                >
+                                  <i className="bi bi-x text-white" />
+                                </button>
                               )}
-
-                              <button
-                                type="button"
-                                className="uploadremove"
-                                onClick={handleRemoveImage}
-                              >
-                                <i className="bi bi-x text-white" />
-                              </button>
                             </div>
+                            {/* Input to select a new image */}
                             <label className="btn btn-primary-soft mb-0">
                               Change
                               <input
@@ -493,7 +501,10 @@ function EditProfile() {
                         <div className="card-body">
                           <h6 className="mb-0">2-way Authentication</h6>
 
-                          <div className="row needs-validation mt-2" noValidate="">
+                          <div
+                            className="row needs-validation mt-2"
+                            noValidate=""
+                          >
                             <div className="mb-3 col-lg-6 col-md-12 col-12">
                               <ol>
                                 <li> Download Application </li>
