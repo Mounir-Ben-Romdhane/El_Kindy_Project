@@ -1,4 +1,5 @@
 import react, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { setLogout } from "state";
@@ -11,10 +12,15 @@ const Index = () => {
   const location = useLocation();
   const [activeNavItem, setActiveNavItem] = useState("");
 
+  const { t, i18n } = useTranslation();
+
+
   const logoutHandler = () => {
     dispatch(setLogout());
     navigate("/");
   };
+
+
 
 
   useEffect(() => {
@@ -42,7 +48,7 @@ const Index = () => {
             {/* Offcanvas header */}
             <div className="offcanvas-header bg-light">
               <h5 className="offcanvas-title" id="offcanvasNavbarLabel">
-                My profile
+                {t("sidebarTeacher.My profile")}
               </h5>
               <button
                 type="button"
@@ -62,7 +68,7 @@ const Index = () => {
                     onClick={() => handleNavItemClick("/dashboard-teacher")}
                   >
                     <i className="bi bi-ui-checks-grid fa-fw me-2" />
-                    Dashboard
+                     {t("sidebarTeacher.Dashboard")}
                   </Link>
 
                   <Link 
@@ -70,28 +76,22 @@ const Index = () => {
                   to="/homeMeet"
                   onClick={() => handleNavItemClick("/homeMeet")}>
                     <i className="bi bi-basket fa-fw me-2" />
-                    Create Meeting En Ligne
+                    {t("sidebarTeacher.Create Meeting En Ligne")}
                   </Link>
                   <Link 
                   className={`list-group-item ${activeNavItem === "/planningTeacher" || activeNavItem.startsWith("/planningTeacher") ? "active" : ""}`}
                   to="/planningTeacher"
                   onClick={() => handleNavItemClick("/planningTeacher")}>
                     <i className="bi bi-basket fa-fw me-2" />
-                    Planning                  </Link>
+                      {t("sidebarTeacher.Planning")}                </Link>
                     <Link 
                   className={`list-group-item ${activeNavItem === "/assignments" || activeNavItem.startsWith("/assignments") ? "active" : ""}`}
                   to="/assignments"
                   onClick={() => handleNavItemClick("/assignments")}>
                     <i className="bi bi-basket fa-fw me-2" />
-                    Assignment                  </Link>
+                       {t("sidebarTeacher.Assignment")}                  </Link>
 
 
-                    <Link 
-                  className={`list-group-item ${activeNavItem === "/assignments" || activeNavItem.startsWith("/assignments") ? "active" : ""}`}
-                  to="/assignments"
-                  onClick={() => handleNavItemClick("/assignments")}>
-                    <i className="bi bi-basket fa-fw me-2" />
-                    Assignment                  </Link>
 
                     
 
@@ -100,7 +100,7 @@ const Index = () => {
                   to="/messages"
                   onClick={() => handleNavItemClick("/messages")}>
                     <i className="bi bi-chat-dots-fill fa-fw me-2" />
-                    Messages
+                    {t("sidebarTeacher.Messages")}   
                   </Link>
 
 
@@ -111,7 +111,7 @@ const Index = () => {
                   to="/StudentsGrades"
                   onClick={() => handleNavItemClick("/StudentsGrades")}>
                     <i className="bi bi-people fa-fw me-2" />
-                    Students Grades
+                    {t("sidebarTeacher.Students Grades")}  
                   </Link>
 
                   <Link 
@@ -119,7 +119,7 @@ const Index = () => {
                   to="/time-slots"
                   onClick={() => handleNavItemClick("/time-slots")}>
                     <i className="bi bi-clock fa-fw me-2" />
-                    Time Slots
+                   {t("sidebarTeacher.Time Slots")}   
                   </Link>
 
                   <Link 
@@ -127,7 +127,7 @@ const Index = () => {
                   to="/profile-teacher"
                   onClick={() => handleNavItemClick("/profile-teacher")}>
                 <i className="bi bi-person-lines-fill fa-fw me-2" />
-                    Edit Profile
+                    {t("sidebarTeacher.Edit Profile")}  
                   </Link>
 
 
@@ -137,7 +137,7 @@ const Index = () => {
                     onClick={logoutHandler}
                   >
                     <i className="fas fa-sign-out-alt fa-fw me-2" />
-                    Sign Out
+                    {t("sidebarTeacher.Sign Out")}  
                   </a>
                 </div>
               </div>
