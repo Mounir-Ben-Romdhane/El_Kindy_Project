@@ -197,7 +197,7 @@ function Index() {
           <img
             src={`http://localhost:3001/assets/${category.picturePath}`}
             alt="Category"
-            style={{ width: "110px", height: "110px", borderRadius: "20%" }} // Adjust size and border radius as needed
+            style={{ width: "130px", height: "110px", borderRadius: "15%" }} // Adjust size and border radius as needed
             />
         ) : (
           <span>No Image</span>
