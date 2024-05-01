@@ -86,13 +86,7 @@ const Index = () => {
                     Assignment                  </Link>
 
 
-                    <Link 
-                  className={`list-group-item ${activeNavItem === "/assignments" || activeNavItem.startsWith("/assignments") ? "active" : ""}`}
-                  to="/assignments"
-                  onClick={() => handleNavItemClick("/assignments")}>
-                    <i className="bi bi-basket fa-fw me-2" />
-                    Assignment                  </Link>
-
+               
                     
 
                   <Link 
