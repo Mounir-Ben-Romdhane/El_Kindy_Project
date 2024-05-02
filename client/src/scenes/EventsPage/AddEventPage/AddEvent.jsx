@@ -18,9 +18,6 @@ const [event, setEvent] = useState({
   timeFrom: "",
   timeTo: "",
   place: "",
-  price: "",
-  isPaid: false,
-  isFree: true,
   imageFile: null
 });
 const [errors, setErrors] = useState({});
@@ -28,13 +25,12 @@ const [errors, setErrors] = useState({});
 const validate = () => {
   let tempErrors = {};
   tempErrors.title = event.title ? "" : "This field is required.";
-  tempErrors.description = event.description ? "" : "This field is required.";
+  tempErrors.description = event.description ? "" : "Write Small Description.";
   tempErrors.dateDebut = event.dateDebut ? "" : "This field is required.";
   tempErrors.dateFin = event.dateFin ? "" : "This field is required.";
   tempErrors.place = event.place ? "" : "This field is required.";
-  if (event.isPaid) {
-      tempErrors.price = event.price ? "" : "This field is required when event is paid.";
-  }
+  tempErrors.timeFrom = event.timeFrom ? "" : "This field is required.";
+  tempErrors.timeTo = event.timeTo ? "" : "This field is required.";
   setErrors(tempErrors);
   return Object.values(tempErrors).every(x => x === "");
 };
@@ -46,9 +42,9 @@ const validate = () => {
   // State to hold the image file
   const [imageFile, setImageFile] = useState(null);
 
-  const [place, setPlace] = useState(""); // New state for place
+  /* const [place, setPlace] = useState(""); // New state for place
   const [timeFrom, setTimeFrom] = useState(""); // New state for time from
-  const [timeTo, setTimeTo] = useState(""); // New state for time to
+  const [timeTo, setTimeTo] = useState(""); // New state for time to */
 
   // Function to handle selecting an image
   const handleImageSelect = (event) => {
@@ -106,11 +102,13 @@ const validate = () => {
     }
   };
 
-  const handleFormSubmit = async (values, onSubmitProps) => {
-    values.preventDefault();
-    const formData = new FormData(values.target); 
-    const formValues = Object.fromEntries(formData.entries()); 
-    await addEvent(formValues, onSubmitProps);
+  const handleFormSubmit = async (e, onSubmitProps) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    if (validate()) { // Check if all fields are valid
+      const formData = new FormData(e.target);
+      const formValues = Object.fromEntries(formData.entries());
+      await addEvent(formValues, onSubmitProps);
+    }
   };
 
   const handleChange = (e) => {
@@ -146,7 +144,7 @@ const validate = () => {
                       type="text"
                       name="title"
                       placeholder="Enter Event title"
-                      required
+                      
                       onChange={handleChange}
                     />
                      <div className="invalid-feedback">{errors.title}</div>
@@ -155,62 +153,74 @@ const validate = () => {
                   <div className="col-12">
                     <label className="form-label">Short Description</label>
                     <textarea
-                      className="form-control"
+                      className={"form-control" + (errors.description ? " is-invalid" : "")}
                       name="description"
                       rows={2}
                       placeholder="Short description of the event"
-                      required
+                      onChange={handleChange}
                     />
+                    <div className="invalid-feedback">{errors.description}</div>
+
                   </div>
                   <div className="col-md-6">
                     <label className="form-label">Start Date</label>
                     <input
-                      className="form-control"
+                     className={"form-control" + (errors.dateDebut ? " is-invalid" : "")}
                       type="date"
                       name="dateDebut"
-                      required
+                      onChange={handleChange}
                     />
+                    <div className="invalid-feedback">{errors.dateDebut}</div>
+
                   </div>
                   <div className="col-md-6">
                     <label className="form-label">End Date</label>
                     <input
-                      className="form-control"
+                      className={"form-control" + (errors.dateFin ? " is-invalid" : "")}
                       type="date"
                       name="dateFin"
-                      required
+                      onChange={handleChange}
                     />
+                    <div className="invalid-feedback">{errors.dateFin}</div>
+
                   </div>
 
                   <div className="col-md-6">
                     <label className="form-label">Time From</label>
                     <input
                       type="time"
-                      className="form-control"
+                      className={"form-control" + (errors.timeFrom ? " is-invalid" : "")}
                       name="timeFrom"
-                      value={timeFrom}
-                      onChange={(e) => setTimeFrom(e.target.value)}
+                      
+                      onChange={handleChange}
+                     
+                      
                     />
+                    <div className="invalid-feedback">{errors.timeFrom}</div>
                   </div>
                   <div className="col-md-6">
                     <label className="form-label">Time To</label>
                     <input
                       type="time"
-                      className="form-control"
+                      className={"form-control" + (errors.timeTo ? " is-invalid" : "")}
                       name="timeTo"
-                      value={timeTo}
-                      onChange={(e) => setTimeTo(e.target.value)}
+                    
+                      onChange={handleChange}
                     />
+                    <div className="invalid-feedback">{errors.timeTo}</div>
                   </div>
                   <div className="col-md-6">
                     <label className="form-label">Place</label>
                     <input
                       type="text"
-                      className="form-control"
+                      className={"form-control" + (errors.place ? " is-invalid" : "")}
                       name="place"
                       placeholder="Enter event place"
-                      value={place}
-                      onChange={(e) => setPlace(e.target.value)}
+                   
+                      onChange={handleChange}
                     />
+                    <div className="invalid-feedback">{errors.place}</div>
+
                   </div>
                   {/*  <div className="col-md-6">
                     <label className="form-label">Event Price</label>

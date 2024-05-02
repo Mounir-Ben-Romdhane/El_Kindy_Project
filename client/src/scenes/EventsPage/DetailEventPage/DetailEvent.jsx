@@ -112,7 +112,7 @@ function DetailEvents() {
     e.preventDefault();
    
     if (!validateForm()) {
-      toast.error("Please correct the errors in the form.");
+      // toast.error("Please correct the errors in the form.");
       return;
     }
     setIsSubmitting(true);
@@ -441,7 +441,6 @@ Form and Tabs START */}
       name="phoneNumber"
       value={reservation.phoneNumber}
       onChange={handleInputChange}
-      required
       aria-describedby="phoneError"
     />
     {reservation.errors.phoneNumber && <div id="phoneError" className="invalid-feedback">{reservation.errors.phoneNumber}</div>}
