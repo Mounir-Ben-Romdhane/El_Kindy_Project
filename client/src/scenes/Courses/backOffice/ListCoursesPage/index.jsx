@@ -13,11 +13,8 @@ import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 function Index() {
   // Custom hook to get Axios instance with authentication
-  const axiosPrivate = useAxiosPrivate();
 
   // State variables
-  const [courses, setCourses] = useState([]); // State to hold the list of courses
-  const [searchQuery, setSearchQuery] = useState(""); // State to hold the search query
   const [sortOption, setSortOption] = useState(""); // State to hold the sorting option
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -69,10 +66,7 @@ function Index() {
 
     getCourses();
 
-    return () => {
-      controller.abort();
-    }
-  }, [accessToken, dispatch]);
+   
 
   console.log("courses : ", courses);
 
@@ -93,9 +87,7 @@ function Index() {
       console.error("Error deleting course:", error);
     }
   };
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value); // Update search query state
-  };
+  
 
   // Filter courses based on search query
   const filteredCourses = courses.filter((course) => {

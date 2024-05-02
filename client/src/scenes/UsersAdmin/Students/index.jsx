@@ -25,7 +25,6 @@ function StudentsDashboard() {
 
 // pagination
 const [searchQuery, setSearchQuery] = useState("");
-const [currentPage, setCurrentPage] = useState(1);
 const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
 const entriesPerPage = 8; // Number of entries to display per page
 
@@ -207,275 +206,268 @@ const entriesPerPage = 8; // Number of entries to display per page
                       className="tab-pane fade show active"
                       id="nav-preview-tab-1"
                     >
-                      <div className="row g-4">
-                        {currentStudents.map((student) => (
-                          <div
-                            key={student._id}
-                            className="col-md-6 col-xxl-4"
-                          >
-                            {/* Student card JSX */}
-                      {students
-  .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
-  .map((student) => (                             <div key={student._id} className="col-md-6 col-xxl-4">
-                            <div className="card bg-transparent border h-100">
-                              <div className="card-header bg-transparent border-bottom d-flex justify-content-between">
-                                <div className="d-sm-flex align-items-center">
-                                  <div className="avatar avatar-md flex-shrink-0">
-                                    <img
-                                      className="avatar-img rounded-circle"
-                                      src={
-                                        student.picturePath ||
-                                        "assets/images/element/02.jpg"
-                                      }
-                                      alt="avatar"
-                                    />
-                                  </div>
-                                  <div className="ms-0 ms-sm-2 mt-2 mt-sm-0">
-                                    <h6 className="mb-0">
-                                      {student.firstName} {student.lastName}
-                                      {student.verified ? (
-                                        <i className="bi bi-check-circle-fill text-success ms-2" />
-                                      ) : (
-                                        <i className="bi bi-exclamation-circle-fill text-warning ms-2" />
-                                      )}
-                                    </h6>
-                                    <span className="text-body small">
-                                      {student.email}
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="dropdown text-end">
-                                  <a
-                                    href="#"
-                                    className="btn btn-sm btn-light btn-round small mb-0"
-                                    role="button"
-                                    id="dropdownShare2"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                  >
-                                    <i className="bi bi-three-dots fa-fw" />
-                                  </a>
-                                  <ul
-                                    className="dropdown-menu dropdown-w-sm dropdown-menu-end min-w-auto shadow rounded"
-                                    aria-labelledby="dropdownShare2"
-                                  >
-                                    <li>
-                                      <a
-                                        className="dropdown-item"
-                                        href="#"
-                                        onClick={() =>
-                                          handleToggleFormUpdate(student)
-                                        }
-                                      >
-                                        <span className="text-primary">
-                                          <i className="bi bi-pencil-square fa-fw me-2" />
-                                          Edit
-                                        </span>
-                                      </a>
-                                    </li>
-                                    <li>
-                                      <a
-                                        className="dropdown-item"
-                                        href="#"
-                                        onClick={() =>
-                                          handleRemoveStudent(student._id)
-                                        }
-                                      >
-                                        <span className="text-danger">
-                                          <i className="bi bi-trash fa-fw me-2" />
-                                          Remove
-                                        </span>
-                                      </a>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
-                              <div className="card-body">
-                                <div>
-                                  <p className="mb-1">
-                                    <i className="bi bi-calendar-check me-2 text-primary" />
-                                    <strong>Date of Birth:</strong>{" "}
-                                    {student.dateOfBirth
-                                      ? new Date(
-                                          student.dateOfBirth
-                                        ).toLocaleDateString()
-                                      : "Not available"}
-                                  </p>
-                                  <p className="mb-1">
-                                    <i className="bi bi-geo-alt me-2 text-primary" />
-                                    <strong>Address:</strong> {student.address}
-                                  </p>
-                                </div>
-                                <div>
-                                  <p className="mb-1">
-                                    <i className="bi bi-gender-male me-2 text-primary" />
-                                    <strong>Gender:</strong>{" "}
-                                    {student.gender || "Not available"}
-                                  </p>
-                                  <p className="mb-1">
-                                    <i className="bi bi-telephone me-2 text-primary" />
-                                    <strong>Phone Number:</strong>{" "}
-                                    {student.phoneNumber1 || "Not available"}
-                                  </p>
-                                  <p className="mb-1">
-                                    {student.blocked ? (
-                                      <i className="bi bi-lock me-2 text-primary" />
-                                    ) : (
-                                      <i className="bi bi-check2-circle me-2 text-primary" />
-                                    )}
-                                    <strong>State:</strong>{" "}
-                                    {student.blocked ? (
-                                      <span className="state-badge blocked">
-                                        Blocked
-                                      </span>
-                                    ) : (
-                                      <span className="state-badge">
-                                        Active
-                                      </span>
-                                    )}
-                                  </p>
+                     <div className="row g-4">
+  {currentStudents
+    .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
+    .map((student) => (
+      <div key={student._id} className="col-md-6 col-xxl-4">
+        <div className="card bg-transparent border h-100">
+          <div className="card-header bg-transparent border-bottom d-flex justify-content-between">
+            <div className="d-sm-flex align-items-center">
+              <div className="avatar avatar-md flex-shrink-0">
+                <img
+                  className="avatar-img rounded-circle"
+                  src={
+                    student.picturePath ||
+                    "assets/images/element/02.jpg"
+                  }
+                  alt="avatar"
+                />
+              </div>
+              <div className="ms-0 ms-sm-2 mt-2 mt-sm-0">
+                <h6 className="mb-0">
+                  {student.firstName} {student.lastName}
+                  {student.verified ? (
+                    <i className="bi bi-check-circle-fill text-success ms-2" />
+                  ) : (
+                    <i className="bi bi-exclamation-circle-fill text-warning ms-2" />
+                  )}
+                </h6>
+                <span className="text-body small">
+                  {student.email}
+                </span>
+              </div>
+            </div>
+            <div className="dropdown text-end">
+              <a
+                href="#"
+                className="btn btn-sm btn-light btn-round small mb-0"
+                role="button"
+                id="dropdownShare2"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i className="bi bi-three-dots fa-fw" />
+              </a>
+              <ul
+                className="dropdown-menu dropdown-w-sm dropdown-menu-end min-w-auto shadow rounded"
+                aria-labelledby="dropdownShare2"
+              >
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={() =>
+                      handleToggleFormUpdate(student)
+                    }
+                  >
+                    <span className="text-primary">
+                      <i className="bi bi-pencil-square fa-fw me-2" />
+                      Edit
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={() =>
+                      handleRemoveStudent(student._id)
+                    }
+                  >
+                    <span className="text-danger">
+                      <i className="bi bi-trash fa-fw me-2" />
+                      Remove
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="card-body">
+            <div>
+              <p className="mb-1">
+                <i className="bi bi-calendar-check me-2 text-primary" />
+                <strong>Date of Birth:</strong>{" "}
+                {student.dateOfBirth
+                  ? new Date(
+                      student.dateOfBirth
+                    ).toLocaleDateString()
+                  : "Not available"}
+              </p>
+              <p className="mb-1">
+                <i className="bi bi-geo-alt me-2 text-primary" />
+                <strong>Address:</strong> {student.address}
+              </p>
+            </div>
+            <div>
+              <p className="mb-1">
+                <i className="bi bi-gender-male me-2 text-primary" />
+                <strong>Gender:</strong>{" "}
+                {student.gender || "Not available"}
+              </p>
+              <p className="mb-1">
+                <i className="bi bi-telephone me-2 text-primary" />
+                <strong>Phone Number:</strong>{" "}
+                {student.phoneNumber1 || "Not available"}
+              </p>
+              <p className="mb-1">
+                {student.blocked ? (
+                  <i className="bi bi-lock me-2 text-primary" />
+                ) : (
+                  <i className="bi bi-check2-circle me-2 text-primary" />
+                )}
+                <strong>State:</strong>{" "}
+                {student.blocked ? (
+                  <span className="state-badge blocked">
+                    Blocked
+                  </span>
+                ) : (
+                  <span className="state-badge">
+                    Active
+                  </span>
+                )}
+              </p>
+            </div>
+            {/* "See more" link */}
+            <a
+              className="p-0 mb-0 mt-2 btn-more d-flex align-items-center"
+              onClick={() =>
+                handleToggleMore(student._id)
+              }
+            >
+              {studentDetails[student._id] ? (
+                <>
+                  See less{" "}
+                  <i className="fas fa-angle-up ms-2" />
+                </>
+              ) : (
+                <>
+                  See{" "}
+                  <span className="see-more ms-1">
+                    more
+                  </span>
+                  <i className="fas fa-angle-down ms-2" />
+                </>
+              )}
+            </a>
+            {/* Additional information */}
+            {studentDetails[student._id] && (
+              <div className="m-1">
+                {/* Classes */}
+                <p className="mb-1">
+                  <i className="bi bi-people me-2 text-primary" />
+                  <strong>Classes:</strong>{" "}
+                  {student.studentInfo.classLevel
+                    ?.className ?? "Not available yet"}
+                </p>
+                {/* Courses Enrolled */}
+                <p className="mb-1">
+                  <i className="bi bi-journal-text me-2 text-primary" />
+                  <strong>Courses Enrolled:</strong>{" "}
+                  {student.studentInfo.coursesEnrolled
+                    ?.length > 0
+                    ? student.studentInfo.coursesEnrolled.map(
+                        (course) => (
+                          <span key={course._id}>
+                            {course.title},{" "}
+                          </span>
+                        )
+                      )
+                    : "None Courses"}
+                </p>
+                {/* Parent Information */}
+                <p className="mb-1">
+                  <i className="bi bi-person me-2 text-primary" />
+                  <strong>Parent Name:</strong>{" "}
+                  {student.studentInfo.parentName
+                    ? student.studentInfo.parentName
+                    : "Not available"}
+                </p>
+                <p className="mb-1">
+                  <i className="bi bi-envelope me-2 text-primary" />
+                  <strong>Parent Email:</strong>{" "}
+                  {student.studentInfo.parentEmail
+                    ? student.studentInfo.parentEmail
+                    : "Not available"}
+                </p>
+                <p className="mb-1">
+                  <i className="bi bi-phone me-2 text-primary" />
+                  <strong>Parent Phone:</strong>{" "}
+                  {student.studentInfo.parentPhone
+                    ? student.studentInfo.parentPhone
+                    : "Not available"}
+                </p>
+                {/* Other additional information can go here */}
+              </div>
+            )}
+          </div>
+          {/* Card footer */}
+          <div className="card-footer bg-transparent border-top">
+            <div className="d-sm-flex justify-content-between align-items-center">
+              {/* Rating star */}
+              <h6 className="mb-2 mb-sm-0">
+                <i className="bi bi-calendar fa-fw text-orange me-2" />
+                <span className="text-body">Join at:</span>{" "}
+                {new Date(
+                  student.createdAt
+                ).toLocaleDateString()}
+              </h6>
+              {/* Buttons */}
+              <div className="text-end text-primary-hover">
+                {/* Message button */}
+                <a
+                  href="#"
+                  className="btn btn-link text-body p-0 mb-0 me-2"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Message"
+                  aria-label="Message"
+                >
+                  <span className="text-primary">
+                    <i className="bi bi-envelope-fill me-1" />
+                  </span>
+                </a>
+                {/* Block/Unblock button */}
+                {student.blocked ? (
+                  <button
+                    className="btn btn-link text-body p-0 mb-0"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Unblock"
+                    aria-label="Unblock"
+                    onClick={() =>
+                      handleUnblockStudent(student._id)
+                    }
+                  >
+                    <span className="text-danger">
+                      <i className="bi bi-lock-fill me-1" />
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-link text-body p-0 mb-0"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Block"
+                    aria-label="Block"
+                    onClick={() =>
+                      handleBlockStudent(student._id)
+                    }
+                  >
+                    <span className="text-danger">
+                      <i className="bi bi-unlock-fill me-1" />
+                    </span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ))}
+</div>
 
-                                  {/* "See more" link */}
-                                  <a
-                                    className="p-0 mb-0 mt-2 btn-more d-flex align-items-center"
-                                    onClick={() =>
-                                      handleToggleMore(student._id)
-                                    }
-                                  >
-                                    {studentDetails[student._id] ? (
-                                      <>
-                                        See less{" "}
-                                        <i className="fas fa-angle-up ms-2" />
-                                      </>
-                                    ) : (
-                                      <>
-                                        See{" "}
-                                        <span className="see-more ms-1">
-                                          more
-                                        </span>
-                                        <i className="fas fa-angle-down ms-2" />
-                                      </>
-                                    )}
-                                  </a>
-                                  {/* Additional information */}
-                                  {studentDetails[student._id] && (
-                                    <div className="m-1">
-                                      {/* Classes */}
-                                      <p className="mb-1">
-                                        <i className="bi bi-people me-2 text-primary" />
-                                        <strong>Classes:</strong>{" "}
-                                        {student.studentInfo.classLevel
-                                          ?.className ?? "Not available yet"}
-                                      </p>
-                                      {/* Courses Enrolled */}
-                                      <p className="mb-1">
-                                        <i className="bi bi-journal-text me-2 text-primary" />
-                                        <strong>Courses Enrolled:</strong>{" "}
-                                        {student.studentInfo.coursesEnrolled
-                                          ?.length > 0
-                                          ? student.studentInfo.coursesEnrolled.map(
-                                              (course) => (
-                                                <span key={course._id}>
-                                                  {course.title},{" "}
-                                                </span>
-                                              )
-                                            )
-                                          : "None Courses"}
-                                      </p>
-                                      {/* Parent Information */}
-                                      <p className="mb-1">
-                                        <i className="bi bi-person me-2 text-primary" />
-                                        <strong>Parent Name:</strong>{" "}
-                                        {student.studentInfo.parentName
-                                          ? student.studentInfo.parentName
-                                          : "Not available"}
-                                      </p>
-                                      <p className="mb-1">
-                                        <i className="bi bi-envelope me-2 text-primary" />
-                                        <strong>Parent Email:</strong>{" "}
-                                        {student.studentInfo.parentEmail
-                                          ? student.studentInfo.parentEmail
-                                          : "Not available"}
-                                      </p>
-                                      <p className="mb-1">
-                                        <i className="bi bi-phone me-2 text-primary" />
-                                        <strong>Parent Phone:</strong>{" "}
-                                        {student.studentInfo.parentPhone
-                                          ? student.studentInfo.parentPhone
-                                          : "Not available"}
-                                      </p>
-
-                                      {/* Other additional information can go here */}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              {/* Card footer */}
-                              <div className="card-footer bg-transparent border-top">
-                                <div className="d-sm-flex justify-content-between align-items-center">
-                                  {/* Rating star */}
-                                  <h6 className="mb-2 mb-sm-0">
-                                    <i className="bi bi-calendar fa-fw text-orange me-2" />
-                                    <span className="text-body">Join at:</span>{" "}
-                                    {new Date(
-                                      student.createdAt
-                                    ).toLocaleDateString()}
-                                  </h6>
-                                  {/* Buttons */}
-                                  <div className="text-end text-primary-hover">
-                                    {/* Message button */}
-                                    <a
-                                      href="#"
-                                      className="btn btn-link text-body p-0 mb-0 me-2"
-                                      data-bs-toggle="tooltip"
-                                      data-bs-placement="top"
-                                      title="Message"
-                                      aria-label="Message"
-                                    >
-                                      <span className="text-primary">
-                                        <i className="bi bi-envelope-fill me-1" />
-                                      </span>
-                                    </a>
-                                    {/* Block/Unblock button */}
-                                    {student.blocked ? (
-                                      <button
-                                        className="btn btn-link text-body p-0 mb-0"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="top"
-                                        title="Unblock"
-                                        aria-label="Unblock"
-                                        onClick={() =>
-                                          handleUnblockStudent(student._id)
-                                        }
-                                      >
-                                        <span className="text-danger">
-                                          <i className="bi bi-lock-fill me-1" />
-                                        </span>
-                                      </button>
-                                    ) : (
-                                      <button
-                                        className="btn btn-link text-body p-0 mb-0"
-                                        data-bs-toggle="tooltip"
-                                        data-bs-placement="top"
-                                        title="Block"
-                                        aria-label="Block"
-                                        onClick={() =>
-                                          handleBlockStudent(student._id)
-                                        }
-                                      >
-                                        <span className="text-danger">
-                                          <i className="bi bi-unlock-fill me-1" />
-                                        </span>
-                                      </button>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>

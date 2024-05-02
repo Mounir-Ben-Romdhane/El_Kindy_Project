@@ -131,7 +131,7 @@ function Index() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredReservations
+                    {filteredReservations
                         .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
                         .map((reservation, index) => (
                           <tr key={index}>
@@ -188,8 +188,8 @@ function Index() {
               </div>
               {/* Card ffooter START */}
               <div className="card-footer bg-transparent pt-0">
-                {/* Pagination START */}
-                <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
+                 {/* Pagination START */}
+                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                   {/* Content */}
                   <p className="mb-0 text-center text-sm-start">Showing {(currentPage - 1) * 8 + 1} to {Math.min(currentPage * 8, totalEntries)} of {totalEntries} entries</p>
                   {/* Pagination */}
