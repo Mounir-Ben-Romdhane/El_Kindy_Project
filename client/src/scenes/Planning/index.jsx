@@ -485,7 +485,7 @@ const addNewEvent = (event) => {
           {/* Enveloppez votre contenu principal dans un div ou un autre conteneur pour le style */}
           <div className="page-content-wrapper border">
             {/* Enveloppez votre calendrier dans un div pour le style */}
-            <div style={{ height: 800 }}>
+            <div style={{ height: 900 }}>
               {/* Ajoutez ici votre composant de calendrier */}
               <Calendar
                 components={{
