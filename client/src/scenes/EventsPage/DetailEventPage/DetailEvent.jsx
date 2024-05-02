@@ -44,6 +44,11 @@ function DetailEvents() {
     email: "",
     phoneNumber: "",
     numberOfReservations: 1,
+    errors: {
+      name: "",
+      email: "",
+      phoneNumber: "",
+    }
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -84,10 +89,15 @@ function DetailEvents() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setReservation((prev) => ({
+    const error = validateField(name, value);
+    setReservation(prev => ({
       ...prev,
       [name]: value,
-    }));
+      errors: {
+          ...prev.errors,
+          [name]: error
+      }
+  }));
   };
 
   const incrementDecrementReservation = (increment = true) => {
@@ -100,8 +110,12 @@ function DetailEvents() {
   
   const handleReservationSubmit = async (e) => {
     e.preventDefault();
+   
+    if (!validateForm()) {
+      toast.error("Please correct the errors in the form.");
+      return;
+    }
     setIsSubmitting(true);
-  
     try {
       if (!eventDetails.price) {
         // Event is free, submit reservation directly
@@ -201,6 +215,43 @@ function DetailEvents() {
       console.error("Error verifying payment:", error);
     }
   };
+
+
+  const validateField = (name, value) => {
+    let error = '';
+    if (!value.trim()) {
+      error = `${name} is required.`;
+    } else if (name === 'email' && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+      error = 'Invalid email address.';
+    } else if (name === 'phoneNumber' && !/^\d{8}$/.test(value)) {
+      error = 'Phone number must be 8 digits.';
+    }
+    return error;
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const errors = {};
+
+    
+    Object.keys(reservation.errors).forEach(key => {
+        const error = validateField(key, reservation[key]);
+        if (error) {
+            errors[key] = error;
+            isValid = false;
+        } else {
+            errors[key] = ''; // No error
+        }
+    });
+
+    // Update the state with the new errors
+    setReservation(prev => ({
+        ...prev,
+        errors
+    }));
+
+    return isValid;
+};
   
 
   if (loading) {
@@ -350,13 +401,15 @@ Form and Tabs START */}
     </label>
     <input
       type="text"
-      className="form-control"
+      className={`form-control ${reservation.errors.name ? 'is-invalid' : ''}`}
       id="name"
       name="name"
       value={reservation.name}
       onChange={handleInputChange}
       aria-label="First name"
+      aria-describedby="nameError"
     />
+    {reservation.errors.name && <div id="nameError" className="invalid-feedback">{reservation.errors.name}</div>}
   </div>
 
   {/* Email */}
@@ -366,12 +419,14 @@ Form and Tabs START */}
     </label>
     <input
       type="email"
-      className="form-control"
+      className={`form-control ${reservation.errors.email ? 'is-invalid' : ''}`}
       id="email"
       name="email"
       value={reservation.email}
       onChange={handleInputChange}
+      aria-describedby="emailError"
     />
+    {reservation.errors.email && <div id="emailError" className="invalid-feedback">{reservation.errors.email}</div>}
   </div>
 
   {/* Phone Number */}
@@ -381,16 +436,18 @@ Form and Tabs START */}
     </label>
     <input
       type="text"
-      className="form-control"
+      className={`form-control ${reservation.errors.phoneNumber ? 'is-invalid' : ''}`}
       id="phoneNumber"
       name="phoneNumber"
       value={reservation.phoneNumber}
       onChange={handleInputChange}
       required
+      aria-describedby="phoneError"
     />
+    {reservation.errors.phoneNumber && <div id="phoneError" className="invalid-feedback">{reservation.errors.phoneNumber}</div>}
   </div>
 
- {/* Number of Reservations */}
+  {/* Number of Reservations */}
   <div className="mb-3">
     <label htmlFor="numberOfReservations" className="form-label">
       Number of Reservations *
@@ -399,12 +456,7 @@ Form and Tabs START */}
       <button
         className="btn btn-outline-secondary"
         type="button"
-        onClick={() =>
-          setReservation((prevReservation) => ({
-            ...prevReservation,
-            numberOfReservations: Math.max(0, prevReservation.numberOfReservations - 1),
-          }))
-        }
+        onClick={() => incrementDecrementReservation(false)}
       >
         -
       </button>
@@ -421,18 +473,14 @@ Form and Tabs START */}
       <button
         className="btn btn-outline-secondary"
         type="button"
-        onClick={() =>
-          setReservation((prevReservation) => ({
-            ...prevReservation,
-            numberOfReservations: prevReservation.numberOfReservations + 1,
-          }))
-        }
+        onClick={() => incrementDecrementReservation(true)}
       >
         +
       </button>
     </div>
   </div>
-  {/* Button */}
+
+  {/* Submit Button */}
   <div className="d-grid">
     <button
       type="submit"
@@ -443,6 +491,7 @@ Form and Tabs START */}
     </button>
   </div>
 </form>
+
 {/* Form END */}
 </div>
             </div>

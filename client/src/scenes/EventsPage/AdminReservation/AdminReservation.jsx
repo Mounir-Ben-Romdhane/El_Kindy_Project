@@ -26,6 +26,8 @@ function Index() {
   const [sortOption, setSortOption] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [numberOfReservations, setNumberOfReservations] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [reservationsPerPage] = useState(10);
 
   const handleIncrement = () => {
     setNumberOfReservations(prevCount => prevCount + 1);
@@ -39,6 +41,8 @@ function Index() {
   useEffect(() => {
     fetchReservations();
   }, []);
+
+  
 
   const fetchReservations = async () => {
     try {
@@ -73,15 +77,35 @@ function Index() {
     setSearchTerm(term.toLowerCase());
   }, 300);
 
-  const filteredReservations = reservations.filter(
-    (reservation) =>
 
-    reservation.eventId?.title.toLowerCase().includes(searchTerm) ||
-      reservation.userName.toLowerCase().includes(searchTerm) ||
-      reservation.userEmail.toLowerCase().includes(searchTerm) ||
-      reservation.phoneNumber.toString().includes(searchTerm) ||
-      reservation.status.toLowerCase().includes(searchTerm)
-  );
+// Combined function for filtering and sorting reservations
+const getFilteredAndSortedReservations = () => {
+  let processedReservations = [...reservations];
+
+ // Filter by search term
+ processedReservations = processedReservations.filter(reservation =>
+  reservation.eventId?.title.toLowerCase().includes(searchTerm) ||
+  reservation.userName.toLowerCase().includes(searchTerm) ||
+  reservation.userEmail.toLowerCase().includes(searchTerm) ||
+  reservation.phoneNumber.toString().includes(searchTerm)
+);
+
+   // Further filter by status if a sort option is selected
+   if (sortOption) {
+    processedReservations = processedReservations.filter(reservation => reservation.status === sortOption.toLowerCase());
+  }
+
+  return processedReservations;
+};
+
+ // Calculate the currently displayed reservations
+ const indexOfLastReservation = currentPage * reservationsPerPage;
+ const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
+ const currentReservations = reservations.slice(indexOfFirstReservation, indexOfLastReservation);
+ const totalReservations = reservations.length;
+
+ // Pagination controls
+ const paginate = pageNumber => setCurrentPage(pageNumber);
 
   return (
     <div>
@@ -93,9 +117,7 @@ function Index() {
             <div className="row mb-3">
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
                 <h1 className="h3 mb-2 mb-sm-0">List Event Reservations</h1>
-                <Link to="/listEventUser" className="btn btn-sm btn-primary me-1 mb-1 mb-md-0">Add a Reservation</Link>
-                <h1 className="h3 mb-2 mb-sm-0">List Reservations</h1>
-             
+                <Link to="/listEventUser" className="btn btn-sm btn-primary me-1 mb-1 mb-md-0">List Events</Link>
               </div>
             </div>
 
@@ -129,9 +151,10 @@ function Index() {
                       value={sortOption}
                       onChange={(e) => setSortOption(e.target.value)}
                     >
-                      <option value="">Sort by</option>
-                      <option value="asc">Ascendant</option>
-                      <option value="desc">Descendant</option>
+                       <option value="">Sort by</option>
+                      <option value="Accepted">Accepted</option>
+                      <option value="Refused">Refused</option>
+                      <option value="Pending">Pending</option>
                     </select>
                   </div>
                 </div>
@@ -153,17 +176,15 @@ function Index() {
                         <th scope="col" className="border-0">
                           Phone Number
                         </th>
-                        <th scope="col" className="border-0">Number of Reservations</th> {/* Added new column header */}
+                        <th scope="col" className="border-0">N° Reservation</th> {/* Added new column header */}
                         <th scope="col" className="border-0">
                           Status
                         </th>
-                        <th scope="col" className="border-0 rounded-end">
-                          Action
-                        </th>
+                        <th scope="col" className="border-0 rounded-end">Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredReservations.map((reservation, index) => (
+                      {getFilteredAndSortedReservations().map((reservation, index) => (
                         <tr key={index}>
                           <td>
                             {reservation.eventId
@@ -201,9 +222,9 @@ function Index() {
                                   "accepted"
                                 )
                               }
-                              className="btn btn-sm btn-success me-1"
+                              className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
                             >
-                              Accept
+                              <i className="bi bi-check fs-4"></i> {/* Accept icon */}
                             </button>
                             <button
                               onClick={() =>
@@ -212,9 +233,9 @@ function Index() {
                                   "refused"
                                 )
                               }
-                              className="btn btn-sm btn-danger"
+                              className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
                             >
-                              Refuse
+                              <i className="bi bi-x fs-4"></i> {/* Refuse icon */}
                             </button>
                           </td>
 
@@ -222,6 +243,12 @@ function Index() {
                       ))}
                     </tbody>
                   </table>
+                  <div className="pagination">
+              <p className="mb-0 text-center text-sm-start">
+                Showing {indexOfFirstReservation + 1} to {Math.min(indexOfLastReservation, totalReservations)} of {totalReservations} entries
+              </p>
+            
+            </div>
                 </div>
               </div>
             </div>

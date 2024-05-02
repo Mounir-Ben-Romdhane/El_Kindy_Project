@@ -13,7 +13,8 @@ import NotFound from "./scenes/NotFound";
 import AdminHomePage from "../src/scenes/AdminHomePage";
 import ListCoursesPage from "./scenes/Courses/backOffice/ListCoursesPage";
 import Stage from "../src/scenes/Stage/StageHome";
-import ListEventsPage from "./scenes/EventsPage/ListEventPage/ListEvent";
+import ListEventsReservation from "./scenes/EventsPage/ListEventPage/ListEventReservation";
+import ListEventsAdmin from "./scenes/EventsPage/ListEventPage/ListEvent";
 import AddEventPage from "./scenes/EventsPage/AddEventPage/AddEvent";
 import AddCoursePage from "./scenes/Courses/backOffice/AddCoursePage";
 import ListCategoryPage from "../src/scenes/Category/ListCategoryPage";
@@ -834,9 +835,15 @@ function App() {
         />
 
         <Route
-          path="/listEvents"
-          element={isAuth ? <ListEventsPage /> : <Navigate to="/" />}
+          path="/listEventsReservation"
+          element={isAuth ? <ListEventsReservation /> : <Navigate to="/" />}
         />
+
+        <Route
+          path="/listEvents"
+          element={isAuth ? <ListEventsAdmin /> : <Navigate to="/" />}
+        />
+
         <Route
           path="/addEvent"
           element={isAuth ? <AddEventPage /> : <Navigate to="/" />}
@@ -851,7 +858,7 @@ function App() {
 
         <Route path="/listEventUser" element={<ListEventUser />} />
 
-        <Route path="/listEventUser" element={<ListEventUser />} />
+
 
         <Route
           path="/addCourse"

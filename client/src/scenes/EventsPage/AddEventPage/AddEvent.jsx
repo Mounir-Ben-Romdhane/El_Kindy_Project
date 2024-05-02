@@ -10,6 +10,34 @@ import { Link, useNavigate } from "react-router-dom";
 function AddEvent() {
   const [isPaid, setIsPaid] = useState(false);
 const [isFree, setIsFree] = useState(false);
+const [event, setEvent] = useState({
+  title: "",
+  description: "",
+  dateDebut: "",
+  dateFin: "",
+  timeFrom: "",
+  timeTo: "",
+  place: "",
+  price: "",
+  isPaid: false,
+  isFree: true,
+  imageFile: null
+});
+const [errors, setErrors] = useState({});
+
+const validate = () => {
+  let tempErrors = {};
+  tempErrors.title = event.title ? "" : "This field is required.";
+  tempErrors.description = event.description ? "" : "This field is required.";
+  tempErrors.dateDebut = event.dateDebut ? "" : "This field is required.";
+  tempErrors.dateFin = event.dateFin ? "" : "This field is required.";
+  tempErrors.place = event.place ? "" : "This field is required.";
+  if (event.isPaid) {
+      tempErrors.price = event.price ? "" : "This field is required when event is paid.";
+  }
+  setErrors(tempErrors);
+  return Object.values(tempErrors).every(x => x === "");
+};
 
   
 
@@ -45,6 +73,7 @@ const [isFree, setIsFree] = useState(false);
   const navigate = useNavigate();
 
   const addEvent = async (values, onSubmitProps) => {
+    
     console.log("values", values);
     // this allow us to send form info with image
     const formData = new FormData();
@@ -79,10 +108,16 @@ const [isFree, setIsFree] = useState(false);
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     values.preventDefault();
-    const formData = new FormData(values.target); // Create FormData object from form
-    const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
+    const formData = new FormData(values.target); 
+    const formValues = Object.fromEntries(formData.entries()); 
     await addEvent(formValues, onSubmitProps);
   };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEvent({ ...event, [name]: value });
+};
+
 
   return (
     <div>
@@ -107,12 +142,15 @@ const [isFree, setIsFree] = useState(false);
                   <div className="col-12">
                     <label className="form-label">Event Title</label>
                     <input
-                      className="form-control"
+                      className={"form-control" + (errors.title ? " is-invalid" : "")}
                       type="text"
                       name="title"
                       placeholder="Enter Event title"
                       required
+                      onChange={handleChange}
                     />
+                     <div className="invalid-feedback">{errors.title}</div>
+
                   </div>
                   <div className="col-12">
                     <label className="form-label">Short Description</label>
