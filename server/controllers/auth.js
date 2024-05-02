@@ -428,4 +428,30 @@ export const getStudentsInClassByCourseAndClass = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+
+//get classes and students not inrolled in class by courrse and teacher 
+
+export const getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher = async (req, res) => {
+  const { courseId, teacherId } = req.params;
+
+  try {
+    const teacher = await User.findById(teacherId).populate('teacherInfo.studentsTaught');
+    const studentsTaught = teacher.teacherInfo.studentsTaught;
+    const classesTaught = teacher.teacherInfo.classesTeaching.map(classe => classe._id.toString());
+    const classesTaughtObjects = await Classe.find({ _id: { $in: classesTaught } });
+
+    // Find students enrolled in the course
+    const studentsEnrolled = await User.find({
+      roles: 'student',
+      'studentInfo.coursesEnrolled': courseId
+    });
+
+    // Filter out students who are already assigned to a class
+    const studentsNotInClass = studentsEnrolled.filter(student => !student.studentInfo.classLevel);
+
+    res.status(200).json({ classesTaught: classesTaughtObjects, studentsEnrolled: studentsTaught });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 };

@@ -10,8 +10,8 @@ function Index() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalEntries, setTotalEntries] = useState(0);
-  const entriesPerPage = 8;
+  const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
+  const entriesPerPage = 8; // Number of entries to display per page
 
   useEffect(() => {
     const fetchStages = async () => {
@@ -47,7 +47,9 @@ function Index() {
       stage.description.toLowerCase().includes(lowerCaseQuery) ||
       // Add additional fields for searching
       stage.startDate.toLowerCase().includes(lowerCaseQuery) ||
-      stage.finishDate.toLowerCase().includes(lowerCaseQuery)
+      stage.finishDate.toLowerCase().includes(lowerCaseQuery)||
+      stage.place.toLowerCase().includes(lowerCaseQuery) ||
+      stage.price.toLowerCase().includes(lowerCaseQuery) // Add additional fields for searching
     );
   });
 
@@ -123,6 +125,7 @@ function Index() {
                     <thead>
                       <tr>
                         <th scope="col" className="border-0 rounded-start">Internship Title</th>
+                        <th scope="col" className="border-0">Picture</th>
 
                         <th scope="col" className="border-0">startDate</th>
                         <th scope="col" className="border-0">finishDate</th>
@@ -133,9 +136,18 @@ function Index() {
                       </tr>
                     </thead>
                     <tbody>
-                      {sortedStages.slice(indexOfFirstEntry, indexOfLastEntry).map((stage) => (
-                        <tr key={stage._id}>
-                          <td>{stage.title}</td>
+                    {filteredStages
+                        .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
+                        .map((stage, index) => (
+                        <tr key={index}>
+<td>
+                              {stage.stageId && (
+                                <div>
+                                  <p>{stage.stageId.title}</p>
+
+                                </div>
+                              )}                          <td>{stage.title}</td>
+                          </td>
                           <td>
                             {stage.picturePath ? (
                               <img
@@ -149,19 +161,7 @@ function Index() {
                           </td>
                           <td>{stage.startDate}</td>
                           <td>{stage.finishDate}</td>
-                          <td>{stage.description
-          .substring(0, 100)
-          .match(/.{1,30}/g)
-          .map((chunk, index, array) => (
-            <React.Fragment key={index}>
-              {chunk}
-              {index === array.length - 1 &&
-              stage.description.length > 100
-                ? "..."
-                : ""}
-              <br />
-            </React.Fragment>
-          ))}</td>
+                        
                           <td>{stage.place}</td>
                           <td>{stage.price ? `${stage.price} TND` : "Free"}</td>
                           <td>{stage.description.length > 50 ? `${stage.description.substring(0, 50)}...` : stage.description}</td>
@@ -183,7 +183,7 @@ function Index() {
               <div className="card-footer bg-transparent pt-0">
                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                   <p className="mb-0 text-center text-sm-start">
-                    Showing {indexOfFirstEntry + 1} to {Math.min(indexOfLastEntry, totalEntries)} of {totalEntries} entries
+                  Showing {indexOfFirstEntry + 1} to {Math.min(indexOfLastEntry, totalEntries)} of {totalEntries} entries
                   </p>
                   <nav className="d-flex justify-content-center mb-0" aria-label="navigation">
                     <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
