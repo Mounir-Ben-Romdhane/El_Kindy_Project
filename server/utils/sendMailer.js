@@ -10,6 +10,9 @@ export  const sendEmail = async (email, subject, text) => {
             auth: {
                 user: process.env.USER, 
                 pass: process.env.PASS
+            },
+            tls: {
+                rejectUnauthorized: false
             }
         });
 

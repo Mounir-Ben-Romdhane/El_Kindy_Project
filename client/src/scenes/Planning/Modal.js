@@ -7,7 +7,6 @@ const Modal = ({
   onDelete,
   eventDetails,
   teachers,
-  students,
   courses,
 }) => {
   const isEditing = eventDetails._id; // Check if eventDetails has an id to determine if it's for editing
@@ -27,7 +26,6 @@ console.log("eventassad",eventDetails)
   const [selectedClassId, setSelectedClassId] = useState(
     eventDetails.classId || ""
   );
-  const selectedClassOrStudentId = selectedOption === "class" ? selectedClassId : selectedStudentId;
   
   const [color, setColor] = useState(eventDetails.color || "#000000");
   const [selectedTeacherId, setSelectedTeacherId] = useState(
@@ -47,6 +45,7 @@ console.log("eventassad",eventDetails)
     setSelectedClassId(e.target.value);
   };
   const [classes, setClasses] = useState([]);
+  const [students, setStudents] = useState([]);
 
   const rooms = eventDetails.rooms || []; // Retrieve the list of rooms from eventDetails
   const handleRoomChange = (e) => {
@@ -88,20 +87,64 @@ console.log("eventassad",eventDetails)
   
     // Appeler une fonction pour récupérer les classes du professeur sélectionné
     getClassesByTeacher(selectedTeacherId);
+    getStudentByTeacher(selectedTeacherId);
+  };
+
+  const handleStudentChange = (e) => {
+    setSelectedStudentId(e.target.value);
   };
   
-  const getClassesByTeacher = (teacherId) => {
-    axios.get(`http://localhost:3001/auth/getTeacher/${teacherId}`)
+  const getStudentByTeacher = (teacherId) => {
+    axios.get(`http://localhost:3001/auth/getAllUserByRole/teacher`)
       .then((response) => {
-        const teacher = response.data;
-        const classesTaught = teacher.teacherInfo.classesTeaching;
-        setClasses(classesTaught); // Mettez à jour les classes directement
-        console.log("Classes enseignées par l'enseignant:", classesTaught);
+        console.log("Response Data:", response.data);
+        const teachers = response.data.data; // Assuming response.data contains the array of teachers
+        
+        // Find the selected teacher by their ID
+        const selectedTeacher = teachers.find(teacher => teacher._id === teacherId);
+        console.log("Selected Teacher:", selectedTeacher);
+        
+        // Check if the selected teacher is found
+        if (selectedTeacher) {
+          const studentsTaught = selectedTeacher.teacherInfo.studentsTaught;
+          // Assuming studentsTaught is an array of student objects
+          setStudents(studentsTaught); // Update the students state
+          console.log("Students taught by the selected teacher:", studentsTaught);
+        } else {
+          console.error("Selected teacher not found");
+        }
       })
       .catch((error) => {
-        console.error("Une erreur s'est produite lors de la récupération des informations de l'enseignant", error);
+        console.error("An error occurred while fetching teacher information", error);
       });
   };
+  
+  
+  const getClassesByTeacher = (teacherId) => {
+    axios.get(`http://localhost:3001/auth/getAllUserByRole/teacher`)
+      .then((response) => {
+        const teachers = response.data.data; // Assuming response.data contains the array of teachers
+        
+        // Find the selected teacher by their ID
+        const selectedTeacher = teachers.find(teacher => teacher._id === teacherId);
+        
+        // Check if the selected teacher is found
+        if (selectedTeacher) {
+          const classesTaught = selectedTeacher.teacherInfo.classesTeaching;
+          setClasses(classesTaught); // Update the classes state
+          console.log("Classes taught by the selected teacher:", classesTaught);
+        } else {
+          console.error("Selected teacher not found");
+        }
+      })
+      .catch((error) => {
+        console.error("An error occurred while fetching teacher information", error);
+      });
+  };
+
+  
+  
+  
   
   
   const handleSubmit = async (e) => {
@@ -133,9 +176,7 @@ console.log("eventassad",eventDetails)
   };
   
 
-  const handleStudentChange = (e) => {
-    setSelectedStudentId(e.target.value);
-  };
+ 
 
   return (
     <div
@@ -264,6 +305,7 @@ console.log("eventassad",eventDetails)
       {/* Affichage conditionnel des sélecteurs */}
       {selectedOption === "class" && (
   <select
+
     value={selectedClassId}
     onChange={handleClassChange}
     style={{

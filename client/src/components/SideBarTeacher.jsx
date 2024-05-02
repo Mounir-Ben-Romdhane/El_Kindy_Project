@@ -92,7 +92,6 @@ const Index = () => {
                        {t("sidebarTeacher.Assignment")}                  </Link>
 
 
-
                     
 
                   <Link 
@@ -112,6 +111,13 @@ const Index = () => {
                   onClick={() => handleNavItemClick("/StudentsGrades")}>
                     <i className="bi bi-people fa-fw me-2" />
                     {t("sidebarTeacher.Students Grades")}  
+                  </Link>
+                  <Link 
+                  className={`list-group-item ${activeNavItem === "/FicheEleve" ? "active" : ""}`}
+                  to="/FicheEleve"
+                  onClick={() => handleNavItemClick("/FicheEleve")}>
+                    <i className="bi bi-people fa-fw me-2" />
+                    Student Sheet
                   </Link>
 
                   <Link 

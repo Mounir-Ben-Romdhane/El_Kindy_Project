@@ -187,7 +187,20 @@ function SideBar() {
                     <FontAwesomeIcon icon={faTags} className="fa-fw me-1" />{" "}
                     {/* Category Courses */}{t("sidebar.Planning")}
                   </Link>
+
                 </li>
+                <li className="nav-item">
+                <Link
+                    to="/anniversaire"
+                    className={`nav-link ${activeNavItem === "/anniversaire" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/anniversaire")}>
+                    <FontAwesomeIcon icon={faTags} className="fa-fw me-1" />{" "}
+                    {/* Category Courses */}Anniversaire
+                  </Link>
+
+                </li>
+
+            
                 {/* menu item courses */}
                 <li className="nav-item">
                   <Link
@@ -214,7 +227,7 @@ function SideBar() {
                 </li>
 
                 {/* menu item events */}
-                <li className="nav-item">
+               {/*  <li className="nav-item">
                   <Link
                     to="/listEvents"
                     className={`nav-link ${activeNavItem === "/listEvents" ? "active" : ""}`}
@@ -225,7 +238,7 @@ function SideBar() {
                     />{" "}
                     {t("sidebar.Events")}
                   </Link>
-                </li>
+                </li> */}
                 {/* menu item Reservation */}
                 <li className="nav-item">
                   <Link
@@ -285,6 +298,16 @@ function SideBar() {
                     onClick={() => handleNavItemClick("/ListAllClasse")}>
                     <FontAwesomeIcon icon={faSchool} className="fa-fw me-1" />{" "}
                     {t("sidebar.Classes")}
+                  </Link>
+                </li>
+                {/* menu item classess */}
+                <li className="nav-item">
+                  <Link
+                    to="/ContactBack"
+                    className={`nav-link ${activeNavItem === "/ContactBack" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/ContactBack")}>
+                    <FontAwesomeIcon icon={faSchool} className="fa-fw me-1" />{" "}
+                    claim
                   </Link>
                 </li>
                 {/* Menu item 9 */}

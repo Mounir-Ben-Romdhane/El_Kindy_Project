@@ -239,15 +239,20 @@ function NavBar() {
                     </li>
                     <li>
                       {" "}
-                      <a className="dropdown-item" href="index-2.html">
+                      <Link
+                        className={`dropdown-item ${
+                          activeNavItem === "/stage" ? "active" : ""
+                        }`}
+                        to="/stage"
+                        onClick={() => handleNavItemClick("/stage")}
+                      >
                         <FontAwesomeIcon
-                          icon={faBriefcase}
+                          icon={faGraduationCap}
                           className="fa-fw me-1"
-                        />{" "}
-                        {/* Stages */}
+                        />
                         {t("navbar.InternalShip")}
                         
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </li>

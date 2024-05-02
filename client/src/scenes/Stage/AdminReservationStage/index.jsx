@@ -26,24 +26,29 @@ function Index() {
   const [sortOption, setSortOption] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
+  const entriesPerPage = 8; // Number of entries to display per page
   useEffect(() => {
     fetchReservations();
   }, []);
 
   const fetchReservations = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/reservationstage/reservations");
+      const response = await axios.get("http://localhost:3001/reservationstage/reservations?populate=stageId");
       setReservations(response.data);
+      setTotalEntries(response.data.length); // Update the totalEntries state
     } catch (error) {
       console.error("Error fetching reservations:", error);
     }
   };
 
+
   const updateReservationStatus = async (reservation, status) => {
     try {
       await axios.put(`http://localhost:3001/reservationstage/updateReservationStatus/${reservation}`, { status });
       MySwal.fire('Updated!', `The reservation has been ${status}.`, 'success');
-      fetchReservations(); 
+      fetchReservations();
     } catch (error) {
       console.error(`Error updating reservation status to ${status}:`, error);
       MySwal.fire('Error!', `The reservation status could not be updated to ${status}.`, 'error');
@@ -56,11 +61,11 @@ function Index() {
 
   const filteredReservations = reservations.filter(
     (reservation) =>
-    reservation.stageId?.title.toLowerCase().includes(searchTerm) ||
-    reservation.userName.toLowerCase().includes(searchTerm) ||
-    reservation.userEmail.toLowerCase().includes(searchTerm) ||
-    reservation.phoneNumber.toString().includes(searchTerm) ||
-    reservation.message.toLowerCase().includes(searchTerm)
+      reservation.stageId?.title.toLowerCase().includes(searchTerm) ||
+      reservation.userName.toLowerCase().includes(searchTerm) ||
+      reservation.userEmail.toLowerCase().includes(searchTerm) ||
+      reservation.phoneNumber.toString().includes(searchTerm) ||
+      reservation.message.toLowerCase().includes(searchTerm)
   );
 
   return (
@@ -116,6 +121,7 @@ function Index() {
                   <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
                     <thead>
                       <tr>
+                        <th scope="col" className="border-0">Stage Title</th>
                         <th scope="col" className="border-0">User Name</th>
                         <th scope="col" className="border-0">User Email</th>
                         <th scope="col" className="border-0">Phone Number</th>
@@ -125,48 +131,96 @@ function Index() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredReservations.map((reservation, index) => (
-                        <tr key={index}>
-                          <td>{reservation.userName}</td>
-                          <td>{reservation.userEmail}</td>
-                          <td>{reservation.phoneNumber}</td>
-                          <td>{reservation.message}</td>
-                          <td>
-                            {reservation.status === "pending" && (
-                              <span className="badge bg-warning bg-opacity-15 text-warning">
-                                Pending
-                              </span>
-                            )}
-                            {reservation.status === "accepted" && (
-                              <span className="badge bg-success bg-opacity-15 text-success">
-                                Accepted
-                              </span>
-                            )}
-                            {reservation.status === "refused" && (
-                              <span className="badge bg-danger bg-opacity-15 text-danger">
-                                Refused
-                              </span>
-                            )}
-                          </td>
-                          <td>
-                            <button
-                              onClick={() => updateReservationStatus(reservation._id, 'accepted')} 
-                              className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
-                            >
-                              <i className="bi bi-check fs-4"></i> {/* Accept icon */}
-                            </button>
-                            <button
-                              onClick={() => updateReservationStatus(reservation._id, 'refused')} 
-                              className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0">
+                    {filteredReservations
+                        .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
+                        .map((reservation, index) => (
+                          <tr key={index}>
+                            {/* Display stage details */}
+                            <td>
+                              {reservation.stageId && (
+                                <div>
+                                  <p>{reservation.stageId.title}</p>
+
+                                </div>
+                              )}
+                            </td>
+                            <td>{reservation.userName}</td>
+                            <td>{reservation.userEmail}</td>
+                            <td>{reservation.phoneNumber}</td>
+                            <td>{reservation.message}</td>
+                            <td>
+                              {reservation.status === "pending" && (
+                                <span className="badge bg-warning bg-opacity-15 text-warning">
+                                  Pending
+                                </span>
+                              )}
+                              {reservation.status === "accepted" && (
+                                <span className="badge bg-success bg-opacity-15 text-success">
+                                  Accepted
+                                </span>
+                              )}
+                              {reservation.status === "refused" && (
+                                <span className="badge bg-danger bg-opacity-15 text-danger">
+                                  Refused
+                                </span>
+                              )}
+                            </td>
+                            <td>
+                              <button
+                                onClick={() => updateReservationStatus(reservation._id, 'accepted')}
+                                className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+                              >
+                                <i className="bi bi-check fs-4"></i> {/* Accept icon */}
+                              </button>
+                              <button
+                                onClick={() => updateReservationStatus(reservation._id, 'refused')}
+                                className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0">
                                 <i className="bi bi-x fs-4"></i> {/* Refuse icon */}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                              </button>
+                            </td>
+
+                          </tr>
+                        ))}
+
                     </tbody>
                   </table>
                 </div>
               </div>
+              {/* Card ffooter START */}
+              <div className="card-footer bg-transparent pt-0">
+                 {/* Pagination START */}
+                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
+                  {/* Content */}
+                  <p className="mb-0 text-center text-sm-start">Showing {(currentPage - 1) * 8 + 1} to {Math.min(currentPage * 8, totalEntries)} of {totalEntries} entries</p>
+                  {/* Pagination */}
+                  <nav className="d-flex justify-content-center mb-0" aria-label="navigation">
+                    <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
+                      {/* Previous page button */}
+                      <li className={`page-item ${currentPage * entriesPerPage >= totalEntries ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                          <i className="fas fa-angle-right" />
+                        </button>
+                      </li>
+
+                      {/* Page numbers */}
+                      {Array.from({ length: Math.ceil(totalEntries / 8) }, (_, index) => (
+                        <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                          <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
+                        </li>
+                      ))}
+                      {/* Next page button */}
+                      <li className={`page-item ${currentPage * 8 >= totalEntries ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                          <i className="fas fa-angle-right" />
+                        </button>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+                {/* Pagination END */}
+
+              </div>
+              {/* Card footer END */}
             </div>
           </div>
         </div>

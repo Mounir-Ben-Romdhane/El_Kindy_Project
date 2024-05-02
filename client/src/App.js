@@ -38,17 +38,17 @@ import DashbordTeacher from "./scenes/PlatformTeacher/DashbordTeacher";
 import HomePagee from "../src/scenes/PlatformTeacher/HomePagee";
 import DashbordStudent from "./scenes/PlatformStudent/DashbordStudent";
 import Room from "../src/scenes/PlatformTeacher/Room";
-
+import successStage from "../src/scenes/Payment/SuccessStage";
 import TeachersList from "../src/scenes/PlatformStudent/TeachersList";
 import Chat from "../src/scenes/Chat/Chat";
 
-import ListMeetingTeacher from "scenes/PlatformTeacher/ListMeetingTeacher";
 import BackListShop from "../src/scenes/Shop/BackShop/BackListShop";
 import BackDetailsShop from "../src/scenes/Shop/BackShop/BackDetailsShop"
 import DetailShopFront from "../src/scenes/Shop/ShopHome/DetailShopFront"
 
-import MessageProf from "../src/scenes/PlatformTeacher/MessageProf";
-import StudentsGrades from "../src/scenes/PlatformTeacher/StudentsGrades";
+import ListMeetingTeacher from 'scenes/PlatformTeacher/ListMeetingTeacher'
+import MessageProf from '../src/scenes/PlatformTeacher/MessageProf'
+import StudentsGrades from '../src/scenes/PlatformTeacher/StudentsGrades'
 
 import AdminReservation from "./scenes/EventsPage/AdminReservation/AdminReservation";
 import DetailEvents from "./scenes/EventsPage/DetailEventPage/DetailEvent";
@@ -56,6 +56,7 @@ import EditEventPage from "./scenes/EventsPage/EditEventPage/EditEvent";
 import InscriptionDetails from "scenes/Inscriptions/backOffice/InscriptionDetails";
 import StageDetail from "scenes/Stage/StageDetail";
 import AdminReservationStage from "scenes/Stage/AdminReservationStage";
+import FicheEleve from "scenes/PlatformTeacher/FicheEleve";
 
 import EditCourse from "scenes/Courses/backOffice/EditCoursePage";
 
@@ -71,13 +72,18 @@ import Reservationbyid from './scenes/EventsPage/ReservationListbyId/Reservation
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
 import ContactPage from "scenes/ContactPage/ContactFront";
+import ContactBack from "scenes/ContactPage/ContactBack";
+
 import AdminsDashboard from "scenes/UsersAdmin/Admins";
 import TeachersDashboard from "scenes/UsersAdmin/Teachers";
 import StudentsDashboard from "scenes/UsersAdmin/Students";
 import ParentsDashboard from "scenes/UsersAdmin/Parents";
 import ListCourses from "scenes/Courses/frontOffice/listCourses";
+import GradeStudent from "scenes/PlatformStudent/GradeStudent";
 
 import Success from "scenes/Payment/Success";
+import SuccessInscription from "scenes/Payment/SucessInscription";
+
 import Fail from "scenes/Payment/Fail";
 import Payment from "scenes/Payment/Payment";
 
@@ -114,7 +120,9 @@ function App() {
       "/assets/vendor/glightbox/js/glightbox.js",
       "/assets/vendor/purecounterjs/dist/purecounter_vanilla.js",
       "/assets/js/functions.js",
-      "assets/vendor/sticky-js/sticky.min.js"
+      "/assets/vendor/sticky-js/sticky.min.js",
+      "/assets/vendor/apexcharts/js/apexcharts.min.js"
+
     ];
 
     if (!scriptsLoaded.current) {
@@ -199,7 +207,15 @@ function App() {
             />
           }
         />
-
+<Route
+          path="/ContactBack"
+          element={
+            <PrivateRoute
+              element={<ContactBack />}
+              requiredRoles={["superAdmin", "admin"]}
+            />
+          }
+        />
         <Route
           path="/inscriptionDetails/:id"
           element={
@@ -260,6 +276,7 @@ function App() {
             />
           }
         />
+
 
 
         <Route
@@ -469,15 +486,6 @@ function App() {
           }
         />
 
-        <Route
-          path="/listCourses"
-          element={
-            <PrivateRoute
-              element={<ListCoursesPage />}
-              requiredRoles={["superAdmin", "admin"]}
-            />
-          }
-        />
 
         <Route
           path="/admins"
@@ -519,6 +527,17 @@ function App() {
         />
 
 
+<Route
+          path="/GradeStudent"
+          element={
+            <PrivateRoute
+              element={<GradeStudent />}
+              requiredRoles={["superAdmin", "admin", "student"]}
+            />
+          }
+        />
+
+
         <Route
           path="/dashboard-teacher"
           element={
@@ -528,6 +547,17 @@ function App() {
             />
           }
         />
+
+<Route
+          path="/FicheEleve"
+          element={
+            <PrivateRoute
+              element={<FicheEleve />}
+              requiredRoles={["superAdmin", "admin", "teacher"]}
+            />
+          }
+        />
+      
 
         <Route
           path="/profile-teacher"
@@ -581,16 +611,6 @@ function App() {
 
 
         <Route
-          path="/listCourses"
-          element={
-            <PrivateRoute
-              element={<ListCoursesPage />}
-              requiredRoles={["superAdmin", "admin"]}
-            />
-          }
-        />
-
-        <Route
           path="/AdminReservationStage"
           element={
             <PrivateRoute
@@ -626,6 +646,12 @@ function App() {
 
 
         <Route path="/fail" element={<Fail />} />
+
+        <Route path="/successInscription" element={<SuccessInscription />} />
+<Route
+          path="/successStage"
+          element={ <successStage />}
+        />
 
 <Route
           path="/review"
@@ -668,6 +694,7 @@ function App() {
             />
           }
         />
+         
 <Route
           path="/DetailShopFront/:id"
           element={
@@ -803,6 +830,7 @@ function App() {
         <Route
           path="/ListStage"
           element={<ListStage />}
+
           />
 
 
@@ -855,10 +883,6 @@ function App() {
           element={isAuth ? <EditClassPage /> : <Navigate to="/" />}
         />
 
-        <Route
-          path="/chat"
-          element={isAuth ? <Chat /> : <Navigate to="../auth" />}
-        />
 
         <Route path="/about" element={<AboutPage />} />
         <Route

@@ -31,14 +31,27 @@ function Index() {
   const approveInscription = async (id) => {
     try {
       const response = await axiosPrivate.patch(
-        `/inscription/${id}/approve`
+        `/inscription/${id}/approvepayment`
       );
       if (response.status === 200) {
         navigate("/inscriptionsList");
       }else {
         // Handle other response statuses here
-        const errorMessage = response.data.message; // Assuming there's an error message returned in the response data
-        alert(errorMessage); // Display the error message in an alert
+        const errorMessage = response.data.message; 
+        alert(errorMessage); 
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const activateuser = async (id) => {
+    try {
+      const response = await axiosPrivate.patch(
+        `/inscription/${id}/approve`
+      );
+      if (response.status === 200) {
+        navigate("/inscriptionsList");
       }
     } catch (error) {
       console.error(error);
@@ -197,17 +210,24 @@ function Index() {
                         >
                           <button
                             className="btn btn-sm btn-success-soft"
-                            style={{ width: "120px" }}
+                            style={{ width: "130px" }}
                             onClick={() => approveInscription(inscription._id)}
                           >
-                            Approve
+                            Payment Request
                           </button>
                           <button
                             className="btn btn-sm btn-danger-soft"
                             style={{ width: "120px" }}
                             onClick={() => rejectInscription(inscription._id)}
                           >
-                            Reject
+                            Reject Request
+                          </button>
+                          <button
+                            className="btn btn-sm btn-info-soft"
+                            style={{ width: "120px" }}
+                            onClick={() => activateuser(inscription._id)}
+                          >
+                            Activate user
                           </button>
                         </div>
                       )}

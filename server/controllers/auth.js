@@ -46,12 +46,13 @@ export const register = async (req, res) => {
 
 /* LOGGING IN */
 export const login = async (req, res) => {
-    try {
-        const { email, password, tokens } = req.body;
-        const user = await User.findOne({ email: email });
-        const isMatch = await bcrypt.compare(password, user.password);
+  try {
+      const { email, password, tokens } = req.body;
+      const user = await User.findOne({ email: email });
+      const isMatch = await bcrypt.compare(password, user.password);
 
-        if(!user || !isMatch) return res.status(400).json({ message: "Email or password not match !" });
+      if (!user || !isMatch) return res.status(400).json({ message: "Email or password not match !" });
+
 
         
         //if (!isMatch) return res.status(400).json({ msg: "Invalid credentials." });
@@ -190,6 +191,7 @@ export const login = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 }
+
 
 export const refreshToken = async (req, res) => {
     try {
@@ -333,6 +335,7 @@ export const getTeacherById = async (req, res) => {
   try {
     const user = await User.findById(id).populate("teacherInfo.classesTeaching");
     if (user) {
+
       res.status(200).json(user);
     } else {
       res.status(404).json("No such User");
@@ -341,6 +344,7 @@ export const getTeacherById = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
 //Get all User by Role
 export const getAllUserByRole = async (req, res) => {
   const role = req.params.role;
@@ -372,6 +376,7 @@ export const getAllUserByRole = async (req, res) => {
 
 
 
+
 //planning
 export const getTeachers = async (req, res) => {
   try {
@@ -391,25 +396,38 @@ export const getStudents = async (req, res) => {
       res.status(500).json({ message: error.message });
   }
 };
-
+export const getStudentById = async (req, res) => {
+  const { studentId } = req.params; // Récupérez l'ID de l'étudiant à partir des paramètres de la requête
+  try {
+      const student = await User.findById(studentId); // Recherchez l'étudiant par son ID dans la base de données
+      if (!student) {
+        // Si aucun étudiant n'est trouvé avec cet ID, renvoyez une réponse 404 (Not Found)
+        return res.status(404).json({ message: 'Student not found' });
+      }
+      // Si un étudiant est trouvé, renvoyez ses détails dans la réponse
+      res.status(200).json(student);
+  } catch (error) {
+      // Si une erreur se produit pendant la recherche, renvoyez une réponse 500 (Internal Server Error)
+      res.status(500).json({ message: error.message });
+  }
+};
 export const getAssignmentsByCourseIdForStudent = async (req, res) => {
   try {
     // Pas besoin de convertir studentId en ObjectId
     const studentId = req.params.studentId;
     const courseIds = req.params.courseId.split(','); // Diviser la chaîne en un tableau d'identifiants de cours
-
+ 
     // Trouver l'utilisateur dans la base de données
     const user = await User.findById(studentId);
- 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
+ 
     // Vérifier que l'utilisateur est un étudiant
     if (!user.roles.includes('student')) {
       return res.status(403).json({ error: 'User is not a student' });
     }
-
+ 
     // Rechercher les affectations correspondant aux ID des cours
     const assignments = await Assignment.find({ courseId: { $in: courseIds } });
     
@@ -419,21 +437,19 @@ export const getAssignmentsByCourseIdForStudent = async (req, res) => {
     console.error('Error fetching assignments by course ID for student:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-};
+ };
 
-
-
-export const getCoursesByStudentId = async (req, res) => {
+ export const getCoursesByStudentId = async (req, res) => {
   const studentId = req.params.studentId;
-
+ 
   try {
     const user = await User.findById(studentId);
     if (!user) {
       return res.status(404).json({ message: "Student not found" });
     }
-
+ 
     const courses = user.studentInfo.coursesEnrolled;
-
+ 
     if (courses.length > 0) {
       // Utiliser une méthode de projection pour retourner uniquement l'ID et le nom du cours
       const coursesWithNames = await Course.find({ _id: { $in: courses } }, { _id: 1, title: 1 });
@@ -444,6 +460,104 @@ export const getCoursesByStudentId = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: "Internal server error", error: error.message });
   }
+ };
+ export const getClassByStudent = async (req, res) => {
+   const studentId = req.params.studentId;
+ 
+   try {
+       const student = await User.findById(studentId).populate('studentInfo.classLevel');
+       res.status(200).json(student.studentInfo.classLevel);
+   } catch (error) {
+       res.status(500).json({ message: error.message });
+   }
+ };// FUNCTION TO GET THE CLASSES TAUGHT BY A TEACHER
+ export const getClassesTaughtByTeacher = async (req, res) => {
+   const teacherId = req.params.teacherId;
+ 
+   try {
+       const teacher = await User.findById(teacherId).populate('teacherInfo.classesTeaching');
+       res.status(200).json(teacher.teacherInfo.classesTeaching);
+   } catch (error) {
+       res.status(500).json({ message: error.message });
+   }
+ };
+ // get courses by student
+export const getCoursesByStudent = async (req, res) => {
+  const studentId = req.params.studentId;
+
+  try {
+      const student = await User.findById(studentId).populate('studentInfo.coursesEnrolled');
+      res.status(200).json(student.studentInfo.coursesEnrolled);  
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
 };
+//get Courses Taught By Teacher
+export const getCoursesTaughtByTeacher = async (req, res) => {
+  const teacherId = req.params.teacherId;
 
+  try {
+      const teacher = await User.findById(teacherId).populate('teacherInfo.coursesTaught');
+      res.status(200).json(teacher.teacherInfo.coursesTaught);
+  } catch (error) {   
+      res.status(500).json({ message: error.message });
+  }
+};
+// Function to get the list of courses in a class taught by a teacher
+export const getCoursesTaughtByTeacherInClass = async (req, res) => {
+}
+//get students by class 
+export const getStudentsEnrolledInClass = async (req, res) => {
+  const classId = req.params.classId;
 
+  try {
+      const students = await User.find({ roles: 'student', 'studentInfo.classLevel': classId });
+      res.status(200).json(students);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
+//i wanta function to get the students enrolled in a class and in a specific course
+export const getStudentsInClassByCourseAndClass = async (req, res) => {
+  const { classId, courseId } = req.params;
+
+  try {
+    // Find the students enrolled in the class
+    const students = await User.find({ roles: 'student', 'studentInfo.classLevel': classId });
+
+    // Filter the students by those enrolled in the provided course
+    const studentsByCourse = students.filter(student =>
+      student.studentInfo.coursesEnrolled.includes(courseId)
+    );
+
+    res.status(200).json(studentsByCourse);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+
+//get classes and students not inrolled in class by courrse and teacher 
+
+export const getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher = async (req, res) => {
+  const { courseId, teacherId } = req.params;
+
+  try {
+    const teacher = await User.findById(teacherId).populate('teacherInfo.studentsTaught');
+    const studentsTaught = teacher.teacherInfo.studentsTaught;
+    const classesTaught = teacher.teacherInfo.classesTeaching.map(classe => classe._id.toString());
+    const classesTaughtObjects = await Classe.find({ _id: { $in: classesTaught } });
+
+    // Find students enrolled in the course
+    const studentsEnrolled = await User.find({
+      roles: 'student',
+      'studentInfo.coursesEnrolled': courseId
+    });
+
+    // Filter out students who are already assigned to a class
+    const studentsNotInClass = studentsEnrolled.filter(student => !student.studentInfo.classLevel);
+
+    res.status(200).json({ classesTaught: classesTaughtObjects, studentsEnrolled: studentsTaught });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+};

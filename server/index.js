@@ -38,13 +38,13 @@ import MessageRoute from './routes/MessageRoute.js'
 import meetingRoutes from './routes/meetingRoutes.js';
 import reservationRoutes  from "./routes/Reservation.js";
 
+import gradeRoutes from "./routes/gradeRoutes.js";
+import ficheEleveRoutes from "./routes/ficheEleveRoutes.js";
 import paymentRouter from "./routes/paymentRouter.js";
 
 import assignmentRoute from "./routes/assignmentRoutes.js";
 
 import textAnalytics from "./routes/textAnalytics.js";
-
-
 
 import planningRoutes from "./routes/planningRoutes.js";
 
@@ -100,9 +100,12 @@ app.put("/api/categories/update/:id", verifyToken, upload.single("picture"), upd
 
 app.post("/shops", upload.single("picture"), createShop);
 app.put("/shops/:id", upload.single("picture"), updateShop);
+app.use("/grades", gradeRoutes);
+app.post("/api/categories", upload.single("picture"), createCategorie);
+app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
 
 app.post("/api/stage", upload.single("picture"), createStage);
-app.patch("/api/stage/:id", upload.single("picture"),updateStage );
+app.patch("/api/stage/:id", upload.single("picture"),verifyToken,updateStage );
 
 app.post("/addMessage", upload.single("picture"), addMessage);
 
@@ -112,6 +115,7 @@ app.patch("/user/edit/:id", upload.single("picture"), verifyToken, editUserProfi
 
 app.post("/api/add", upload.single("picturePath"), createAssignment);
 router.post('/api/upload/:assignmentId', upload.single('picturePath'), uploadAssignmentFile);
+
 
 
 
@@ -146,6 +150,7 @@ app.use('/shops', shopRoute);
 app.use('/event', eventRoutes);
 app.use("/course",courseRoute);
 
+
 app.use("/contact",ContactRoutes);
 app.use("/salle",salleRoutes);
 app.use("/inscription", inscriptionRoutes);
@@ -153,7 +158,7 @@ app.use('/chat', ChatRoute);
 app.use('/message', MessageRoute);
 app.use('/meeting', meetingRoutes);
 app.use("/events",reservationRoutes);
-
+app.use("/ficheEleve",ficheEleveRoutes)
 app.use("/payment",paymentRouter);
 
 
