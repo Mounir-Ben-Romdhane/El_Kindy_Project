@@ -1,5 +1,7 @@
 import express from "express";
-import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord, verifyAccount,getUser,getAllUserByRole, getTeachers, getStudents, getUserById, getTeacherById, getAssignmentsByCourseIdForStudent, getCoursesByStudentId } from "../controllers/auth.js"
+
+import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord, verifyAccount,getUser,getAllUserByRole, getCoursesTaughtByTeacher,getCoursesByStudent,getAssignmentsByCourseIdForStudent,getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher,getCoursesByStudentId,getTeachers,getClassByStudent,getStudentsInClassByCourseAndClass,getCoursesTaughtByTeacherInClass,
+         getStudents, getUserById, getTeacherById,getClassesTaughtByTeacher,getStudentsEnrolledInClass } from "../controllers/auth.js"
 
 import { verifyToken } from '../middleware/auth.js';
 import googleAuth from "../controllers/googleAuth.js";
@@ -30,8 +32,14 @@ router.get('/getAll', verifyToken,getAllUsers);
 router.post("/googleAuth", googleAuth);
 router.get('/getAllUserByRole/:role',getAllUserByRole);
 router.get('/getTeacher/:teacherId', getTeacherById);
-
-
+router.get('/getClassesTaughtByTeacher/:teacherId', getClassesTaughtByTeacher);
+router.get('/getStudentsEnrolledInClass/:classId', getStudentsEnrolledInClass);
+router.get('/getCoursesTaughtByTeacherInClass/:teacherId/:classId', getCoursesTaughtByTeacherInClass);
+router.get('/getStudentsInClassByCourseAndClass/:classId/:courseId', getStudentsInClassByCourseAndClass);
+router.get('/getClassByStudent/:studentId', getClassByStudent);
+router.get('/getCoursesByStudent/:studentId', getCoursesByStudent);
+router.get('/getCoursesTaughtByTeacher/:teacherId', getCoursesTaughtByTeacher);
+router.get('/getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher/:courseId/:teacherId', getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher);
 //Add users
 router.post("/addAdmin", addAdmin);
 router.post("/addTeacher", addTeacher);
@@ -63,5 +71,10 @@ router.put('/updateTimeSlots/:id', verifyToken, updateTimeSlots);
 router.post('/ajouter2FA/:email',verifyToken, ajouter2FA);
 
 
+
+
+//added by ahmed
+router.get('/teachers', getTeachers);
+router.get('/getAllUserByRole/:role',getAllUserByRole);
 
 export default router;
