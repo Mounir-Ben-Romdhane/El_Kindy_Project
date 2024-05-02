@@ -46,24 +46,39 @@ const validate = () => {
   const [timeFrom, setTimeFrom] = useState(""); // New state for time from
   const [timeTo, setTimeTo] = useState(""); // New state for time to */
 
-  // Function to handle selecting an image
   const handleImageSelect = (event) => {
-    // Get the selected file
     const selectedFile = event.target.files[0];
-    // Set the image name
-    setImageName(selectedFile.name);
-    // Set the image file
-    setImageFile(selectedFile);
+    setEvent({ ...event, picture: selectedFile });
+    
+    // Remove red border when an image is selected
+    event.target.parentElement.classList.remove("border-danger");
+  
+    // Check if a picture is selected and update the error status
+    if (!selectedFile) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        picture: "Please upload an image!",
+      }));
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        picture: "",
+      }));
+    }
   };
-
-  // Function to handle removing the image
+  
   const handleRemoveImage = () => {
-    // Reset the image name to null
-    setImageName(null);
-    // Reset the image file
-    setImageFile(null);
-    // Reset the input field value to allow selecting the same file again
+    setEvent({ ...event, picture: null });
     document.getElementById("image").value = "";
+  
+    // Update the error status for the picture field
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      picture: "Please upload an image!",
+    }));
+  
+    // Add red border if no image is selected after removal
+    document.getElementById("image").parentElement.classList.add("border-danger");
   };
 
   const navigate = useNavigate();
@@ -277,65 +292,64 @@ const validate = () => {
   </div>
 </div>
                   {/* Upload image START */}
+                  {/* Upload image START */}
                   <div className="m-4">
-                    {/* Image */}
-                    <div className="col-12">
-                      <div className="text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3">
-                        {/* Display the image */}
-                        {imageFile && (
-                          <div>
-                            <img
-                              src={URL.createObjectURL(imageFile)}
-                              alt="Uploaded image"
-                              className="img-fluid mb-2"
-                              style={{ maxWidth: "300px", maxHeight: "300px" }} // Limit image dimensions
+                      <div className="col-12">
+                        <div className={`text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3 ${errors.picture ? "border-danger" : ""}`}>
+                          {event.picture && (
+                            <div>
+                              <img
+                                src={URL.createObjectURL(event.picture)}
+                                alt="Uploaded image"
+                                className="img-fluid mb-2"
+                                style={{
+                                  maxWidth: "300px",
+                                  maxHeight: "300px",
+                                }}
+                              />
+                              <p className="mb-0">Uploaded image</p>
+                            </div>
+                          )}
+                          <div className="mb-3">
+                            <h6 className="my-2">
+                              Upload course image here, or{" "}
+                              <span
+                                className="text-primary"
+                                style={{ cursor: "pointer" }}
+                              >
+                                Browse {" "}
+                              <span className="text-danger">*</span>
+                              </span>
+                            </h6>
+                            <input
+                              className="form-control"
+                              type="file"
+                              name="picture"
+                              id="image"
+                              accept="image/gif, image/jpeg, image/png"
+                              onChange={handleImageSelect}
                             />
-                            <p className="mb-0">Uploaded image</p>
+                            <p className="small mb-0 mt-2">
+                              <b>Note:</b> Only JPG, JPEG, and PNG formats are
+                              supported. Our suggested dimensions are 600px *
+                              450px. Larger images will be cropped to fit our
+                              thumbnails/previews.
+                            </p>
                           </div>
-                        )}
-                        {/* Upload image button */}
-                        <div className="mb-3">
-                          <h6 className="my-2">
-                            Upload Event image here, or{" "}
-                            <span
-                              className="text-primary"
-                              style={{ cursor: "pointer" }}
-                            >
-                              Browse
-                            </span>
-                          </h6>
-                          {/* File input */}
-                          <input
-                            className="form-control"
-                            type="file"
-                            name="picture"
-                            id="image"
-                            accept="image/gif, image/jpeg, image/png"
-                            onChange={handleImageSelect}
-                          />
-                          {/* Note */}
-                          <p className="small mb-0 mt-2">
-                            <b>Note:</b> Only JPG, JPEG, and PNG formats are
-                            supported. Our suggested dimensions are 600px *
-                            450px. Larger images will be cropped to fit our
-                            thumbnails/previews.
-                          </p>
+                          {event.picture && (
+                            <div className="d-sm-flex justify-content-end mt-2">
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-danger-soft mb-3"
+                                onClick={handleRemoveImage}
+                              >
+                                Remove image
+                              </button>
+                            </div>
+                          )}
                         </div>
-                        {/* Remove image button */}
-                        {imageName && (
-                          <div className="d-sm-flex justify-content-end mt-2">
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-danger-soft mb-3"
-                              onClick={handleRemoveImage}
-                            >
-                              Remove image
-                            </button>
-                          </div>
-                        )}
                       </div>
                     </div>
-                  </div>
                   {/* Upload image END */}
                 </div>
                 <div className="d-md-flex justify-content-end align-items-start mt-4">
