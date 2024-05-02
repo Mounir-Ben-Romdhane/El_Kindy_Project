@@ -35,7 +35,6 @@ function ClassesForm() {
         setMessage("Failed to load class data.");
       }
     };
-
     if (id) fetchClasseData();
   }, [id]);
 
@@ -111,7 +110,7 @@ function ClassesForm() {
                 className="form-control"
                 id="name"
                 name="name"
-                required
+                
                 value={formState.name}
                 onChange={handleChange}
               />
@@ -125,7 +124,7 @@ function ClassesForm() {
                 className="form-control"
                 id="capacity"
                 name="capacity"
-                required
+                
                 value={formState.capacity}
                 onChange={handleChange}
               />
