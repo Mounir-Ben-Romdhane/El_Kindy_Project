@@ -12,6 +12,11 @@ import AddStudent from "../userCrud/addStudent";
 import UpdateStudent from "../userCrud/updateStudent";
 
 function StudentsDashboard() {
+
+  const iconStyle = {
+    marginRight: "10px",
+  };
+
   const [students, setStudents] = useState([]);
   const [student, setStudent] = useState();
   const [loading, setLoading] = useState(true);
@@ -145,6 +150,30 @@ function StudentsDashboard() {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  //export admins
+  const djangoapi = "http://127.0.0.1:8000/insertdata/students/";
+  const addStudent = async () => {
+    try {
+      const response = await fetch(djangoapi); // Assuming your backend API is available at this endpoint
+      if (response.status === 200) {
+        fetchData();
+      } else {
+        throw new Error("Erreur lors de la récupération des données");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la requête GET:", error.message);
+    }
+  };
+
+  const handleOpenSheets = () => {
+    // URL of your Google Sheets document
+    const googleSheetsUrl =
+      "https://docs.google.com/spreadsheets/d/1pRMgY4bmKN7Ruc3Dt9qjTiNSuEOF_0IGFtmKHoWJduc/edit#gid=0";
+
+    // Open the Google Sheets document in a new tab
+    window.open(googleSheetsUrl, "_blank");
+  };
+
   return (
     <div>
       <main>
@@ -165,7 +194,7 @@ function StudentsDashboard() {
               <div className="card bg-transparent">
                 <div className="card-header bg-transparent border-bottom px-0">
                   <div className="row g-3 align-items-center justify-content-between">
-                    <div className="col-md-8">
+                    <div className="col-md-6">
                       <form className="rounded position-relative">
                         <input
                           className="form-control bg-transparent"
@@ -185,12 +214,35 @@ function StudentsDashboard() {
                         )}
                       </form>
                     </div>
-                    <div className="col-md-4 text-end">
+                    <div className="col-md-6 d-flex justify-content-end">
                       <button
-                        className="btn btn-primary"
+                        className="btn btn-info m-2 text-wrap text-break"
+                        onClick={addStudent}
+                      >
+                        <i className="fas fa-file-import" style={iconStyle}></i>
+                        <span className="d-none d-md-inline">
+                          Import Student
+                        </span>
+                      </button>
+
+                      <button
+                        className="btn btn-success m-2 text-wrap text-break"
+                        onClick={handleOpenSheets}
+                      >
+                        <i className="fas fa-file-alt " style={iconStyle}></i>
+                        <span className="d-none d-md-inline">
+                          Open Google Sheets
+                        </span>
+                      </button>
+                      <button
+                        className="btn btn-primary m-2 text-wrap text-break"
                         onClick={handleToggleForm}
                       >
-                        Add New Student
+                        <i className="fas fa-user" style={iconStyle}></i>
+
+                        <span className="d-none d-md-inline">
+                          Add New Student
+                        </span>
                       </button>
                     </div>
                   </div>

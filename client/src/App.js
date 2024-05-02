@@ -830,7 +830,9 @@ function App() {
         <Route
           path="/ListStage"
           element={<ListStage />}
-        />
+
+          />
+
 
 <Route
           path="/events/reservation/:eventId"
