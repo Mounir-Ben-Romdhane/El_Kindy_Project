@@ -397,7 +397,7 @@ export const getStudents = async (req, res) => {
   }
 };
 export const getStudentById = async (req, res) => {
-  const { studentId } = req.params; // Récupérez l'ID de l'étudiant à partir des paramètres de la requête
+  const studentId = req.params.studentId;
   try {
       const student = await User.findById(studentId); // Recherchez l'étudiant par son ID dans la base de données
       if (!student) {
@@ -505,6 +505,8 @@ export const getCoursesTaughtByTeacher = async (req, res) => {
 };
 // Function to get the list of courses in a class taught by a teacher
 export const getCoursesTaughtByTeacherInClass = async (req, res) => {
+
+  
 }
 //get students by class 
 export const getStudentsEnrolledInClass = async (req, res) => {
