@@ -55,6 +55,7 @@ export const login = async (req, res) => {
 
         
         //if (!isMatch) return res.status(400).json({ msg: "Invalid credentials." });
+
         // Generate refresh token
         const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
         user.refreshToken = refreshToken;
@@ -62,7 +63,6 @@ export const login = async (req, res) => {
 
         const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
         roles: user.roles,  email : user.email, picturePath: user.picturePath, authSource: user.authSource, gender: user.gender  }, process.env.JWT_SECRET, {expiresIn:"10s"});
-        
      
 
         if(!user.verified) {
@@ -168,6 +168,7 @@ export const login = async (req, res) => {
 
         // Check if TwoFactorAuthentication is enabled for the user
         
+        
         if (user.TwoFactorAuthentication) {
           // Verify the user's token
           const verified = speakeasy.totp.verify({
@@ -182,6 +183,7 @@ export const login = async (req, res) => {
           }
         }
 
+       
         delete user.password;
         res.status(200).json({ accessToken, refreshToken: user.refreshToken });
     }catch (err) {

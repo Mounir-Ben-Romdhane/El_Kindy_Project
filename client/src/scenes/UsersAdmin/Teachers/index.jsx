@@ -23,6 +23,10 @@ function TeachersDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const [teachersPerPage] = useState(6);
 
+  const iconStyle = {
+    marginRight: "10px",
+  };
+
   const fetchData = async () => {
     try {
       const response = await getUsers("teacher");
@@ -122,6 +126,30 @@ function TeachersDashboard() {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  //export admins
+  const djangoapi = "http://127.0.0.1:8000/insertdata/teacher/";
+  const addTeachers = async () => {
+    try {
+      const response = await fetch(djangoapi); // Assuming your backend API is available at this endpoint
+      if (response.status === 200) {
+        fetchData();
+      } else {
+        throw new Error("Erreur lors de la récupération des données");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la requête GET:", error.message);
+    }
+  };
+
+  const handleOpenSheets = () => {
+    // URL of your Google Sheets document
+    const googleSheetsUrl =
+      "https://docs.google.com/spreadsheets/d/18maG021PnL_2ZaDc8A51ek3nORxYS-G5ItsCLfOvAnw/edit#gid=0";
+
+    // Open the Google Sheets document in a new tab
+    window.open(googleSheetsUrl, "_blank");
+  };
+
   return (
     <div>
       <main>
@@ -142,7 +170,7 @@ function TeachersDashboard() {
               <div className="card bg-transparent">
                 <div className="card-header bg-transparent border-bottom px-0">
                   <div className="row g-3 align-items-center justify-content-between">
-                    <div className="col-md-8">
+                    <div className="col-md-6">
                       <form className="rounded position-relative">
                         <input
                           className="form-control bg-transparent"
@@ -162,12 +190,35 @@ function TeachersDashboard() {
                         )}
                       </form>
                     </div>
-                    <div className="col-md-4 text-end">
+                    <div className="col-md-6 d-flex justify-content-end">
                       <button
-                        className="btn btn-primary"
+                        className="btn btn-info m-2 text-wrap text-break"
+                        onClick={addTeachers}
+                      >
+                        <i className="fas fa-file-import" style={iconStyle}></i>
+                        <span className="d-none d-md-inline">
+                          Import Teachers
+                        </span>
+                      </button>
+
+                      <button
+                        className="btn btn-success m-2 text-wrap text-break"
+                        onClick={handleOpenSheets}
+                      >
+                        <i className="fas fa-file-alt " style={iconStyle}></i>
+                        <span className="d-none d-md-inline">
+                          Open Google Sheets
+                        </span>
+                      </button>
+                      <button
+                        className="btn btn-primary m-2 text-wrap text-break"
                         onClick={handleToggleForm}
                       >
-                        Add New Teacher
+                        <i className="fas fa-user" style={iconStyle}></i>
+
+                        <span className="d-none d-md-inline">
+                          Add New Teacher
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -181,10 +232,7 @@ function TeachersDashboard() {
                   >
                     <div className="row g-4">
                       {currentTeachers.map((teacher) => (
-                        <div
-                          key={teacher._id}
-                          className="col-md-6 col-xxl-4"
-                        >
+                        <div key={teacher._id} className="col-md-6 col-xxl-4">
                           <div className="card bg-transparent border h-100">
                             <div className="card-header bg-transparent border-bottom d-flex justify-content-between">
                               <div className="d-sm-flex align-items-center">
@@ -297,9 +345,7 @@ function TeachersDashboard() {
                                       Blocked
                                     </span>
                                   ) : (
-                                    <span className="state-badge">
-                                      Active
-                                    </span>
+                                    <span className="state-badge">Active</span>
                                   )}
                                 </p>
                                 <div className="teacher-more">
@@ -373,9 +419,7 @@ function TeachersDashboard() {
                                   {/* Rating star */}
                                   <h6 className="mb-2 mb-sm-0">
                                     <i className="bi bi-calendar fa-fw text-orange me-2" />
-                                    <span className="text-body">
-                                      Join at:
-                                    </span>{" "}
+                                    <span className="text-body">Join at:</span>{" "}
                                     {new Date(
                                       teacher.createdAt
                                     ).toLocaleDateString()}
@@ -446,11 +490,8 @@ function TeachersDashboard() {
                   {/* Content */}
                   <p className="mb-0 text-center text-sm-start">
                     Showing {indexOfFirstTeacher + 1} to{" "}
-                    {Math.min(
-                      indexOfLastTeacher,
-                      filteredTeachers.length
-                    )}{" "}
-                    of {filteredTeachers.length} entries
+                    {Math.min(indexOfLastTeacher, filteredTeachers.length)} of{" "}
+                    {filteredTeachers.length} entries
                   </p>
                   {/* Pagination */}
                   <nav
@@ -458,20 +499,56 @@ function TeachersDashboard() {
                     aria-label="navigation"
                   >
                     <ul className="pagination pagination-sm pagination-primary-soft mb-0 pb-0 px-0">
-                      <li className={`page-item ${currentPage === 1 && 'disabled'}`}>
-                        <a className="page-link" href="#" onClick={() => paginate(currentPage - 1)} tabIndex={-1}>
+                      <li
+                        className={`page-item ${
+                          currentPage === 1 && "disabled"
+                        }`}
+                      >
+                        <a
+                          className="page-link"
+                          href="#"
+                          onClick={() => paginate(currentPage - 1)}
+                          tabIndex={-1}
+                        >
                           <i className="fas fa-angle-left" />
                         </a>
                       </li>
-                      {Array.from({ length: Math.ceil(filteredTeachers.length / teachersPerPage) }, (_, i) => (
-                        <li key={i} className={`page-item ${currentPage === i + 1 && 'active'}`}>
-                          <a className="page-link" href="#" onClick={() => paginate(i + 1)}>
-                            {i + 1}
-                          </a>
-                        </li>
-                      ))}
-                      <li className={`page-item ${currentPage === Math.ceil(filteredTeachers.length / teachersPerPage) && 'disabled'}`}>
-                        <a className="page-link" href="#" onClick={() => paginate(currentPage + 1)}>
+                      {Array.from(
+                        {
+                          length: Math.ceil(
+                            filteredTeachers.length / teachersPerPage
+                          ),
+                        },
+                        (_, i) => (
+                          <li
+                            key={i}
+                            className={`page-item ${
+                              currentPage === i + 1 && "active"
+                            }`}
+                          >
+                            <a
+                              className="page-link"
+                              href="#"
+                              onClick={() => paginate(i + 1)}
+                            >
+                              {i + 1}
+                            </a>
+                          </li>
+                        )
+                      )}
+                      <li
+                        className={`page-item ${
+                          currentPage ===
+                            Math.ceil(
+                              filteredTeachers.length / teachersPerPage
+                            ) && "disabled"
+                        }`}
+                      >
+                        <a
+                          className="page-link"
+                          href="#"
+                          onClick={() => paginate(currentPage + 1)}
+                        >
                           <i className="fas fa-angle-right" />
                         </a>
                       </li>
