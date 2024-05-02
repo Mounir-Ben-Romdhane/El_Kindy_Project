@@ -119,7 +119,6 @@ function EditEvent() {
     setFormState({ ...formState, [name]: value });
     validateField(name, value);
     setFormModified(true); // Set form as modified when any field is changed
-
   };
 
   const validateField = (name, value) => {

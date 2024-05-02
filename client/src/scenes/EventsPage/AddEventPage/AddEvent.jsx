@@ -31,6 +31,7 @@ const validate = () => {
   tempErrors.place = event.place ? "" : "This field is required.";
   tempErrors.timeFrom = event.timeFrom ? "" : "This field is required.";
   tempErrors.timeTo = event.timeTo ? "" : "This field is required.";
+  tempErrors.picture = event.picture ? "" : "Please upload an image!";
   setErrors(tempErrors);
   return Object.values(tempErrors).every(x => x === "");
 };
@@ -129,7 +130,8 @@ const validate = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEvent({ ...event, [name]: value });
-};
+    validate(name, value);
+  };
 
 
   return (

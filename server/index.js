@@ -80,6 +80,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+import main from './controllers/ExtractText.js';
 
 /* ROUTES WITH FILES*/
 //app.post("/auth/register",upload.single("picture"),register);
@@ -161,7 +162,22 @@ app.use('/api', assignmentRoute);
 
 app.use("/reservationstage", ReservationStage);
 
+app.post('/upload', upload.single('image'), async (req, res) => {
+    if (!req.file) {
+        return res.status(400).send('No file uploaded.');
+    }
 
+    try {
+        // Call the main function with the uploaded file path
+        await main(req.file.path);
+
+        // Respond with a success message
+        res.status(200).send('File uploaded successfully.');
+    } catch (error) {
+        console.error('Error processing file:', error);
+        res.status(500).send('Error processing file.');
+    }
+});
 
 
 

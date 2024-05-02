@@ -32,7 +32,7 @@ import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
 import EditAllClass from "../src/scenes/AllClass/EditAllClass";
 import ListAllClass from "../src/scenes/AllClass/ListAllClass";
 import AddAllClass from "../src/scenes/AllClass/AddAllClass";
-
+import UploadImageForm from "../src/scenes/Azureimage/UploadImageForm";
 import ListShop from "../src/scenes/Shop/ShopHome/ListShop";
 import MeetingHomeStudent from "./scenes/PlatformStudent/MeetingHomeStudent";
 import DashbordTeacher from "./scenes/PlatformTeacher/DashbordTeacher";
@@ -410,6 +410,15 @@ function App() {
           element={isAuth ? <TeachersList /> : <Navigate to="/" />}
 />
           
+<Route
+          path="/uploadImageForm"
+          element={
+            <PrivateRoute
+              element={<UploadImageForm />}
+              requiredRoles={["superAdmin", "teacher", "student"]}
+            />
+          }
+        />
        
 
 <Route
@@ -834,6 +843,7 @@ function App() {
 
         />
 
+        
         <Route
           path="/listEventsReservation"
           element={isAuth ? <ListEventsReservation /> : <Navigate to="/" />}
