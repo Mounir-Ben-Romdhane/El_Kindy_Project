@@ -3,7 +3,6 @@ import Footer from 'components/Footer'
 import NavBar from 'components/NavBar'
 import React, { useState, useEffect } from 'react'
 import { getShop } from "services/shopService/api";
-
 import axios from 'axios'; // Import Axios
 import { ToastContainer, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

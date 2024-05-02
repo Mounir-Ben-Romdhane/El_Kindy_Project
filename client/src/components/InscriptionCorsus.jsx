@@ -15,6 +15,9 @@ import "../App.css";
 function InscriptionCorsus(props) {
   const [coursesByCategories, setCoursesByCategories] = useState([]);
   const [favoriteCourses, setFavoriteCourses] = useState([]);
+  const [disponiliteTeacher, setDisponiliteTeacher] = useState([]);
+  const [nonSelectableHours, setNonSelectableHours] = useState([]);
+
   const scriptsLoaded = useRef(false);
   const [open, setOpen] = useState(false);
   let [loading, setLoading] = useState(true);
@@ -78,6 +81,22 @@ function InscriptionCorsus(props) {
       navigate("/");
     }, 2500);
   };
+
+  useEffect(() => {
+    // Fetch disponibilite from backend when component mounts
+    const fetchDisponibilite = async () => {
+      try {
+        const response = await axios.get('/auth/teacher/disponibility');
+        setDisponiliteTeacher(response.data);
+      } catch (error) {
+        console.error('Error fetching disponibilite:', error);
+      }
+    };
+
+    fetchDisponibilite();
+
+  }, []); // Empty dependency array ensures useEffect runs only once on mount
+
 
   const addInscription = async (values, onSubmitProps) => {
     setOpen(true);
@@ -195,23 +214,9 @@ function InscriptionCorsus(props) {
   ];
 
   const isSelectable = (day, hour, minute) => {
-    if (day === "Saturday" || day === "Sunday") {
-      return true; // Allow selection on Saturday and Sunday
-    }
-
-    const nonSelectableHours = [
-      "10:00",
-      "10:30",
-      "11:00",
-      "11:30",
-      "12:00",
-      "12:30",
-      "13:00",
-      "13:30",
-    ];
-    const currentTime = `${hour}:${minute < 10 ? "0" : ""}${minute}`;
-
-    return !nonSelectableHours.includes(currentTime);
+    // Check if the selected time slot matches any of the teacher's available time slots
+    const currentTime = `${hour}:${minute < 10 ? '0' : ''}${minute}`;
+    return disponiliteTeacher.some((slot) => slot.day === day && slot.startTime <= currentTime && slot.endTime > currentTime);
   };
 
   return (

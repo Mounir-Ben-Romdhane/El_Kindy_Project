@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { getAllClasses } from 'services/classesService/api';
 import { getAllCourses } from 'services/courseService/api';
-import { addTeacher } from 'services/usersService/api';
+import { addTeacher, getUsers } from 'services/usersService/api';
 
 function AddTeacher({ onClose, fetchData }) {
+  
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -11,6 +12,7 @@ function AddTeacher({ onClose, fetchData }) {
     password: '',
     coursesTaught: [],
     classesTeaching: [], // Add classesTeaching
+    studentsTaught: [], // Add studentsTaught field
     dateOfBirth: '',
     address: '',
     gender: '',
@@ -23,6 +25,10 @@ function AddTeacher({ onClose, fetchData }) {
 
   const [courses, setCourses] = useState([]);
   const [classes, setClasses] = useState([]);
+  // State to hold the list of students
+  const [students, setStudents] = useState([]);
+  // Validation errors state
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     async function fetchCourses() {
@@ -50,6 +56,24 @@ function AddTeacher({ onClose, fetchData }) {
     fetchClasses();
   }, []);
 
+  // Fetch students data
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        // Make an API call to fetch students data
+         const response = await getUsers("student");
+        // Set the fetched students data to the state
+        setStudents(response.data.data);
+      } catch (error) {
+        console.error('Error fetching students:', error);
+      }
+    };
+
+    fetchStudents();
+  }, []);
+
+  
+
 
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
@@ -61,11 +85,16 @@ function AddTeacher({ onClose, fetchData }) {
           ...prevFormData,
           coursesTaught: [...prevFormData.coursesTaught, selectedCourseId],
         }));
+        validateField(name, value);
+
+        
       } else {
         setFormData((prevFormData) => ({
           ...prevFormData,
           coursesTaught: prevFormData.coursesTaught.filter((id) => id !== selectedCourseId),
         }));
+        validateField(name, value);
+
       }
     } else if (name === 'classesTeaching') {
       const selectedClassId = value;
@@ -75,24 +104,112 @@ function AddTeacher({ onClose, fetchData }) {
           ...prevFormData,
           classesTeaching: [...prevFormData.classesTeaching, selectedClassId],
         }));
+        validateField(name, value);
+
       } else {
         setFormData((prevFormData) => ({
           ...prevFormData,
           classesTeaching: prevFormData.classesTeaching.filter((id) => id !== selectedClassId),
         }));
+        validateField(name, value);
+
       }
     } else {
       setFormData({ ...formData, [name]: value });
+      validateField(name, value);
+    }
+  };
+
+  // Function to handle changes in selected students
+  const handleStudentChange = (e) => {
+    const { value, checked } = e.target;
+    const selectedStudentId = value;
+
+    if (checked) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        studentsTaught: [...prevFormData.studentsTaught, selectedStudentId],
+      }));
+      
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        studentsTaught: prevFormData.studentsTaught.filter(
+          (id) => id !== selectedStudentId
+        ),
+      }));
     }
   };
   
+  const validateField = (name, value) => {
+    let error = '';
+    switch (name) {
+      case 'firstName':
+        error = value.trim() === '' ? 'Please enter teacher first name !' : '';
+        break;
+      case 'lastName':
+        error = value.trim() === '' ? 'Please enter teacher last name !' : '';
+        break;
+      case 'email':
+        error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Please enter a valid email address !';
+        break;
+      case 'password':
+        error = value.length < 6 ? 'Password must be at least 6 characters long !' : '';
+        break;
+      case 'address':
+        error = value.trim() === '' || value.length < 6 ? 'Please enter teacher full address !' : '';
+        break;
+      case 'gender':
+        error = value === '' ? 'Please select teacher gender !' : '';
+        break;
+      case 'phoneNumber1':
+        error = /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(value) ? '' : 'Please enter a valid phone number !';
+        break;
+      case 'phoneNumber2':
+        // Validate phone number 2 only if a value is provided
+        if (value.trim() !== '') {
+          error = /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(value) ? '' : 'Please enter a valid phone number !';
+        }
+        break;
+      case 'dateOfBirth':
+        // Calculate 3 years ago date
+        const minDate = new Date();
+        minDate.setFullYear(minDate.getFullYear() - 3);
+        const selectedDate = new Date(value);
+        error = selectedDate > minDate ? 'Date of birth must be at least 3 years ago!' : '';
+        break;
+      case 'qualifications':
+        error = value < 6 ? 'Please select teacher qualifications !' : '';
+        break;
+      case 'experienceYears':
+        error = value < 0 ? 'Please select teacher experience years !' : '';
+        break;
+      default:
+        break;
+    }
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
+  };
   
 
   // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     formData.disponibilite = selectedTimeSlots;
-    console.log("formData : ",formData);
+    //console.log("formData : ",formData);
+
+    const formErrors = {};
+    Object.keys(formData).forEach((key) => {
+      validateField(key, formData[key]);
+      if (errors[key]) {
+        formErrors[key] = errors[key];
+      }
+    });
+    
+    if (Object.keys(formErrors).length > 0) {
+      return;
+    }
+    else{
+
     try {
       // Make API call to add teacher
       const response = await addTeacher(formData);
@@ -110,6 +227,7 @@ function AddTeacher({ onClose, fetchData }) {
       console.error('Error adding teacher:', error);
       // Handle error here, e.g., show error message to the user
     }
+  }
   };
 
   //table time
@@ -182,6 +300,11 @@ function AddTeacher({ onClose, fetchData }) {
     return !nonSelectableHours.includes(currentTime);
   };
 
+   // State for controlling the visibility of modals
+  const [showAddCourseModal, setShowAddCourseModal] = useState(false);
+  const [showAddClassModal, setShowAddClassModal] = useState(false);
+  const [showAddStudentModal, setShowAddStudentModal] = useState(false);
+
   return (
     <div className="page-content-wrapper border">
       <div className="container position-relative">
@@ -215,8 +338,9 @@ function AddTeacher({ onClose, fetchData }) {
                           name="firstName"
                           value={formData.firstName}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.firstName ? 'is-invalid' : ''}`}
                         />
+                        {errors.firstName && <div className="invalid-feedback">{errors.firstName}</div>}
                       </div>
                     </div>
                   </div>
@@ -234,8 +358,9 @@ function AddTeacher({ onClose, fetchData }) {
                           name="lastName"
                           value={formData.lastName}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.lastName ? 'is-invalid' : ''}`}
                         />
+                        {errors.lastName && <div className="invalid-feedback">{errors.lastName}</div>}
                       </div>
                     </div>
                   </div>
@@ -253,9 +378,11 @@ function AddTeacher({ onClose, fetchData }) {
                           name="email"
                           value={formData.email}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.email ? 'is-invalid' : ''}`}
                         />
-                      </div>
+                                                {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+
+                        </div>
                     </div>
                   </div>
                   {/* Password */}
@@ -272,8 +399,9 @@ function AddTeacher({ onClose, fetchData }) {
                           name="password"
                           value={formData.password}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.password ? 'is-invalid' : ''}`}
                         />
+                        {errors.password && <div className="invalid-feedback">{errors.password}</div>}
                       </div>
                     </div>
                   </div>
@@ -340,11 +468,42 @@ function AddTeacher({ onClose, fetchData }) {
                       </div>
                     </div>
 
+                    {/* Students taught */}
+        <div className="col-12">
+          <div className="row g-xl-0 align-items-center">
+            <div className="col-lg-4">
+              <h6 className="mb-lg-0">
+                Students Taught{' '}
+                <span className="text-danger">*</span>
+              </h6>
+            </div>
+            <div className="col-lg-8">
+              {students.map((student) => (
+                <div key={student._id} className="form-check form-check-inline">
+                  <input
+                    type="checkbox"
+                    name="studentsTaught"
+                    value={student._id}
+                    checked={formData.studentsTaught.includes(student._id)}
+                    onChange={handleStudentChange}
+                    className="form-check-input"
+                    id={student._id}
+                  />
+                  <label className="form-check-label" htmlFor={student._id}>
+                    {student.firstName} {student.lastName}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
                   {/* Date of Birth */}
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Date of Birth</h6>
+                        <h6 className="mb-lg-0">Date of Birth {' '}
+                            <span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -352,8 +511,9 @@ function AddTeacher({ onClose, fetchData }) {
                           name="dateOfBirth"
                           value={formData.dateOfBirth}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.dateOfBirth ? 'is-invalid' : ''}`}
                         />
+                        {errors.dateOfBirth && <div className="invalid-feedback">{errors.dateOfBirth}</div>}
                       </div>
                     </div>
                   </div>
@@ -361,7 +521,8 @@ function AddTeacher({ onClose, fetchData }) {
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Address</h6>
+                        <h6 className="mb-lg-0">Address{' '}
+                            <span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -369,8 +530,10 @@ function AddTeacher({ onClose, fetchData }) {
                           name="address"
                           value={formData.address}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.address ? 'is-invalid' : ''}`}
                         />
+                        {errors.address && <div className="invalid-feedback">{errors.address}</div>}
+
                       </div>
                     </div>
                   </div>
@@ -378,19 +541,22 @@ function AddTeacher({ onClose, fetchData }) {
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Gender</h6>
+                        <h6 className="mb-lg-0">Gender{' '}
+                            <span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <select
                           name="gender"
                           value={formData.gender}
                           onChange={handleChange}
-                          className="form-select"
+                          className={`form-select ${errors.gender ? 'is-invalid' : ''}`}
                         >
                           <option value="">Select gender</option>
                           <option value="Male">Male</option>
                           <option value="Female">Female</option>
                         </select>
+                        {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
+                      
                       </div>
                     </div>
                   </div>
@@ -408,8 +574,9 @@ function AddTeacher({ onClose, fetchData }) {
                           name="phoneNumber1"
                           value={formData.phoneNumber1}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.phoneNumber1 ? 'is-invalid' : ''}`}
                         />
+                        {errors.phoneNumber1 && <div className="invalid-feedback">{errors.phoneNumber1}</div>}
                       </div>
                     </div>
                   </div>
@@ -425,9 +592,10 @@ function AddTeacher({ onClose, fetchData }) {
                           name="phoneNumber2"
                           value={formData.phoneNumber2}
                           onChange={handleChange}
-                          className="form-control"
-                        />
-                      </div>
+                          className={`form-control ${errors.phoneNumber2 ? 'is-invalid' : ''}`}
+                          />
+                          {errors.phoneNumber2 && <div className="invalid-feedback">{errors.phoneNumber2}</div>}
+                        </div>
                     </div>
                   </div>
                   {/* Qualifications */}
@@ -442,8 +610,9 @@ function AddTeacher({ onClose, fetchData }) {
                           name="qualifications"
                           value={formData.qualifications}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.qualifications ? 'is-invalid' : ''}`}
                         />
+                        {errors.qualifications && <div className="invalid-feedback">{errors.qualifications}</div>}
                       </div>
                     </div>
                   </div>
@@ -459,8 +628,9 @@ function AddTeacher({ onClose, fetchData }) {
                           name="experienceYears"
                           value={formData.experienceYears}
                           onChange={handleChange}
-                          className="form-control"
+                          className={`form-control ${errors.experienceYears ? 'is-invalid' : ''}`}
                         />
+                        {errors.experienceYears && <div className="invalid-feedback">{errors.experienceYears}</div>}
                       </div>
                     </div>
                   </div>

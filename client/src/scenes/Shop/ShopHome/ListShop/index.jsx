@@ -14,6 +14,7 @@ function Index() {
   const decodeToken = accessToken ? jwtDecode(accessToken) : "";
   const [popupVisible, setPopupVisible] = useState(false); // Etat pour contrôler la visibilité du popup
   const [shops, setShops] = useState([]); // Etat pour stocker la liste des shops
+  const [errors, setErrors] = useState({}); // State to hold form errors
 
   // State to hold the image name
   const [imageName, setImageName] = useState(null);
@@ -102,8 +103,31 @@ function Index() {
     values.preventDefault();
     const formData = new FormData(values.target); // Create FormData object from form
     const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
-    // console.log("Values",formValues);
-    await addShop(formValues, onSubmitProps);
+    const formErrors = {};
+ // Add validation for image
+ if (!imageFile) {
+  formErrors.picture = 'Image is required';
+}
+    // console.log("Values",formValues);const formErrors = {};
+    if (!formValues.name) {
+      formErrors.name = 'Name is required';
+    }
+    if (!formValues.marque) {
+      formErrors.marque = 'Brand is required';
+    }
+    if (!formValues.price) {
+      formErrors.price = 'Price is required';
+    }
+    if (!formValues.phoneNumber) {
+      formErrors.phoneNumber = 'Phone number is required';
+    }
+    if (!formValues.description) {
+      formErrors.description = 'description is required';
+    }
+    setErrors(formErrors); // Update error state
+    if (Object.keys(formErrors).length === 0) {
+      await addShop(formValues, onSubmitProps);
+    }
   };
   useEffect(() => {
     const fetchData = async () => {
@@ -269,95 +293,94 @@ Page content END */}
                   <button type="button" className="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i className="bi bi-x-lg" /></button>
                 </div>
                 <div className="modal-body">
-                  <form onSubmit={handleFormSubmit} className="row text-start g-3">
-                    {/* Answer options START */}
-                    <div className="col-6">
-                      <label className="form-label">Instrument name </label>
-                      <input className="form-control" name="name" type="text" placeholder="Write name" required />
-                    </div>
-                    {/* Answer options START */}
-                    <div className="col-6">
-                      <label className="form-label">brand</label>
-                      <input className="form-control" name="marque" type="text" placeholder="Write the brand" required />
-                    </div>
+                <form onSubmit={handleFormSubmit} className="row text-start g-3">
+                  {/* Instrument name */}
+                  <div className="col-6">
+                    <label className="form-label">Instrument name </label>
+                    <input className="form-control" name="name" type="text" placeholder="Write name"  />
+                    {errors.name && <div className="text-danger">{errors.name}</div>} {/* Display name error */}
+                  </div>
+                  {/* Brand */}
+                  <div className="col-6">
+                    <label className="form-label">Brand</label>
+                    <input className="form-control" name="marque" type="text" placeholder="Write the brand"  />
+                    {errors.marque && <div className="text-danger">{errors.marque}</div>} {/* Display brand error */}
+                  </div>
+                  {/* Price */}
+                  <div className="col-6">
+                    <label className="form-label">Price</label>
+                    <input className="form-control" name="price" type="number" placeholder="Write the price"  />
+                    {errors.price && <div className="text-danger">{errors.price}</div>} {/* Display price error */}
+                  </div>
+                  {/* Discount */}
+                  <div className="col-6">
+                    <label className="form-label">Discount</label>
+                    <input className="form-control" name="remise" type="number" placeholder="Write a discount" />
+                  </div>
+                  {/* Phone number */}
+                  <div className="col-6">
+                    <label className="form-label">Phone number</label>
+                    <input className="form-control" name="phoneNumber" type="number" placeholder="Write the number"  />
+                    {errors.phoneNumber && <div className="text-danger">{errors.phoneNumber}</div>} {/* Display phone number error */}
+                  </div>
+                  {/* Description */}
+                  <div className="col-12">
+                    <label className="form-label">Description</label>
+                    <input className="form-control" name="description" type="text" placeholder="Write description"  />
+                    {errors.description && <div className="text-danger">{errors.description}</div>} {/* Display phone number error */}
 
-                    <div className="col-6">
-                      <label className="form-label">Price</label>
-                      <input className="form-control" name="price" type="number" placeholder="Write the price" required />
-                    </div>
-                    <div className="col-6">
-                      <label className="form-label">discount</label>
-                      <input className="form-control" name="remise" type="number" placeholder="Write a discount" />
-                    </div>
-                    <div className="col-6">
-                      <label className="form-label">Phone number </label>
-                      <input className="form-control" name="phoneNumber" type="number" placeholder="Write the number" required />
-                    </div>
-                    {/* Question */}
-                    <div className="col-12">
-                      <label className="form-label">Description</label>
-                      <input className="form-control" name="description" type="text" placeholder="Write description" required />
-                    </div>
-                    {/* Course category */}
-
-
-                    <div className="col-12">
-                      {/* Upload image START */}
-
-                      <div className="m-4">
-                        {/* Image */}
-                        <div className="text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3">
-                          {/* Display the image */}
-                          {imageFile && (
-                            <div>
-                              <img
-                                src={URL.createObjectURL(imageFile)}
-                                alt="Uploaded image"
-                                className="img-fluid mb-2 rounded"
-                                style={{ maxWidth: '100px', maxHeight: '100px' }} // Ajuster la taille de l'image ici
-                              />
-                              <p className="mb-0">Uploaded image</p>
-                            </div>
-                          )}
-                          {/* Upload image button */}
-                          <div className="mb-3">
-                            <h6 className="my-2">Upload instrument picture here, or <span className="text-primary" style={{ cursor: 'pointer' }}>Browse</span></h6>
-                            {/* File input */}
-                            <input
-                              className="form-control form-control-sm" // Ajouter la classe form-control-sm pour réduire la taille de l'input
-                              type="file"
-                              name="picture"
-                              id="image"
-                              accept="image/gif, image/jpeg, image/png"
-                              onChange={handleImageSelect}
-                              required // Champ requis pour l'image
+                  </div>
+                  {/* Upload image */}
+                  <div className="col-12">
+                    <div className="m-4">
+                      <div className="text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3">
+                        {imageFile && (
+                          <div>
+                            <img
+                              src={URL.createObjectURL(imageFile)}
+                              alt="Uploaded image"
+                              className="img-fluid mb-2 rounded"
+                              style={{ maxWidth: '100px', maxHeight: '100px' }}
                             />
-                            {/* Note */}
-                            <p className="small mb-0 mt-2"><b>Note:</b> Only JPG, JPEG, and PNG formats are supported. Our suggested dimensions are 600px * 450px. Larger images will be cropped to fit our thumbnails/previews.</p>
+                            <p className="mb-0">Uploaded image</p>
                           </div>
-                          {/* Remove image button */}
-                          {imageName && (
-                            <div className="d-sm-flex justify-content-end mt-2">
-                              <button
-                                type="button"
-                                className="btn btn-sm btn-danger-soft mb-3"
-                                onClick={handleRemoveImage}
-                              >
-                                Remove image
-                              </button>
-                            </div>
-                          )}
+                        )}
+                        <div className="mb-3">
+                          <h6 className="my-2">Upload instrument picture here, or <span className="text-primary" style={{ cursor: 'pointer' }}>Browse</span></h6>
+                          <input
+                            className="form-control form-control-sm"
+                            type="file"
+                            name="picture"
+                            id="image"
+                            accept="image/gif, image/jpeg, image/png"
+                            onChange={handleImageSelect}
+                            
+                          />
+                                              {errors.picture && <div className="text-danger">{errors.picture}</div>} {/* Display phone number error */}
+
+                          <p className="small mb-0 mt-2"><b>Note:</b> Only JPG, JPEG, and PNG formats are supported. Our suggested dimensions are 600px * 450px. Larger images will be cropped to fit our thumbnails/previews.</p>
                         </div>
+                        {errors.picture && <div className="text-danger">{errors.picture}</div>} {/* Display image error */}
+                        {imageFile && (
+                          <div className="d-sm-flex justify-content-end mt-2">
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-danger-soft mb-3"
+                              onClick={handleRemoveImage}
+                            >
+                              Remove image
+                            </button>
+                          </div>
+                        )}
                       </div>
-
                     </div>
-                    <div className="modal-footer">
-                      <button type="button" className="btn btn-danger-soft my-0" data-bs-dismiss="modal">Close</button>
-                      <button className="btn btn-success my-0" type="submit">Add Instrument</button>
-                    </div>
-                    {/* Answer options END */}
-
-                  </form>
+                  </div>
+                  {/* Submit button */}
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-danger-soft my-0" data-bs-dismiss="modal">Close</button>
+                    <button className="btn btn-success my-0" type="submit">Add Instrument</button>
+                  </div>
+                </form>
                 </div>
 
               </div>
