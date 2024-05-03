@@ -169,9 +169,81 @@ import { useTranslation } from "react-i18next";
         {/* Left sidebar END */}
       </>
     );
+const Index = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [activeNavItem, setActiveNavItem] = useState("");
+
+  const { t, i18n } = useTranslation();
+
+
+  const logoutHandler = () => {
+    dispatch(setLogout());
+    navigate("/");
+  };
+
+  useEffect(() => {
+    // Set activeNavItem based on current location
+    const pathname = location.pathname;
+    setActiveNavItem(pathname);
+  }, [location]);
+
+  const handleNavItemClick = (item) => {
+    setActiveNavItem(item === activeNavItem ? "" : item);
   };
   export default Index;
 
 
 
-  
+
+                  <Link
+                    className={`list-group-item ${
+                      activeNavItem === "/TeachersList" ? "active" : ""
+                    }`}
+                    to="/TeachersList"
+                    onClick={() => handleNavItemClick("/TeachersList")}
+                  >
+                    <i className="bi bi-people fa-fw me-2" />
+                     {t("sidebarStudent.Teachers")}  
+                  </Link>
+                  <Link
+                    className={`list-group-item ${
+                      activeNavItem === "/time-slots-student" ? "active" : ""
+                    }`}
+                    to="/time-slots-student"
+                    onClick={() => handleNavItemClick("/time-slots-student")}
+                  >
+                    <i className="bi bi-clock fa-fw me-2" />
+                    {t("sidebarStudent.Time Slots")}  
+                  </Link>
+                  <Link
+                    className={`list-group-item ${
+                      activeNavItem === "/profile-student" ? "active" : ""
+                    }`}
+                    to="/profile-student"
+                    onClick={() => handleNavItemClick("/profile-student")}
+                  >
+                    <i className="bi bi-person-lines-fill fa-fw me-2" />
+                   {t("sidebarStudent.Edit Profile")}  
+                  </Link>{" "}
+                  <a
+                    className="list-group-item text-danger bg-danger-soft-hover"
+                    href="#"
+                    onClick={logoutHandler}
+                  >
+                    <i className="fas fa-sign-out-alt fa-fw me-2" />
+                    {t("sidebarStudent.Sign Out")} 
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+        {/* Responsive offcanvas body END */}
+      </div>
+      {/* Left sidebar END */}
+    </>
+  );
+};
+export default Index;

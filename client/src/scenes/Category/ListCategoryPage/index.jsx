@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -7,8 +8,6 @@ import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import Swal from "sweetalert2"; // Importez SweetAlert2
 import useAxiosPrivate from "hooks/useAxiosPrivate";
-import { Backdrop } from "@mui/material";
-import { GridLoader } from "react-spinners";
 const MySwal = withReactContent(Swal);
 
 function Index() {
@@ -16,19 +15,16 @@ function Index() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortOption, setSortOption] = useState("");
-  // pagination
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
-  const entriesPerPage = 8; // Number of entries to display per page
+
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
   let [color, setColor] = useState("#399ebf");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
+  const entriesPerPage = 8; // Number of entries to display per page
   const axiosPrivate = useAxiosPrivate();
 
   const fetchCategories = async () => {
-    setOpen(true);
-
     try {
       const response = await axiosPrivate.get("/api/categories");
       setCategories(response.data);
@@ -116,6 +112,7 @@ function Index() {
               >
                 <GridLoader color={color} loading={loading} size={20} />
               </Backdrop>
+
           {/* Page main content START */}
           <div className="page-content-wrapper border">
             {/* Title */}
@@ -332,11 +329,11 @@ function Index() {
         )}
         {/* Page content END */}
       </div>
-      {/* ************** MAIN CONTENT END ************** */}
-    </main>
-  </div>
-);
-  
+
+      </main>
+      {/* **************** MAIN CONTENT END **************** */}
+    </div>
+  );
 }
 
 export default Index;

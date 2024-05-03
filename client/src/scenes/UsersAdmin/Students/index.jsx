@@ -1,7 +1,7 @@
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import React, { useEffect, useState } from "react";
-
+import { Link } from "react-router-dom";
 import {
   blockUser,
   getUsers,
@@ -13,43 +13,35 @@ import UpdateStudent from "../userCrud/updateStudent";
 
 function StudentsDashboard() {
 
+import AddUser from "../userCrud/addUser";
+import UpdateUser from "../userCrud/updateUser";
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
+
+function AdminsDashboard() {
   const iconStyle = {
     marginRight: "10px",
   };
 
-  const [students, setStudents] = useState([]);
-  const [student, setStudent] = useState();
+  const [admins, setAdmins] = useState([]);
+  const [admin, setAdmin] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [showFormUpdate, setShowFormUpdate] = useState(false);
-  const [studentDetails, setStudentDetails] = useState({});
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [studentsPerPage] = useState(6);
 
+  const [entriesPerPage] = useState(6);
+  let [color, setColor] = useState("#399ebf");
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
 
-  const handleToggleMore = (studentId) => {
-    setStudentDetails((prevState) => ({
-      ...prevState,
-      [studentId]: !prevState[studentId],
-    }));
-  };
 
   const handleToggleForm = () => {
     setShowForm(!showForm);
     setShowFormUpdate(false); // Close the update form when toggling the add form
-  };
-
-  const handleToggleFormUpdate = (student) => {
-    // If the update form is already shown, only change the student
-    if (showFormUpdate) {
-      setStudent(student);
-    } else {
-      setStudent(student);
-      setShowFormUpdate(true);
-      setShowForm(false); // Close the add form when toggling the update form
-    }
   };
 
   const close = () => {
@@ -57,41 +49,63 @@ function StudentsDashboard() {
     setShowFormUpdate(false);
   };
 
-  const handleBlockStudent = async (studentId) => {
-    try {
-      // Make API call to block student
-      const response = await blockUser(studentId);
-
-      if (response.status === 200) {
-        console.log("Student blocked successfully!");
-        // Perform any additional actions if needed
-        fetchData();
-      } else {
-        console.error("Error blocking student:", response.data);
-        // Handle error here, e.g., show error message to the user
-      }
-    } catch (error) {
-      console.error("Error blocking student:", error);
-      // Handle error here, e.g., show error message to the user
+  const handleToggleFormUpdate = (admin) => {
+    // If the update form is already shown, only change the teacher
+    if (showFormUpdate) {
+      setAdmin(admin);
+    } else {
+      setAdmin(admin);
+      setShowFormUpdate(true);
+      setShowForm(false); // Close the add form when toggling the update form
     }
   };
 
-  const handleUnblockStudent = async (studentId) => {
+  const handleBlockUser = async (userId) => {
+    setOpen2(true);
+
     try {
-      // Make API call to unblock student
-      const response = await unblockUser(studentId);
+      // Make API call to block user
+      const response = await blockUser(userId);
 
       if (response.status === 200) {
-        console.log("Student unblocked successfully!");
+        console.log("User blocked successfully!");
         // Perform any additional actions if needed
         fetchData();
+        setOpen2(false);
       } else {
-        console.error("Error unblocking student:", response.data);
+        console.error("Error blocking user:", response.data);
+        setOpen2(false);
+
         // Handle error here, e.g., show error message to the user
       }
     } catch (error) {
-      console.error("Error unblocking student:", error);
+      console.error("Error blocking user:", error);
       // Handle error here, e.g., show error message to the user
+      setOpen2(false);
+    }
+  };
+
+  const handleUnblockUser = async (userId) => {
+    setOpen2(true);
+
+    try {
+      // Make API call to unblock user
+      const response = await unblockUser(userId);
+
+      if (response.status === 200) {
+        console.log("User unblocked successfully!");
+        // Perform any additional actions if needed
+        fetchData();
+        setOpen2(false);
+      } else {
+        console.error("Error unblocking user:", response.data);
+        // Handle error here, e.g., show error message to the user
+        setOpen2(false);
+      }
+    } catch (error) {
+      console.error("Error unblocking user:", error);
+      // Handle error here, e.g., show error message to the user
+      setOpen2(false);
     }
   };
 
@@ -100,75 +114,89 @@ function StudentsDashboard() {
       const response = await getUsers("student");
       setStudents(response.data.data);
       setLoading(false);
+
+      if (response.status === 200) {
+        setOpen(false);
+      } else {
+        setOpen(false);
+      }
     } catch (error) {
-      console.error("Error fetching students:", error);
-      setError("Error fetching students. Please try again later.");
+      console.error("Error fetching admins:", error);
+      setError("Error fetching admins. Please try again later.");
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Function to handle student removal
-  const handleRemoveStudent = async (studentId) => {
+  // Function to handle user removal
+  const handleRemoveUser = async (userId) => {
+    setOpen2(true);
+
     try {
-      // Call the removeStudent function from your service
-      await removeUser(studentId);
-      fetchData();
-      close();
+      // Call the removeUser function from your service
+      const respense = await removeUser(userId);
+      if (respense.status === 200) {
+        fetchData();
+        setOpen2(false);
+        close();
+      }
     } catch (error) {
-      console.error("Error removing student:", error);
+      console.error("Error removing user:", error);
       // Handle errors as needed
     }
   };
 
-  // Search functionality
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset current page when searching
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
   };
 
- 
-
-  const filteredStudents = students.filter((teacher) =>
-  Object.values(teacher).some(
-    (value) =>
-      typeof value === "string" &&
-      value.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-);
+  // Filter admins based on search query
+  const filteredAdmins = admins.filter((admin) =>
+    Object.values(admin).some(
+      (value) =>
+        value &&
+        value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
 
   // Pagination
-  const indexOfLastStudent = currentPage * studentsPerPage;
-  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
-  const currentStudents = filteredStudents.slice(
-    indexOfFirstStudent,
-    indexOfLastStudent
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentAdmins = filteredAdmins.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
   );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   //export admins
-  const djangoapi = "http://127.0.0.1:8000/insertdata/students/";
-  const addStudent = async () => {
+  const djangoapi = "http://127.0.0.1:8000/insertdata/";
+  const addAdmins = async () => {
+    setOpen2(true);
     try {
       const response = await fetch(djangoapi); // Assuming your backend API is available at this endpoint
       if (response.status === 200) {
         fetchData();
+        setOpen2(false);
       } else {
         throw new Error("Erreur lors de la récupération des données");
+        setOpen2(false);
+
       }
     } catch (error) {
       console.error("Erreur lors de la requête GET:", error.message);
+      setOpen2(false);
+
     }
   };
 
   const handleOpenSheets = () => {
     // URL of your Google Sheets document
     const googleSheetsUrl =
-      "https://docs.google.com/spreadsheets/d/1pRMgY4bmKN7Ruc3Dt9qjTiNSuEOF_0IGFtmKHoWJduc/edit#gid=0";
+      "https://docs.google.com/spreadsheets/d/1QoHnm1uRLN8VOrxTrkINykgG5xdCKRmPKthb3LBF5wI/edit#gid=0";
 
     // Open the Google Sheets document in a new tab
     window.open(googleSheetsUrl, "_blank");
@@ -189,6 +217,18 @@ function StudentsDashboard() {
               <div className="row">
                 <div className="col-12">
                   <h1 className="h2 mb-2 mb-sm-0">Students list</h1>
+              {/* Backdrop with GridLoader */}
+
+                  <Backdrop
+                      sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                      open={open2}
+                  >
+                      <GridLoader color={color} loading={loading} size={20} />
+                  </Backdrop>
+
+              <div className="row">
+                <div className="col-12">
+                  <h1 className="h2 mb-2 mb-sm-0">Admins list</h1>
                 </div>
               </div>
               <div className="card bg-transparent">
@@ -201,10 +241,10 @@ function StudentsDashboard() {
                           type="search"
                           placeholder="Search"
                           aria-label="Search"
-                          value={searchTerm}
+                          value={searchQuery}
                           onChange={handleSearchChange}
                         />
-                        {searchTerm === "" && (
+                        {searchQuery === "" && ( // Check if the search query is empty
                           <button
                             className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
                             onClick={(event) => event.preventDefault()}
@@ -214,34 +254,50 @@ function StudentsDashboard() {
                         )}
                       </form>
                     </div>
-                    <div className="col-md-6 d-flex justify-content-end">
+                    <div className="col-md-6 d-flex justify-content-end align-items-center">
                       <button
-                        className="btn btn-info m-2 text-wrap text-break"
-                        onClick={addStudent}
+                        className="btn btn-info btn-sm m-2 d-flex align-items-center text-wrap text-break"
+                        onClick={addAdmins}
+                        style={{
+                          fontSize: "0.8rem",
+                          padding: "0.5rem 0.9rem",
+                        }} // Ensure padding is consistent
                       >
-                        <i className="fas fa-file-import" style={iconStyle}></i>
-                        <span className="d-none d-md-inline">
-                          Import Student
+                        <i
+                          className="fas fa-file-import"
+                          style={{ width: "1em", marginRight: "7px" }}
+                        ></i>{" "}
+                        <span className="d-none d-md-inline ms-1">
+                          Import Admins
                         </span>
                       </button>
-
                       <button
-                        className="btn btn-success m-2 text-wrap text-break"
+                        className="btn btn-success btn-sm m-2 d-flex align-items-center text-wrap text-break"
                         onClick={handleOpenSheets}
+                        style={{
+                          fontSize: "0.8rem",
+                          padding: "0.5rem 0.9rem",
+                        }}
                       >
-                        <i className="fas fa-file-alt " style={iconStyle}></i>
-                        <span className="d-none d-md-inline">
+                        <i
+                          className="fas fa-file-alt"
+                          style={{ width: "1em", marginRight: "7px" }}
+                        ></i>
+                        <span className="d-none d-md-inline ms-1">
                           Open Google Sheets
                         </span>
                       </button>
                       <button
-                        className="btn btn-primary m-2 text-wrap text-break"
+                        className="btn btn-primary btn-sm m-2 d-flex align-items-center text-wrap text-break"
                         onClick={handleToggleForm}
+                        style={{
+                          fontSize: "0.8rem",
+                          padding: "0.56rem 0.9rem",
+                        }}
                       >
-                        <i className="fas fa-user" style={iconStyle}></i>
-
-                        <span className="d-none d-md-inline">
-                          Add New Student
+                        <i className="fas fa-user" style={{ width: "1em", marginRight: "7px" }}></i>
+                        <span className="d-none d-md-inline ms-1">
+                          Add New Admin
                         </span>
                       </button>
                     </div>
@@ -512,12 +568,14 @@ function StudentsDashboard() {
                                       </button>
                                     )}
                                   </div>
+
                                 </div>
                               </div>
                             </div>
                           </div>
-                        ))}
-                      </div>
+                     
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -535,6 +593,7 @@ function StudentsDashboard() {
                       filteredStudents.length
                     )}{" "}
                     of {filteredStudents.length} entries
+                   
                   </p>
                   {/* Pagination */}
                   <nav
@@ -556,6 +615,7 @@ function StudentsDashboard() {
                       ))}
                       <li className={`page-item ${currentPage === Math.ceil(filteredStudents.length / studentsPerPage) && 'disabled'}`}>
                         <a className="page-link" href="#" onClick={() => paginate(currentPage + 1)}>
+
                           <i className="fas fa-angle-right" />
                         </a>
                       </li>
@@ -568,6 +628,9 @@ function StudentsDashboard() {
 
             </div>
           )}
+
+
+          
 
           {showForm && <AddStudent onClose={close} fetchData={fetchData} />}
 
@@ -584,4 +647,4 @@ function StudentsDashboard() {
   );
 }
 
-export default StudentsDashboard;
+export default AdminsDashboard;

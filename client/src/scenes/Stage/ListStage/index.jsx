@@ -12,6 +12,7 @@ function Index() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+
   const [totalEntries, setTotalEntries] = useState(0);
   const entriesPerPage = 8;
   const [open, setOpen] = useState(false);
