@@ -16,7 +16,7 @@ export const getUserById = async (id) => {
 export const removeUser = async (userId) => {
     try {
         const response = await axiosPublic.delete(`/auth/removeUser/${userId}`);
-        return response.data;
+        return response;
     } catch (error) {
         console.error('Error removing user:', error);
         throw error;

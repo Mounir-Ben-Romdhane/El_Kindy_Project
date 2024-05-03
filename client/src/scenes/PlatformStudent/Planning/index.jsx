@@ -8,7 +8,7 @@ import NavBar from "components/NavBar";
 import SideBarStudent from "components/SideBarStudent";
 import TopBarTeacherStudent from "components/TopBarTeacherStudent";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient";
 import { useSelector } from "react-redux"; // Importez useSelector depuis React Redux
 import { jwtDecode } from "jwt-decode";
 import EventDetailsModal from './EventDetailsModal';
@@ -19,7 +19,7 @@ const MyCalendar = () => {
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState({});
-  const [courses, setCourses] = useState([]); // Ajoutez un état pour stocker les cours
+  const [courses, setCourses] = useState({ data: [] });
   const [teachers, setTeachers] = useState([]); // Ajout d'un état pour les enseignants
   const [students, setStudents] = useState([]); // Ajout d'un état pour les étudiants
   const [loadingTeachers, setLoadingTeachers] = useState(true);
@@ -36,11 +36,13 @@ const MyCalendar = () => {
     try {
       const response = await axios.get(`http://localhost:3001/planning/${event.id}/details`);
       const courseDetails = response.data;
-      
-      setSelectedEvent(courseDetails);
+
+        console.log("aaaa",event)
+
+      const updatedEvent = { ...event}; // Add teacherId to the event object
+      setSelectedEvent(updatedEvent);
       setShowModal(true); // Add this line
       console.log("showModal set to true");
-      
     } catch (error) {
       console.error("Erreur lors de la récupération des détails du cours", error);
     }
@@ -58,6 +60,8 @@ const MyCalendar = () => {
         });
         setEvents(response.data.map((planning) => ({
           id: planning._id,
+          courseId: planning.courseId,
+
           title: planning.title,
           start: new Date(planning.start),
           end: new Date(planning.end),
@@ -97,15 +101,16 @@ const MyCalendar = () => {
         console.error("There was an error fetching the courses", error);
       });
   
-    axios
-      .get("http://localhost:3001/auth/teachers")
-      .then((response) => {
-        setTeachers(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the teachers", error);
-      });
-  
+  axios.get("http://localhost:3001/auth/teachers")
+    .then((response) => {
+      setTeachers(response.data);
+      console.log(response.data); // Vérifiez les données de l'enseignant récupérées
+    })
+    .catch((error) => {
+      console.error("There was an error fetching the teachers", error);
+    });
+
+
     axios
       .get("http://localhost:3001/auth/students")
       .then((response) => {
@@ -146,7 +151,7 @@ const MyCalendar = () => {
     setShowModal(false);
     const roomId = event.roomId;
     const roomExists = rooms.some((room) => room._id === roomId);
-    const selectedCourse = courses.data.find((course) => course._id === event.courseId);
+    const course = courses.data.find((s) => s._id === event.courseId);
 
     if (!roomExists) {
       console.error("L'ID de la salle spécifiée n'existe pas.");
@@ -173,11 +178,13 @@ const MyCalendar = () => {
   const MyEvent = ({ event }) => {
     const teacher = teachers.find((t) => t._id === event.teacherId);
     const student = students.find((s) => s._id === event.studentId);
-    {/*const teacherName = teacher ? `${teacher.firstName} ${teacher.lastName}`: "Enseignant inconnu";*/}
+    const course = courses.data.find((s) => s._id === event.courseId);
+
+    const courseName = course ? `${course.title}` : "";
 
     return (
       <div>
-        <strong>{event.title}</strong>
+        <strong>{courseName}</strong>
         {/*<div>Teacher: {teacherName}</div>*/}
       </div>
     );
@@ -226,7 +233,7 @@ const MyCalendar = () => {
                               startAccessor="start"
                               endAccessor="end"
                               dayLayoutAlgorithm={'overlap'} // Ajustez la taille des cases en fonction des événements qui se chevauchent
-                              style={{ height: '700px', width: "70%"  }} // Augmentez la hauteur du calendrier pour afficher plus de cases
+                              style={{ height: '700px', width: "101%"  }} // Augmentez la hauteur du calendrier pour afficher plus de cases
                                                         formats={formats}
                               eventPropGetter={(event) => ({
                                 style: { backgroundColor: event.color },
@@ -234,13 +241,18 @@ const MyCalendar = () => {
                             />
                            {console.log("Selected Event:", selectedEvent)}
                            {showModal && (
-  <EventDetailsModal
-    onClose={() => setShowModal(false)}
-    event={selectedEvent}
-    roomId={selectedEvent.resourceId}
-    rooms={rooms}
-  />
-)}
+                            <EventDetailsModal
+                              onClose={() => setShowModal(false)}
+                              event={selectedEvent}
+                              roomId={selectedEvent.resourceId}
+                              courseId={selectedEvent.courseId}
+                              teachers={teachers}
+                              teacherId={selectedEvent.teacherId}
+
+                              rooms={rooms}
+                              courses={courses} // Pass courseName as prop
+                            />
+                          )}
 
 
                           </div>
@@ -256,7 +268,7 @@ const MyCalendar = () => {
             </div>
           </div>
         </section>
-        <Footer />
+        <FooterClient />
 
       </main>
     </div>

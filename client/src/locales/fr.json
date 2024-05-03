@@ -42,7 +42,8 @@
     "Account Settings": "Paramètres du compte",
     "Sign Out": "Se déconnecter",
     "Dark mode": "Mode sombre",
-    "Sign In": "Se connecter"
+    "Sign In": "Se connecter",
+    "PLaymusic":"Jouer de la musique"
   },
   "sidebar": {
     "Dashboard": "Tableau de bord",
@@ -75,7 +76,20 @@
   "Time Slots": "Plages horaires",
   "Edit Profile": "Modifier le profil",
   "Sign Out": "Déconnexion"
+},
+"sidebarTeacher": {
+  "My profile": "Mon profil",
+  "Dashboard": "Tableau de bord",
+  "Create Meeting En Ligne": "Créer une réunion en ligne",
+  "Planning": "Planning",
+  "Assignment": "Affectation",
+  "Messages": "Messages",
+  "Students Grades": "Notes des élèves",
+  "Time Slots": "Plages horaires",
+  "Edit Profile": "Modifier le profil",
+  "Sign Out": "Déconnexion"
 }
+
 
 
   

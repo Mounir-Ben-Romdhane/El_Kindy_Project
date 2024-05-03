@@ -6,7 +6,12 @@ import TopBarBack from "components/TopBarBack";
 import { ToastContainer, toast } from "react-toastify";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 import { BASE_URL } from "api/axios";
+
+import { Backdrop } from "@mui/material";
+import { GridLoader } from "react-spinners";
+
 import { useNavigate, useParams } from "react-router-dom";
+
 
 function Index() {
   const [inscriptions, setInscriptions] = useState([]);
@@ -14,16 +19,25 @@ function Index() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortStatus, setSortStatus] = useState(""); // Sorting status: 'accepted', 'refused', 'pending', or ''
   const entriesPerPage = 10;
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  let [color, setColor] = useState("#399ebf");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Refresh token
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     const fetchData = async () => {
+      setOpen(true);
+
       try {
         const response = await axiosPrivate.get("/inscription/all");
         if (response.status === 200) {
           setInscriptions(response.data.data);
+          setOpen(false);
+
         } else {
           throw new Error("Failed to fetch inscriptions");
         }
@@ -130,6 +144,23 @@ function Index() {
         <SideBar />
         <div className="page-content">
           <TopBarBack />
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <div>
+              <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
           <div className="page-content-wrapper border">
             <ToastContainer />
             <div className="row mb-3">
@@ -137,6 +168,8 @@ function Index() {
                 <h1 className="h3 mb-2 mb-sm-0">Inscriptions</h1>
               </div>
             </div>
+
+            
 
             {/* Render text if inscriptions array is empty */}
             {inscriptions.length === 0 && <h2>No inscriptions available.</h2>}
@@ -157,13 +190,13 @@ function Index() {
                           onChange={handleSearchChange}
                         />
                         {searchQuery === "" && ( // Check if the search query is empty
-                          <button
-                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-                            type="submit"
-                          >
-                            <i className="fas fa-search fs-6 " />
-                          </button>
-                        )}
+      <button
+        className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+        type="submit"
+      >
+        <i className="fas fa-search fs-6 " />
+      </button>
+    )}
                       </form>
                     </div>
                     {/* Select option */}
@@ -224,11 +257,16 @@ function Index() {
                                   Pending
                                 </span>
                               )}
-                              {inscription.status === "confirmed" && (
+                              {inscription.status === "accepted" && (
                                 <span className="badge bg-success bg-opacity-15 text-success">
-                                  payment confirmed
+                                  Accepted
                                 </span>
                               )}
+
+                              {inscription.status === "refused" && (
+                                <span className="badge bg-danger bg-opacity-15 text-danger">
+                                  Refused
+
                               {inscription.status === "active" && (
                                 <span className="badge bg-danger bg-opacity-15 text-primary">
                                   active user
@@ -237,6 +275,7 @@ function Index() {
                               {inscription.status === "not paid" && (
                                 <span className="badge bg-info bg-opacity-15 text-danger ">
                                   Not Paid
+
                                 </span>
                               )}
                             </td>
@@ -277,8 +316,11 @@ function Index() {
                   <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                     <p className="mb-0 text-center text-sm-start">
                       Showing {indexOfFirstEntry + 1} to{" "}
-                      {Math.min(indexOfLastEntry, sortedInscriptions.length)} of{" "}
-                      {sortedInscriptions.length} entries
+                      {Math.min(
+                        indexOfLastEntry,
+                        sortedInscriptions.length
+                      )}{" "}
+                      of {sortedInscriptions.length} entries
                     </p>
                     <nav
                       className="d-flex justify-content-center mb-0"
@@ -347,7 +389,12 @@ function Index() {
             )}
           </div>
         </div>
+          )}
+           </div>
+    
       </main>
+     
+
     </div>
   );
 }

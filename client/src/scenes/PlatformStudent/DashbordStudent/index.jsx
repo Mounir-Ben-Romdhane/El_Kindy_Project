@@ -1,4 +1,4 @@
-import Footer from 'components/Footer';
+import FooterClient from 'components/FooterClient';
 import NavBar from 'components/NavBar';
 import React, { useEffect, useState } from "react";
 import SideBarStudent from 'components/SideBarStudent';
@@ -188,7 +188,7 @@ Page content END */}
 
 
 
-                <Footer />
+                <FooterClient />
 
             </main>
             {/* **************** MAIN CONTENT END **************** */}

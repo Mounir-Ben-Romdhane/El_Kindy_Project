@@ -1,5 +1,5 @@
 import BannerStartHome from "components/BannerStartHome";
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient"
 import NavBar from "components/NavBar";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 import React, { useEffect, useState } from "react";
@@ -430,7 +430,7 @@ function ListCourses() {
           </div>
         </section>
       </div>
-      <Footer />
+      <FooterClient />
     </>
   );
 }

@@ -11,6 +11,8 @@ const MySwal = withReactContent(Swal);
 function Index() {
   const [classes, setClasses] = useState([]);
   const [sortOption, setSortOption] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredClasses, setFilteredClasses] = useState([]);
   useEffect(() => {
     // Fonction pour récupérer les catégories
     const fetchClasses = async () => {
@@ -33,6 +35,7 @@ function Index() {
     };
     fetchClasses();
   }, []);
+  
   const fetchClasses = async () => {
     try {
       const response = await axios.get("http://localhost:3001/salle");
@@ -82,21 +85,34 @@ function Index() {
     }
   };
 
-  useEffect(() => {
-    // Appeler la fonction de tri lorsque sortOption change
-    handleSort();
-  }, [sortOption]);
+  
 
-  // Fonction pour trier les classes
-const handleSort = () => {
-  const sortedClasses = [...classes];
-  if (sortOption === "asc") {
-    sortedClasses.sort((a, b) => (a.name && b.name) ? a.name.localeCompare(b.name) : 0);
-  } else if (sortOption === "desc") {
-    sortedClasses.sort((a, b) => (a.name && b.name) ? b.name.localeCompare(a.name) : 0);
-  }
-  setClasses(sortedClasses);
-};
+  useEffect(() => {
+    setFilteredClasses(
+      classes.filter((classe) =>
+        classe.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  }, [classes, searchQuery]);
+  
+  // Sort courses based on the selected sorting option
+  
+  const sortedClass = filteredClasses.sort((a, b) => {
+    switch (sortOption) {
+      case "A-Z":
+        return a.name.localeCompare(b.name);
+      case "Z-A":
+        return b.name.localeCompare(a.name);
+      // Ajoutez d'autres options de tri selon vos besoins
+      default:
+        return 0;
+    }
+  });
+
+
+
+
+
 
 
   return (
@@ -127,20 +143,24 @@ const handleSort = () => {
                 <div className="row g-3 align-items-center justify-content-between">
                   {/* Search bar */}
                   <div className="col-md-8">
-                    <form className="rounded position-relative">
-                      <input
-                        className="form-control bg-body"
-                        type="search"
-                        placeholder="Search"
-                        aria-label="Search"
-                      />
-                      <button
-                        className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-                        type="submit"
-                      >
-                        <i className="fas fa-search fs-6 " />
-                      </button>
-                    </form>
+                  <form className="rounded position-relative">
+                        <input
+                          className="form-control bg-body"
+                          type="search"
+                          placeholder="Search"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          />
+                        {searchQuery === "" && ( // Check if the search query is empty
+                          <button
+                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                            onClick={(event) => event.preventDefault()}
+                          >
+                            <i className="fas fa-search fs-6 " />
+                          </button>
+                        )}
+                      </form>
+
                   </div>
                   {/* Select option */}
                   <div className="col-md-3">
@@ -152,8 +172,8 @@ const handleSort = () => {
             onChange={(e) => setSortOption(e.target.value)}
           >
             <option value="">Sort by</option>
-            <option value="asc">Ascendant</option>
-            <option value="desc">Descendant</option>
+            <option value="A-Z">Ascendant</option>
+            <option value="Z-A">Descendant</option>
           </select>
         </form>
       </div>
@@ -177,18 +197,18 @@ const handleSort = () => {
   </tr>
 </thead>
 <tbody>
-  {classes.map((clas, index) => (
-    <tr key={index}>
-      <td>{clas.name}</td>
-      <td>{clas.capacity}</td>
-      <td>{clas.status}</td>
+{sortedClass.map((classe) => (
+  <tr key={classe._id}>
+  <td>{classe.name}</td>
+      <td>{classe.capacity}</td>
+      <td>{classe.status}</td>
 
       
       <td>
-        <Link to={`/edit-classe/${clas._id}`} className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0">
+        <Link to={`/edit-classe/${classe._id}`} className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0">
             <i class="bi bi-pencil-square"></i>
         </Link>
-        <button onClick={() => handleDeleteClasses(clas._id)} className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"><i class="bi bi-trash"></i></button>
+        <button onClick={() => handleDeleteClasses(classe._id)} className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"><i class="bi bi-trash"></i></button>
       </td>
     </tr>
   ))}
@@ -259,15 +279,3 @@ const handleSort = () => {
 }
 
 export default Index;
-
-
-
-
-
-
-
-
-
-
-
-
