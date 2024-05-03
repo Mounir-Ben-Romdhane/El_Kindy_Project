@@ -3,6 +3,8 @@ import TopBarBack from 'components/TopBarBack';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import useAxiosPrivate from 'hooks/useAxiosPrivate';
+import { Backdrop } from '@mui/material';
+import { GridLoader } from 'react-spinners';
 
 function Index() {
   const axiosPrivate = useAxiosPrivate();
@@ -10,15 +12,28 @@ function Index() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalEntries, setTotalEntries] = useState(0);
+  const entriesPerPage = 8;
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  let [color, setColor] = useState("#399ebf");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
   const entriesPerPage = 8; // Number of entries to display per page
 
   useEffect(() => {
     const fetchStages = async () => {
+      setOpen(true);
+
       try {
         const response = await axiosPrivate.get('/stage');
+        setOpen(false);
+
         setStages(response.data.stages);
         setTotalEntries(response.data.total);
+
       } catch (error) {
         console.error('Error fetching stages:', error);
       }
@@ -74,6 +89,23 @@ function Index() {
         <SideBar />
         <div className="page-content">
           <TopBarBack />
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <>
+              <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
           <div className="page-content-wrapper border">
             <div className="row mb-3">
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
@@ -210,7 +242,13 @@ function Index() {
               </div>
             </div>
           </div>
-        </div>
+               
+              {/* Page main content END */}
+            </>
+          )}
+     </div>
+             
+          
       </main>
     </div>
   );
