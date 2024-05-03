@@ -462,13 +462,7 @@ function NavBar() {
 
                     </a>
                   </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      <i className="bi bi-gear fa-fw me-2" />
-                      {t("navbar.Account Settings")}
 
-                    </a>
-                  </li>
                   <li>
                     <a
                       className="dropdown-item bg-danger-soft-hover"

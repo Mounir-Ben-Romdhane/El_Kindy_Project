@@ -87,7 +87,7 @@ function Index() {
                                                 </div>
                                                 <div className="card-body pb-3">
                                                     <div className="text-center">
-                                                        <a href="#" className="btn btn-light mb-0">{liked ? (
+                                                        <a className="btn btn-light mb-0">{liked ? (
                                                             <FontAwesomeIcon
                                                                 icon={faHeartSolid}
                                                                 className="text-danger"

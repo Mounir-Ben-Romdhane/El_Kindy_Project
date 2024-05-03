@@ -9,6 +9,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import './ListShop.css';
+import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
+import { faShare } from '@fortawesome/free-solid-svg-icons';
+
 function Index() {
   const accessToken = useSelector((state) => state.accessToken);
   const decodeToken = accessToken ? jwtDecode(accessToken) : "";
@@ -29,7 +32,7 @@ function Index() {
     setImageFile(null);
     // Reset the input field value to allow selecting the same file again
     document.getElementById('image').value = '';
-  }; 
+  };
   // Function to handle selecting an image
   const handleImageSelect = (event) => {
     // Get the selected file
@@ -104,10 +107,10 @@ function Index() {
     const formData = new FormData(values.target); // Create FormData object from form
     const formValues = Object.fromEntries(formData.entries()); // Convert FormData to plain object
     const formErrors = {};
- // Add validation for image
- if (!imageFile) {
-  formErrors.picture = 'Image is required';
-}
+    // Add validation for image
+    if (!imageFile) {
+      formErrors.picture = 'Image is required';
+    }
     // console.log("Values",formValues);const formErrors = {};
     if (!formValues.name) {
       formErrors.name = 'Name is required';
@@ -156,27 +159,22 @@ Page Banner START */}
         <div>
           <section className="py-5">
             <div className="container">
-              <div className="row justify-content-center align-items-center">
-                <div className="col-lg-6 position-relative order-1 order-lg-2">
-                  {/* Title */}
-                  <h5 className="text-center"><img
-                    src="assets/images/element/guitarr.svg"
-                    className="h-50px mb-2"
-                    alt=""
-                  /> Sell your own product <img
-                      src="assets/images/element/guitarr.svg"
-                      className="h-50px mb-2"
-                      alt=""
-                    />  </h5>
-                  <p className="mb-2 text-center">For instance, when it comes to buying musical instruments, whether new or used, our website makes it easy for you.</p>
+            <div className="row justify-content-center align-items-center">
+  <div className="col-lg-6 position-relative order-1 order-lg-2">
+    {/* Title */}
+    <h5 className="text-center">
+      <img src="assets/images/element/guitarr.svg" className="h-50px mb-2" alt="" /> Sell your own product <img src="assets/images/element/guitarr.svg" className="h-50px mb-2" alt="" />
+    </h5>
+    <p className="mb-2 text-center">For instance, when it comes to buying musical instruments, whether new or used, our website makes it easy for you.</p>
 
-                  {/* Button */}
-                  <div className="text-center">
-                    <a href="#" className="btn btn-primary-soft mb-0 " data-bs-toggle="modal" data-bs-target="#addShop">
-                      <FontAwesomeIcon icon={faPlus} /> Post your product for sale here ...
-                    </a>        </div>
-                </div>
-              </div>
+    {/* Button */}
+    <div className="text-center">
+      <a href="#" className="btn btn-primary mb-0" data-bs-toggle="modal" data-bs-target="#addShop">
+        <FontAwesomeIcon icon={faShare} className="me-2" /> Share your product for sale here ...
+      </a>
+    </div>
+  </div>
+</div>
               <div className="my-5"></div>
 
 
@@ -202,7 +200,7 @@ Page Banner START */}
                             <Link to={`/DetailShopFront/${shop._id}`} className="text-decoration-none">
                               <div className="cardd h-100 shadow zoom border-2s position-relative" style={{ backgroundColor: 'white' }}>
                                 {/* Bouton panier en haut à droite avec espace */}
-                                
+
                                 {/* Image */}
                                 <img
                                   src={`http://localhost:3001/assets/${shop.picturePath}`}
@@ -293,94 +291,94 @@ Page content END */}
                   <button type="button" className="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i className="bi bi-x-lg" /></button>
                 </div>
                 <div className="modal-body">
-                <form onSubmit={handleFormSubmit} className="row text-start g-3">
-                  {/* Instrument name */}
-                  <div className="col-6">
-                    <label className="form-label">Instrument name </label>
-                    <input className="form-control" name="name" type="text" placeholder="Write name"  />
-                    {errors.name && <div className="text-danger">{errors.name}</div>} {/* Display name error */}
-                  </div>
-                  {/* Brand */}
-                  <div className="col-6">
-                    <label className="form-label">Brand</label>
-                    <input className="form-control" name="marque" type="text" placeholder="Write the brand"  />
-                    {errors.marque && <div className="text-danger">{errors.marque}</div>} {/* Display brand error */}
-                  </div>
-                  {/* Price */}
-                  <div className="col-6">
-                    <label className="form-label">Price</label>
-                    <input className="form-control" name="price" type="number" placeholder="Write the price"  />
-                    {errors.price && <div className="text-danger">{errors.price}</div>} {/* Display price error */}
-                  </div>
-                  {/* Discount */}
-                  <div className="col-6">
-                    <label className="form-label">Discount</label>
-                    <input className="form-control" name="remise" type="number" placeholder="Write a discount" />
-                  </div>
-                  {/* Phone number */}
-                  <div className="col-6">
-                    <label className="form-label">Phone number</label>
-                    <input className="form-control" name="phoneNumber" type="number" placeholder="Write the number"  />
-                    {errors.phoneNumber && <div className="text-danger">{errors.phoneNumber}</div>} {/* Display phone number error */}
-                  </div>
-                  {/* Description */}
-                  <div className="col-12">
-                    <label className="form-label">Description</label>
-                    <input className="form-control" name="description" type="text" placeholder="Write description"  />
-                    {errors.description && <div className="text-danger">{errors.description}</div>} {/* Display phone number error */}
+                  <form onSubmit={handleFormSubmit} className="row text-start g-3">
+                    {/* Instrument name */}
+                    <div className="col-6">
+                      <label className="form-label">Instrument name </label>
+                      <input className="form-control" name="name" type="text" placeholder="Write name" />
+                      {errors.name && <div className="text-danger">{errors.name}</div>} {/* Display name error */}
+                    </div>
+                    {/* Brand */}
+                    <div className="col-6">
+                      <label className="form-label">Brand</label>
+                      <input className="form-control" name="marque" type="text" placeholder="Write the brand" />
+                      {errors.marque && <div className="text-danger">{errors.marque}</div>} {/* Display brand error */}
+                    </div>
+                    {/* Price */}
+                    <div className="col-6">
+                      <label className="form-label">Price</label>
+                      <input className="form-control" name="price" type="number" placeholder="Write the price" />
+                      {errors.price && <div className="text-danger">{errors.price}</div>} {/* Display price error */}
+                    </div>
+                    {/* Discount */}
+                    <div className="col-6">
+                      <label className="form-label">Discount</label>
+                      <input className="form-control" name="remise" type="number" placeholder="Write a discount" />
+                    </div>
+                    {/* Phone number */}
+                    <div className="col-6">
+                      <label className="form-label">Phone number</label>
+                      <input className="form-control" name="phoneNumber" type="number" placeholder="Write the number" />
+                      {errors.phoneNumber && <div className="text-danger">{errors.phoneNumber}</div>} {/* Display phone number error */}
+                    </div>
+                    {/* Description */}
+                    <div className="col-12">
+                      <label className="form-label">Description</label>
+                      <input className="form-control" name="description" type="text" placeholder="Write description" />
+                      {errors.description && <div className="text-danger">{errors.description}</div>} {/* Display phone number error */}
 
-                  </div>
-                  {/* Upload image */}
-                  <div className="col-12">
-                    <div className="m-4">
-                      <div className="text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3">
-                        {imageFile && (
-                          <div>
-                            <img
-                              src={URL.createObjectURL(imageFile)}
-                              alt="Uploaded image"
-                              className="img-fluid mb-2 rounded"
-                              style={{ maxWidth: '100px', maxHeight: '100px' }}
+                    </div>
+                    {/* Upload image */}
+                    <div className="col-12">
+                      <div className="m-4">
+                        <div className="text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3">
+                          {imageFile && (
+                            <div>
+                              <img
+                                src={URL.createObjectURL(imageFile)}
+                                alt="Uploaded image"
+                                className="img-fluid mb-2 rounded"
+                                style={{ maxWidth: '100px', maxHeight: '100px' }}
+                              />
+                              <p className="mb-0">Uploaded image</p>
+                            </div>
+                          )}
+                          <div className="mb-3">
+                            <h6 className="my-2">Upload instrument picture here, or <span className="text-primary" style={{ cursor: 'pointer' }}>Browse</span></h6>
+                            <input
+                              className="form-control form-control-sm"
+                              type="file"
+                              name="picture"
+                              id="image"
+                              accept="image/gif, image/jpeg, image/png"
+                              onChange={handleImageSelect}
+
                             />
-                            <p className="mb-0">Uploaded image</p>
-                          </div>
-                        )}
-                        <div className="mb-3">
-                          <h6 className="my-2">Upload instrument picture here, or <span className="text-primary" style={{ cursor: 'pointer' }}>Browse</span></h6>
-                          <input
-                            className="form-control form-control-sm"
-                            type="file"
-                            name="picture"
-                            id="image"
-                            accept="image/gif, image/jpeg, image/png"
-                            onChange={handleImageSelect}
-                            
-                          />
-                                              {errors.picture && <div className="text-danger">{errors.picture}</div>} {/* Display phone number error */}
+                            {errors.picture && <div className="text-danger">{errors.picture}</div>} {/* Display phone number error */}
 
-                          <p className="small mb-0 mt-2"><b>Note:</b> Only JPG, JPEG, and PNG formats are supported. Our suggested dimensions are 600px * 450px. Larger images will be cropped to fit our thumbnails/previews.</p>
-                        </div>
-                        {errors.picture && <div className="text-danger">{errors.picture}</div>} {/* Display image error */}
-                        {imageFile && (
-                          <div className="d-sm-flex justify-content-end mt-2">
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-danger-soft mb-3"
-                              onClick={handleRemoveImage}
-                            >
-                              Remove image
-                            </button>
+                            <p className="small mb-0 mt-2"><b>Note:</b> Only JPG, JPEG, and PNG formats are supported. Our suggested dimensions are 600px * 450px. Larger images will be cropped to fit our thumbnails/previews.</p>
                           </div>
-                        )}
+                          {errors.picture && <div className="text-danger">{errors.picture}</div>} {/* Display image error */}
+                          {imageFile && (
+                            <div className="d-sm-flex justify-content-end mt-2">
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-danger-soft mb-3"
+                                onClick={handleRemoveImage}
+                              >
+                                Remove image
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  {/* Submit button */}
-                  <div className="modal-footer">
-                    <button type="button" className="btn btn-danger-soft my-0" data-bs-dismiss="modal">Close</button>
-                    <button className="btn btn-success my-0" type="submit">Add Instrument</button>
-                  </div>
-                </form>
+                    {/* Submit button */}
+                    <div className="modal-footer">
+                      <button type="button" className="btn btn-danger-soft my-0" data-bs-dismiss="modal">Close</button>
+                      <button className="btn btn-success my-0" type="submit">Add Instrument</button>
+                    </div>
+                  </form>
                 </div>
 
               </div>
