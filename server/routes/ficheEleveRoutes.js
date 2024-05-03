@@ -1,5 +1,6 @@
 import express from "express";
 import { affectFicheEleve ,getFicheEleves,getFicheElevesByStudent,getFicheElevesByClassAndCourse,deleteFicheEleve ,getFicheEleveByStudentAndCourse} from "../controllers/FicheEleveController.js";
+import { verifyToken } from "../middleware/auth.js";
 const router = express.Router();
 
 //route for affectFicheEleve
