@@ -19,6 +19,7 @@ import {
   faCalendarAlt,
   faBriefcase,
   faSchool,
+  faShoppingCart
 } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from "react-i18next";
 
@@ -287,7 +288,17 @@ function SideBar() {
                     className={`nav-link ${activeNavItem === "/listClasse" ? "active" : ""}`}
                     onClick={() => handleNavItemClick("/listClasse")}>
                     <FontAwesomeIcon icon={faSchool} className="fa-fw me-1" />{" "}
-                    {t("sidebar.Internship Reservations")}
+                    {t("sidebar.Salle")}
+                  </Link>
+                </li>
+                {/* menu item shops */}
+                <li className="nav-item">
+                  <Link
+                    to="/BackListShop"
+                    className={`nav-link ${activeNavItem === "/BackListShop" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/BackListShop")}>
+                    <FontAwesomeIcon icon={faShoppingCart} className="fa-fw me-1" />{" "}
+                    {t("sidebar.Instrument")}
                   </Link>
                 </li>
                 {/* menu item classess */}

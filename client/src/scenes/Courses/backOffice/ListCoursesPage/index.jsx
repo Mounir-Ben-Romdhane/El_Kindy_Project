@@ -22,13 +22,18 @@ function Index() {
   let [color, setColor] = useState("#399ebf");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // State variables
+  const [courses, setCourses] = useState([]); // State to hold the list of courses
+  const [searchQuery, setSearchQuery] = useState(""); // State to hold the search query
   const [sortOption, setSortOption] = useState(""); // State to hold the sorting option
   const [pagination, setPagination] = useState({
     currentPage: 1,
     entriesPerPage: 8,
-  });
+  }); const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
+  const entriesPerPage = 8; // Number of entries to display per page
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // State variables
+ 
 
   // Fetch courses from the server when component mounts
   useEffect(() => {
@@ -101,7 +106,10 @@ function Index() {
       course.courseCategory.name.toLowerCase().includes(lowerCaseQuery)
     );
   });
-
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
   // Sort courses based on the selected sorting option
   const sortedCourses = filteredCourses.sort((a, b) => {
     switch (sortOption) {

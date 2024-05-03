@@ -108,17 +108,23 @@ const [receiverData, setReceiverData] = useState(null);
               <div className="row">
                 
               {users.filter(chat => chat.otherUser).map((chat) => (
-    <div className="col-lg-4" key={chat._id}>
+    <div className="col-lg-6" key={chat._id}>
       <div className="card shadow p-2 mb-3">
         <div className="row g-0">
           <div className="col-md-4">
-            <img src={chat.otherUser?.picturePath ? chat.otherUser.picturePath : process.env.PUBLIC_URL + '/defaultProfile.png'} alt="user" style={{ width: "130px", height: "auto", borderRadius: "10%" }} />
+            <img src={chat.otherUser?.picturePath ? chat.otherUser.picturePath : "/assets/images/element/02.jpg"} className="rounded-3" alt="user" style={{ width: "130px", height: "auto", borderRadius: "10%" }} />
           </div>
           <div className="col-md-8">
             <div className="card-body">
               <h5 className="card-title mb-0">{chat.otherUser?.firstName} {chat.otherUser?.lastName}</h5>
-              <button onClick={() => handleContact(chat.otherUser?._id)} className="btn btn-primary">Contacter</button>
+              
             </div>
+            <div className="d-sm-flex me-5 justify-content-sm-end align-items-center">
+
+              <ul className="list-inline mb-0 mt-3 mt-sm-0">
+              <button onClick={() => handleContact(chat.otherUser?._id)} className="btn btn-primary-soft">Contacter</button>
+              </ul>
+              </div>
           </div>
         </div>
       </div>

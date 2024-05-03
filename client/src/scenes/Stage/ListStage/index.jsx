@@ -20,8 +20,6 @@ function Index() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
-  const entriesPerPage = 8; // Number of entries to display per page
 
   useEffect(() => {
     const fetchStages = async () => {

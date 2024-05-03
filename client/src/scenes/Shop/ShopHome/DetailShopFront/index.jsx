@@ -3,7 +3,6 @@ import Footer from 'components/Footer'
 import NavBar from 'components/NavBar'
 import React, { useState, useEffect } from 'react'
 import { getShop } from "services/shopService/api";
-
 import axios from 'axios'; // Import Axios
 import { ToastContainer, toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -88,7 +87,7 @@ function Index() {
                                                 </div>
                                                 <div className="card-body pb-3">
                                                     <div className="text-center">
-                                                        <a href="#" className="btn btn-light mb-0">{liked ? (
+                                                        <a className="btn btn-light mb-0">{liked ? (
                                                             <FontAwesomeIcon
                                                                 icon={faHeartSolid}
                                                                 className="text-danger"
