@@ -6,33 +6,42 @@ import 'react-confirm-alert/src/react-confirm-alert.css'; // Importez les styles
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import Swal from 'sweetalert2'; // Importez SweetAlert2
+import { Backdrop } from "@mui/material";
+import { GridLoader } from "react-spinners";
 const MySwal = withReactContent(Swal);
 
 function Index() {
   const [classes, setClasses] = useState([]);
   const [sortOption, setSortOption] = useState("");
-  
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  let [color, setColor] = useState("#399ebf");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
   const entriesPerPage = 8; // Number of entries to display per page
-
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Fonction pour récupérer les catégories
     const fetchClasses = async () => {
+      setOpen(true);
+
       try {
         const response = await fetch("http://localhost:3001/salle", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-        });
+        });      setOpen(false);
+
         const data = await response.json();
 
         if (data) {
           setClasses(data); // Stocke les catégories dans l'état
           setTotalEntries(data.length);
-          console.log("classes", data);
+          console.log("classes", data);      setOpen(false);
+
         }
       } catch (error) {
         console.error("Error fetching classes:", error);
@@ -41,9 +50,12 @@ function Index() {
     fetchClasses();
   }, []);
   const fetchClasses = async () => {
+    setOpen(true);
+
     try {
       const response = await axios.get("http://localhost:3001/salle");
       setClasses(response.data);
+      setOpen(false);
     } catch (error) {
       console.error("Error fetching classes:", error);
     }
@@ -114,7 +126,23 @@ const handleSort = () => {
         {/* Page content START */}
         <div className="page-content">
           <TopBarBack />
-
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <div className="">
+              <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
           {/* Page main content START */}
           <div className="page-content-wrapper border">
             {/* Title */}
@@ -247,8 +275,9 @@ const handleSort = () => {
             {/* Card END */}
           </div>
           {/* Page main content END */}
-        </div>
-        {/* Page content END */}
+          </div>
+          )}
+          </div>
       </main>
       {/* **************** MAIN CONTENT END **************** */}
     </div>

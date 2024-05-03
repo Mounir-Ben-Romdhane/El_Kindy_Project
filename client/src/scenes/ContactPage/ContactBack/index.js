@@ -6,12 +6,22 @@ import 'react-confirm-alert/src/react-confirm-alert.css'; // Importez les styles
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import Swal from 'sweetalert2'; // Importez SweetAlert2
+import { Backdrop } from "@mui/material";
+import { GridLoader } from "react-spinners";
 const MySwal = withReactContent(Swal);
 function Index() {
   const [contacts, setContacts] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  let [color, setColor] = useState("#399ebf");
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+
   useEffect(() => {
     // Fonction pour récupérer les catégories
     const fetchContacts = async () => {
+      setOpen(true);
+
       try {
         const response = await fetch("http://localhost:3001/contact", {
           method: "GET",
@@ -19,6 +29,7 @@ function Index() {
             "Content-Type": "application/json",
           },
         });
+        setOpen(false);
         const data = await response.json();
 
         if (data) {
@@ -90,7 +101,23 @@ function Index() {
         {/* Page content START */}
         <div className="page-content">
           <TopBarBack />
-
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <div className="">
+              <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
           {/* Page main content START */}
           <div className="page-content-wrapper border">
             {/* Title */}
@@ -210,6 +237,9 @@ function Index() {
           </div>
           {/* Page main content END */}
         </div>
+           )}
+                   </div>
+
         {/* Page content END */}
       </main>
       {/* **************** MAIN CONTENT END **************** */}

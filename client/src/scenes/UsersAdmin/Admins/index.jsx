@@ -144,7 +144,7 @@ function AdminsDashboard() {
           ) : error ? (
             <h2>Error: {error}</h2>
           ) : (
-            <div className="page-content-wrapper border">
+            <div className="">
               <div className="row">
                 <div className="col-12">
                   <h1 className="h2 mb-2 mb-sm-0">Admins list</h1>
