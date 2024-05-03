@@ -398,10 +398,10 @@ const MyCalendar = () => {
     const filteredTeachers = filterAvailableTeachers(start, end);
 
     if (filteredTeachers.length === 0) {
-      setErrorMessage("Aucun enseignant disponible à cette heure.");
+      setErrorMessage("No teachers available at this time.");
       setShowModal(false); // Close the modal
       // Display error message in a popup
-      toast.error("Aucun enseignant disponible à cette heure.", {
+      toast.error("No teachers available at this time.", {
         autoClose: 3000,
       });
     } else {
@@ -435,7 +435,7 @@ const addNewEvent = (event) => {
     courseId: event.courseId || null,
   };
 
-  console.log("Nouvel événement à sauvegarder :", newEvent);
+  console.log("New event added :", newEvent);
 
   // Fusionner le nouvel événement avec les événements existants
   const updatedEvents = [...events, newEvent];
