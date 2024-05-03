@@ -1,8 +1,8 @@
 import express from "express";
 
-import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord, verifyAccount,getUser,getAllUserByRole, getCoursesTaughtByTeacher,getCoursesByStudent,getAssignmentsByCourseIdForStudent,getCoursesByStudentId,getClassByStudent,getStudentsInClassByCourseAndClass,getCoursesTaughtByTeacherInClass,
- getStudents, getUserById, getTeacherById,getClassesTaughtByTeacher,getStudentsEnrolledInClass , getStudentById, 
- getTeachers} from "../controllers/auth.js"
+
+import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord, verifyAccount,getUser,getAllUserByRole, getCoursesTaughtByTeacher,getCoursesByStudent,getAssignmentsByCourseIdForStudent,getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher,getCoursesByStudentId,getTeachers,getClassByStudent,getStudentsInClassByCourseAndClass,getCoursesTaughtByTeacherInClass,
+         getStudents, getUserById, getTeacherById,getClassesTaughtByTeacher,getStudentsEnrolledInClass } from "../controllers/auth.js"
 
 import { verifyToken } from '../middleware/auth.js';
 import googleAuth from "../controllers/googleAuth.js";
@@ -41,6 +41,7 @@ router.get('/getStudentsInClassByCourseAndClass/:classId/:courseId', getStudents
 router.get('/getClassByStudent/:studentId', getClassByStudent);
 router.get('/getCoursesByStudent/:studentId', getCoursesByStudent);
 router.get('/getCoursesTaughtByTeacher/:teacherId', getCoursesTaughtByTeacher);
+router.get('/getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher/:courseId/:teacherId', getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher);
 //Add users
 router.post("/addAdmin", addAdmin);
 router.post("/addTeacher", addTeacher);

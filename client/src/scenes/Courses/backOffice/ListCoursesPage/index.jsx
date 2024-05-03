@@ -13,11 +13,8 @@ import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 function Index() {
   // Custom hook to get Axios instance with authentication
-  const axiosPrivate = useAxiosPrivate();
 
   // State variables
-  const [courses, setCourses] = useState([]); // State to hold the list of courses
-  const [searchQuery, setSearchQuery] = useState(""); // State to hold the search query
   const [sortOption, setSortOption] = useState(""); // State to hold the sorting option
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -38,6 +35,29 @@ function Index() {
     fetchCourses(); // Call the fetchCourses function
   }, [axiosPrivate]); // Only re-run effect if axiosPrivate changes
 
+
+    const controller = new AbortController();
+
+    const getCourses = async () => {
+      try {
+        const response = await axiosPrivate.get('/course/all', {
+          signal: controller.signal
+        });
+        console.log(response.data);
+        setCourses(response.data.data);
+        setTotalEntries(response.data.data.length); // Update the totalEntries state
+      } catch (err) {
+        console.error(err);
+        //navigate('/login', { state: { from: location }, replace: true });
+      }
+    }
+
+    getCourses();
+
+   
+
+  console.log("courses : ", courses);
+
   // Function to handle course deletion
   const handleDelete = async (id) => {
     try {
@@ -55,9 +75,7 @@ function Index() {
       console.error("Error deleting course:", error);
     }
   };
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value); // Update search query state
-  };
+  
 
   // Filter courses based on search query
   const filteredCourses = courses.filter((course) => {
