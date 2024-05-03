@@ -4,7 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import NavBar from "components/NavBar";
 import BannerStartHome from "components/BannerStartHome";
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient";
 function ContactPage() {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -307,7 +307,7 @@ Map END */}
 </main>
 {/* **************** MAIN CONTENT END **************** */}
 
-      <Footer />
+      <FooterClient />
       </>
   )
 }

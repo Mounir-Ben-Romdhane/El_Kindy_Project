@@ -3,7 +3,7 @@ import SideBarTeacher from 'components/SideBarTeacher';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient";
 import NavBar from "components/NavBar";
 
 const Index = () => {
@@ -70,7 +70,7 @@ const Index = () => {
                     </div>
                 </section>
                 {/* Page content END */}
-                <Footer />
+                <FooterClient />
             </main>
             {/* MAIN CONTENT END */}
         </div>

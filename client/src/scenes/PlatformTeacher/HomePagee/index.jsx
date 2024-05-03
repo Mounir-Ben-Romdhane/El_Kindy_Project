@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import NavBar from 'components/NavBar';
-import Footer from 'components/Footer';
+import FooterClient from 'components/FooterClient';
 import SideBarTeacher from 'components/SideBarTeacher';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
 import Swal from 'sweetalert2'; // Importez SweetAlert2
@@ -97,7 +97,7 @@ const HomePagee = () => {
 
 
 
-<Footer />
+<FooterClient />
       </main>
       {/* **************** MAIN CONTENT END **************** */}
 

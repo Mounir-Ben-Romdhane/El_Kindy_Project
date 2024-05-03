@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { Link } from 'react-router-dom';
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient";
 import NavBar from "components/NavBar";
 import SideBarTeacher from "components/SideBarTeacher";
 import { useSelector } from "react-redux";
@@ -303,7 +303,7 @@ const Room = () => {
           </div>
         </section>
         {/* =======================
-  Page content END */}<Footer />
+  Page content END */}<FooterClient />
       </main>
       {/* **************** MAIN CONTENT END **************** */}
     </div>

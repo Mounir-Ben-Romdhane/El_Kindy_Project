@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Footer from 'components/Footer';
+import FooterClient from 'components/FooterClient';
 import SideBarStudent from 'components/SideBarStudent';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
 import axios from 'axios';
@@ -105,7 +105,7 @@ function Index() {
         </section>
         {/* =======================
                   Page content END */}
-        <Footer />
+        <FooterClient />
       </main>
       {/* **************** MAIN CONTENT END **************** */}
     </div>

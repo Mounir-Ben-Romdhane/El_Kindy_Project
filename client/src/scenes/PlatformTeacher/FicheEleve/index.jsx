@@ -5,7 +5,7 @@ import NavBar from "components/NavBar";
 import axios from "api/axios";
 import { jwtDecode } from "jwt-decode";
 import { useSelector } from "react-redux";
-import Footer from 'components/Footer';
+import FooterClient from 'components/FooterClient';
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -426,7 +426,7 @@ const fetchFicheEleveByStudent = async (studentId, courseId) => {
             </div>
           </div>
         </div>
-        <Footer />
+        <FooterClient />
       </div>
 
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import NavBar from 'components/NavBar'
 import BannerStartHome from 'components/BannerStartHome'
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -333,7 +333,7 @@ onChange={(e) =>
           {/* Row END */}
         </div>
       </section>
-      <Footer />
+      <FooterClient />
     </div>
   );
 }

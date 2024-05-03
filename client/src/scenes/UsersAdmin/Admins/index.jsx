@@ -556,7 +556,6 @@ function AdminsDashboard() {
                               </div>
                             </div>
                           </div>
-                        </div>
                       ))}
                     </div>
 
