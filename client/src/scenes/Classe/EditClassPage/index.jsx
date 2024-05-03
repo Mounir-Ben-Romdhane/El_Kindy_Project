@@ -32,7 +32,6 @@ function ClassesForm() {
         setMessage("Failed to load class data.");
       }
     };
-
     if (id) fetchClasseData();
   }, [id]);
 
@@ -102,6 +101,7 @@ function ClassesForm() {
         <TopBarBack />
         <ToastContainer />
         <div className="page-content-wrapper border">
+
           <BannerStart
             title="Update Class"
             description="Make changes to your class details below."
@@ -184,6 +184,82 @@ function ClassesForm() {
               </button>
             </form>
           </div>
+
+
+        {/* Add your banner component if you have one */}
+        <BannerStart
+          title="Update Class"
+          description="Make changes to your class details below."
+        />
+        <div className="container mt-4">
+          <h2>Update Class</h2>
+          {message && (
+            <div
+              className={`alert ${
+                message.startsWith("Failed") ? "alert-danger" : "alert-success"
+              }`}
+            >
+              {message}
+            </div>
+          )}
+          <form onSubmit={handleSubmit}>
+            {/* Category Name */}
+            <div className="mb-3">
+              <label htmlFor="name" className="form-label">
+                Name
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="name"
+                name="name"
+                
+                value={formState.name}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="capacity" className="form-label">
+                Cpacity
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="capacity"
+                name="capacity"
+                
+                value={formState.capacity}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="mb-3">
+  <label htmlFor="status" className="form-label">
+    Status
+  </label>
+  <select
+    className="form-select"
+    id="status"
+    name="status"
+    required
+    value={formState.status}
+    onChange={handleChange}
+  >
+    <option value="" disabled>
+      Select Status
+    </option>
+    <option value="available">Available</option>
+    <option value="occupied">Occupied</option>
+    <option value="maintenance">Maintenance</option>
+    {/* Ajoutez les autres choix ici en fonction de votre application */}
+  </select>
+</div>
+           
+            {/* Submit Button */}
+            <button type="submit" className="btn btn-primary">
+              Update Category
+            </button>
+          </form>
+
         </div>
       </div>
     </main>

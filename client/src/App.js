@@ -13,7 +13,8 @@ import NotFound from "./scenes/NotFound";
 import AdminHomePage from "../src/scenes/AdminHomePage";
 import ListCoursesPage from "./scenes/Courses/backOffice/ListCoursesPage";
 import Stage from "../src/scenes/Stage/StageHome";
-import ListEventsPage from "./scenes/EventsPage/ListEventPage/ListEvent";
+import ListEventsReservation from "./scenes/EventsPage/ListEventPage/ListEventReservation";
+import ListEventsAdmin from "./scenes/EventsPage/ListEventPage/ListEvent";
 import AddEventPage from "./scenes/EventsPage/AddEventPage/AddEvent";
 import AddCoursePage from "./scenes/Courses/backOffice/AddCoursePage";
 import ListCategoryPage from "../src/scenes/Category/ListCategoryPage";
@@ -31,7 +32,11 @@ import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
 import EditAllClass from "../src/scenes/AllClass/EditAllClass";
 import ListAllClass from "../src/scenes/AllClass/ListAllClass";
 import AddAllClass from "../src/scenes/AllClass/AddAllClass";
+
 import PLaymusic from "../src/scenes/PLaymusic";
+
+import UploadImageForm from "../src/scenes/Azureimage/UploadImageForm";
+
 import ListShop from "../src/scenes/Shop/ShopHome/ListShop";
 import MeetingHomeStudent from "./scenes/PlatformStudent/MeetingHomeStudent";
 import DashbordTeacher from "./scenes/PlatformTeacher/DashbordTeacher";
@@ -415,6 +420,15 @@ function App() {
           element={isAuth ? <TeachersList /> : <Navigate to="/" />}
 />
           
+<Route
+          path="/uploadImageForm"
+          element={
+            <PrivateRoute
+              element={<UploadImageForm />}
+              requiredRoles={["superAdmin", "teacher", "student"]}
+            />
+          }
+        />
        
 
 <Route
@@ -847,10 +861,17 @@ function App() {
 
         />
 
+        
+        <Route
+          path="/listEventsReservation"
+          element={isAuth ? <ListEventsReservation /> : <Navigate to="/" />}
+        />
+
         <Route
           path="/listEvents"
-          element={isAuth ? <ListEventsPage /> : <Navigate to="/" />}
+          element={isAuth ? <ListEventsAdmin /> : <Navigate to="/" />}
         />
+
         <Route
           path="/addEvent"
           element={isAuth ? <AddEventPage /> : <Navigate to="/" />}
@@ -865,7 +886,7 @@ function App() {
 
         <Route path="/listEventUser" element={<ListEventUser />} />
 
-        <Route path="/listEventUser" element={<ListEventUser />} />
+
 
         <Route
           path="/addCourse"

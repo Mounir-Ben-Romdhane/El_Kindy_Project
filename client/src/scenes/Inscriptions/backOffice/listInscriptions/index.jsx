@@ -6,8 +6,12 @@ import TopBarBack from "components/TopBarBack";
 import { ToastContainer, toast } from "react-toastify";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 import { BASE_URL } from "api/axios";
+
 import { Backdrop } from "@mui/material";
 import { GridLoader } from "react-spinners";
+
+import { useNavigate, useParams } from "react-router-dom";
+
 
 function Index() {
   const [inscriptions, setInscriptions] = useState([]);
@@ -103,6 +107,35 @@ function Index() {
   );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+  const activateUser = async () => {
+    try {
+      const response = await axios.patch(`/inscription/${id}/approve`);
+      if (response.status === 200) {
+        toast.success("Inscription Activated successfully for this User!", {
+          autoClose: 1500,
+          style: { color: "green" },
+        });
+      } else {
+        toast.error("Activation failed. Please try again.", {
+          autoClose: 1500,
+          style: { color: "red" },
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        "Error activating inscription. Please check the console for more details.",
+        {
+          autoClose: 1500,
+          style: { color: "red" },
+        }
+      );
+    }
+  };
 
   return (
     <div>
@@ -229,9 +262,20 @@ function Index() {
                                   Accepted
                                 </span>
                               )}
+
                               {inscription.status === "refused" && (
                                 <span className="badge bg-danger bg-opacity-15 text-danger">
                                   Refused
+
+                              {inscription.status === "active" && (
+                                <span className="badge bg-danger bg-opacity-15 text-primary">
+                                  active user
+                                </span>
+                              )}
+                              {inscription.status === "not paid" && (
+                                <span className="badge bg-info bg-opacity-15 text-danger ">
+                                  Not Paid
+
                                 </span>
                               )}
                             </td>
@@ -251,6 +295,15 @@ function Index() {
                                 onClick={() => handleDelete(inscription._id)}
                               >
                                 <i className="bi bi-trash"></i>
+                              </button>
+                              <button
+                                className="btn btn-info-soft btn-round me-1 mb-1 mb-md-0"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top"
+                                title="Activate User"
+                                onClick={() => activateUser(inscription._id)}
+                              >
+                                <i className="bi bi-check-circle"></i> 
                               </button>
                             </td>
                           </tr>

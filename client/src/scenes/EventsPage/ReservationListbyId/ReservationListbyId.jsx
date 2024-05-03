@@ -22,6 +22,9 @@ function Index() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [numberOfReservations, setNumberOfReservations] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [reservationsPerPage] = useState(10);
 
   useEffect(() => {
     if (eventId) {
@@ -59,14 +62,35 @@ function Index() {
     setSearchTerm(event.target.value.toLowerCase());
   }, 300);
 
-  const filteredReservations = reservations.filter(
-    (reservation) =>
-      reservation.eventId?.title.toLowerCase().includes(searchTerm) ||
-      reservation.userName.toLowerCase().includes(searchTerm) ||
-      reservation.userEmail.toLowerCase().includes(searchTerm) ||
-      reservation.phoneNumber.toString().includes(searchTerm) ||
-      reservation.status.toLowerCase().includes(searchTerm)
-  );
+ // Combined function for filtering and sorting reservations
+const getFilteredAndSortedReservations = () => {
+  let processedReservations = [...reservations];
+
+ // Filter by search term
+ processedReservations = processedReservations.filter(reservation =>
+  reservation.eventId?.title.toLowerCase().includes(searchTerm) ||
+  reservation.userName.toLowerCase().includes(searchTerm) ||
+  reservation.userEmail.toLowerCase().includes(searchTerm) ||
+  reservation.phoneNumber.toString().includes(searchTerm)
+);
+
+   // Further filter by status if a sort option is selected
+   if (sortOption) {
+    processedReservations = processedReservations.filter(reservation => reservation.status === sortOption.toLowerCase());
+  }
+
+  return processedReservations;
+};
+
+
+ // Calculate the currently displayed reservations
+ const indexOfLastReservation = currentPage * reservationsPerPage;
+ const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
+ const currentReservations = reservations.slice(indexOfFirstReservation, indexOfLastReservation);
+ const totalReservations = reservations.length;
+
+ // Pagination controls
+ const paginate = pageNumber => setCurrentPage(pageNumber);
 
   return (
     <div>
@@ -100,9 +124,10 @@ function Index() {
                     value={sortOption}
                     onChange={(e) => setSortOption(e.target.value)}
                   >
-                    <option value="">Sort by</option>
-                    <option value="asc">Ascendant</option>
-                    <option value="desc">Descendant</option>
+                      <option value="">Sort by</option>
+                      <option value="Accepted">Accepted</option>
+                      <option value="Refused">Refused</option>
+                      <option value="Pending">Pending</option>
                   </select>
                 </div>
               </div>
@@ -122,7 +147,7 @@ function Index() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredReservations.map((reservation) => (
+                    {getFilteredAndSortedReservations().map((reservation) => (
                       <tr key={reservation._id}>
                         <td>{reservation.eventId?.title || "Event not found"}</td>
                         <td>{reservation.userName}</td>
@@ -146,14 +171,40 @@ function Index() {
                               </span>
                             )}
                           </td>
-                        <td>
-                          <button onClick={() => updateReservationStatus(reservation._id, "accepted")} className="btn btn-sm btn-success me-1">Accept</button>
-                          <button onClick={() => updateReservationStatus(reservation._id, "refused")} className="btn btn-sm btn-danger">Refuse</button>
-                        </td>
+                          <td>
+                            <button
+                              onClick={() =>
+                                updateReservationStatus(
+                                  reservation._id,
+                                  "accepted"
+                                )
+                              }
+                              className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+                            >
+                              <i className="bi bi-check fs-4"></i> {/* Accept icon */}
+                            </button>
+                            <button
+                              onClick={() =>
+                                updateReservationStatus(
+                                  reservation._id,
+                                  "refused"
+                                )
+                              }
+                              className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
+                            >
+                              <i className="bi bi-x fs-4"></i> {/* Refuse icon */}
+                            </button>
+                          </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+                <div className="pagination">
+              <p className="mb-0 text-center text-sm-start">
+                Showing {indexOfFirstReservation + 1} to {Math.min(indexOfLastReservation, totalReservations)} of {totalReservations} entries
+              </p>
+            
+            </div>
               </div>
             </div>
           </div>

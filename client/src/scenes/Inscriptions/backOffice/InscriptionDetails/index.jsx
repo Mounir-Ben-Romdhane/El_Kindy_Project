@@ -45,7 +45,7 @@ function Index() {
     }
   };
 
-  const activateuser = async (id) => {
+ /*  const activateuser = async (id) => {
     try {
       const response = await axiosPrivate.patch(
         `/inscription/${id}/approve`
@@ -56,7 +56,7 @@ function Index() {
     } catch (error) {
       console.error(error);
     }
-  };
+  }; */
 
   const rejectInscription = async (id) => {
     try {
@@ -222,13 +222,13 @@ function Index() {
                           >
                             Reject Request
                           </button>
-                          <button
+                          {/* <button
                             className="btn btn-sm btn-info-soft"
                             style={{ width: "120px" }}
                             onClick={() => activateuser(inscription._id)}
                           >
                             Activate user
-                          </button>
+                          </button> */}
                         </div>
                       )}
                     </div>

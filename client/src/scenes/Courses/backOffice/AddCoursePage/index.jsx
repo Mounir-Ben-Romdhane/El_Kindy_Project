@@ -319,7 +319,7 @@ function Index() {
                                 style={{ cursor: "pointer" }}
                               >
                                 Browse {" "}
-                                          <span className="text-danger">*</span>
+                              <span className="text-danger">*</span>
                               </span>
                             </h6>
                             <input
