@@ -18,12 +18,12 @@ function Index() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortStatus, setSortStatus] = useState(""); // Sorting status: 'accepted', 'refused', 'pending', or ''
-  const entriesPerPage = 10;
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
   let [color, setColor] = useState("#399ebf");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const entriesPerPage = 8;
 
   // Refresh token
   const axiosPrivate = useAxiosPrivate();
@@ -169,8 +169,6 @@ function Index() {
               </div>
             </div>
 
-            
-
             {/* Render text if inscriptions array is empty */}
             {inscriptions.length === 0 && <h2>No inscriptions available.</h2>}
 
@@ -190,13 +188,13 @@ function Index() {
                           onChange={handleSearchChange}
                         />
                         {searchQuery === "" && ( // Check if the search query is empty
-      <button
-        className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-        type="submit"
-      >
-        <i className="fas fa-search fs-6 " />
-      </button>
-    )}
+                          <button
+                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                            type="submit"
+                          >
+                            <i className="fas fa-search fs-6 " />
+                          </button>
+                        )}
                       </form>
                     </div>
                     {/* Select option */}
@@ -313,22 +311,24 @@ function Index() {
                     </table>
                   </div>
                 </div>
-                <div className="card-footer bg-transparent pt-0">
+                <div className="card-footer bg-transparent pt-0 px-4">
                   <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                     <p className="mb-0 text-center text-sm-start">
                       Showing {indexOfFirstEntry + 1} to{" "}
-                      {Math.min(
-                        indexOfLastEntry,
-                        sortedInscriptions.length
-                      )}{" "}
-                      of {sortedInscriptions.length} entries
+                      {Math.min(indexOfLastEntry, sortedInscriptions.length)} of{" "}
+                      {sortedInscriptions.length} entries
                     </p>
                     <nav
                       className="d-flex justify-content-center mb-0"
                       aria-label="navigation"
                     >
                       <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
-                        <li className="page-item mb-0">
+                        <li
+                          className={`page-item ${
+                            currentPage === 1 && "disabled"
+                          }`}
+                        >
+                          {" "}
                           <button
                             className="page-link"
                             onClick={() => paginate(currentPage - 1)}

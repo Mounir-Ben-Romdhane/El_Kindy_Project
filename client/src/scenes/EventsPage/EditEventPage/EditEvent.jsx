@@ -8,6 +8,7 @@ import "react-notifications/lib/notifications.css";
 
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 function EditEvent() {
   const [formState, setFormState] = useState({
@@ -16,6 +17,7 @@ function EditEvent() {
     price: "",
     dateDebut: "",
     dateFin: "",
+    picturePath: "",
     timeFrom: "",
     timeTo: "",
     place: "",
@@ -27,12 +29,14 @@ function EditEvent() {
   const [imageFile, setImageFile] = useState(null);
   const [errors, setErrors] = useState({});
   const { id } = useParams();
+  const axiosPrivate = useAxiosPrivate();
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosPrivate.get(
           `http://localhost:3001/event/events/${id}`
         );
 
@@ -46,13 +50,8 @@ function EditEvent() {
           timeFrom: eventData.timeFrom,
           timeTo: eventData.timeTo,
           place: eventData.place,
+          picturePath: eventData.picturePath,
         });
-        if (eventData.picturePath) {
-          setPreviewImageUrl(
-            `http://localhost:3001/assets/${eventData.picturePath}`
-          );
-          setImageName(eventData.picturePath);
-        }
       } catch (error) {
         console.error("Error Fetching Event:", error);
       }
@@ -315,47 +314,89 @@ function EditEvent() {
                     />
                     <div className="invalid-feedback">{errors.place}</div>
                   </div>
-                  <div className="m-4">
-                    <div className="col-12">
-                      <div className="mb-3">
-                        <label htmlFor="picture" className="form-label">
-                          Event Image
-                        </label>
-                        {previewImageUrl && (
-                          <div className="text-center mb-3">
-                            <img
-                              src={previewImageUrl}
-                              alt="Preview"
-                              style={{ maxWidth: "300px", maxHeight: "300px" }}
+                   {/* Upload image START */}
+                   <div className="m-4">
+                      {/* Image */}
+                      <div className="col-12">
+                        <div
+                          className={`text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3 ${
+                            errors.picture ? "border-danger" : ""
+                          }`}
+                        >
+                          {/* Display the image */}
+                          {imageFile ? (
+                            <div>
+                              <img
+                                src={URL.createObjectURL(imageFile)}
+                                alt="Uploaded image"
+                                className="img-fluid mb-2"
+                                style={{
+                                  maxWidth: "300px",
+                                  maxHeight: "300px",
+                                }} // Limit image dimensions
+                                required
+                              />
+                              <p className="mb-0">Uploaded image</p>
+                            </div>
+                          ) : (
+                            <div>
+                              <img
+                                src={`http://localhost:3001/assets/${formState.picturePath}`}
+                                alt="Uploaded image"
+                                className="img-fluid mb-2"
+                                style={{
+                                  maxWidth: "300px",
+                                  maxHeight: "300px",
+                                }} // Limit image dimensions
+                                required
+                              />
+                              <p className="mb-0">{formState.picturePath}</p>
+                            </div>
+                          )}
+                          {/* Upload image button */}
+                          <div className="mb-3">
+                            <h6 className="my-2">
+                              Upload course image here, or{" "}
+                              <span
+                                className="text-primary"
+                                style={{ cursor: "pointer" }}
+                              >
+                                Browse
+                              </span>
+                            </h6>
+                            {/* File input */}
+                            <input
+                              className="form-control"
+                              type="file"
+                              name="picture"
+                              id="image"
+                              accept="image/gif, image/jpeg, image/png"
+                              onChange={handleImageSelect}
                             />
-                            <div className="mt-2">
+                            {/* Note */}
+                            <p className="small mb-0 mt-2">
+                              <b>Note:</b> Only JPG, JPEG, and PNG formats are
+                              supported. Our suggested dimensions are 600px *
+                              450px. Larger images will be cropped to fit our
+                              thumbnails/previews.
+                            </p>
+                          </div>
+                          {/* Remove image button */}
+                          {imageName && (
+                            <div className="d-sm-flex justify-content-end mt-2">
                               <button
                                 type="button"
-                                className="btn btn-danger btn-sm"
+                                className="btn btn-sm btn-danger-soft mb-3"
                                 onClick={handleRemoveImage}
                               >
-                                Remove Image
+                                Remove image
                               </button>
                             </div>
-                          </div>
-                        )}
-                        <input
-                          type="file"
-                          className="form-control"
-                          id="picture"
-                          name="picture"
-                          accept="image/*"
-                          onChange={handleImageSelect}
-                        />
-                        <p className="small mt-2">
-                          <b>Note:</b> Only JPG, JPEG, and PNG formats are
-                          supported. Our suggested dimensions are 600px * 450px.
-                          Larger images will be cropped to fit our
-                          thumbnails/previews.
-                        </p>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                    {/* Upload image END */}
                 </div>
                 <div className="d-md-flex justify-content-end align-items-start mt-4">
                   <button

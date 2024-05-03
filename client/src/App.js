@@ -71,8 +71,7 @@ import Review from './scenes/ReviewPage/Review'
 import Dashboard from './scenes/ReviewPage/Dashboard'
 import Reservationbyid from './scenes/EventsPage/ReservationListbyId/ReservationListbyId'
 
-
-
+import ListEventsAdmin from "./scenes/EventsPage/ListEventPage/ListEvent";
 
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";
@@ -647,9 +646,10 @@ function App() {
           }
         />
 
-
-
-
+<Route
+          path="/listEvents"
+          element={isAuth ? <ListEventsAdmin /> : <Navigate to="/" />}
+        />
 
          <Route path="/payment" element={
             <PrivateRoute
@@ -868,8 +868,8 @@ function App() {
         />
 
         <Route
-          path="/listEvents"
-          element={isAuth ? <ListEventsAdmin /> : <Navigate to="/" />}
+          path="/listEventsUser"
+          element={isAuth ? <ListEventsPage /> : <Navigate to="/" />}
         />
 
         <Route
