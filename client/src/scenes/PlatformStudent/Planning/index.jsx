@@ -8,7 +8,7 @@ import NavBar from "components/NavBar";
 import SideBarStudent from "components/SideBarStudent";
 import TopBarTeacherStudent from "components/TopBarTeacherStudent";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient";
 import { useSelector } from "react-redux"; // Importez useSelector depuis React Redux
 import { jwtDecode } from "jwt-decode";
 import EventDetailsModal from './EventDetailsModal';
@@ -268,7 +268,7 @@ const MyCalendar = () => {
             </div>
           </div>
         </section>
-        <Footer />
+        <FooterClient />
 
       </main>
     </div>

@@ -8,7 +8,7 @@ import ChatBox from "../../../components/ChatBox/ChatBox";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
 import { createChat, findChat } from '../../../api/ChatRequests';
-import Footer from 'components/Footer';
+import FooterClient from 'components/FooterClient';
 
 function Index() {
   const accessToken = useSelector((state) => state.accessToken);
@@ -121,22 +121,20 @@ function Index() {
                     <div className="card shadow p-2 mb-3">
                       <div className="row g-0">
                         <div className="col-md-4">
-                          <img src={user?.picturePath ? user.picturePath : process.env.PUBLIC_URL + '/defaultProfile.png'} alt="user" style={{ width: "130px", height: "auto", borderRadius: "10%" }} />
+                          <img src={user?.picturePath ? user.picturePath : "/assets/images/element/02.jpg" } className="rounded-3" alt="user" style={{ width: "130px", height: "auto", borderRadius: "10%" }} />
                         </div>
                         <div className="col-md-8">
                           <div className="card-body">
                             <div className="d-sm-flex justify-content-sm-between mb-2 mb-sm-3">
                               <div>
                                 <h5 className="card-title mb-0">{user.firstName} {user.lastName}</h5>
-                                <p className="small mb-2 mb-sm-0">{user.position}</p>
+                                <p className="small mb-2 mb-sm-0">{user.phoneNumber1}</p>
                               </div>
-                              <span className="h6 fw-light">4.3<i className="fas fa-star text-warning ms-1" /></span>
                             </div>
-                            <p className="text-truncate-2 mb-3">{user.description}</p>
                             <div className="d-sm-flex justify-content-sm-between align-items-center">
                               <h6 className="text-orange mb-0">{user.roles}</h6>
                               <ul className="list-inline mb-0 mt-3 mt-sm-0">
-                                <button onClick={() => handleContact(user._id)} className="btn btn-primary">Contacter</button>
+                                <button onClick={() => handleContact(user._id)} className="btn btn-primary-soft">Contacter</button>
                               </ul>
                             </div>
                           </div>
@@ -165,7 +163,7 @@ function Index() {
         </div>
 
       </section>
-
+<FooterClient/>
     </div>
   )
 }

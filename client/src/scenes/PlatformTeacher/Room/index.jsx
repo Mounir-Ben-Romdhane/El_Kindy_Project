@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { Link } from 'react-router-dom';
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient";
 import NavBar from "components/NavBar";
 import SideBarTeacher from "components/SideBarTeacher";
 import { useSelector } from "react-redux";
@@ -11,9 +11,12 @@ import TopBarTeacherStudent from "components/TopBarTeacherStudent";
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
+
 const Room = () => {
   const { roomId } = useParams();
   const [loadin, setLoading] = useState(true);
+  const axiosPrivate = useAxiosPrivate();
 
   const [studentsList, setStudentsList] = useState([]);
   const accessToken = useSelector((state) => state.accessToken);
@@ -131,22 +134,17 @@ const Room = () => {
     // Fetch all inscriptions from your backend API
     const fetchInscriptions = async () => {
       try {
-        const response = await fetch("http://localhost:3001/inscription/all");
-        if (response.ok) {
-          const data = await response.json();
-          setStudentsList(data.data);
-        } else {
-          console.error("Error fetching inscriptions:", await response.text());
-        }
+        const response = await axiosPrivate.get("/inscription/all");
+          setStudentsList(response.data.data);
+        
       } catch (error) {
         console.error("Error fetching inscriptions:", error.message);
       } finally {
         setLoading(false);
       }
     };
-
     fetchInscriptions();
-  }, []);
+  }, [axiosPrivate]);
   return (
     <div>
       {/* **************** MAIN CONTENT START **************** */}
@@ -268,7 +266,7 @@ const Room = () => {
                                 required
                               >
                                 <option value="Select class">
-                                  Select class
+                                  Select student
                                 </option>
                                 {studentsList.map((student) => (
                                   <option key={student._id} value={student._id}>
@@ -305,7 +303,7 @@ const Room = () => {
           </div>
         </section>
         {/* =======================
-  Page content END */}<Footer />
+  Page content END */}<FooterClient />
       </main>
       {/* **************** MAIN CONTENT END **************** */}
     </div>

@@ -7,11 +7,22 @@ import { ToastContainer, toast } from "react-toastify";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 import { BASE_URL } from "api/axios";
 
+import { Backdrop } from "@mui/material";
+import { GridLoader } from "react-spinners";
+
+import { useNavigate, useParams } from "react-router-dom";
+
+
 function Index() {
   const [inscriptions, setInscriptions] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortStatus, setSortStatus] = useState(""); // Sorting status: 'accepted', 'refused', 'pending', or ''
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  let [color, setColor] = useState("#399ebf");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const entriesPerPage = 8;
 
   // Refresh token
@@ -19,10 +30,14 @@ function Index() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setOpen(true);
+
       try {
         const response = await axiosPrivate.get("/inscription/all");
         if (response.status === 200) {
           setInscriptions(response.data.data);
+          setOpen(false);
+
         } else {
           throw new Error("Failed to fetch inscriptions");
         }
@@ -93,6 +108,35 @@ function Index() {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+  const activateUser = async () => {
+    try {
+      const response = await axios.patch(`/inscription/${id}/approve`);
+      if (response.status === 200) {
+        toast.success("Inscription Activated successfully for this User!", {
+          autoClose: 1500,
+          style: { color: "green" },
+        });
+      } else {
+        toast.error("Activation failed. Please try again.", {
+          autoClose: 1500,
+          style: { color: "red" },
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        "Error activating inscription. Please check the console for more details.",
+        {
+          autoClose: 1500,
+          style: { color: "red" },
+        }
+      );
+    }
+  };
+
   return (
     <div>
       {/* Main content */}
@@ -100,6 +144,23 @@ function Index() {
         <SideBar />
         <div className="page-content">
           <TopBarBack />
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <div>
+              <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
           <div className="page-content-wrapper border">
             <ToastContainer />
             <div className="row mb-3">
@@ -199,9 +260,21 @@ function Index() {
                                   Accepted
                                 </span>
                               )}
+
                               {inscription.status === "refused" && (
                                 <span className="badge bg-danger bg-opacity-15 text-danger">
-                                  Refused
+                                  Refused</span>
+                                )}
+
+                              {inscription.status === "active" && (
+                                <span className="badge bg-danger bg-opacity-15 text-primary">
+                                  active user
+                                </span>
+                              )}
+                              {inscription.status === "not paid" && (
+                                <span className="badge bg-info bg-opacity-15 text-danger ">
+                                  Not Paid
+
                                 </span>
                               )}
                             </td>
@@ -221,6 +294,15 @@ function Index() {
                                 onClick={() => handleDelete(inscription._id)}
                               >
                                 <i className="bi bi-trash"></i>
+                              </button>
+                              <button
+                                className="btn btn-info-soft btn-round me-1 mb-1 mb-md-0"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="top"
+                                title="Activate User"
+                                onClick={() => activateUser(inscription._id)}
+                              >
+                                <i className="bi bi-check-circle"></i> 
                               </button>
                             </td>
                           </tr>
@@ -308,7 +390,12 @@ function Index() {
             )}
           </div>
         </div>
+          )}
+           </div>
+    
       </main>
+     
+
     </div>
   );
 }

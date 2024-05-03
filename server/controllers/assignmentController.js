@@ -128,13 +128,17 @@ export const getAssignmentsS = async (req, res) => {
     try {
         const { assignmentId } = req.params;
         // Utilisez l'ID du devoir pour trouver les soumissions des étudiants associées
-        const submissions = await AssignmentStudent.findOne({ _id: assignmentId });
+        const submissions = await AssignmentStudent.find({ assignmentId: assignmentId });
+        console.log(submissions);
+
         res.json(submissions);
     } catch (error) {
         console.error('Error fetching student submissions:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+
 
 // Obtenir toutes les assignments
 export const getAssignments = async (req, res) => {

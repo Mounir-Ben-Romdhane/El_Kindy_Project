@@ -13,7 +13,8 @@ import NotFound from "./scenes/NotFound";
 import AdminHomePage from "../src/scenes/AdminHomePage";
 import ListCoursesPage from "./scenes/Courses/backOffice/ListCoursesPage";
 import Stage from "../src/scenes/Stage/StageHome";
-import ListEventsPage from "./scenes/EventsPage/ListEventPage/ListEvent";
+import ListEventsReservation from "./scenes/EventsPage/ListEventPage/ListEventReservation";
+import ListEventsAdmin from "./scenes/EventsPage/ListEventPage/ListEvent";
 import AddEventPage from "./scenes/EventsPage/AddEventPage/AddEvent";
 import AddCoursePage from "./scenes/Courses/backOffice/AddCoursePage";
 import ListCategoryPage from "../src/scenes/Category/ListCategoryPage";
@@ -32,13 +33,17 @@ import EditAllClass from "../src/scenes/AllClass/EditAllClass";
 import ListAllClass from "../src/scenes/AllClass/ListAllClass";
 import AddAllClass from "../src/scenes/AllClass/AddAllClass";
 
+import PLaymusic from "../src/scenes/PLaymusic";
+
+import UploadImageForm from "../src/scenes/Azureimage/UploadImageForm";
+
 import ListShop from "../src/scenes/Shop/ShopHome/ListShop";
 import MeetingHomeStudent from "./scenes/PlatformStudent/MeetingHomeStudent";
 import DashbordTeacher from "./scenes/PlatformTeacher/DashbordTeacher";
 import HomePagee from "../src/scenes/PlatformTeacher/HomePagee";
 import DashbordStudent from "./scenes/PlatformStudent/DashbordStudent";
 import Room from "../src/scenes/PlatformTeacher/Room";
-import successStage from "../src/scenes/Payment/SuccessStage";
+import SuccessStage from "../src/scenes/Payment/SuccessStage";
 import TeachersList from "../src/scenes/PlatformStudent/TeachersList";
 import Chat from "../src/scenes/Chat/Chat";
 
@@ -85,6 +90,7 @@ import SuccessInscription from "scenes/Payment/SucessInscription";
 
 import Fail from "scenes/Payment/Fail";
 import Payment from "scenes/Payment/Payment";
+import Anniversaire from "../src/scenes/Anniversaire";
 
 import DetailsCourse from "scenes/Courses/frontOffice/detailsCourse";
 //Planning
@@ -235,13 +241,12 @@ function App() {
           }
 
         />
-
-        <Route
-          path="/admins"
+ <Route
+          path="/anniversaire"
           element={
             <PrivateRoute
-              element={<AdminsDashboard />}
-              requiredRoles={["superAdmin"]}
+              element={<Anniversaire />}
+              requiredRoles={["superAdmin", "admin"]}
             />
           }
         />
@@ -307,10 +312,13 @@ function App() {
           }
         />
         <Route
+          path="/PLaymusic"
+          element={<PLaymusic />}
+        />
+ <Route
           path="/category"
           element={<Category />}
         />
-
         <Route
           path="/courses"
           element={<ListCourses />}
@@ -411,6 +419,15 @@ function App() {
           element={isAuth ? <TeachersList /> : <Navigate to="/" />}
 />
           
+<Route
+          path="/uploadImageForm"
+          element={
+            <PrivateRoute
+              element={<UploadImageForm />}
+              requiredRoles={["superAdmin", "teacher", "student"]}
+            />
+          }
+        />
        
 
 <Route
@@ -649,8 +666,8 @@ function App() {
 
         <Route path="/successInscription" element={<SuccessInscription />} />
 <Route
-          path="/successStage"
-          element={ <successStage />}
+          path="/SuccessStage"
+          element={ <SuccessStage />}
         />
 
 <Route
@@ -833,8 +850,7 @@ function App() {
 
           />
 
-
-<Route
+       <Route
           path="/events/reservation/:eventId"
           element={
             <PrivateRoute
@@ -845,10 +861,17 @@ function App() {
 
         />
 
+        
+        <Route
+          path="/listEventsReservation"
+          element={isAuth ? <ListEventsReservation /> : <Navigate to="/" />}
+        />
+
         <Route
           path="/listEventsUser"
           element={isAuth ? <ListEventsPage /> : <Navigate to="/" />}
         />
+
         <Route
           path="/addEvent"
           element={isAuth ? <AddEventPage /> : <Navigate to="/" />}
@@ -863,7 +886,7 @@ function App() {
 
         <Route path="/listEventUser" element={<ListEventUser />} />
 
-        <Route path="/listEventUser" element={<ListEventUser />} />
+
 
         <Route
           path="/addCourse"

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient";
 import NavBar from "components/NavBar";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -128,7 +128,7 @@ function Index() {
 
       </div>
 
-      <Footer />
+      <FooterClient />
     </>
   );
 }

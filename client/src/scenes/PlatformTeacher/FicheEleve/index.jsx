@@ -5,7 +5,8 @@ import NavBar from "components/NavBar";
 import axios from "api/axios";
 import { jwtDecode } from "jwt-decode";
 import { useSelector } from "react-redux";
-import Footer from 'components/Footer';
+import FooterClient from 'components/FooterClient';
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
 
 function Index() {
@@ -17,6 +18,7 @@ function Index() {
   const [showFicheEleve, setShowFicheEleve] = useState(false);
   const [popupVisible, setPopupVisible] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -35,8 +37,11 @@ function Index() {
   }, [accessToken]);
 
   const fetchCourses = async (userId, classId) => {
+    console.log('classId',classId);
+    console.log('userId',userId);
     try {
       const response = await axios.get(`/auth/getCoursesTaughtByTeacherInClass/${userId}/${classId}`);
+      console.log('ccccccccc',response.data);
       setClasses(prevClasses =>
         prevClasses.map(classItem =>
           classItem._id === classId ? { ...classItem, courses: response.data } : classItem
@@ -104,32 +109,41 @@ const handleFormSubmit = async (event) => {
   const form = event.target;
   const formData = new FormData(form);
   const student = formData.get('studentId');
-  const course = formData.get('courseId');
+  const courseId = formData.get('courseId');
   const classId = formData.get('classId');
   const date = formData.get('date');
   const duration = formData.get('duration');
   const content = formData.get('content');
   const observation = formData.get('observation');
 
-  await affectFicheEleve(student, course, classId, date, duration, content, observation);
+  await affectFicheEleve(student, courseId, classId, date, duration, content, observation);
   setPopupVisible(false); // Hide the modal
-  fetchFicheEleveByStudent(student); // Refresh the list of student grades
+  fetchFicheEleveByStudent(student,courseId); // Refresh the list of student grades
 };
 
  //delete fiche eleve by id
- const deleteFicheEleve = async (ficheEleveId) => {
+ const deleteFicheEleve = async (ficheEleveId, studentId, courseId) => {
   try {
     const response = await axios.delete(`/ficheEleve/deleteFicheEleve/${ficheEleveId}`);
     console.log(response.data);
-    fetchFicheEleveByStudent(ficheEleveId);
+    
+    // Update the state to remove the deleted ficheEleve
+    setFicheEleves(prevFicheEleves =>
+      prevFicheEleves.filter(ficheEleve => ficheEleve._id !== ficheEleveId)
+    );
+
+    // You may also want to fetch the updated list of ficheEleves here
+     fetchFicheEleveByStudent(studentId, courseId);
   } catch (error) {
     console.error('Error deleting ficheEleve:', error);
   }
 };
 
-  const fetchFicheEleveByStudent = async (studentId) => {
-    try {
-      const response = await axios.get(`/ficheEleve/getFicheElevesByStudent/${studentId}`);
+
+
+const fetchFicheEleveByStudent = async (studentId, courseId) => {
+  try {
+      const response = await axios.get(`/ficheEleve/getFicheEleveByStudentAndCourse/${studentId}/${courseId}`);
       setFicheEleves(response.data);
     } catch (error) {
       console.error('Error fetching ficheEleves:', error);
@@ -164,7 +178,7 @@ const handleFormSubmit = async (event) => {
       setSelectedStudent(null); // Reset the selected student
     } else {
       fetchStudents(classId, courseId);
-      await fetchFicheEleveByStudent(studentId);
+      await fetchFicheEleveByStudent(studentId ,courseId);
       setShowFicheEleve(true);
       setPopupVisible(true); // Show the modal
       setSelectedStudent(studentId); // Set the selected student
@@ -179,7 +193,6 @@ const handleFormSubmit = async (event) => {
   };
   
 
-
   return (
     <div>
       <NavBar />
@@ -187,7 +200,6 @@ const handleFormSubmit = async (event) => {
       <div className="container">
         <div className="row">
           <SideBarTeacher />
-          <div className="container col-md-8 mt-3">
             <div class="col-xl-9">
               <div class="card border bg-transparent rounded-3">
                 <div class="card-header bg-transparent border-bottom">
@@ -261,7 +273,7 @@ const handleFormSubmit = async (event) => {
                                                 <td>
                                                   <button
                                                     className="btn btn-sm btn-success-soft btn-round me-1 mb-0"
-                                                    onClick={() => fetchFicheEleveByStudent(student._id)}
+                                                    onClick={() => fetchFicheEleveByStudent(student._id,course._id)}
                                                   >
                                                     <i className="fas fa-fw fa-eye"></i>
                                                   </button>
@@ -355,37 +367,46 @@ const handleFormSubmit = async (event) => {
                                           </tbody>
                                         </table>
                                         {ficheEleves.length > 0 && (
-                                          <table className="table table-striped">
-                                            <thead>
-                                              <tr>
-                                                <th>Date</th>
-                                                <th>Duration</th>
-                                                <th>Content</th>
-                                                <th>Observation</th>
-                                                <th>Action</th>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                              {ficheEleves.map((ficheEleve, index) => (
-                                                <tr key={index}>
-                                                  <td>{ficheEleve.date}</td>
-                                                  <td>{ficheEleve.duration}</td>
-                                                  <td>{ficheEleve.content}</td>
-                                                  <td>{ficheEleve.observation}</td>
-                                                  <td>
-  <button
-    className="btn btn-sm btn-danger-soft btn-round ml-1 mb-0"
-    onClick={() => deleteFicheEleve(ficheEleve._id)}
-  >
-    <i className="fas fa-fw fa-trash"></i>
-  </button>
-</td>
+  <div className="col-lg-9">
+    <div className="card bg-transparent border rounded-3">
+      <div className="card-header bg-transparent border-bottom">
+        <h5 className="card-header-title mb-0">Student Sheet </h5>
+      </div>
+      <div className="card-body">
+        <table className="table table-striped">
+          <thead>
+            <tr className="card-header-title mb-0">
+              <th>Date</th>
+              <th>Duration</th>
+              <th>Content</th>
+              <th>Observation</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ficheEleves.map((ficheEleve, index) => (
+              <tr key={index}>
+                <td>{ficheEleve.date}</td>
+                <td>{ficheEleve.duration}</td>
+                <td>{ficheEleve.content}</td>
+                <td>{ficheEleve.observation}</td>
+                <td>
+                  <button
+                    className="btn btn-sm btn-danger-soft btn-round ml-1 mb-0"
+                    onClick={() => deleteFicheEleve(ficheEleve._id)}
+                  >
+                    <i className="fas fa-fw fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+)}
 
-                                                </tr>
-                                              ))}
-                                            </tbody>
-                                          </table>
-                                        )}
                                       </td>
                                     </tr>
 
@@ -398,13 +419,14 @@ const handleFormSubmit = async (event) => {
                         </div>
                       )
                     ))}
-                  </div>
                 </div>
+                
               </div>
+              
             </div>
           </div>
         </div>
-        <Footer />
+        <FooterClient />
       </div>
 
 

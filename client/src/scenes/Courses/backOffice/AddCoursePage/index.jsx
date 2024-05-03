@@ -150,9 +150,6 @@ function Index() {
     formDataToSend.append('picturePath', formData.picture.name);
     formDataToSend.append("fullDescription", fullDescription); // Append full description to form dat
 
-    
-
-
     try {
       const response = await axiosPrivate.post("/course/add", formDataToSend);
       const savedCourse = response.data;
@@ -322,7 +319,7 @@ function Index() {
                                 style={{ cursor: "pointer" }}
                               >
                                 Browse {" "}
-                                          <span className="text-danger">*</span>
+                              <span className="text-danger">*</span>
                               </span>
                             </h6>
                             <input

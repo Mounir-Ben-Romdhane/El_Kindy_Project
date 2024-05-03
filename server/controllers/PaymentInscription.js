@@ -3,8 +3,6 @@ import Inscription from "../models/Inscription.js";
 import { sendEmail } from "../utils/sendMailer.js";
 import User from "../models/User.js";
 
-
-
 // Add a new inscription with payment initialization
 export async function addInscriptionWithPayment(req, res) {
   const { id } = req.params;
@@ -69,6 +67,13 @@ export async function addInscriptionWithPayment(req, res) {
           padding: 20px;
           text-align: center;
         }
+        .header img {
+          max-width: 100%;
+          height: auto;
+          border-bottom: 5px solid #333333; /* Adding a border to the header image */
+          display: block;
+          margin-bottom: 20px;
+        }
         .content {
           padding: 20px;
           color: #333333;
@@ -108,6 +113,7 @@ export async function addInscriptionWithPayment(req, res) {
     <body>
       <div class="email-container">
         <div class="header">
+          <img src="https://i.imgur.com/4qQS8E2.jpeg" alt="Conservatory Scene">
           <h1>Payment Required</h1>
         </div>
         <div class="content">
@@ -123,6 +129,7 @@ export async function addInscriptionWithPayment(req, res) {
       </div>
     </body>
     </html>`;
+    
 
     await sendEmail(inscription.email, "Welcome to Elkindy", body);
 
@@ -178,6 +185,5 @@ export async function Verifyinscription(req, res) {
       res.status(500).json({ message: "Error verifying payment", error: error.message });
   }
 }
-
 
 

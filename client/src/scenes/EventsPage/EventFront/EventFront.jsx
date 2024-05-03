@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import BannerStart from 'components/BannerStart';
 import kendy from "../../../../src/assetss/images/kendy.png";
 import Navbar  from "components/NavBar";
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient";
 import '../../Style.css';
 import BannerStartHome from "components/BannerStartHome";
 import { useDispatch, useSelector } from "react-redux";
@@ -278,7 +278,7 @@ Newsletter END */}
   {/* **************** MAIN CONTENT END **************** */}
   {/* =======================
 Footer START */}
-  <Footer />
+  <FooterClient />
   
   {/* =======================
 Footer END */}

@@ -7,7 +7,9 @@ import { ToastContainer, toast } from "react-toastify";
 
 function Index() {
   const [shop, setShop] = useState([]);
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredClasses, setFilteredClasses] = useState([]);
+  const [sortOption, setSortOption] = useState(""); // State to hold the sorting option
   const fetchData = async () => {
     try {
       const response = await fetch("http://localhost:3001/shops", {
@@ -104,7 +106,26 @@ function Index() {
     }
   };
   
+ 
+  useEffect(() => {
+    setFilteredClasses(
+      shop.filter((shops) =>
+        shops.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (sortOption === "" || shops.status === sortOption || shops.etat === sortOption)
+      )
+    );
+  }, [shop, searchQuery, sortOption]);
 
+  const sortedClass = filteredClasses.sort((a, b) => {
+    switch (sortOption) {
+      case "A-Z":
+        return a.name.localeCompare(b.name);
+      case "Z-A":
+        return b.name.localeCompare(a.name);
+      default:
+        return 0;
+    }
+  });
   return (
     <div>
       {/* **************** MAIN CONTENT START **************** */}
@@ -133,30 +154,46 @@ function Index() {
                 <div className="row g-3 align-items-center justify-content-between">
                   {/* Search bar */}
                   <div className="col-md-8">
-                    <form className="rounded position-relative">
-                      <input
-                        className="form-control bg-body"
-                        type="search"
-                        placeholder="Search"
-                        aria-label="Search"
-                      />
-                    </form>
+                  <form className="rounded position-relative">
+                        <input
+                          className="form-control bg-body"
+                          type="search"
+                          placeholder="Search"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          />
+                        {searchQuery === "" && ( // Check if the search query is empty
+                          <button
+                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                            onClick={(event) => event.preventDefault()}
+                          >
+                            <i className="fas fa-search fs-6 " />
+                          </button>
+                        )}
+                      </form>
                   </div>
                   {/* Select option */}
                   <div className="col-md-3">
                     {/* Short by filter */}
                     <form>
-                      <select
-                        className="form-select  border-0 z-index-9"
-                        aria-label=".form-select-sm"
-                      >
-                        <option value>Sort by</option>
-                        <option>Newest</option>
-                        <option>Oldest</option>
-                        <option>Accepted</option>
-                        <option>Rejected</option>
-                      </select>
-                    </form>
+                        {/* Sorting dropdown */}
+                        <select
+                          className="form-select  border-0 z-index-9"
+                          value={sortOption}
+                          onChange={(e) => setSortOption(e.target.value)}
+                        >
+                          <option value="">Sort by</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="pending">Pending</option>
+                        <option value="refused">Rejected</option>
+                        <option value="sold">Sold</option>
+                        <option value="unsold">Unsold</option>
+
+
+
+                          {/* Add other sorting options here */}
+                        </select>
+                      </form>
                   </div>
                 </div>
                 {/* Search and select END */}
@@ -195,35 +232,35 @@ function Index() {
                     <tbody style={{ whiteSpace: "nowrap" }}>
                       {/* Table row */}
                       {shop && shop.length > 0 ? (
-  shop.map((item) => (
-    <tr key={item._id}>
-      <td>{item.name}</td>
-      <td>{item.marque}</td>
-      <td>{item.price}</td>
+  sortedClass.map((shop) => (
+    <tr key={shop._id}>
+      <td>{shop.name}</td>
+      <td>{shop.marque}</td>
+      <td>{shop.price}</td>
       <td>
-        {item.status === "pending" && (
+        {shop.status === "pending" && (
           <span className="badge bg-warning bg-opacity-15 text-warning">
             Pending
           </span>
         )}
-        {item.status === "accepted" && (
+        {shop.status === "accepted" && (
           <span className="badge bg-success bg-opacity-15 text-success">
             Accepted
           </span>
         )}
-        {item.status === "refused" && (
+        {shop.status === "refused" && (
           <span className="badge bg-danger bg-opacity-15 text-danger">
             Refused
           </span>
         )}
       </td>
       <td>
-        {item.etat === "unsold" && (
+        {shop.etat === "unsold" && (
           <span className="badge bg-info bg-opacity-15 text-info">
             Unsold
           </span>
         )}
-        {item.etat === "sold" && (
+        {shop.etat === "sold" && (
           <span className="badge bg-danger bg-opacity-15 text-danger">
             Sold
           </span>
@@ -231,7 +268,7 @@ function Index() {
       </td>
       <td>
         <Link
-          to={`/BackDetailsShop/${item._id}`}
+          to={`/BackDetailsShop/${shop._id}`}
           className="btn btn-info-soft btn-round mb-1 me-1 mb-md-0"
         >
           <i className="bi bi-eye"></i>
@@ -242,22 +279,22 @@ function Index() {
           data-bs-placement="top"
           title=""
           data-bs-original-title="Delete"
-          onClick={() => handleDelete(item._id)}
+          onClick={() => handleDelete(shop._id)}
         >
           <i className="bi bi-trash"></i>
         </button>
-        {item.etat === "unsold" && (
+        {shop.etat === "unsold" && (
           <button
             className="btn btn-primary-soft btn-round mb-1 me-1 mb-md-0"
-            onClick={() => handleSold(item._id)}
+            onClick={() => handleSold(shop._id)}
           >
              Sold
           </button>
         )}
-        {item.etat === "sold" && (
+        {shop.etat === "sold" && (
           <button
             className="btn btn-primary-soft btn-round mb-1 me-1 mb-md-0"
-            onClick={() => handleUnsold(item._id)}
+            onClick={() => handleUnsold(shop._id)}
           >
             Unso
           </button>
@@ -267,7 +304,7 @@ function Index() {
   ))
 ) : (
   <tr>
-    <td colSpan="5">No data available</td>
+    <td colSpan="5"> No data available </td>
   </tr>
 )}
 

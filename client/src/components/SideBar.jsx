@@ -19,6 +19,7 @@ import {
   faCalendarAlt,
   faBriefcase,
   faSchool,
+  faShoppingCart
 } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from "react-i18next";
 
@@ -229,7 +230,7 @@ function SideBar() {
                 </li> 
 
                 {/* menu item events */}
-               {/*  <li className="nav-item">
+               <li className="nav-item">
                   <Link
                     to="/listEvents"
                     className={`nav-link ${activeNavItem === "/listEvents" ? "active" : ""}`}
@@ -240,7 +241,7 @@ function SideBar() {
                     />{" "}
                     {t("sidebar.Events")}
                   </Link>
-                </li> */}
+                </li> 
                 {/* menu item Reservation */}
                 <li className="nav-item">
                   <Link
@@ -254,21 +255,7 @@ function SideBar() {
                     {t("sidebar.Event Reservations")}
                   </Link>
                 </li>
-
-
-                {/* menu item Reservation */}
-                <li className="nav-item">
-                  <Link
-                    to="/listReservation"
-                    className={`nav-link ${activeNavItem === "/listReservation" ? "active" : ""}`}
-                    onClick={() => handleNavItemClick("/listReservation")}>
-
-                    {/* menu item Reservation Stage*/}
-                  
-
-
-                  </Link>
-                </li>
+              
                 <li className="nav-item">
                       <Link
                         to="/AdminReservationStage"
@@ -289,7 +276,17 @@ function SideBar() {
                     className={`nav-link ${activeNavItem === "/listClasse" ? "active" : ""}`}
                     onClick={() => handleNavItemClick("/listClasse")}>
                     <FontAwesomeIcon icon={faSchool} className="fa-fw me-1" />{" "}
-                    {t("sidebar.Internship Reservations")}
+                    {t("sidebar.Salle")}
+                  </Link>
+                </li>
+                {/* menu item shops */}
+                <li className="nav-item">
+                  <Link
+                    to="/BackListShop"
+                    className={`nav-link ${activeNavItem === "/BackListShop" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/BackListShop")}>
+                    <FontAwesomeIcon icon={faShoppingCart} className="fa-fw me-1" />{" "}
+                    {t("sidebar.Instrument")}
                   </Link>
                 </li>
                 {/* menu item classess */}
