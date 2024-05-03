@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -173,54 +174,6 @@ function Index() {
                       </tr>
                     </thead>
                     <tbody>
-  {filteredAndSortedCategories.map((category, index) => (
-    <tr key={index}>
-      <td>{category.name}</td>
-      <td>
-        {category.description
-          .substring(0, 100)
-          .match(/.{1,30}/g)
-          .map((chunk, index, array) => (
-            <React.Fragment key={index}>
-              {chunk}
-              {index === array.length - 1 &&
-              category.description.length > 100
-                ? "..."
-                : ""}
-              <br />
-            </React.Fragment>
-          ))}
-      </td>
-      <td>
-        {/* Displaying the image */}
-        {category.picturePath ? (
-          <img
-            src={`http://localhost:3001/assets/${category.picturePath}`}
-            alt="Category"
-            style={{ width: "130px", height: "110px", borderRadius: "15%" }} // Adjust size and border radius as needed
-            />
-        ) : (
-          <span>No Image</span>
-        )}
-      </td>
-      <td>
-        <Link
-          to={`/edit-category/${category._id}`}
-          className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
-        >
-          <i className="bi bi-pencil-square"></i>
-        </Link>
-        <button
-          onClick={() => handleDeleteCategory(category._id)}
-          className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
-        >
-          <i className="bi bi-trash"></i>
-        </button>
-      </td>
-    </tr>
-  ))}
-</tbody>
-=======
                       {filteredAndSortedCategories.map((category, index) => (
                         <tr key={index}>
                           <td>{category.name}</td>
@@ -289,6 +242,26 @@ function Index() {
                     aria-label="navigation"
                   >
                     <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
+                      {/* Previous page button */}
+                      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>
+                          <i className="fas fa-angle-left" />
+                        </button>
+                      </li>
+
+                      {/* Page numbers */}
+                      {Array.from({ length: Math.ceil(totalEntries / entriesPerPage) }, (_, index) => (
+                        <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                          <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
+                        </li>
+                      ))}
+
+                      {/* Next page button */}
+                      <li className={`page-item ${currentPage * entriesPerPage >= totalEntries ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                          <i className="fas fa-angle-right" />
+                        </button>
+                      </li>
 
                       <li className="page-item mb-0">
                         <a className="page-link" href="#" tabIndex={-1}>
@@ -315,28 +288,6 @@ function Index() {
                           <i className="fas fa-angle-right" />
                         </a>
                       </li>
-
-                      {/* Previous page button */}
-                      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                        <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>
-                          <i className="fas fa-angle-left" />
-                        </button>
-                      </li>
-
-                      {/* Page numbers */}
-                      {Array.from({ length: Math.ceil(totalEntries / entriesPerPage) }, (_, index) => (
-                        <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                          <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
-                        </li>
-                      ))}
-
-                      {/* Next page button */}
-                      <li className={`page-item ${currentPage * entriesPerPage >= totalEntries ? 'disabled' : ''}`}>
-                        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
-                          <i className="fas fa-angle-right" />
-                        </button>
-                      </li>
-
                     </ul>
                   </nav>
                 </div>

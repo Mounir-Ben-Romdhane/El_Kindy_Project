@@ -224,6 +224,21 @@ function TopBarBack() {
                         French
                       </button>
                     </li>
+                    <li>
+                      <button
+                        className={`dropdown-item ${
+                          i18n.language === "ar" ? "active" : ""
+                        }`}
+                        onClick={() => changeLanguage("ar")}
+                      >
+                        <img
+                          className="fa-fw me-2"
+                          src="assets/images/flags/ar.svg"
+                          alt="arabic"
+                        />
+                        Arabic
+                      </button>
+                    </li>
                   </ul>
                 </li>
 

@@ -6,6 +6,8 @@ import TopBarBack from "components/TopBarBack";
 import { ToastContainer, toast } from "react-toastify";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 import { BASE_URL } from "api/axios";
+import { Backdrop } from "@mui/material";
+import { GridLoader } from "react-spinners";
 
 function Index() {
   const [inscriptions, setInscriptions] = useState([]);
@@ -13,16 +15,25 @@ function Index() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortStatus, setSortStatus] = useState(""); // Sorting status: 'accepted', 'refused', 'pending', or ''
   const entriesPerPage = 10;
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  let [color, setColor] = useState("#399ebf");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Refresh token
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     const fetchData = async () => {
+      setOpen(true);
+
       try {
         const response = await axiosPrivate.get("/inscription/all");
         if (response.status === 200) {
           setInscriptions(response.data.data);
+          setOpen(false);
+
         } else {
           throw new Error("Failed to fetch inscriptions");
         }
@@ -100,6 +111,23 @@ function Index() {
         <SideBar />
         <div className="page-content">
           <TopBarBack />
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <div>
+              <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
           <div className="page-content-wrapper border">
             <ToastContainer />
             <div className="row mb-3">
@@ -308,7 +336,12 @@ function Index() {
             )}
           </div>
         </div>
+          )}
+           </div>
+    
       </main>
+     
+
     </div>
   );
 }
