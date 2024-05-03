@@ -64,7 +64,7 @@ function Index() {
                   {/* Reviews START */}
                   <div className="card-body mt-2 mt-sm-4 d-flex justify-content-center align-items-center ">
                     {/* Category item */}
-                    <div className="col-sm-9 ">
+                    <div className="col-sm-12 ">
                       <div className="card card-body shadow h-100 d-flex justify-content-center align-items-center  ">
                         {/* Title and image */}
                         <div className="d-flex align-items-center">

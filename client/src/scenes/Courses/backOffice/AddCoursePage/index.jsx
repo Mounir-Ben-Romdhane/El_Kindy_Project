@@ -150,9 +150,6 @@ function Index() {
     formDataToSend.append('picturePath', formData.picture.name);
     formDataToSend.append("fullDescription", fullDescription); // Append full description to form dat
 
-    
-
-
     try {
       const response = await axiosPrivate.post("/course/add", formDataToSend);
       const savedCourse = response.data;

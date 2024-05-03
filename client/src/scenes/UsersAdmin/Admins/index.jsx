@@ -213,9 +213,6 @@ function AdminsDashboard() {
           ) : error ? (
             <h2>Error: {error}</h2>
           ) : (
-
-            <div className="">
-
             <div className="page-content-wrapper border">
               {/* Backdrop with GridLoader */}
 

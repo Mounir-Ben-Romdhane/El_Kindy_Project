@@ -31,7 +31,7 @@ import InscriptionList from "./scenes/Inscriptions/backOffice/listInscriptions";
 import EditAllClass from "../src/scenes/AllClass/EditAllClass";
 import ListAllClass from "../src/scenes/AllClass/ListAllClass";
 import AddAllClass from "../src/scenes/AllClass/AddAllClass";
-
+import PLaymusic from "../src/scenes/PLaymusic";
 import ListShop from "../src/scenes/Shop/ShopHome/ListShop";
 import MeetingHomeStudent from "./scenes/PlatformStudent/MeetingHomeStudent";
 import DashbordTeacher from "./scenes/PlatformTeacher/DashbordTeacher";
@@ -308,10 +308,13 @@ function App() {
           }
         />
         <Route
+          path="/PLaymusic"
+          element={<PLaymusic />}
+        />
+ <Route
           path="/category"
           element={<Category />}
         />
-
         <Route
           path="/courses"
           element={<ListCourses />}
@@ -833,8 +836,7 @@ function App() {
 
           />
 
-
-<Route
+       <Route
           path="/events/reservation/:eventId"
           element={
             <PrivateRoute

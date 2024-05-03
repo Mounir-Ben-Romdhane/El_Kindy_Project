@@ -173,9 +173,8 @@ function NavBar() {
                 {/* Nav HOME*/}
                 <li className="nav-item ">
                   <Link
-                    className={`nav-link ${
-                      activeNavItem === "/home" ? "active" : ""
-                    }`}
+                    className={`nav-link ${activeNavItem === "/home" ? "active" : ""
+                      }`}
                     to="/home"
                     onClick={() => handleNavItemClick("/home")}
                   >
@@ -187,12 +186,11 @@ function NavBar() {
                 {/* CORSUS */}
                 <li className="nav-item dropdown">
                   <a
-                    className={`nav-link dropdown-toggle ${
-                      activeNavItem === "/category" ||
-                      activeNavItem === "/courses"
+                    className={`nav-link dropdown-toggle ${activeNavItem === "/category" ||
+                        activeNavItem === "/courses"
                         ? "active"
                         : ""
-                    }`}
+                      }`}
                     href="#"
                     id="demoMenu"
                     data-bs-toggle="dropdown"
@@ -209,9 +207,8 @@ function NavBar() {
                     <li>
                       {" "}
                       <Link
-                        className={`dropdown-item ${
-                          activeNavItem === "/category" ? "active" : ""
-                        }`}
+                        className={`dropdown-item ${activeNavItem === "/category" ? "active" : ""
+                          }`}
                         to="/category"
                         onClick={() => handleNavItemClick("/category")}
                       >
@@ -223,9 +220,8 @@ function NavBar() {
                     <li>
                       {" "}
                       <Link
-                        className={`dropdown-item ${
-                          activeNavItem === "/courses" ? "active" : ""
-                        }`}
+                        className={`dropdown-item ${activeNavItem === "/courses" ? "active" : ""
+                          }`}
                         to="/courses"
                         onClick={() => handleNavItemClick("/courses")}
                       >
@@ -234,7 +230,7 @@ function NavBar() {
                           className="fa-fw me-1"
                         />
                         {t("navbar.Courses")}
-                        
+
                       </Link>
                     </li>
                     <li>
@@ -253,6 +249,8 @@ function NavBar() {
                         {t("navbar.InternalShip")}
                         
                       </Link>
+
+                      
                     </li>
                   </ul>
                 </li>
@@ -260,9 +258,8 @@ function NavBar() {
                 {/* Nav item 4 Component*/}
                 <li className="nav-item ">
                   <Link
-                    className={`nav-link ${
-                      activeNavItem === "/listEventUser" ? "active" : ""
-                    }`}
+                    className={`nav-link ${activeNavItem === "/listEventUser" ? "active" : ""
+                      }`}
                     to="/listEventUser"
                     onClick={() => handleNavItemClick("/listEventUser")}
                   >
@@ -270,15 +267,14 @@ function NavBar() {
                       icon={faCalendarAlt}
                       className="fa-fw me-1"
                     />
-                     {t("navbar.Events")}
+                    {t("navbar.Events")}
                   </Link>
                 </li>
                 {/* PRODUCT*/}
                 <li className="nav-item">
                   <Link
-                    className={`nav-link ${
-                      activeNavItem === "/ListShop" ? "active" : ""
-                    }`}
+                    className={`nav-link ${activeNavItem === "/ListShop" ? "active" : ""
+                      }`}
                     to="/ListShop"
                     onClick={() => handleNavItemClick("/ListShop")}
                   >
@@ -286,8 +282,8 @@ function NavBar() {
                       icon={faBasketShopping}
                       className="fa-fw me-1"
                     />{" "}
-                     {t("navbar.Shop")}
-                    
+                    {t("navbar.Shop")}
+
                   </Link>
                 </li>
 
@@ -299,13 +295,27 @@ function NavBar() {
                   </a>
                 </li>
                 */}
-
+                {/* Nav item 4 Component*/}
+                {/* <li className="nav-item ">
+                  <Link
+                    className={`nav-link ${activeNavItem === "/PLaymusic" ? "active" : ""
+                      }`}
+                    to="/PLaymusic"
+                    onClick={() => handleNavItemClick("/PLaymusic")}
+                  >
+                    <FontAwesomeIcon
+                      icon={faClipboardList}
+                      className="fa-fw me-1"
+                    />{" "}
+                    {/* PLaymusic 
+                    {t("navbar.PLaymusic")}
+                  </Link>
+                </li>*/}
                 {/* Nav item 4 Component*/}
                 <li className="nav-item ">
                   <Link
-                    className={`nav-link ${
-                      activeNavItem === "/inscription" ? "active" : ""
-                    }`}
+                    className={`nav-link ${activeNavItem === "/inscription" ? "active" : ""
+                      }`}
                     to="/inscription"
                     onClick={() => handleNavItemClick("/inscription")}
                   >
@@ -320,16 +330,15 @@ function NavBar() {
                 {/* Nav item 4 Component*/}
                 <li className="nav-item ">
                   <Link
-                    className={`nav-link ${
-                      activeNavItem === "/contact-us" ? "active" : ""
-                    }`}
+                    className={`nav-link ${activeNavItem === "/contact-us" ? "active" : ""
+                      }`}
                     to="/contact-us"
                     onClick={() => handleNavItemClick("/contact-us")}
                   >
                     <FontAwesomeIcon icon={faEnvelope} className="fa-fw me-1" />{" "}
                     {/* Contact */}
                     {t("navbar.Contact")}
-                    
+
                   </Link>
                 </li>
               </ul>
@@ -356,9 +365,8 @@ function NavBar() {
                   >
                     <li>
                       <button
-                        className={`dropdown-item ${
-                          i18n.language === "en" ? "active" : ""
-                        }`}
+                        className={`dropdown-item ${i18n.language === "en" ? "active" : ""
+                          }`}
                         onClick={() => changeLanguage("en")}
                       >
                         <img
@@ -371,9 +379,8 @@ function NavBar() {
                     </li>
                     <li>
                       <button
-                        className={`dropdown-item ${
-                          i18n.language === "fr" ? "active" : ""
-                        }`}
+                        className={`dropdown-item ${i18n.language === "fr" ? "active" : ""
+                          }`}
                         onClick={() => changeLanguage("fr")}
                       >
                         <img
@@ -466,7 +473,7 @@ function NavBar() {
                       <i className="bi bi-grid-fill fa-fw me-1" />{" "}
                       {/* Replace "bi-person" with "bi-house-door" for a dashboard icon */}
                       {t("navbar.Dashboard")}
-                      
+
                     </Link>
                   </li>
 
@@ -474,16 +481,10 @@ function NavBar() {
                     <a className="dropdown-item" href="#">
                       <i className="bi bi-person fa-fw me-2" />
                       {t("navbar.Edit Profile")}
-                      
+
                     </a>
                   </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      <i className="bi bi-gear fa-fw me-2" />
-                      {t("navbar.Account Settings")}
-                      
-                    </a>
-                  </li>
+
                   <li>
                     <a
                       className="dropdown-item bg-danger-soft-hover"
@@ -492,7 +493,7 @@ function NavBar() {
                       <i className="bi bi-power fa-fw me-2" />
                       {t("navbar.Sign Out")}
 
-                      
+
                     </a>
                   </li>
                   <li>
@@ -521,7 +522,7 @@ function NavBar() {
                   >
                     <i className="fas fa-sign-in-alt me-2" />
                     {t("navbar.Sign In")}
-                    
+
                   </button>
                 </div>
               </div>

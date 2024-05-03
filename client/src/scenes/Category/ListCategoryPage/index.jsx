@@ -12,8 +12,13 @@ const MySwal = withReactContent(Swal);
 
 function Index() {
   const [categories, setCategories] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [sortOption, setSortOption] = useState("");
+
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  let [color, setColor] = useState("#399ebf");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
   const entriesPerPage = 8; // Number of entries to display per page
@@ -23,6 +28,8 @@ function Index() {
     try {
       const response = await axiosPrivate.get("/api/categories");
       setCategories(response.data);
+      setOpen(false);
+
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -82,12 +89,29 @@ function Index() {
 
   return (
     <div>
-      {/* **************** MAIN CONTENT START **************** */}
+      {/* ************** MAIN CONTENT START ************** */}
       <main>
         <SideBar />
         {/* Page content START */}
         <div className="page-content">
           <TopBarBack />
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <>
+              <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
 
           {/* Page main content START */}
           <div className="page-content-wrapper border">
@@ -292,16 +316,20 @@ function Index() {
                       </li>
                     </ul>
                   </nav>
+                  </div>
+                  {/* Pagination END */}
                 </div>
-                {/* Pagination END */}
+                {/* Card footer END */}
               </div>
-              {/* Card footer END */}
+              {/* Card END */}
             </div>
-            {/* Card END */}
-          </div>
-          {/* Page main content END */}
-        </div>
+
+            {/* Page main content END */}
+          </>
+        )}
         {/* Page content END */}
+      </div>
+
       </main>
       {/* **************** MAIN CONTENT END **************** */}
     </div>
