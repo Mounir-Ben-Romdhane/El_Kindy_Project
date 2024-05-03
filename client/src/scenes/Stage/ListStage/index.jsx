@@ -12,6 +12,7 @@ function Index() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+
   const [totalEntries, setTotalEntries] = useState(0);
   const entriesPerPage = 8;
   const [open, setOpen] = useState(false);
@@ -19,6 +20,7 @@ function Index() {
   let [color, setColor] = useState("#399ebf");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
 
   const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
   const entriesPerPage = 8; // Number of entries to display per page
