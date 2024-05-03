@@ -14,6 +14,7 @@ import Backdrop from "@mui/material/Backdrop";
 import GridLoader from "react-spinners/GridLoader";
 import { Button, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import UploadImageForm from "../../Azureimage/UploadImageForm";
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 
 function AdminsDashboard() {
   const iconStyle = {
@@ -280,9 +281,9 @@ function AdminsDashboard() {
                           fontSize: "0.8rem",
                           padding: "0.5rem 0.9rem",
                         }}  color="primary" onClick={handleToggleUploadPopup}>
+                          
                      <span className="d-none d-md-inline ms-1"> Upload Image </span>
-                    
-      </Button>
+                     </Button>
                       <button
                         className="btn btn-success btn-sm m-2 d-flex align-items-center text-wrap text-break"
                         onClick={handleOpenSheets}
