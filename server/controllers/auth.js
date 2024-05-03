@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import Classe from "../models/ClassModel.js";
 import { sendEmail } from '../utils/sendMailer.js';
 import speakeasy from "speakeasy";
 import Assignment from "../models/Assignment.js";
@@ -503,11 +504,38 @@ export const getCoursesTaughtByTeacher = async (req, res) => {
       res.status(500).json({ message: error.message });
   }
 };
-// Function to get the list of courses in a class taught by a teacher
+// Function to get the list of courses in a class taught by a teacher getCoursesTaughtByTeacherInClass
 export const getCoursesTaughtByTeacherInClass = async (req, res) => {
+  const { teacherId, classId } = req.params;
 
-  
+  try {
+    // Find the teacher by ID and populate their coursesTaught
+    const teacher = await User.findById(teacherId).populate('teacherInfo.coursesTaught');
+
+    // Check if teacher or teacherInfo is null or empty coursesTaught array is empty  
+    if (!teacher || !teacher.teacherInfo || !teacher.teacherInfo.coursesTaught.length) {
+      return res.status(404).json({ error: "Teacher not found or missing coursesTaught." });
+    }
+
+    // Find the class by ID and populate its courses
+    const classe = await Classe.findById(classId).populate('courses');
+
+    // Extract the courses taught by the teacher
+    const teacherCourses = teacher.teacherInfo.coursesTaught.map(course => course._id.toString());
+
+    // Filter the courses in the class by those taught by the teacher and return the list of courses taught by the teacher in the class 
+    const coursesTaughtByTeacherInClass = classe.courses.filter(course =>
+      teacherCourses.includes(course._id.toString())
+    );
+
+    res.json(coursesTaughtByTeacherInClass);
+  } catch (error) {
+    console.error("Error fetching courses taught by teacher in class:", error);
+    res.status(500).json({ error: "Failed to fetch courses taught by teacher in class." });
+  } 
+
 }
+
 //get students by class 
 export const getStudentsEnrolledInClass = async (req, res) => {
   const classId = req.params.classId;
@@ -536,12 +564,9 @@ export const getStudentsInClassByCourseAndClass = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-
 };
 
-
 //get classes and students not inrolled in class by courrse and teacher 
-
 export const getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher = async (req, res) => {
   const { courseId, teacherId } = req.params;
 

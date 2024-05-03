@@ -38,7 +38,7 @@ import DashbordTeacher from "./scenes/PlatformTeacher/DashbordTeacher";
 import HomePagee from "../src/scenes/PlatformTeacher/HomePagee";
 import DashbordStudent from "./scenes/PlatformStudent/DashbordStudent";
 import Room from "../src/scenes/PlatformTeacher/Room";
-import successStage from "../src/scenes/Payment/SuccessStage";
+import SuccessStage from "../src/scenes/Payment/SuccessStage";
 import TeachersList from "../src/scenes/PlatformStudent/TeachersList";
 import Chat from "../src/scenes/Chat/Chat";
 
@@ -649,8 +649,8 @@ function App() {
 
         <Route path="/successInscription" element={<SuccessInscription />} />
 <Route
-          path="/successStage"
-          element={ <successStage />}
+          path="/SuccessStage"
+          element={ <SuccessStage />}
         />
 
 <Route

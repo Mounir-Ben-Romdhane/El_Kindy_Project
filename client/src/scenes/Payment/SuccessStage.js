@@ -4,7 +4,7 @@ import { useSearchParams,Link } from 'react-router-dom';
 import success from '../../assetss/images/icons8-success.svg'
 import fail from '../../assetss/images/icons8-fail-188.png'
 
-function Success() {
+function SuccessStage() {
   const [searchParams] = useSearchParams();
   const [result, setResult] = useState("");
   const paymentId = searchParams.get("payment_id");
@@ -56,4 +56,4 @@ function Success() {
   );
 }
 
-export default Success;
+export default SuccessStage;

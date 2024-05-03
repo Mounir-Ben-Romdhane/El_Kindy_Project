@@ -89,7 +89,7 @@ export async function AddStage(req, res) {
         "amount": amount,
         "accept_card": "true",
         "session_timeout_secs": 1200,
-        "success_link": "http://localhost:3000/successStage",
+        "success_link": "http://localhost:3000/SuccessStage",
         "fail_link": "http://localhost:3000/fail",
         "developer_tracking_id": "84cb42aa-8358-4818-9c6c-42499e99be1e",
     };
@@ -99,7 +99,7 @@ export async function AddStage(req, res) {
         const paymentId = response.data.result.payment_id;
 
         // Store the reservation data temporarily in the database
-        const tempReservation = new Reservation({
+        const tempReservation = new ReservationStage({
             stageId,
             userName,
             userEmail,
