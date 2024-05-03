@@ -67,7 +67,7 @@ app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
 
 // Configure CORS to allow requests from http://localhost:3000
 app.use(cors({
-    origin: ["http://localhost:3000","https://lh3.googleusercontent.com","http://localhost:3001"],
+    origin: ["http://localhost:3000","https://lh3.googleusercontent.com","http://localhost:3001", "http://localhost:8000"],
     credentials: true // Include credentials in CORS request
   }));
 app.use("/assets", express.static(path.join(__dirname,'public/assets')));
@@ -105,7 +105,7 @@ app.post("/api/categories", upload.single("picture"), createCategorie);
 app.put("/api/categories/:id", upload.single("picture"), updateCategorie);
 
 app.post("/api/stage", upload.single("picture"), createStage);
-app.patch("/api/stage/:id", upload.single("picture"),updateStage );
+app.patch("/api/stage/:id", upload.single("picture"),verifyToken,updateStage );
 
 app.post("/addMessage", upload.single("picture"), addMessage);
 

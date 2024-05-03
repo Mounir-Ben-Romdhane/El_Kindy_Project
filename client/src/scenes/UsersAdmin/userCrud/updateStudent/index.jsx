@@ -3,6 +3,7 @@ import { getAllClasses } from "services/classesService/api";
 import { updateStudent } from "services/usersService/api";
 import "../../../../App.css";
 import { getAllCourses } from "services/courseService/api";
+import { axiosPrivate } from "api/axios";
 
 function UpdateStudent({ student, onClose, fetchData }) {
   const [formData, setFormData] = useState({
@@ -124,7 +125,7 @@ function UpdateStudent({ student, onClose, fetchData }) {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await getAllCourses();
+        const response = await getAllCourses(axiosPrivate);
         setCourses(response.data.data);
       } catch (error) {
         console.error("Error fetching courses:", error);
@@ -133,7 +134,8 @@ function UpdateStudent({ student, onClose, fetchData }) {
 
     const fetchClasses = async () => {
       try {
-        const response = await getAllClasses();
+        const response = await getAllClasses(axiosPrivate);
+
         setClasses(response.data);
       } catch (error) {
         console.error("Error fetching classes:", error);
@@ -143,6 +145,8 @@ function UpdateStudent({ student, onClose, fetchData }) {
     fetchCourses();
     fetchClasses();
   }, []);
+
+  console.log("classes",classes);
 
   const handleChange = (e) => {
     const { name, value, checked } = e.target;

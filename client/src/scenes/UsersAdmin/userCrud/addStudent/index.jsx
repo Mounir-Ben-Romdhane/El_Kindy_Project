@@ -1,3 +1,4 @@
+import useAxiosPrivate from 'hooks/useAxiosPrivate';
 import React, { useEffect, useState } from 'react';
 import { getAllClasses } from 'services/classesService/api';
 import { getAllCourses } from 'services/courseService/api';
@@ -25,12 +26,14 @@ function AddStudent({ onClose, fetchData }) {
   const [courses, setCourses] = useState([]);
   const [classes, setClasses] = useState([]);
   const [errors, setErrors] = useState({});
+  const axiosPrivate = useAxiosPrivate();
+
 
 
   useEffect(() => {
     async function fetchCourses() {
       try {
-        const response = await getAllCourses();
+        const response = await getAllCourses(axiosPrivate);
         setCourses(response.data.data);
       } catch (error) {
         console.error('Error fetching courses:', error);
@@ -43,7 +46,7 @@ function AddStudent({ onClose, fetchData }) {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const classesData = await getAllClasses();
+        const classesData = await getAllClasses(axiosPrivate);
         setClasses(classesData.data);
       } catch (error) {
         console.error('Error fetching classes:', error);

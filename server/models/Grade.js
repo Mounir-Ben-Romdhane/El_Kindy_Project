@@ -21,7 +21,6 @@ const GradeSchema = new mongoose.Schema(
         classId:{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Class',
-            required: true
         }
     },
     { timestamps: true }

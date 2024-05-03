@@ -109,6 +109,70 @@ function Index() {
                   </div>
                 </div>
 
+              </div>
+              <div className="card-body">
+                <div className="table-responsive border-0 rounded-3">
+                  <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col" className="border-0">Stage Title</th>
+                        <th scope="col" className="border-0">User Name</th>
+                        <th scope="col" className="border-0">User Email</th>
+                        <th scope="col" className="border-0">Phone Number</th>
+                        <th scope="col" className="border-0">Message</th>
+                        <th scope="col" className="border-0">Status</th>
+                        <th scope="col" className="border-0 rounded-end">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {filteredReservations
+                        .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
+                        .map((reservation, index) => (
+                          <tr key={index}>
+                            {/* Display stage details */}
+                            <td>
+                              {reservation.stageId && (
+                                <div>
+                                  <p>{reservation.stageId.title}</p>
+
+                                </div>
+                              )}
+                            </td>
+                            <td>{reservation.userName}</td>
+                            <td>{reservation.userEmail}</td>
+                            <td>{reservation.phoneNumber}</td>
+                            <td>{reservation.message}</td>
+                            <td>
+                              {reservation.status === "pending" && (
+                                <span className="badge bg-warning bg-opacity-15 text-warning">
+                                  Pending
+                                </span>
+                              )}
+                              {reservation.status === "accepted" && (
+                                <span className="badge bg-success bg-opacity-15 text-success">
+                                  Accepted
+                                </span>
+                              )}
+                              {reservation.status === "refused" && (
+                                <span className="badge bg-danger bg-opacity-15 text-danger">
+                                  Refused
+                                </span>
+                              )}
+                            </td>
+                            <td>
+                              <button
+                                onClick={() => updateReservationStatus(reservation._id, 'accepted')}
+                                className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+                              >
+                                <i className="bi bi-check fs-4"></i> {/* Accept icon */}
+                              </button>
+                              <button
+                                onClick={() => updateReservationStatus(reservation._id, 'refused')}
+                                className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0">
+                                <i className="bi bi-x fs-4"></i> {/* Refuse icon */}
+                              </button>
+                            </td>
+
                 <div className="card bg-transparent border">
                   <div className="card-header bg-light border-bottom">
                     <div className="row g-3 align-items-center justify-content-between">
@@ -157,6 +221,7 @@ function Index() {
                             <th scope="col" className="border-0">Status</th>
                             <th scope="col" className="border-0 rounded-end">Action</th>
                           </tr>
+
                         </thead>
                         {/* Table body */}
                         <tbody>
@@ -243,6 +308,44 @@ function Index() {
                       </nav>
                     </div>
                   </div>
+
+                        ))}
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              {/* Card ffooter START */}
+              <div className="card-footer bg-transparent pt-0">
+                 {/* Pagination START */}
+                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
+                  {/* Content */}
+                  <p className="mb-0 text-center text-sm-start">Showing {(currentPage - 1) * 8 + 1} to {Math.min(currentPage * 8, totalEntries)} of {totalEntries} entries</p>
+                  {/* Pagination */}
+                  <nav className="d-flex justify-content-center mb-0" aria-label="navigation">
+                    <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
+                      {/* Previous page button */}
+                      <li className={`page-item ${currentPage * entriesPerPage >= totalEntries ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                          <i className="fas fa-angle-right" />
+                        </button>
+                      </li>
+
+                      {/* Page numbers */}
+                      {Array.from({ length: Math.ceil(totalEntries / 8) }, (_, index) => (
+                        <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                          <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
+                        </li>
+                      ))}
+                      {/* Next page button */}
+                      <li className={`page-item ${currentPage * 8 >= totalEntries ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                          <i className="fas fa-angle-right" />
+                        </button>
+                      </li>
+                    </ul>
+                  </nav>
+
                 </div>
               </div>
             </>

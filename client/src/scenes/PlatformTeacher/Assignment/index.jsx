@@ -29,13 +29,33 @@ function TeacherView() {
   const decodeToken = accessToken ? jwtDecode(accessToken) : "";
   const StudentSubmissionDetails = ({ submission }) => {
     const [studentDetails, setStudentDetails] = useState(null);
-
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                const details = await fetchStudentDetails(submission.studentId); // Utilisez submission.studentId ici
-                console.log("Student ID:", details); // Ajoutez cette ligne pour afficher l'ID de l'étudiant
-
+                if (!submission) {
+                    // If submission is undefined, return early
+                    return;
+                }
+    
+                console.log("hi", submission);
+    
+                // Utilize Promise.all to make requests for each student ID
+                const detailsPromises = submission.map(async (sub) => {
+                    console.log("hi", sub.studentId);
+                    // Fetch student details
+                    const studentDetails = await fetchStudentDetails(sub.studentId);
+                    // Return an object containing both student details and the picture path
+                    return {
+                        ...studentDetails,
+                        picturePath: sub.picturePath
+                    };
+                });
+    
+                // Wait for all requests to finish
+                const details = await Promise.all(detailsPromises);
+    
+                console.log("Student IDs:", details);
+    
                 setStudentDetails(details);
             } catch (error) {
                 console.error('Error fetching student details:', error);
@@ -43,19 +63,19 @@ function TeacherView() {
         };
     
         fetchDetails();
-    }, [submission.studentId]);
+    }, [submission]);
     
 
     return (
         <>
-            <p>Student Name: {studentDetails ? `${studentDetails.firstName} ${studentDetails.lastName}` : 'Unknown'}</p>
-            <p>Title: {submission.title}</p>
-            <p>CourseId: {submission.courseId}</p>
-            <a href={`http://localhost:3001/assets/${submission.picturePath.split('/').slice(-1)[0]}`} download> Télécharger </a>
-
-
-                </>
+            <p>Student Name: {studentDetails ? `${studentDetails.map(student => `${student.firstName} ${student.lastName}`).join(', ')}` : 'Unknown'}</p>
+            {/* Map over each submission and render a download link for each picturePath */}
+            {submission.map((sub, index) => (
+                <a key={index} href={`http://localhost:3001/assets/${sub.picturePath ? sub.picturePath.split('/').slice(-1)[0] : ''}`} download> Télécharger {index + 1}</a>
+            ))}
+        </>
     );
+    
 };
 
     // Créez une fonction de gestionnaire pour mettre à jour la date sélectionnée
@@ -170,7 +190,9 @@ function TeacherView() {
     };
     const fetchStudentDetails = async (studentId) => {
         try {
-            const response = await axios.get(`http://localhost:3001/auth/students/66323f1fe113d3b85a72881c`);
+            const response = await axios.get(`http://localhost:3001/auth/students/${studentId}`);
+            console.log("sss",response.data)
+
             return response.data;
         } catch (error) {
             console.error('Error fetching student details:', error);
@@ -478,7 +500,7 @@ function TeacherView() {
                 </Modal.Body>
             </Modal>
          
-    <Modal show={showSubmissionModal} onHide={() => setShowSubmissionModal(false)}>
+            <Modal show={showSubmissionModal} onHide={() => setShowSubmissionModal(false)}>
     <Modal.Header closeButton>
         <Modal.Title>Student Submissions</Modal.Title>
     </Modal.Header>
@@ -489,6 +511,7 @@ function TeacherView() {
             <ul>
                 {studentSubmissions.map((submission, index) => (
                     <li key={index}>
+                        {/* Utilisez le composant StudentSubmissionDetails ici */}
                         <StudentSubmissionDetails submission={submission} />
                     </li>
                 ))}

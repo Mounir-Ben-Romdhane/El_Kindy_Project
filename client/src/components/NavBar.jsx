@@ -239,15 +239,20 @@ function NavBar() {
                     </li>
                     <li>
                       {" "}
-                      <a className="dropdown-item" href="index-2.html">
+                      <Link
+                        className={`dropdown-item ${
+                          activeNavItem === "/stage" ? "active" : ""
+                        }`}
+                        to="/stage"
+                        onClick={() => handleNavItemClick("/stage")}
+                      >
                         <FontAwesomeIcon
-                          icon={faBriefcase}
+                          icon={faGraduationCap}
                           className="fa-fw me-1"
-                        />{" "}
-                        {/* Stages */}
+                        />
                         {t("navbar.InternalShip")}
                         
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </li>
@@ -358,7 +363,7 @@ function NavBar() {
                       >
                         <img
                           className="fa-fw me-2"
-                          src="assets/images/flags/uk.svg"
+                          src="assets/images/flags/us.svg"
                           alt="English"
                         />
                         English
@@ -377,6 +382,21 @@ function NavBar() {
                           alt="French"
                         />
                         French
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className={`dropdown-item ${
+                          i18n.language === "ar" ? "active" : ""
+                        }`}
+                        onClick={() => changeLanguage("ar")}
+                      >
+                        <img
+                          className="fa-fw me-2"
+                          src="assets/images/flags/tn.svg"
+                          alt="arabic"
+                        />
+                        Arabic
                       </button>
                     </li>
                   </ul>
