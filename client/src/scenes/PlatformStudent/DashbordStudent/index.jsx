@@ -1,6 +1,10 @@
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Footer from 'components/Footer';
+
+import FooterClient from 'components/FooterClient';
+
 import NavBar from 'components/NavBar';
 import SideBarStudent from 'components/SideBarStudent';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
@@ -72,7 +76,18 @@ function Index() {
                         </div>
                     </div>
                 </section>
+
                 <Footer />
+
+                {/* =======================
+Page content END */}
+
+
+
+
+                <FooterClient />
+
+
             </main>
         </div>
     );

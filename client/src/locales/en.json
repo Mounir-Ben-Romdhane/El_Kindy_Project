@@ -25,8 +25,8 @@
     "form_name": "Your name *",
     "form_email": "Email address *",
     "form_message": "Message *"
-  }
-  ,
+  },
+
   "navbar": 
     {
       "home": "Home",
@@ -44,7 +44,8 @@
       "Account Settings": "Account Settings",
       "Sign Out": "Sign Out",
       "Dark mode": "Dark mode",
-      "Sign In": "Sign In"
+      "Sign In": "Sign In",
+      "PLaymusic":"PLay music"
     },
     "sidebar": {
       "Dashboard": "Dashboard",
@@ -65,7 +66,9 @@
       "Classes": "Classes",
       "Documentation": "Documentation",
       "Earnings": "Earnings",
-      "Account Settings": "Account Settings"
+      "Account Settings": "Account Settings",
+      "Instrument": "Instrument"
+
   },
   "sidebarStudent": {
     "My profile": "My profile",
@@ -77,8 +80,17 @@
     "Time Slots": "Time Slots",
     "Edit Profile": "Edit Profile",
     "Sign Out": "Sign Out"
-}
-
-  
-    
+  },
+  "sidebarTeacher": {
+    "My profile": "My profile",
+    "Dashboard": "Dashboard",
+    "Create Meeting En Ligne": "Create Online Meeting",
+    "Planning": "Planning",
+    "Assignment": "Assignment",
+    "Messages": "Messages",
+    "Students Grades": "Students Grades",
+    "Time Slots": "Time Slots",
+    "Edit Profile": "Edit Profile",
+    "Sign Out": "Sign Out"
+  }
 }

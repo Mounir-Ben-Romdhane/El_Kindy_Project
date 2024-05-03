@@ -1,5 +1,5 @@
 import BannerStartHome from 'components/BannerStartHome'
-import Footer from 'components/Footer'
+import FooterClient from "components/FooterClient"
 import NavBar from 'components/NavBar'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
@@ -112,7 +112,7 @@ Main Banner END */}
 
 
         </div>
-        <Footer />
+        <FooterClient />
     </>
   )
 }

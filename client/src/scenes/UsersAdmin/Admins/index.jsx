@@ -12,6 +12,7 @@ import AddUser from "../userCrud/addUser";
 import UpdateUser from "../userCrud/updateUser";
 import Backdrop from "@mui/material/Backdrop";
 import GridLoader from "react-spinners/GridLoader";
+
 import { Button, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import UploadImageForm from "../../Azureimage/UploadImageForm";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
@@ -33,12 +34,18 @@ function AdminsDashboard() {
   let [color, setColor] = useState("#399ebf");
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
+
   const [showUploadPopup, setShowUploadPopup] = useState(false);
 
 
   const handleToggleUploadPopup = () => {
     setShowUploadPopup(!showUploadPopup);
   };
+
+
+
+  const [totalEntries, setTotalEntries] = useState(0);
+
 
   const handleToggleForm = () => {
     setShowForm(!showForm);
@@ -210,8 +217,6 @@ function AdminsDashboard() {
         <div className="page-content">
         
           <TopBarBack />
-
-         
           {open ? (
             <Backdrop
               sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -240,7 +245,9 @@ function AdminsDashboard() {
               <div className="card bg-transparent">
                 <div className="card-header bg-transparent border-bottom px-0">
                   <div className="row g-3 align-items-center justify-content-between">
+
                     <div className="col-md-5">
+
                       <form className="rounded position-relative">
                         <input
                           className="form-control bg-transparent"
@@ -260,7 +267,9 @@ function AdminsDashboard() {
                         )}
                       </form>
                     </div>
-                    <div className="col-md-7 d-flex justify-content-end align-items-center">
+
+                    <div className="col-md-6 d-flex justify-content-end align-items-center">
+
                       <button
                         className="btn btn-info btn-sm m-2 d-flex align-items-center text-wrap text-break"
                         onClick={addAdmins}
@@ -277,6 +286,7 @@ function AdminsDashboard() {
                           Import Admins
                         </span>
                       </button>
+
                       <Button variant="contained" style={{
                           fontSize: "0.8rem",
                           padding: "0.5rem 0.9rem",
@@ -284,6 +294,7 @@ function AdminsDashboard() {
                           
                      <span className="d-none d-md-inline ms-1"> Upload Image </span>
                      </Button>
+
                       <button
                         className="btn btn-success btn-sm m-2 d-flex align-items-center text-wrap text-break"
                         onClick={handleOpenSheets}
@@ -331,27 +342,101 @@ function AdminsDashboard() {
                 </div>
               </div>
               <div className="card-body px-0">
-                <div className="tab-content">
-                  <div
-                    className="tab-pane fade show active"
-                    id="nav-preview-tab-1"
-                  >
-                    <div className="row g-4">
-                      {currentAdmins.map((admin) => (
-                        <div key={admin._id} className="col-md-6 col-xxl-4">
-                          <div className="card bg-transparent border h-100">
-                            <div className="card-header bg-transparent border-bottom d-flex justify-content-between">
-                              <div className="d-sm-flex align-items-center">
-                                <div className="avatar avatar-md flex-shrink-0">
-                                  <img
-                                    className="avatar-img rounded-circle"
-                                    src={
-                                      admin.picturePath ||
-                                      "assets/images/element/02.jpg"
-                                    }
-                                    alt="avatar"
-                                  />
+
+                  <div className="tab-content">
+                    <div
+                      className="tab-pane fade show active"
+                      id="nav-preview-tab-1"
+                    >
+
+                      <div className="row g-4">
+                        {currentAdmins.map((admin) => (
+                          <div key={admin._id} className="col-md-6 col-xxl-4">
+                            <div className="card bg-transparent border h-100">
+                              <div className="card-header bg-transparent border-bottom d-flex justify-content-between">
+                                <div className="d-sm-flex align-items-center">
+                                  <div className="avatar avatar-md flex-shrink-0">
+                                    <img
+                                      className="avatar-img rounded-circle"
+                                      src={
+                                        admin.picturePath ||
+                                        "assets/images/element/02.jpg"
+                                      }
+                                      alt="avatar"
+                                    />
+                                  </div>
+                                  <div className="ms-0 ms-sm-2 mt-2 mt-sm-0">
+                                    <h6 className="mb-0">
+                                      {admin.firstName} {admin.lastName}
+                                      {admin.verified ? (
+                                        <i className="bi bi-check-circle-fill text-success ms-2" />
+                                      ) : (
+                                        <i className="bi bi-exclamation-circle-fill text-warning ms-2" />
+                                      )}
+                                    </h6>
+                                    <span className="text-body small">
+                                      {admin.email}
+                                    </span>
+                                  </div>
                                 </div>
+                                <div className="dropdown text-end">
+                                  <a
+                                    href="#"
+                                    className="btn btn-sm btn-light btn-round small mb-0"
+                                    role="button"
+                                    id="dropdownShare2"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                  >
+                                    <i className="bi bi-three-dots fa-fw" />
+                                  </a>
+                                  <ul
+                                    className="dropdown-menu dropdown-w-sm dropdown-menu-end min-w-auto shadow rounded"
+                                    aria-labelledby="dropdownShare2"
+                                  >
+                                    <li>
+                                      <a className="dropdown-item" href="#" onClick={() => handleToggleFormUpdate(admin)}>
+                                        <span className="text-primary">
+                                          <i className="bi bi-pencil-square fa-fw me-2" />
+                                          Edit
+                                        </span>
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a
+                                        className="dropdown-item"
+                                        href="#"
+                                        onClick={() =>
+                                          handleRemoveUser(admin._id)
+                                        }
+                                      >
+                                        <span className="text-danger">
+                                          <i className="bi bi-trash fa-fw me-2" />
+                                          Remove
+                                        </span>
+                                      </a>
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div>
+                              <div className="card-body">
+                                <div>
+                                  <p className="mb-1">
+                                    <i className="bi bi-calendar-check me-2 text-primary" />
+                                    <strong>Date of Birth:</strong>{" "}
+                                    {admin.dateOfBirth
+                                      ? new Date(
+                                          admin.dateOfBirth
+                                        ).toLocaleDateString()
+                                      : "Not available"}
+                                  </p>
+                                  <p className="mb-1">
+                                    <i className="bi bi-geo-alt me-2 text-primary" />
+                                    <strong>Address:</strong> {admin.address}
+                                  </p>
+
+                                </div>
+
                                 <div className="ms-0 ms-sm-2 mt-2 mt-sm-0">
                                   <h6 className="mb-0">
                                     {admin.firstName} {admin.lastName}
@@ -512,9 +597,184 @@ function AdminsDashboard() {
                               </div>
                             </div>
                           </div>
-                        </div>
+
+
                       ))}
                     </div>
+
+                     <div className="row g-4">
+  {currentAdmins
+    .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
+    .map((admin) => (
+      <div key={admin._id} className="col-md-6 col-xxl-4">
+        <div className="card bg-transparent border h-100">
+          <div className="card-header bg-transparent border-bottom d-flex justify-content-between">
+            <div className="d-sm-flex align-items-center">
+              <div className="avatar avatar-md flex-shrink-0">
+                <img
+                  className="avatar-img rounded-circle"
+                  src={
+                    admin.picturePath ||
+                    "assets/images/element/02.jpg"
+                  }
+                  alt="avatar"
+                />
+              </div>
+              <div className="ms-0 ms-sm-2 mt-2 mt-sm-0">
+                <h6 className="mb-0">
+                  {admin.firstName} {admin.lastName}
+                  {admin.verified ? (
+                    <i className="bi bi-check-circle-fill text-success ms-2" />
+                  ) : (
+                    <i className="bi bi-exclamation-circle-fill text-warning ms-2" />
+                  )}
+                </h6>
+                <span className="text-body small">
+                  {admin.email}
+                </span>
+              </div>
+            </div>
+            <div className="dropdown text-end">
+              <a
+                href="#"
+                className="btn btn-sm btn-light btn-round small mb-0"
+                role="button"
+                id="dropdownShare2"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i className="bi bi-three-dots fa-fw" />
+              </a>
+              <ul
+                className="dropdown-menu dropdown-w-sm dropdown-menu-end min-w-auto shadow rounded"
+                aria-labelledby="dropdownShare2"
+              >
+                <li>
+                  <a className="dropdown-item" href="#" onClick={() => handleToggleFormUpdate(admin)}>
+                    <span className="text-primary">
+                      <i className="bi bi-pencil-square fa-fw me-2" />
+                      Edit
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="#"
+                    onClick={() =>
+                      handleRemoveUser(admin._id)
+                    }
+                  >
+                    <span className="text-danger">
+                      <i className="bi bi-trash fa-fw me-2" />
+                      Remove
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="card-body">
+            <div>
+              <p className="mb-1">
+                <i className="bi bi-calendar-check me-2 text-primary" />
+                <strong>Date of Birth:</strong>{" "}
+                {admin.dateOfBirth
+                  ? new Date(
+                      admin.dateOfBirth
+                    ).toLocaleDateString()
+                  : "Not available"}
+              </p>
+              <p className="mb-1">
+                <i className="bi bi-geo-alt me-2 text-primary" />
+                <strong>Address:</strong> {admin.address}
+              </p>
+            </div>
+            <div>
+              <p className="mb-1">
+                <i className="bi bi-gender-male me-2 text-primary" />
+                <strong>Gender:</strong>{" "}
+                {admin.gender || "Not available"}
+              </p>
+              <p className="mb-1">
+                <i className="bi bi-telephone me-2 text-primary" />
+                <strong>Phone Number:</strong>{" "}
+                {admin.phoneNumber1 || "Not available"}
+              </p>
+              <p className="mb-1">
+                {admin.blocked ? (
+                  <i className="bi bi-lock me-2 text-primary" />
+                ) : (
+                  <i className="bi bi-check2-circle me-2 text-primary" />
+                )}
+                <strong>State:</strong>{" "}
+                {admin.blocked ? (
+                  <span className="state-badge blocked">Blocked</span>
+                ) : (
+                  <span className="state-badge">Active</span>
+                )}
+              </p>
+            </div>
+          </div>
+          {/* Card footer */}
+          <div className="card-footer bg-transparent border-top">
+            <div className="d-sm-flex justify-content-between align-items-center">
+              <h6 className="mb-2 mb-sm-0">
+                <i className="bi bi-calendar fa-fw text-orange me-2" />
+                <span className="text-body">Join at:</span>{" "}
+                {new Date(
+                  admin.createdAt
+                ).toLocaleDateString()}
+              </h6>
+              <div className="text-end text-primary-hover">
+                <a
+                  href="#"
+                  className="btn btn-link text-body p-0 mb-0 me-2"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Message"
+                  aria-label="Message"
+                >
+                  <span className="text-primary">
+                    <i className="bi bi-envelope-fill me-1" />
+                  </span>
+                </a>
+                {admin.blocked ? (
+                  <button
+                    className="btn btn-link text-body p-0 mb-0"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Unblock"
+                    aria-label="Unblock"
+                    onClick={() => handleUnblockUser(admin._id)}
+                  >
+                    <span className="text-danger">
+                      <i className="bi bi-lock-fill me-1" />
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-link text-body p-0 mb-0"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Block"
+                    aria-label="Block"
+                    onClick={() => handleBlockUser(admin._id)}
+                  >
+                    <span className="text-danger">
+                      <i className="bi bi-unlock-fill me-1" />
+                    </span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ))}
+</div>
+
+
                   </div>
                 </div>
               </div>

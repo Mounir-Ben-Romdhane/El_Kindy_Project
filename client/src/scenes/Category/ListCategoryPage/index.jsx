@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -7,19 +8,31 @@ import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import Swal from "sweetalert2"; // Importez SweetAlert2
 import useAxiosPrivate from "hooks/useAxiosPrivate";
+import { GridLoader } from "react-spinners";
+import Backdrop from "@mui/material/Backdrop";
 const MySwal = withReactContent(Swal);
 
 function Index() {
   const [categories, setCategories] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [sortOption, setSortOption] = useState("");
+  const [searchQuery, setSearchQuery] = useState(""); // State to hold the search query
 
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  let [color, setColor] = useState("#399ebf");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
+  const entriesPerPage = 8; // Number of entries to display per page
   const axiosPrivate = useAxiosPrivate();
 
   const fetchCategories = async () => {
     try {
       const response = await axiosPrivate.get("/api/categories");
       setCategories(response.data);
+      setOpen(false);
+
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -59,7 +72,7 @@ function Index() {
   const filteredAndSortedCategories = categories
     .filter((category) => {
       // Filter by search query
-      const matchesSearch = 
+      const matchesSearch =
         category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         category.description.toLowerCase().includes(searchQuery.toLowerCase());
       // Return true if no search query or if category name or description matches search query
@@ -79,12 +92,29 @@ function Index() {
 
   return (
     <div>
-      {/* **************** MAIN CONTENT START **************** */}
+      {/* ************** MAIN CONTENT START ************** */}
       <main>
         <SideBar />
         {/* Page content START */}
         <div className="page-content">
           <TopBarBack />
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <>
+              <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
 
           {/* Page main content START */}
           <div className="page-content-wrapper border">
@@ -119,29 +149,29 @@ function Index() {
                         onChange={(e) => setSearchQuery(e.target.value)}
                       />
                       {searchQuery === "" && ( // Check if the search query is empty
-                          <button
-                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-                            type="submit"
-                          >
-                            <i className="fas fa-search fs-6 " />
-                          </button>
-                        )}
+                        <button
+                          className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                          type="submit"
+                        >
+                          <i className="fas fa-search fs-6 " />
+                        </button>
+                      )}
                     </form>
                   </div>
                   {/* Select option */}
                   <div className="col-md-3">
                     {/* Short by filter */}
                     <form>
-                    <select
-            className="form-select  border-0 z-index-9"
-            aria-label=".form-select-sm"
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-          >
-            <option value="">Sort by</option>
-            <option value="Newest">Newest</option>
-            <option value="Oldest">Oldest</option>
-          </select>
+                      <select
+                        className="form-select  border-0 z-index-9"
+                        aria-label=".form-select-sm"
+                        value={sortOption}
+                        onChange={(e) => setSortOption(e.target.value)}
+                      >
+                        <option value="">Sort by</option>
+                        <option value="Newest">Newest</option>
+                        <option value="Oldest">Oldest</option>
+                      </select>
                     </form>
                   </div>
                 </div>
@@ -173,53 +203,51 @@ function Index() {
                       </tr>
                     </thead>
                     <tbody>
-  {filteredAndSortedCategories.map((category, index) => (
-    <tr key={index}>
-      <td>{category.name}</td>
-      <td>
-        {category.description
-          .substring(0, 100)
-          .match(/.{1,30}/g)
-          .map((chunk, index, array) => (
-            <React.Fragment key={index}>
-              {chunk}
-              {index === array.length - 1 &&
-              category.description.length > 100
-                ? "..."
-                : ""}
-              <br />
-            </React.Fragment>
-          ))}
-      </td>
-      <td>
-        {/* Displaying the image */}
-        {category.picturePath ? (
-          <img
-            src={`http://localhost:3001/assets/${category.picturePath}`}
-            alt="Category"
-            style={{ width: "130px", height: "110px", borderRadius: "15%" }} // Adjust size and border radius as needed
-            />
-        ) : (
-          <span>No Image</span>
-        )}
-      </td>
-      <td>
-        <Link
-          to={`/edit-category/${category._id}`}
-          className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
-        >
-          <i className="bi bi-pencil-square"></i>
-        </Link>
-        <button
-          onClick={() => handleDeleteCategory(category._id)}
-          className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
-        >
-          <i className="bi bi-trash"></i>
-        </button>
-      </td>
-    </tr>
-  ))}
-</tbody>
+                      {filteredAndSortedCategories.map((category, index) => (
+                        <tr key={index}>
+                          <td>{category.name}</td>
+                          <td>
+                            {category.description
+                              .substring(0, 100)
+                              .match(/.{1,30}/g)
+                              .map((chunk, index, array) => (
+                                <React.Fragment key={index}>
+                                  {chunk}
+                                  {index === array.length - 1 && category.description.length > 100 ? "..." : ""}
+                                  <br />
+                                </React.Fragment>
+                              ))}
+                          </td>
+                          <td>
+                            {/* Displaying the image */}
+                            {category.picturePath ? (
+                              <img
+                                src={`http://localhost:3001/assets/${category.picturePath}`}
+                                alt="Category"
+                                style={{ width: "130px", height: "110px", borderRadius: "15%" }} // Adjust size and border radius as needed
+                              />
+                            ) : (
+                              <span>No Image</span>
+                            )}
+                          </td>
+                          <td>
+                            <Link
+                              to={`/edit-category/${category._id}`}
+                              className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+                            >
+                              <i className="bi bi-pencil-square"></i>
+                            </Link>
+                            <button
+                              onClick={() => handleDeleteCategory(category._id)}
+                              className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
+                            >
+                              <i className="bi bi-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+
 
 
                     {/* Table body END */}
@@ -243,6 +271,27 @@ function Index() {
                     aria-label="navigation"
                   >
                     <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
+                      {/* Previous page button */}
+                      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>
+                          <i className="fas fa-angle-left" />
+                        </button>
+                      </li>
+
+                      {/* Page numbers */}
+                      {Array.from({ length: Math.ceil(totalEntries / entriesPerPage) }, (_, index) => (
+                        <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                          <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
+                        </li>
+                      ))}
+
+                      {/* Next page button */}
+                      <li className={`page-item ${currentPage * entriesPerPage >= totalEntries ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                          <i className="fas fa-angle-right" />
+                        </button>
+                      </li>
+
                       <li className="page-item mb-0">
                         <a className="page-link" href="#" tabIndex={-1}>
                           <i className="fas fa-angle-left" />
@@ -270,16 +319,20 @@ function Index() {
                       </li>
                     </ul>
                   </nav>
+                  </div>
+                  {/* Pagination END */}
                 </div>
-                {/* Pagination END */}
+                {/* Card footer END */}
               </div>
-              {/* Card footer END */}
+              {/* Card END */}
             </div>
-            {/* Card END */}
-          </div>
-          {/* Page main content END */}
-        </div>
+
+            {/* Page main content END */}
+          </>
+        )}
         {/* Page content END */}
+      </div>
+
       </main>
       {/* **************** MAIN CONTENT END **************** */}
     </div>

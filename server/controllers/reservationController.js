@@ -3,10 +3,8 @@ import Event from "../models/Event.js";
 import { sendSms } from "../index.js"
 import axios from 'axios';
 
+import { generateInvoice } from './Pdf.js';
 
-
-
-// Initiate payment for a paid event and then create a reservation
 export const createReservation = async (req, res) => {
   console.log("initiatePaymentAndCreateReservation hit", req.params, req.body); 
   const { eventId } = req.params;
@@ -76,9 +74,6 @@ if (isNaN(numReservations)) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 }
-
-
-
 
 
 

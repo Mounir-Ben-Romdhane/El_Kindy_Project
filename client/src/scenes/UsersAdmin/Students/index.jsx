@@ -1,149 +1,137 @@
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { blockUser, getUsers, removeUser, unblockUser } from "services/usersService/api";
+import AddUser from "../userCrud/addUser";
+import UpdateUser from "../userCrud/updateUser";
 
-import {
-  blockUser,
-  getUsers,
-  removeUser,
-  unblockUser,
-} from "services/usersService/api";
-import AddStudent from "../userCrud/addStudent";
-import UpdateStudent from "../userCrud/updateStudent";
-
-function StudentsDashboard() {
-  const [students, setStudents] = useState([]);
-  const [student, setStudent] = useState();
+function AdminsDashboard() {
+  const [admins, setAdmins] = useState([]);
+  const [admin, setAdmin] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [showFormUpdate, setShowFormUpdate] = useState(false);
-  const [studentDetails, setStudentDetails] = useState({});
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [studentsPerPage] = useState(6);
-
-
-  const handleToggleMore = (studentId) => {
-    setStudentDetails((prevState) => ({
-      ...prevState,
-      [studentId]: !prevState[studentId],
-    }));
-  };
+  const [entriesPerPage] = useState(6);
 
   const handleToggleForm = () => {
     setShowForm(!showForm);
     setShowFormUpdate(false); // Close the update form when toggling the add form
   };
 
-  const handleToggleFormUpdate = (student) => {
-    // If the update form is already shown, only change the student
-    if (showFormUpdate) {
-      setStudent(student);
-    } else {
-      setStudent(student);
-      setShowFormUpdate(true);
-      setShowForm(false); // Close the add form when toggling the update form
-    }
-  };
-
   const close = () => {
     setShowForm(false);
     setShowFormUpdate(false);
+  }
+  
+  
+
+  const handleToggleFormUpdate = (admin) => {
+    // If the update form is already shown, only change the teacher
+    if (showFormUpdate) {
+        setAdmin(admin);
+    } else {
+        setAdmin(admin);
+        setShowFormUpdate(true);
+        setShowForm(false); // Close the add form when toggling the update form
+    }
   };
+  
 
-  const handleBlockStudent = async (studentId) => {
+  const handleBlockUser = async (userId) => {
     try {
-      // Make API call to block student
-      const response = await blockUser(studentId);
-
+      // Make API call to block user
+      const response = await blockUser(userId);
+  
       if (response.status === 200) {
-        console.log("Student blocked successfully!");
+        console.log('User blocked successfully!');
         // Perform any additional actions if needed
         fetchData();
       } else {
-        console.error("Error blocking student:", response.data);
+        console.error('Error blocking user:', response.data);
         // Handle error here, e.g., show error message to the user
       }
     } catch (error) {
-      console.error("Error blocking student:", error);
+      console.error('Error blocking user:', error);
       // Handle error here, e.g., show error message to the user
     }
   };
-
-  const handleUnblockStudent = async (studentId) => {
+  
+  const handleUnblockUser = async (userId) => {
     try {
-      // Make API call to unblock student
-      const response = await unblockUser(studentId);
-
+      // Make API call to unblock user
+      const response = await unblockUser(userId);
+  
       if (response.status === 200) {
-        console.log("Student unblocked successfully!");
+        console.log('User unblocked successfully!');
         // Perform any additional actions if needed
         fetchData();
       } else {
-        console.error("Error unblocking student:", response.data);
+        console.error('Error unblocking user:', response.data);
         // Handle error here, e.g., show error message to the user
       }
     } catch (error) {
-      console.error("Error unblocking student:", error);
+      console.error('Error unblocking user:', error);
       // Handle error here, e.g., show error message to the user
     }
   };
+  
 
   const fetchData = async () => {
     try {
-      const response = await getUsers("student");
-      setStudents(response.data.data);
+      const response = await getUsers("admin");
+      setAdmins(response.data.data);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching students:", error);
-      setError("Error fetching students. Please try again later.");
+      console.error("Error fetching admins:", error);
+      setError("Error fetching admins. Please try again later.");
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Function to handle student removal
-  const handleRemoveStudent = async (studentId) => {
+  // Function to handle user removal
+  const handleRemoveUser = async (userId) => {
     try {
-      // Call the removeStudent function from your service
-      await removeUser(studentId);
+      // Call the removeUser function from your service
+      await removeUser(userId);
       fetchData();
       close();
     } catch (error) {
-      console.error("Error removing student:", error);
+      console.error("Error removing user:", error);
       // Handle errors as needed
     }
   };
 
-  // Search functionality
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset current page when searching
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
   };
 
- 
-
-  const filteredStudents = students.filter((teacher) =>
-  Object.values(teacher).some(
-    (value) =>
-      typeof value === "string" &&
-      value.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-);
+  // Filter admins based on search query
+  const filteredAdmins = admins.filter((admin) =>
+    Object.values(admin).some(
+      (value) =>
+        value &&
+        value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
 
   // Pagination
-  const indexOfLastStudent = currentPage * studentsPerPage;
-  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
-  const currentStudents = filteredStudents.slice(
-    indexOfFirstStudent,
-    indexOfLastStudent
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentAdmins = filteredAdmins.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
   );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
 
   return (
     <div>
@@ -159,7 +147,7 @@ function StudentsDashboard() {
             <div className="page-content-wrapper border">
               <div className="row">
                 <div className="col-12">
-                  <h1 className="h2 mb-2 mb-sm-0">Students list</h1>
+                  <h1 className="h2 mb-2 mb-sm-0">Admins list</h1>
                 </div>
               </div>
               <div className="card bg-transparent">
@@ -172,17 +160,18 @@ function StudentsDashboard() {
                           type="search"
                           placeholder="Search"
                           aria-label="Search"
-                          value={searchTerm}
+                          value={searchQuery}
                           onChange={handleSearchChange}
                         />
-                        {searchTerm === "" && (
-                          <button
-                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-                            onClick={(event) => event.preventDefault()}
-                          >
-                            <i className="fas fa-search fs-6 " />
-                          </button>
-                        )}
+                        {searchQuery === "" && ( // Check if the search query is empty
+      <button
+        className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+        onClick={(event) => event.preventDefault()}
+
+      >
+        <i className="fas fa-search fs-6 " />
+      </button>
+    )}
                       </form>
                     </div>
                     <div className="col-md-4 text-end">
@@ -190,24 +179,21 @@ function StudentsDashboard() {
                         className="btn btn-primary"
                         onClick={handleToggleForm}
                       >
-                        Add New Student
+                        Add New Admin
                       </button>
                     </div>
                   </div>
                 </div>
-                <div className="card-body px-0">
+                </div>
+              <div className="card-body px-0">
                   <div className="tab-content">
                     <div
                       className="tab-pane fade show active"
                       id="nav-preview-tab-1"
                     >
                       <div className="row g-4">
-                        {currentStudents.map((student) => (
-                          <div
-                            key={student._id}
-                            className="col-md-6 col-xxl-4"
-                          >
-                            {/* Student card JSX */}
+                        {currentAdmins.map((admin) => (
+                          <div key={admin._id} className="col-md-6 col-xxl-4">
                             <div className="card bg-transparent border h-100">
                               <div className="card-header bg-transparent border-bottom d-flex justify-content-between">
                                 <div className="d-sm-flex align-items-center">
@@ -215,7 +201,7 @@ function StudentsDashboard() {
                                     <img
                                       className="avatar-img rounded-circle"
                                       src={
-                                        student.picturePath ||
+                                        admin.picturePath ||
                                         "assets/images/element/02.jpg"
                                       }
                                       alt="avatar"
@@ -223,15 +209,15 @@ function StudentsDashboard() {
                                   </div>
                                   <div className="ms-0 ms-sm-2 mt-2 mt-sm-0">
                                     <h6 className="mb-0">
-                                      {student.firstName} {student.lastName}
-                                      {student.verified ? (
+                                      {admin.firstName} {admin.lastName}
+                                      {admin.verified ? (
                                         <i className="bi bi-check-circle-fill text-success ms-2" />
                                       ) : (
                                         <i className="bi bi-exclamation-circle-fill text-warning ms-2" />
                                       )}
                                     </h6>
                                     <span className="text-body small">
-                                      {student.email}
+                                      {admin.email}
                                     </span>
                                   </div>
                                 </div>
@@ -251,13 +237,7 @@ function StudentsDashboard() {
                                     aria-labelledby="dropdownShare2"
                                   >
                                     <li>
-                                      <a
-                                        className="dropdown-item"
-                                        href="#"
-                                        onClick={() =>
-                                          handleToggleFormUpdate(student)
-                                        }
-                                      >
+                                      <a className="dropdown-item" href="#" onClick={() => handleToggleFormUpdate(admin)}>
                                         <span className="text-primary">
                                           <i className="bi bi-pencil-square fa-fw me-2" />
                                           Edit
@@ -269,7 +249,7 @@ function StudentsDashboard() {
                                         className="dropdown-item"
                                         href="#"
                                         onClick={() =>
-                                          handleRemoveStudent(student._id)
+                                          handleRemoveUser(admin._id)
                                         }
                                       >
                                         <span className="text-danger">
@@ -286,135 +266,54 @@ function StudentsDashboard() {
                                   <p className="mb-1">
                                     <i className="bi bi-calendar-check me-2 text-primary" />
                                     <strong>Date of Birth:</strong>{" "}
-                                    {student.dateOfBirth
+                                    {admin.dateOfBirth
                                       ? new Date(
-                                          student.dateOfBirth
+                                          admin.dateOfBirth
                                         ).toLocaleDateString()
                                       : "Not available"}
                                   </p>
                                   <p className="mb-1">
                                     <i className="bi bi-geo-alt me-2 text-primary" />
-                                    <strong>Address:</strong> {student.address}
+                                    <strong>Address:</strong> {admin.address}
                                   </p>
                                 </div>
                                 <div>
                                   <p className="mb-1">
                                     <i className="bi bi-gender-male me-2 text-primary" />
                                     <strong>Gender:</strong>{" "}
-                                    {student.gender || "Not available"}
+                                    {admin.gender || "Not available"}
                                   </p>
                                   <p className="mb-1">
                                     <i className="bi bi-telephone me-2 text-primary" />
                                     <strong>Phone Number:</strong>{" "}
-                                    {student.phoneNumber1 || "Not available"}
+                                    {admin.phoneNumber1 || "Not available"}
                                   </p>
                                   <p className="mb-1">
-                                    {student.blocked ? (
+                                    {admin.blocked ? (
                                       <i className="bi bi-lock me-2 text-primary" />
                                     ) : (
                                       <i className="bi bi-check2-circle me-2 text-primary" />
                                     )}
                                     <strong>State:</strong>{" "}
-                                    {student.blocked ? (
-                                      <span className="state-badge blocked">
-                                        Blocked
-                                      </span>
+                                    {admin.blocked ? (
+                                      <span className="state-badge blocked">Blocked</span>
                                     ) : (
-                                      <span className="state-badge">
-                                        Active
-                                      </span>
+                                      <span className="state-badge">Active</span>
                                     )}
                                   </p>
-
-                                  {/* "See more" link */}
-                                  <a
-                                    className="p-0 mb-0 mt-2 btn-more d-flex align-items-center"
-                                    onClick={() =>
-                                      handleToggleMore(student._id)
-                                    }
-                                  >
-                                    {studentDetails[student._id] ? (
-                                      <>
-                                        See less{" "}
-                                        <i className="fas fa-angle-up ms-2" />
-                                      </>
-                                    ) : (
-                                      <>
-                                        See{" "}
-                                        <span className="see-more ms-1">
-                                          more
-                                        </span>
-                                        <i className="fas fa-angle-down ms-2" />
-                                      </>
-                                    )}
-                                  </a>
-                                  {/* Additional information */}
-                                  {studentDetails[student._id] && (
-                                    <div className="m-1">
-                                      {/* Classes */}
-                                      <p className="mb-1">
-                                        <i className="bi bi-people me-2 text-primary" />
-                                        <strong>Classes:</strong>{" "}
-                                        {student.studentInfo.classLevel
-                                          ?.className ?? "Not available yet"}
-                                      </p>
-                                      {/* Courses Enrolled */}
-                                      <p className="mb-1">
-                                        <i className="bi bi-journal-text me-2 text-primary" />
-                                        <strong>Courses Enrolled:</strong>{" "}
-                                        {student.studentInfo.coursesEnrolled
-                                          ?.length > 0
-                                          ? student.studentInfo.coursesEnrolled.map(
-                                              (course) => (
-                                                <span key={course._id}>
-                                                  {course.title},{" "}
-                                                </span>
-                                              )
-                                            )
-                                          : "None Courses"}
-                                      </p>
-                                      {/* Parent Information */}
-                                      <p className="mb-1">
-                                        <i className="bi bi-person me-2 text-primary" />
-                                        <strong>Parent Name:</strong>{" "}
-                                        {student.studentInfo.parentName
-                                          ? student.studentInfo.parentName
-                                          : "Not available"}
-                                      </p>
-                                      <p className="mb-1">
-                                        <i className="bi bi-envelope me-2 text-primary" />
-                                        <strong>Parent Email:</strong>{" "}
-                                        {student.studentInfo.parentEmail
-                                          ? student.studentInfo.parentEmail
-                                          : "Not available"}
-                                      </p>
-                                      <p className="mb-1">
-                                        <i className="bi bi-phone me-2 text-primary" />
-                                        <strong>Parent Phone:</strong>{" "}
-                                        {student.studentInfo.parentPhone
-                                          ? student.studentInfo.parentPhone
-                                          : "Not available"}
-                                      </p>
-
-                                      {/* Other additional information can go here */}
-                                    </div>
-                                  )}
                                 </div>
                               </div>
                               {/* Card footer */}
                               <div className="card-footer bg-transparent border-top">
                                 <div className="d-sm-flex justify-content-between align-items-center">
-                                  {/* Rating star */}
                                   <h6 className="mb-2 mb-sm-0">
                                     <i className="bi bi-calendar fa-fw text-orange me-2" />
                                     <span className="text-body">Join at:</span>{" "}
                                     {new Date(
-                                      student.createdAt
+                                      admin.createdAt
                                     ).toLocaleDateString()}
                                   </h6>
-                                  {/* Buttons */}
                                   <div className="text-end text-primary-hover">
-                                    {/* Message button */}
                                     <a
                                       href="#"
                                       className="btn btn-link text-body p-0 mb-0 me-2"
@@ -427,17 +326,14 @@ function StudentsDashboard() {
                                         <i className="bi bi-envelope-fill me-1" />
                                       </span>
                                     </a>
-                                    {/* Block/Unblock button */}
-                                    {student.blocked ? (
+                                    {admin.blocked ? (
                                       <button
                                         className="btn btn-link text-body p-0 mb-0"
                                         data-bs-toggle="tooltip"
                                         data-bs-placement="top"
                                         title="Unblock"
                                         aria-label="Unblock"
-                                        onClick={() =>
-                                          handleUnblockStudent(student._id)
-                                        }
+                                        onClick={() => handleUnblockUser(admin._id)}
                                       >
                                         <span className="text-danger">
                                           <i className="bi bi-lock-fill me-1" />
@@ -450,9 +346,7 @@ function StudentsDashboard() {
                                         data-bs-placement="top"
                                         title="Block"
                                         aria-label="Block"
-                                        onClick={() =>
-                                          handleBlockStudent(student._id)
-                                        }
+                                        onClick={() => handleBlockUser(admin._id)}
                                       >
                                         <span className="text-danger">
                                           <i className="bi bi-unlock-fill me-1" />
@@ -469,7 +363,6 @@ function StudentsDashboard() {
                     </div>
                   </div>
                 </div>
-              </div>
 
               {/* Card footer START */}
               <div className="card-footer bg-transparent pt-0 px-0 mt-4">
@@ -477,12 +370,12 @@ function StudentsDashboard() {
                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                   {/* Content */}
                   <p className="mb-0 text-center text-sm-start">
-                    Showing {indexOfFirstStudent + 1} to{" "}
+                    Showing {indexOfFirstEntry + 1} to{" "}
                     {Math.min(
-                      indexOfLastStudent,
-                      filteredStudents.length
+                      indexOfLastEntry,
+                      filteredAdmins.length
                     )}{" "}
-                    of {filteredStudents.length} entries
+                    of {filteredAdmins.length} entries
                   </p>
                   {/* Pagination */}
                   <nav
@@ -495,14 +388,14 @@ function StudentsDashboard() {
                           <i className="fas fa-angle-left" />
                         </a>
                       </li>
-                      {Array.from({ length: Math.ceil(filteredStudents.length / studentsPerPage) }, (_, i) => (
+                      {Array.from({ length: Math.ceil(filteredAdmins.length / entriesPerPage) }, (_, i) => (
                         <li key={i} className={`page-item ${currentPage === i + 1 && 'active'}`}>
                           <a className="page-link" href="#" onClick={() => paginate(i + 1)}>
                             {i + 1}
                           </a>
                         </li>
                       ))}
-                      <li className={`page-item ${currentPage === Math.ceil(filteredStudents.length / studentsPerPage) && 'disabled'}`}>
+                      <li className={`page-item ${currentPage === Math.ceil(filteredAdmins.length / entriesPerPage) && 'disabled'}`}>
                         <a className="page-link" href="#" onClick={() => paginate(currentPage + 1)}>
                           <i className="fas fa-angle-right" />
                         </a>
@@ -513,23 +406,19 @@ function StudentsDashboard() {
                 {/* Pagination END */}
               </div>
               {/* Card footer END */}
-
             </div>
           )}
 
-          {showForm && <AddStudent onClose={close} fetchData={fetchData} />}
+          {showForm && <AddUser onClose={close} fetchData={fetchData} />}
 
-          {showFormUpdate && (
-            <UpdateStudent
-              student={student}
-              onClose={close}
-              fetchData={fetchData}
-            />
-          )}
+          {showFormUpdate && <UpdateUser user={admin} onClose={close} fetchData={fetchData} />}
+
         </div>
+
+        
       </main>
     </div>
   );
 }
 
-export default StudentsDashboard;
+export default AdminsDashboard;
