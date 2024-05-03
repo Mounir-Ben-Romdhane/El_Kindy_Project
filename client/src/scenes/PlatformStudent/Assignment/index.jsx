@@ -6,9 +6,27 @@ import NavBar from 'components/NavBar';
 import SideBarStudent from 'components/SideBarStudent';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
 import Footer from 'components/Footer';
-import Select from 'react-select'; // Importez React Select
+import Select from 'react-select';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Badge from 'react-bootstrap/Badge';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const AssignmentsComponent = () => {
+  const [newAssignment, setNewAssignment] = useState({
+    title: '',
+    courseId: '',
+    picturePath: null,
+    description: '',
+    type: '', // Ajoutez le champ type
+    courseLevel: '', // Ajoutez le champ courseLevel
+    deadline: 'withDeadline' // Ajoutez le champ deadline avec une valeur par défaut
+});
+  const accessToken = useSelector((state) => state.accessToken); // Récupérez le jeton d'accès du store Redux
+  const decodeToken = accessToken ? jwtDecode(accessToken) : "";
   const [assignments, setAssignments] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -16,78 +34,135 @@ const AssignmentsComponent = () => {
   const [error, setError] = useState(null);
   const [courseImages, setCourseImages] = useState({});
   const [selectedCourse, setSelectedCourse] = useState("");
-  const accessToken = useSelector((state) => state.accessToken);
-  const decodeToken = accessToken ? jwtDecode(accessToken) : "";
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [showModal, setShowModal] = useState(false); 
+  const [selectedAssignmentId, setSelectedAssignmentId] = useState(null); 
+  const [deadlineInfo, setDeadlineInfo] = useState({ date: null, isPassed: false }); // Ajout de l'état pour la date de deadline
+
+  const handleFileSelection = (e) => {
+    setSelectedFile(e.target.files[0]); // Ensure this correctly sets the selected file
+};
+
+  const handleRemettreClick = (assignmentId, deadlineDate) => {
+    setSelectedAssignmentId(assignmentId);
+    const currentDateTime = new Date();
+  
+    // Convertir la date de la deadline en objet Date
+    const deadlineDateTime = new Date(deadlineDate);
+  
+    if (currentDateTime < deadlineDateTime) {
+      setDeadlineInfo({ date: deadlineDateTime, isPassed: false });
+    } else {
+      setDeadlineInfo({ date: deadlineDateTime, isPassed: true });
+    }
+  
+    setShowModal(true);
+  };
 
   useEffect(() => {
-    const fetchAssignments = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/auth/assignments/${decodeToken.course}/${decodeToken.id}`, {
+        const assignmentsResponse = await axios.get(`http://localhost:3001/auth/assignments/${decodeToken.course}/${decodeToken.id}`, {
           headers: {
             "Authorization": `Bearer ${accessToken}`,
           },
         });
-        setAssignments(response.data);
-        setLoading(false);
-        console.log(response.data);
+        setAssignments(assignmentsResponse.data);
 
-        response.data.forEach(async (assignment) => {
-          try {
-            const courseResponse = await axios.get(`http://localhost:3001/course/${assignment.courseId}`);
-            console.log('URL correcte de l\'image:', courseResponse.data.picturePath);
-            setCourseImages(prevState => ({
-              ...prevState,
-              [assignment.courseId]: courseResponse.data.picturePath
-            }));
-          } catch (error) {
-            console.error('Error fetching course image:', error);
-          }
-        });
-      } catch (error) {
-        setError('Error fetching assignments');
-        setLoading(false);
-      }
-    };
+        const teachersResponse = await axios.get('http://localhost:3001/auth/teachers');
+        setTeachers(teachersResponse.data);
 
-    const fetchTeachers = async () => {
-      try {
-        const response = await axios.get('http://localhost:3001/auth/teachers'); 
-        setTeachers(response.data);
-      } catch (error) {
-        setError('Error fetching teachers');
-      }
-    };
-
-    const fetchCourses = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3001/auth/course/${decodeToken.id}`, {
+        const coursesResponse = await axios.get(`http://localhost:3001/auth/course/${decodeToken.id}`, {
           headers: {
             "Authorization": `Bearer ${accessToken}`,
           },
         });
-        console.log()
-        setCourses(response.data);
+        setCourses(coursesResponse.data);
+
+        setLoading(false);
       } catch (error) {
-        setError('Error fetching courses');
+        setError('Error fetching data');
+        setLoading(false);
       }
     };
 
-    if (accessToken && decodeToken) {
-      fetchAssignments();
-      fetchTeachers();
-      fetchCourses();
-    }
-
-    return () => {
-      // Clean up if necessary
-    };
-  }, [accessToken, decodeToken]);
+    fetchData();
+  }, [accessToken, decodeToken.course, decodeToken.id]);
 
   const getTeacherName = (teacherId) => {
     const teacher = teachers.find((t) => t.id === teacherId);
     return teacher ? `${teacher.firstName} ${teacher.lastName}` : 'Unknown';
   };
 
+  const handleDownloadFile = async (filePath) => {
+    try {
+      const response = await axios.get(`http://localhost:3001/${filePath}`, {
+        responseType: 'blob',
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filePath.split('/').pop());
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
+  const handleFileChange = (e) => {
+    setNewAssignment(prevState => ({
+        ...prevState,
+        picturePath: e.target.files[0]
+    }));
+};
+const handleSubmitFile = async (assignmentId) => {
+  const assignment = assignments.find((assignment) => assignment._id === assignmentId);
+  if (!assignment) {
+    console.error("Assignment not found");
+    return;
+  }
+
+  try {
+    if (!selectedFile) {
+      console.error("No file selected");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('picturePath', selectedFile); // Ensure correct field name
+    formData.append('studentId', decodeToken.id); // Add studentId to the formData
+console.log("asa",decodeToken.id)
+    console.log("Assignment ID:", assignmentId);
+    const response = await axios.post(`http://localhost:3001/api/submit/${assignmentId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Set Content-Type explicitly
+        'Authorization': `Bearer ${accessToken}`, // Add Authorization header
+      },
+    });
+
+    console.log("Submit file response:", response);
+
+    if (response.status === 200) {
+      toast.success("File submitted successfully.");
+      setSelectedFile(null);
+      setShowModal(false);
+    } else {
+      console.error("Unexpected response status:", response.status);
+      alert("Unexpected response from server. Please try again later.");
+    }
+  } catch (error) {
+    console.error("Error submitting file:", error);
+    alert("Failed to submit file. Please try again later.");
+  }
+};
+
+
+
+  
+  
+  
   const handleCourseChange = (selectedOption) => {
     setSelectedCourse(selectedOption.value);
   };
@@ -130,11 +205,43 @@ const AssignmentsComponent = () => {
                     <div>
                       <h3 className="card-title"><a href={`http://localhost:3001/${assignment.picturePath}`} target="_blank">{assignment.title}</a></h3>
                       <ul className="list-inline mb-2">
-                        <li className="list-inline-item h6 fw-light mb-1 mb-sm-0"><i className="far fa-clock text-danger me-2"></i>{new Date(assignment.createdAt).toLocaleDateString()}</li>
-                        <li className="list-inline-item h6 fw-light"><i className="fas fa-signal text-success me-2"></i>Beginner</li>
-                        <li className="list-inline-item h6 fw-light"><i className="fas fa-chalkboard-teacher text-primary me-2"></i>{getTeacherName(assignment.id)}</li>
+                        <li className="list-inline-item h6 fw-light mb-1 mb-sm-0"><i className="far fa-clock text-danger me-2"></i>{new Date(assignment.createdAt).toLocaleString()}</li>
+                        <li className="list-inline-item h6 fw-light"><i className="fas fa-signal text-success me-2"></i>{assignment.courseLevel}</li>
+                        <li className="list-inline-item h6 fw-light">
+                          {decodeToken.role === 'teacher' ? (
+                            <i className="fas fa-chalkboard-teacher text-primary me-2"></i>
+                          ) : (
+                            assignment.deadline === 'withDeadline' && (
+                              assignment.type === 'course' ? (
+                                <i className="far fa-calendar-alt text-primary me-2"></i>
+                              ) : (
+                                <i className="fas fa-calendar-alt text-primary me-2"></i>
+                              )
+                            )
+                          )}
+                          {assignment.type === 'course' ? 'Course' : 'TP'}
+                          {assignment.deadline === 'withDeadline' && assignment.type === 'tp' && (
+                            <>
+                              <span className="me-2">Deadline:</span>
+                              <span>{new Date(assignment.deadlineDate).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                              <span className="me-2">Deadline Time:</span>
+                              <span>{assignment.deadlineTime}</span>
+                            </>
+                          )}
+                        </li>
                       </ul>
-                      <a href="#" className="btn btn-primary-soft btn-sm mb-0">Detail course</a>
+                      <div>
+                        {assignment.type === 'tp' && (
+                          <div>
+                            <button onClick={() => handleRemettreClick(assignment._id, assignment.deadlineDate)} className="btn btn-primary-soft btn-sm mb-0">Remettre</button>
+                            {/* Afficher le lien de téléchargement */}
+                          {assignment.file && (
+    <a href={`http://localhost:3001/assets/${assignment.file}`} download className="btn btn-primary-soft btn-sm mb-0 ms-2">Télécharger à nouveau</a>
+)}
+
+                          </div>
+                        )}
+                      </div>
                       <p>{assignment.description}</p>
                     </div>
                   </div>
@@ -144,10 +251,48 @@ const AssignmentsComponent = () => {
           </div>
         </div>
       </section>
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Remettre un fichier</Modal.Title>
+          <div className="deadline-info">
+            {deadlineInfo.date && (
+              <p>
+                Deadline: {deadlineInfo.date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'short', day: 'numeric' })}
+                {deadlineInfo.isPassed ? ' (Remis en retard)' : ' (Remettre)'}
+              </p>
+            )}
+          </div>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="formFile" className="mb-3">
+              <Form.Label>Sélectionnez un fichier à soumettre</Form.Label>
+              <div className="mb-3">
+                            <label htmlFor="picture" className="form-label">Upload Assignment File (PDF)</label>
+                            <input
+    id="picture"
+    className="form-control"
+    type="file"
+    name="picturePath"
+    accept=".pdf" // Ensure this attribute is present
+    onChange={handleFileSelection} // Check that the onChange event is correctly bound
+/>
+                        </div>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Annuler
+          </Button>
+          <Button variant="primary" onClick={() => handleSubmitFile(selectedAssignmentId)}>
+            Soumettre
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Footer />
     </div>
   );
 }
-
 
 export default AssignmentsComponent;

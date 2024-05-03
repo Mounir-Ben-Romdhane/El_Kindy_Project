@@ -6,7 +6,7 @@ const router = express.Router();
 
 //router.get("/all", verifyToken, verifyRoles(["superAdmin", "admin", "teacher"]), getAll);
 router.get("/allCourses", getAll);
-router.get("/all",verifyToken, getAll);
+router.get("/all", getAll);
 router.get("/getAllByCategories", getAllCoursesGroupedByCategory)
 router.delete("/delete/:id",verifyToken, removeCourse);
 router.get("/:id",verifyToken, getCourseById);

@@ -15,20 +15,11 @@ function Index() {
   const [sortOption, setSortOption] = useState("");
 
   const axiosPrivate = useAxiosPrivate();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
-  const entriesPerPage = 8; // Number of entries to display per page
-
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    entriesPerPage: 8,
-  });
 
   const fetchCategories = async () => {
     try {
       const response = await axiosPrivate.get("/api/categories");
       setCategories(response.data);
-      setTotalEntries(response.data.length); // Update the totalEntries state
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -182,6 +173,54 @@ function Index() {
                       </tr>
                     </thead>
                     <tbody>
+  {filteredAndSortedCategories.map((category, index) => (
+    <tr key={index}>
+      <td>{category.name}</td>
+      <td>
+        {category.description
+          .substring(0, 100)
+          .match(/.{1,30}/g)
+          .map((chunk, index, array) => (
+            <React.Fragment key={index}>
+              {chunk}
+              {index === array.length - 1 &&
+              category.description.length > 100
+                ? "..."
+                : ""}
+              <br />
+            </React.Fragment>
+          ))}
+      </td>
+      <td>
+        {/* Displaying the image */}
+        {category.picturePath ? (
+          <img
+            src={`http://localhost:3001/assets/${category.picturePath}`}
+            alt="Category"
+            style={{ width: "130px", height: "110px", borderRadius: "15%" }} // Adjust size and border radius as needed
+            />
+        ) : (
+          <span>No Image</span>
+        )}
+      </td>
+      <td>
+        <Link
+          to={`/edit-category/${category._id}`}
+          className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+        >
+          <i className="bi bi-pencil-square"></i>
+        </Link>
+        <button
+          onClick={() => handleDeleteCategory(category._id)}
+          className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
+        >
+          <i className="bi bi-trash"></i>
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+=======
                       {filteredAndSortedCategories.map((category, index) => (
                         <tr key={index}>
                           <td>{category.name}</td>
@@ -228,6 +267,7 @@ function Index() {
                     </tbody>
 
 
+
                     {/* Table body END */}
                   </table>
                   {/* Table END */}
@@ -240,10 +280,42 @@ function Index() {
                 {/* Pagination START */}
                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                   {/* Content */}
-                  <p className="mb-0 text-center text-sm-start">Showing {(currentPage - 1) * 8 + 1} to {Math.min(currentPage * 8, totalEntries)} of {totalEntries} entries</p>
+                  <p className="mb-0 text-center text-sm-start">
+                    Showing 1 to 8 of 20 entries
+                  </p>
                   {/* Pagination */}
-                  <nav className="d-flex justify-content-center mb-0" aria-label="navigation">
+                  <nav
+                    className="d-flex justify-content-center mb-0"
+                    aria-label="navigation"
+                  >
                     <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
+
+                      <li className="page-item mb-0">
+                        <a className="page-link" href="#" tabIndex={-1}>
+                          <i className="fas fa-angle-left" />
+                        </a>
+                      </li>
+                      <li className="page-item mb-0">
+                        <a className="page-link" href="#">
+                          1
+                        </a>
+                      </li>
+                      <li className="page-item mb-0 active">
+                        <a className="page-link" href="#">
+                          2
+                        </a>
+                      </li>
+                      <li className="page-item mb-0">
+                        <a className="page-link" href="#">
+                          3
+                        </a>
+                      </li>
+                      <li className="page-item mb-0">
+                        <a className="page-link" href="#">
+                          <i className="fas fa-angle-right" />
+                        </a>
+                      </li>
+
                       {/* Previous page button */}
                       <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                         <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>

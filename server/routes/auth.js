@@ -1,5 +1,6 @@
 import express from "express";
 
+
 import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord, verifyAccount,getUser,getAllUserByRole, getCoursesTaughtByTeacher,getCoursesByStudent,getAssignmentsByCourseIdForStudent,getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher,getCoursesByStudentId,getTeachers,getClassByStudent,getStudentsInClassByCourseAndClass,getCoursesTaughtByTeacherInClass,
          getStudents, getUserById, getTeacherById,getClassesTaughtByTeacher,getStudentsEnrolledInClass } from "../controllers/auth.js"
 
@@ -14,6 +15,7 @@ import { addAdmin, addStudentAndParent, addTeacher, ajouter2FA, blockUser, getDi
 const router = express.Router();
 router.get('/teachers', getTeachers);
 router.get('/course/:studentId', getCoursesByStudentId);
+router.get('/students/:studentId', getStudentById);
 
 router.get("/assignments/:courseId/:studentId", getAssignmentsByCourseIdForStudent);
 
