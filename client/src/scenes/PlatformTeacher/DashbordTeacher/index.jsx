@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SideBarTeacher from 'components/SideBarTeacher';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
 import NavBar from 'components/NavBar';
-import Footer from 'components/Footer';
+import FooterClient from 'components/FooterClient';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook } from '@fortawesome/free-solid-svg-icons';
 
@@ -70,7 +70,7 @@ function Index() {
                 </section>
                 {/* =======================
                     Page content END */}
-                <Footer />
+                <FooterClient />
             </main>
             {/* **************** MAIN CONTENT END **************** */}
         </div>

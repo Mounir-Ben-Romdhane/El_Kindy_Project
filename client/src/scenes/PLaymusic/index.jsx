@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import NavBar from "components/NavBar";
 import BannerStartHome from "components/BannerStartHome";
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient";
 import { Piano } from 'react-piano';
 import 'react-piano/dist/styles.css';
 
@@ -113,7 +113,7 @@ function Index() {
                     ))}
                 </div>
             </main>
-            <Footer />
+            <FooterClient />
             <style jsx>{`
                 .xylophone {
                     display: flex;

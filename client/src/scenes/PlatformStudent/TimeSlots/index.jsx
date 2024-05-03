@@ -2,7 +2,7 @@ import NavBar from "components/NavBar";
 import React, { useEffect, useState } from "react";
 import TopBarTeacherStudent from "components/TopBarTeacherStudent";
 
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
@@ -241,7 +241,7 @@ function TimeSlotsStudent() {
             </div>
           </div>
         </section>
-        <Footer />
+        <FooterClient />
       </main>
     </div>
   );

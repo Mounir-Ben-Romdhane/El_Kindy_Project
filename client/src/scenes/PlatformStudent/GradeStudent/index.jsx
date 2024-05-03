@@ -5,7 +5,7 @@ import axios from 'axios';
 import NavBar from 'components/NavBar';
 import SideBarStudent from 'components/SideBarStudent';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
-import Footer from 'components/Footer';
+import FooterClient from 'components/FooterClient';
 
 function Index() {
   const accessToken = useSelector((state) => state.accessToken);
@@ -105,11 +105,11 @@ function Index() {
               </div>
             </div>
           </div>
-        </section>
+        </section>   <br></br>    <FooterClient />
+
         {/* Page content END */}
       </main>
       {/* **************** MAIN CONTENT END **************** */}
-      <Footer />
     </div>
   );
 }

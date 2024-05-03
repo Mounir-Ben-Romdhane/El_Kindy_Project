@@ -1,4 +1,4 @@
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient"
 import NavBar from "components/NavBar";
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from 'react-router-dom';
@@ -1388,7 +1388,7 @@ Course END */}
 
     
       </div>
-      <Footer />
+      <FooterClient />
     </>
   );
 }

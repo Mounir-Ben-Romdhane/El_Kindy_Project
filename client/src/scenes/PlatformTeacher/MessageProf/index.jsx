@@ -8,7 +8,7 @@ import ChatBox from "../../../components/ChatBox/ChatBox";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
 import { createChat, findChat } from '../../../api/ChatRequests';
-import Footer from 'components/Footer';
+import FooterClient from 'components/FooterClient';
 function Index() {
   const accessToken = useSelector((state) => state.accessToken);
   const refreshTokenState = useSelector((state) => state.refreshToken);
@@ -149,7 +149,8 @@ const [receiverData, setReceiverData] = useState(null);
             )}
           </div>
         </div>
-      </section>
+      </section>      < FooterClient/>
+
     </div>
   )
 }

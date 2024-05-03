@@ -3,7 +3,7 @@ import axios from "axios";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient";
 import NavBar from "components/NavBar";
 import SideBarTeacher from "components/SideBarTeacher";
 import SideBarStudent from "components/SideBarStudent";
@@ -280,7 +280,7 @@ return (
           </div>
         </div>
       </section>
-      <Footer />
+      <FooterClient />
     </main>
   </div>
 );

@@ -15,7 +15,6 @@ import { GridLoader } from "react-spinners";
 
 function Index() {
   // Custom hook to get Axios instance with authentication
-  const axiosPrivate = useAxiosPrivate();
 
   const axiosPrivate = useAxiosPrivate();
   const [open, setOpen] = useState(false);
@@ -73,9 +72,7 @@ function Index() {
       console.error("Error deleting course:", error);
     }
   };
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value); // Update search query state
-  };
+  
 
   // Filter courses based on search query
   const filteredCourses = courses.filter((course) => {

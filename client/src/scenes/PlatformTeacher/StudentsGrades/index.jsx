@@ -5,7 +5,7 @@ import NavBar from "components/NavBar";
 import axios from "api/axios";
 import { jwtDecode } from "jwt-decode";
 import { useSelector } from "react-redux";
-import Footer from 'components/Footer';
+import FooterClient from 'components/FooterClient';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-regular-svg-icons';
 
@@ -282,7 +282,7 @@ function Index() {
             </div>
           </div>
         </div>
-        <Footer />
+        <FooterClient />
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import NavBar from 'components/NavBar';
 import SideBarStudent from 'components/SideBarStudent';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
-import Footer from 'components/Footer';
+import FooterClient from 'components/FooterClient';
 import Select from 'react-select';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -290,7 +290,7 @@ console.log("asa",decodeToken.id)
           </Button>
         </Modal.Footer>
       </Modal>
-      <Footer />
+      <FooterClient />
     </div>
   );
 }

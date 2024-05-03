@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Footer from "components/Footer";
+import FooterClient from "components/FooterClient"
 import NavBar from "components/NavBar";
 import { useSelector } from "react-redux";
 import { loadScripts } from '../../scriptLoader';
@@ -106,7 +106,7 @@ Categories START */}
         </section>
       </div>
 
-      <Footer />
+      <FooterClient />
     </>
   );
 }

@@ -8,6 +8,8 @@ import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import Swal from "sweetalert2"; // Importez SweetAlert2
 import useAxiosPrivate from "hooks/useAxiosPrivate";
+import { GridLoader } from "react-spinners";
+import Backdrop from "@mui/material/Backdrop";
 const MySwal = withReactContent(Swal);
 
 function Index() {
@@ -15,6 +17,7 @@ function Index() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortOption, setSortOption] = useState("");
+  const [searchQuery, setSearchQuery] = useState(""); // State to hold the search query
 
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
