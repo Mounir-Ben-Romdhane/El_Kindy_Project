@@ -86,6 +86,7 @@ import SuccessInscription from "scenes/Payment/SucessInscription";
 
 import Fail from "scenes/Payment/Fail";
 import Payment from "scenes/Payment/Payment";
+import Anniversaire from "../src/scenes/Anniversaire";
 
 import DetailsCourse from "scenes/Courses/frontOffice/detailsCourse";
 //Planning
@@ -236,13 +237,12 @@ function App() {
           }
 
         />
-
-        <Route
-          path="/admins"
+ <Route
+          path="/anniversaire"
           element={
             <PrivateRoute
-              element={<AdminsDashboard />}
-              requiredRoles={["superAdmin"]}
+              element={<Anniversaire />}
+              requiredRoles={["superAdmin", "admin"]}
             />
           }
         />
@@ -830,7 +830,9 @@ function App() {
         <Route
           path="/ListStage"
           element={<ListStage />}
-        />
+
+          />
+
 
 <Route
           path="/events/reservation/:eventId"
