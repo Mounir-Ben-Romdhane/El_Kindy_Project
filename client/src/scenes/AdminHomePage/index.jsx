@@ -97,7 +97,7 @@ function Index() {
     const fetchTopInstructor = async () => {
       try {
         const response = await axios.get('/azure/professors');
-        setTopInstructor(response.data[0]); // Assuming the first item is the top instructor
+        setTopInstructor(response.data[0]); 
       } catch (error) {
         console.error('Error fetching top instructor:', error);
       }

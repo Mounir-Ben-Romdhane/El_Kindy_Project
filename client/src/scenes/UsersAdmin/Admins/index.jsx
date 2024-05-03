@@ -13,6 +13,10 @@ import UpdateUser from "../userCrud/updateUser";
 import Backdrop from "@mui/material/Backdrop";
 import GridLoader from "react-spinners/GridLoader";
 
+import { Button, Dialog, DialogTitle, DialogContent } from '@mui/material';
+import UploadImageForm from "../../Azureimage/UploadImageForm";
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+
 function AdminsDashboard() {
   const iconStyle = {
     marginRight: "10px",
@@ -31,8 +35,17 @@ function AdminsDashboard() {
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
 
+  const [showUploadPopup, setShowUploadPopup] = useState(false);
+
+
+  const handleToggleUploadPopup = () => {
+    setShowUploadPopup(!showUploadPopup);
+  };
+
+
 
   const [totalEntries, setTotalEntries] = useState(0);
+
 
   const handleToggleForm = () => {
     setShowForm(!showForm);
@@ -202,6 +215,7 @@ function AdminsDashboard() {
       <main>
         <SideBar />
         <div className="page-content">
+        
           <TopBarBack />
           {open ? (
             <Backdrop
@@ -231,7 +245,9 @@ function AdminsDashboard() {
               <div className="card bg-transparent">
                 <div className="card-header bg-transparent border-bottom px-0">
                   <div className="row g-3 align-items-center justify-content-between">
-                    <div className="col-md-6">
+
+                    <div className="col-md-5">
+
                       <form className="rounded position-relative">
                         <input
                           className="form-control bg-transparent"
@@ -251,7 +267,9 @@ function AdminsDashboard() {
                         )}
                       </form>
                     </div>
+
                     <div className="col-md-6 d-flex justify-content-end align-items-center">
+
                       <button
                         className="btn btn-info btn-sm m-2 d-flex align-items-center text-wrap text-break"
                         onClick={addAdmins}
@@ -268,6 +286,15 @@ function AdminsDashboard() {
                           Import Admins
                         </span>
                       </button>
+
+                      <Button variant="contained" style={{
+                          fontSize: "0.8rem",
+                          padding: "0.5rem 0.9rem",
+                        }}  color="primary" onClick={handleToggleUploadPopup}>
+                          
+                     <span className="d-none d-md-inline ms-1"> Upload Image </span>
+                     </Button>
+
                       <button
                         className="btn btn-success btn-sm m-2 d-flex align-items-center text-wrap text-break"
                         onClick={handleOpenSheets}
@@ -298,6 +325,19 @@ function AdminsDashboard() {
                         </span>
                       </button>
                     </div>
+                    
+      <Dialog
+        open={showUploadPopup}
+        onClose={handleToggleUploadPopup}
+        aria-labelledby="form-dialog-title"
+        fullWidth={true}
+        maxWidth="sm" 
+      >
+        <DialogTitle id="form-dialog-title">Optical Character Recognition</DialogTitle>
+        <DialogContent>
+          <UploadImageForm />
+        </DialogContent>
+      </Dialog>
                   </div>
                 </div>
               </div>
@@ -396,6 +436,7 @@ function AdminsDashboard() {
                                   </p>
 
                                 </div>
+
                                 <div className="ms-0 ms-sm-2 mt-2 mt-sm-0">
                                   <h6 className="mb-0">
                                     {admin.firstName} {admin.lastName}
@@ -556,6 +597,8 @@ function AdminsDashboard() {
                               </div>
                             </div>
                           </div>
+
+
                       ))}
                     </div>
 

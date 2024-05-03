@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/analyze-sentiment", textAnalytics);
 router.get("/best-instructor/:month", getBestInstructorForMonth);
 router.get("/professors",professors)
-router.get("/professors/:id",professors)
+
 
 
 

@@ -265,7 +265,8 @@ function Index() {
 
                               {inscription.status === "refused" && (
                                 <span className="badge bg-danger bg-opacity-15 text-danger">
-                                  Refused
+                                  Refused</span>
+                                )}
 
                               {inscription.status === "active" && (
                                 <span className="badge bg-danger bg-opacity-15 text-primary">
