@@ -1,154 +1,70 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { makeStyles } from '@material-ui/core/styles';
-import { Button, Typography, Container, Paper } from '@material-ui/core';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import { Button, Typography, Paper, Box, styled } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(3),
-    textAlign: 'center',
-    color: theme.palette.text.primary,
-    background: '#333',
-    borderRadius: theme.shape.borderRadius,
-    margin: theme.spacing(2, 0),
-  },
-  input: {
-    display: 'none',
-  },
-  button: {
-    margin: theme.spacing(2, 0),
-  },
-  icon: {
-    marginRight: theme.spacing(1),
-  },
-  error: {
-    color: 'red',
-    marginTop: theme.spacing(2),
-  },
-  title: {
-    color: 'white',
-    marginBottom: theme.spacing(2),
-  },
-}));
+const Input = styled('input')({
+  display: 'none',
+});
 
-function UploadImageForm() {
-  const classes = useStyles();
+const StyledButton = styled(Button)({
+  margin: '20px 0',
+});
+
+const UploadImageForm = () => {
   const [file, setFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [fileName, setFileName] = useState('');
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
+    setFileName(e.target.files[0]?.name);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!file) {
-      setErrorMessage('Please select a file to upload.');
+      alert('Please select an image file.');
       return;
     }
-    setUploading(true);
+
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('image', file);
 
     try {
       const response = await axios.post('/upload', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+          'Content-Type': 'multipart/form-data'
+        }
       });
       console.log(response.data);
-      alert('File uploaded successfully!');
+      alert('Image uploaded successfully!');
     } catch (error) {
       console.error('Error uploading file:', error);
-      setErrorMessage('Error uploading file. Please try again.');
-    } finally {
-      setUploading(false);
+      alert('Error uploading file.');
     }
   };
 
   return (
-    <Paper className={classes.root}>
-      <Typography variant="h5" className={classes.title}>
-        Upload a File
-      </Typography>
-      <form onSubmit={handleSubmit}>
-        <input
-          accept="image/*, .pdf"
-          className={classes.input}
-          id="file-upload"
-          type="file"
-          onChange={handleFileChange}
-        />
-        <label htmlFor="file-upload">
-          <Button
-            variant="contained"
-            color="primary"
-            component="span"
-            startIcon={<CloudUploadIcon />}
-            className={classes.button}
-          >
-            Choose File
-          </Button>
-        </label>
-        <Button
-          type="submit"
-          variant="contained"
-          color="secondary"
-          className={classes.button}
-          disabled={uploading}
-        >
-          {uploading ? 'Uploading...' : 'Upload'}
-        </Button>
-        {errorMessage && (
-          <Typography variant="body2" className={classes.error}>
-            {errorMessage}
-          </Typography>
-        )}
-      </form>
-    </Paper>
+    <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh" bgcolor="#f7f7f7">
+      <Paper elevation={2} sx={{ p: 4, maxWidth: 400, width: '100%' }}>
+        <Typography variant="h5" color="primary" gutterBottom>
+          Upload Image
+        </Typography>
+        <form onSubmit={handleSubmit} noValidate>
+          <Input accept="image/*" id="file-input" type="file" onChange={handleFileChange} />
+          <label htmlFor="file-input">
+            <StyledButton variant="outlined" component="span" startIcon={<CloudUploadIcon />} fullWidth>
+              Choose Image
+            </StyledButton>
+          </label>
+          {fileName && <Typography variant="subtitle1">{fileName}</Typography>}
+          <StyledButton type="submit" variant="contained" color="primary" fullWidth>
+            Upload
+          </StyledButton>
+        </form>
+      </Paper>
+    </Box>
   );
-}
+};
 
-function Index() {
-  return (
-    <div>
-      <title>Eduport - LMS, Education and Course Theme</title>
-      {/* Meta Tags */}
-      <meta charSet="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-      <meta name="author" content="Webestica.com" />
-      <meta name="description" content="Eduport- LMS, Education and Course Theme" />
-      {/* Favicon */}
-      <link rel="shortcut icon" href="assets/images/favicon.ico" />
-      {/* Google Font */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" />
-      {/* Plugins CSS */}
-      <link rel="stylesheet" type="text/css" href="assets/vendor/font-awesome/css/all.min.css" />
-      <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap-icons/bootstrap-icons.css" />
-      {/* Theme CSS */}
-      <link id="style-switch" rel="stylesheet" type="text/css" href="assets/css/style.css" />
-      <header className="navbar-light navbar-sticky">
-        <nav className="navbar navbar-expand-xl">
-          <div className="container">
-            {/* Profile and other elements here */}
-          </div>
-        </nav>
-      </header>
-      <main>
-        <Container>
-          <UploadImageForm />
-          {/* Other page elements */}
-        </Container>
-      </main>
-      <footer className="footer">
-        {/* Footer content here */}
-      </footer>
-    </div>
-  );
-}
-
-export default Index;
+export default UploadImageForm;
