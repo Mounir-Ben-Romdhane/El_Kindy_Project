@@ -534,6 +534,7 @@ export const getStudentsInClassByCourseAndClass = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+}
 
 //get classes and students not inrolled in class by courrse and teacher 
 
@@ -559,5 +560,4 @@ export const getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher = async (
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};
 };

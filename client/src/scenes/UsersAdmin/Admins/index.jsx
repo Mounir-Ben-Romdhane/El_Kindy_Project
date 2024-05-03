@@ -28,6 +28,7 @@ function AdminsDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage] = useState(6);
   let [color, setColor] = useState("#399ebf");
+  //1er
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
 
@@ -175,8 +176,8 @@ function AdminsDashboard() {
         fetchData();
         setOpen2(false);
       } else {
-        throw new Error("Erreur lors de la récupération des données");
         setOpen2(false);
+        throw new Error("Erreur lors de la récupération des données");
 
       }
     } catch (error) {

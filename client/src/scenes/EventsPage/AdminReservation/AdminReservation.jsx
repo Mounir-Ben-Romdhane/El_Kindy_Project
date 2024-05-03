@@ -26,10 +26,8 @@ function Index() {
   const [sortOption, setSortOption] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [numberOfReservations, setNumberOfReservations] = useState(1);
-
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
-  const entriesPerPage = 8; // Number of entries to display per page
+  const [reservationsPerPage] = useState(10);
 
   const handleIncrement = () => {
     setNumberOfReservations(prevCount => prevCount + 1);
@@ -44,13 +42,14 @@ function Index() {
     fetchReservations();
   }, []);
 
+  
+
   const fetchReservations = async () => {
     try {
       const response = await axios.get(
         "http://localhost:3001/events/reservations"
       );
       setReservations(response.data);
-      setTotalEntries(response.data.length);
     } catch (error) {
       console.error("Error fetching reservations:", error);
     }
@@ -78,15 +77,35 @@ function Index() {
     setSearchTerm(term.toLowerCase());
   }, 300);
 
-  const filteredReservations = reservations.filter(
-    (reservation) =>
 
-    reservation.eventId?.title.toLowerCase().includes(searchTerm) ||
-      reservation.userName.toLowerCase().includes(searchTerm) ||
-      reservation.userEmail.toLowerCase().includes(searchTerm) ||
-      reservation.phoneNumber.toString().includes(searchTerm) ||
-      reservation.status.toLowerCase().includes(searchTerm)
-  );
+// Combined function for filtering and sorting reservations
+const getFilteredAndSortedReservations = () => {
+  let processedReservations = [...reservations];
+
+ // Filter by search term
+ processedReservations = processedReservations.filter(reservation =>
+  reservation.eventId?.title.toLowerCase().includes(searchTerm) ||
+  reservation.userName.toLowerCase().includes(searchTerm) ||
+  reservation.userEmail.toLowerCase().includes(searchTerm) ||
+  reservation.phoneNumber.toString().includes(searchTerm)
+);
+
+   // Further filter by status if a sort option is selected
+   if (sortOption) {
+    processedReservations = processedReservations.filter(reservation => reservation.status === sortOption.toLowerCase());
+  }
+
+  return processedReservations;
+};
+
+ // Calculate the currently displayed reservations
+ const indexOfLastReservation = currentPage * reservationsPerPage;
+ const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
+ const currentReservations = reservations.slice(indexOfFirstReservation, indexOfLastReservation);
+ const totalReservations = reservations.length;
+
+ // Pagination controls
+ const paginate = pageNumber => setCurrentPage(pageNumber);
 
   return (
     <div>
@@ -98,9 +117,7 @@ function Index() {
             <div className="row mb-3">
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
                 <h1 className="h3 mb-2 mb-sm-0">List Event Reservations</h1>
-                <Link to="/listEventUser" className="btn btn-sm btn-primary me-1 mb-1 mb-md-0">Add a Reservation</Link>
-                <h1 className="h3 mb-2 mb-sm-0">List Reservations</h1>
-             
+                <Link to="/listEventUser" className="btn btn-sm btn-primary me-1 mb-1 mb-md-0">List Events</Link>
               </div>
             </div>
 
@@ -134,9 +151,10 @@ function Index() {
                       value={sortOption}
                       onChange={(e) => setSortOption(e.target.value)}
                     >
-                      <option value="">Sort by</option>
-                      <option value="asc">Ascendant</option>
-                      <option value="desc">Descendant</option>
+                       <option value="">Sort by</option>
+                      <option value="Accepted">Accepted</option>
+                      <option value="Refused">Refused</option>
+                      <option value="Pending">Pending</option>
                     </select>
                   </div>
                 </div>
@@ -158,19 +176,16 @@ function Index() {
                         <th scope="col" className="border-0">
                           Phone Number
                         </th>
-                        <th scope="col" className="border-0">Number of Reservations</th> {/* Added new column header */}
+                        <th scope="col" className="border-0">N° Reservation</th> {/* Added new column header */}
                         <th scope="col" className="border-0">
                           Status
                         </th>
-                        <th scope="col" className="border-0 rounded-end">
-                          Action
-                        </th>
+                        <th scope="col" className="border-0 rounded-end">Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                    {filteredReservations
-    .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
-    .map((reservation, index) => (                        <tr key={index}>
+                      {getFilteredAndSortedReservations().map((reservation, index) => (
+                        <tr key={index}>
                           <td>
                             {reservation.eventId
                               ? reservation.eventId.title
@@ -207,9 +222,9 @@ function Index() {
                                   "accepted"
                                 )
                               }
-                              className="btn btn-sm btn-success me-1"
+                              className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
                             >
-                              Accept
+                              <i className="bi bi-check fs-4"></i> {/* Accept icon */}
                             </button>
                             <button
                               onClick={() =>
@@ -218,9 +233,9 @@ function Index() {
                                   "refused"
                                 )
                               }
-                              className="btn btn-sm btn-danger"
+                              className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
                             >
-                              Refuse
+                              <i className="bi bi-x fs-4"></i> {/* Refuse icon */}
                             </button>
                           </td>
 
@@ -228,43 +243,14 @@ function Index() {
                       ))}
                     </tbody>
                   </table>
+                  <div className="pagination">
+              <p className="mb-0 text-center text-sm-start">
+                Showing {indexOfFirstReservation + 1} to {Math.min(indexOfLastReservation, totalReservations)} of {totalReservations} entries
+              </p>
+            
+            </div>
                 </div>
               </div>
-                    {/* Card ffooter START */}
-                    <div className="card-footer bg-transparent pt-0">
-                  {/* Pagination START */}
-                  <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
-                  {/* Content */}
-                  <p className="mb-0 text-center text-sm-start">Showing {(currentPage - 1) * 8 + 1} to {Math.min(currentPage * 8, totalEntries)} of {totalEntries} entries</p>
-                  {/* Pagination */}
-                  <nav className="d-flex justify-content-center mb-0" aria-label="navigation">
-                    <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
-                      {/* Previous page button */}
-                      <li className={`page-item ${currentPage * entriesPerPage >= totalEntries ? 'disabled' : ''}`}>
-  <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
-    <i className="fas fa-angle-right" />
-  </button>
-</li>
-
-                      {/* Page numbers */}
-                      {Array.from({ length: Math.ceil(totalEntries / 8) }, (_, index) => (
-                        <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                          <button className="page-link" onClick={() => setCurrentPage(index + 1)}>{index + 1}</button>
-                        </li>
-                      ))}
-                      {/* Next page button */}
-                      <li className={`page-item ${currentPage * 8 >= totalEntries ? 'disabled' : ''}`}>
-                        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
-                          <i className="fas fa-angle-right" />
-                        </button>
-                      </li>
-                    </ul>
-                  </nav>
-                </div>
-                {/* Pagination END */}
-
-                </div>
-                {/* Card footer END */}
             </div>
           </div>
         </div>
