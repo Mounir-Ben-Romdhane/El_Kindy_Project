@@ -35,8 +35,11 @@ function Index() {
       );
       if (response.status === 200) {
         navigate("/inscriptionsList");
-      }else {
-        // Handle other response statuses here
+      }else if (response.status === 400) {
+        const errorMessage = response.data.message;
+        alert(errorMessage);
+      }
+      else {
         const errorMessage = response.data.message; 
         alert(errorMessage); 
       }
