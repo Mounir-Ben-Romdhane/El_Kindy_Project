@@ -6,54 +6,33 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-notifications/lib/notifications.css";
 import { Link, useNavigate } from "react-router-dom";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 function AddEvent() {
   const [isPaid, setIsPaid] = useState(false);
-const [isFree, setIsFree] = useState(false);
-const [event, setEvent] = useState({
-  title: "",
-  description: "",
-  dateDebut: "",
-  dateFin: "",
-  timeFrom: "",
-  timeTo: "",
-  place: "",
-  imageFile: null
-});
-const [errors, setErrors] = useState({});
+  const [isFree, setIsFree] = useState(true);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    dateDebut: "",
+    dateFin: "",
+    timeFrom: "",
+    timeTo: "",
+    place: "",
+    price : 0,
+    imageFile: null,
+  });
+  const [errors, setErrors] = useState({});
 
-const validate = () => {
-  let tempErrors = {};
-  tempErrors.title = event.title ? "" : "This field is required.";
-  tempErrors.description = event.description ? "" : "Write Small Description.";
-  tempErrors.dateDebut = event.dateDebut ? "" : "This field is required.";
-  tempErrors.dateFin = event.dateFin ? "" : "This field is required.";
-  tempErrors.place = event.place ? "" : "This field is required.";
-  tempErrors.timeFrom = event.timeFrom ? "" : "This field is required.";
-  tempErrors.timeTo = event.timeTo ? "" : "This field is required.";
-  tempErrors.picture = event.picture ? "" : "Please upload an image!";
-  setErrors(tempErrors);
-  return Object.values(tempErrors).every(x => x === "");
-};
-
-  
-
-  // State to hold the image name
-  const [imageName, setImageName] = useState(null);
-  // State to hold the image file
-  const [imageFile, setImageFile] = useState(null);
-
-  /* const [place, setPlace] = useState(""); // New state for place
-  const [timeFrom, setTimeFrom] = useState(""); // New state for time from
-  const [timeTo, setTimeTo] = useState(""); // New state for time to */
+  const axiosPrivate = useAxiosPrivate();
 
   const handleImageSelect = (event) => {
     const selectedFile = event.target.files[0];
-    setEvent({ ...event, picture: selectedFile });
-    
+    setFormData({ ...formData, picture: selectedFile });
+
     // Remove red border when an image is selected
     event.target.parentElement.classList.remove("border-danger");
-  
+
     // Check if a picture is selected and update the error status
     if (!selectedFile) {
       setErrors((prevErrors) => ({
@@ -67,44 +46,77 @@ const validate = () => {
       }));
     }
   };
-  
+
   const handleRemoveImage = () => {
-    setEvent({ ...event, picture: null });
+    setFormData({ ...formData, picture: null });
     document.getElementById("image").value = "";
-  
+
     // Update the error status for the picture field
     setErrors((prevErrors) => ({
       ...prevErrors,
       picture: "Please upload an image!",
     }));
-  
+
     // Add red border if no image is selected after removal
-    document.getElementById("image").parentElement.classList.add("border-danger");
+    document
+      .getElementById("image")
+      .parentElement.classList.add("border-danger");
   };
 
+  const validateField = (name, value) => {
+    let error = "";
+    switch (name) {
+      case "title":
+        error = value.trim() === "" ? "Please enter a course title !" : "";
+        break;
+      case "description":
+        error = value.trim() === "" ? "Please enter a short description !" : "";
+        break;
+      case "picture":
+        error = value === null ? "Please upload an image !" : "";
+        break;
+      case "dateDebut":
+        error = value === "" ? "Please select a course category !" : "";
+        break;
+      case "dateFin":
+        error = value === "" ? "Please select a course level !" : "";
+        break;
+      case "price":
+        error = value === 0 || value === null || value < 0 ? "Please add a price !" : "";
+        break;
+      case "place":
+        error = value === "" ? "Please select a course category !" : "";
+        break;
+      case "timeFrom":
+        error = value === "" ? "Please select a course level !" : "";
+        break;
+      case "timeTo":
+        error = value === "" ? "Please select a course level !" : "";
+        break;
+      default:
+        break;
+    }
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
+  };
+
+  //const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const addEvent = async (values, onSubmitProps) => {
-    
-    console.log("values", values);
-    // this allow us to send form info with image
-    const formData = new FormData();
-    for (let value in values) {
-      formData.append(value, values[value]);
+  const addEvent = async () => {
+    const formDataToSend = new FormData();
+    for (let key in formData) {
+      formDataToSend.append(key, formData[key]);
     }
-    formData.append("picturePath", values.picture.name);
     console.log("formData", formData);
-    console.log("picture name", values.picture.name);
 
-    const savedEventResponse = await fetch("http://localhost:3001/event/add", {
-      method: "POST",
-      body: formData,
-    });
-    const savedEvent = await savedEventResponse.json();
+    // Append picturePath to the form data
+    formDataToSend.append("picturePath", formData.picture.name);
 
-    if (savedEvent) {
+    try {
+      const response = await axiosPrivate.post("/event/add", formDataToSend);
+      const savedCourse = response.data;
       console.log("Event added!");
-      console.log("Event", savedEvent);
+      //console.log("Course", savedCourse);
       // Show the toast notification with autoClose: false
       toast.success("Event added successfully !!", {
         autoClose: 1500,
@@ -115,23 +127,45 @@ const validate = () => {
       setTimeout(() => {
         navigate("/listEvents");
       }, 2000);
+    } catch (error) {
+      console.error("Error adding course:", error);
+      // Handle error
+      toast.error("Failed to add course. Please try again.");
     }
   };
 
-  const handleFormSubmit = async (e, onSubmitProps) => {
-    e.preventDefault(); // Prevent default form submission behavior
-    if (validate()) { // Check if all fields are valid
-      const formData = new FormData(e.target);
-      const formValues = Object.fromEntries(formData.entries());
-      await addEvent(formValues, onSubmitProps);
+  const handleFormSubmit = async (values, onSubmitProps) => {
+    values.preventDefault();
+
+    // Validate fields
+    for (let [key, value] of Object.entries(formData)) {
+      validateField(key, value);
     }
+
+    // Check if there are any errors
+    if (Object.values(errors).some((error) => error !== "")) {
+      return;
+    }
+
+    // Check if an image is selected
+    if (!formData.picture) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        picture: "Please upload an image!",
+      }));
+      // Add red border if no image is selected
+      document
+        .getElementById("image")
+        .parentElement.classList.add("border-danger");
+      return;
+    }
+    await addEvent();
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEvent({ ...event, [name]: value });
-    validate(name, value);
-  };
+    setFormData({ ...formData, [name]: value });
+    validateField(name, value);  };
 
 
   return (
@@ -155,89 +189,108 @@ const validate = () => {
               <form onSubmit={handleFormSubmit} className="m-4">
                 <div className="row g-4">
                   <div className="col-12">
-                    <label className="form-label">Event Title</label>
+                    <label className="form-label">
+                      Event Title <span className="text-danger">*</span>
+                    </label>
                     <input
-                      className={"form-control" + (errors.title ? " is-invalid" : "")}
+                      className={`form-control ${
+                        errors.title ? "is-invalid" : ""
+                      }`}
                       type="text"
                       name="title"
                       placeholder="Enter Event title"
-                      
                       onChange={handleChange}
                     />
-                     <div className="invalid-feedback">{errors.title}</div>
-
+                    {errors.title && (
+                      <div className="invalid-feedback">{errors.title}</div>
+                    )}{" "}
                   </div>
                   <div className="col-12">
-                    <label className="form-label">Short Description</label>
+                    <label className="form-label">
+                      Short Description <span className="text-danger">*</span>
+                    </label>
                     <textarea
-                      className={"form-control" + (errors.description ? " is-invalid" : "")}
+                      className={`form-control ${
+                        errors.description ? "is-invalid" : ""
+                      }`}
                       name="description"
                       rows={2}
                       placeholder="Short description of the event"
                       onChange={handleChange}
                     />
                     <div className="invalid-feedback">{errors.description}</div>
-
                   </div>
                   <div className="col-md-6">
-                    <label className="form-label">Start Date</label>
+                    <label className="form-label">
+                      Start Date <span className="text-danger">*</span>
+                    </label>
                     <input
-                     className={"form-control" + (errors.dateDebut ? " is-invalid" : "")}
+                      className={
+                        "form-control" + (errors.dateDebut ? " is-invalid" : "")
+                      }
                       type="date"
                       name="dateDebut"
                       onChange={handleChange}
                     />
                     <div className="invalid-feedback">{errors.dateDebut}</div>
-
                   </div>
                   <div className="col-md-6">
-                    <label className="form-label">End Date</label>
+                    <label className="form-label">
+                      End Date <span className="text-danger">*</span>
+                    </label>
                     <input
-                      className={"form-control" + (errors.dateFin ? " is-invalid" : "")}
+                      className={
+                        "form-control" + (errors.dateFin ? " is-invalid" : "")
+                      }
                       type="date"
                       name="dateFin"
                       onChange={handleChange}
                     />
                     <div className="invalid-feedback">{errors.dateFin}</div>
-
                   </div>
 
                   <div className="col-md-6">
-                    <label className="form-label">Time From</label>
+                    <label className="form-label">
+                      Time From <span className="text-danger">*</span>
+                    </label>
                     <input
                       type="time"
-                      className={"form-control" + (errors.timeFrom ? " is-invalid" : "")}
+                      className={
+                        "form-control" + (errors.timeFrom ? " is-invalid" : "")
+                      }
                       name="timeFrom"
-                      
                       onChange={handleChange}
-                     
-                      
                     />
                     <div className="invalid-feedback">{errors.timeFrom}</div>
                   </div>
                   <div className="col-md-6">
-                    <label className="form-label">Time To</label>
+                    <label className="form-label">
+                      Time To <span className="text-danger">*</span>{" "}
+                    </label>
                     <input
                       type="time"
-                      className={"form-control" + (errors.timeTo ? " is-invalid" : "")}
+                      className={
+                        "form-control" + (errors.timeTo ? " is-invalid" : "")
+                      }
                       name="timeTo"
-                    
                       onChange={handleChange}
                     />
                     <div className="invalid-feedback">{errors.timeTo}</div>
                   </div>
                   <div className="col-md-6">
-                    <label className="form-label">Place</label>
+                    <label className="form-label">
+                      Place <span className="text-danger">*</span>
+                    </label>
                     <input
                       type="text"
-                      className={"form-control" + (errors.place ? " is-invalid" : "")}
+                      className={
+                        "form-control" + (errors.place ? " is-invalid" : "")
+                      }
                       name="place"
                       placeholder="Enter event place"
-                   
                       onChange={handleChange}
                     />
                     <div className="invalid-feedback">{errors.place}</div>
-
                   </div>
                   {/*  <div className="col-md-6">
                     <label className="form-label">Event Price</label>
@@ -249,109 +302,125 @@ const validate = () => {
                     />
                   </div> */}
 
-<div className="col-md-6 event-price-container">
-  <label htmlFor="paidCheckbox" className="form-label">
-    Event Price
-  </label>
-  <div className="price-toggle">
-    <input
-      className="form-check-input"
-      type="checkbox"
-      id="paidCheckbox"
-      checked={isPaid}
-      onChange={() => {
-        setIsPaid(!isPaid);
-        setIsFree(false); // Uncheck the free option when paid is selected
-      }}
-    />
-    <label className="form-check-label" htmlFor="paidCheckbox">
-      Paid
-    </label>
-  </div>
-  {isPaid && (
-    <input
-      type="number"
-      className="form-control price-input"
-      name="price"
-      placeholder="Enter event price"
-    />
-  )}
+                  <div className="col-md-6 event-price-container">
+                    <label htmlFor="paidCheckbox" className="form-label">
+                      Event Price <span className="text-danger">*</span>
+                    </label>
+                    <div className="price-toggle">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="paidCheckbox"
+                        checked={isPaid}
+                        onChange={() => {
+                          setIsPaid(!isPaid);
+                          setIsFree(false); // Uncheck the free option when paid is selected
+                        }}
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor="paidCheckbox"
+                      >
+                        Paid
+                      </label>
+                    </div>
+                    {isPaid && (
+                      <div >
+                      <input
+                        type="number"
+                        className={
+                          "form-control price-input" + (errors.price ? " is-invalid" : "")
+                        }
+                        name="price"
+                        onChange={handleChange}
+                        placeholder="Enter event price"
+                      />
+                      <div className="invalid-feedback">{errors.price}</div>
+                      </div>
+                    )}
 
-  <div className="price-toggle mt-2">
-    <input
-      className="form-check-input"
-      type="checkbox"
-      id="freeCheckbox"
-      checked={isFree}
-      onChange={() => {
-        setIsFree(!isFree);
-        setIsPaid(false); // Uncheck the paid option when free is selected
-      }}
-    />
-    <label className="form-check-label" htmlFor="freeCheckbox">
-      Free
-    </label>
-  </div>
-</div>
+
+                    <div className="price-toggle mt-2">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="freeCheckbox"
+                        checked={isFree}
+                        onChange={() => {
+                          setIsFree(!isFree);
+                          setIsPaid(false); // Uncheck the paid option when free is selected
+                        }}
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor="freeCheckbox"
+                      >
+                        Free
+                      </label>
+                    </div>
+                  </div>
                   {/* Upload image START */}
                   {/* Upload image START */}
                   <div className="m-4">
-                      <div className="col-12">
-                        <div className={`text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3 ${errors.picture ? "border-danger" : ""}`}>
-                          {event.picture && (
-                            <div>
-                              <img
-                                src={URL.createObjectURL(event.picture)}
-                                alt="Uploaded image"
-                                className="img-fluid mb-2"
-                                style={{
-                                  maxWidth: "300px",
-                                  maxHeight: "300px",
-                                }}
-                              />
-                              <p className="mb-0">Uploaded image</p>
-                            </div>
-                          )}
-                          <div className="mb-3">
-                            <h6 className="my-2">
-                              Upload course image here, or{" "}
-                              <span
-                                className="text-primary"
-                                style={{ cursor: "pointer" }}
-                              >
-                                Browse {" "}
-                              <span className="text-danger">*</span>
-                              </span>
-                            </h6>
-                            <input
-                              className="form-control"
-                              type="file"
-                              name="picture"
-                              id="image"
-                              accept="image/gif, image/jpeg, image/png"
-                              onChange={handleImageSelect}
+                    <div className="col-12">
+                      <div
+                        className={`text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3 ${
+                          errors.picture ? "border-danger" : ""
+                        }`}
+                      >
+                        {formData.picture && (
+                          <div>
+                            <img
+                              src={URL.createObjectURL(formData.picture)}
+                              alt="Uploaded image"
+                              className="img-fluid mb-2"
+                              style={{
+                                maxWidth: "300px",
+                                maxHeight: "300px",
+                              }}
                             />
-                            <p className="small mb-0 mt-2">
-                              <b>Note:</b> Only JPG, JPEG, and PNG formats are
-                              supported. Our suggested dimensions are 600px *
-                              450px. Larger images will be cropped to fit our
-                              thumbnails/previews.
-                            </p>
+                            <p className="mb-0">Uploaded image</p>
                           </div>
-                          {event.picture && (
-                            <div className="d-sm-flex justify-content-end mt-2">
-                              <button
-                                type="button"
-                                className="btn btn-sm btn-danger-soft mb-3"
-                                onClick={handleRemoveImage}
-                              >
-                                Remove image
-                              </button>
-                            </div>
-                          )}
+                        )}
+                        <div className="mb-3">
+                          <h6 className="my-2">
+                            Upload course image here, or{" "}
+                            <span
+                              className="text-primary"
+                              style={{ cursor: "pointer" }}
+                            >
+                              Browse <span className="text-danger">*</span>
+                            </span>
+                          </h6>
+                          <input
+                            className="form-control"
+                            type="file"
+                            name="picture"
+                            id="image"
+                            accept="image/gif, image/jpeg, image/png"
+                            onChange={handleImageSelect}
+                          />
+                          <p className="small mb-0 mt-2">
+                            <b>Note:</b> Only JPG, JPEG, and PNG formats are
+                            supported. Our suggested dimensions are 600px *
+                            450px. Larger images will be cropped to fit our
+                            thumbnails/previews.
+                          </p>
                         </div>
+                        {formData.picture && (
+                          <div className="d-sm-flex justify-content-end mt-2">
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-danger-soft mb-3"
+                              onClick={handleRemoveImage}
+                            >
+                              Remove image
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
+                  </div>
                   {/* Upload image END */}
                 </div>
                 <div className="d-md-flex justify-content-end align-items-start mt-4">

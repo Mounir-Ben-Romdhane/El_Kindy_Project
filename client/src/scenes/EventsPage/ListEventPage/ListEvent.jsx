@@ -1,143 +1,86 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import BannerStart from 'components/BannerStart';
-import kendy from "../../../../src/assetss/images/kendy.png";
-import Navbar  from "components/NavBar";
-import Footer from "components/Footer";
-import '../../Style.css';
-import BannerStartHome from "components/BannerStartHome";
-import { Backdrop } from "@mui/material";
-import { GridLoader } from "react-spinners";
+import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import "react-confirm-alert/src/react-confirm-alert.css";
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "react-notifications/lib/notifications.css";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 
+const MySwal = withReactContent(Swal);
 
-function Index() {
-  const [sortBy, setSortBy] = useState(null);
+function EventIndex() {
   const [events, setEvents] = useState([]);
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    entriesPerPage: 8,
-  });
-
-  const handleSortChange = (e) => {
-    setSortBy(e.target.value);
-    console.log(e.target.value);
-  };
-
-  const [open, setOpen] = useState(false);
-  const [open2, setOpen2] = useState(false);
-  let [color, setColor] = useState("#399ebf");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [sortOption, setSortOption] = useState("Newest");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(8);
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
-
-    // Fetch events when the component mounts
     const fetchEvents = async () => {
-            setOpen(true);
-
       try {
-        const response = await axios.get("http://localhost:3001/event/events");
-        console.log('Response Data:', response.data);
-        const filteredEvents = response.data.filter(event => {
-          // Convert event start date and current date to Date objects
-          const eventStartDate = new Date(event.dateDebut);
-          setOpen(false);
-
-          const currentDate = new Date();
-          currentDate.setHours(0, 0, 0, 0);
-          // Return true if the event's start date is today or in the future
-          return eventStartDate >= currentDate;
-        });
-        setEvents(filteredEvents);
+        const response = await axiosPrivate.get("/event/events");
+        setEvents(response.data);
       } catch (error) {
         console.error("Error fetching events:", error);
       }
     };
 
-
     fetchEvents();
-  }, [sortBy]);
+  }, [axiosPrivate, searchQuery, sortOption]);
 
-  const fetchEvents = async () => {
-    try {
-      const response = await axios.get("http://localhost:3001/event/events");
-      const sortedEvents = sortEvents(response.data);
-      setEvents([...sortedEvents]);
-    } catch (error) {
-      console.error("Error Fetching Events:", error);
-    }
+  const handleDeleteEvent = async (eventId) => {
+    MySwal.fire({
+      title: "Are you sure?",
+      text: "You will not be able to undo this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axiosPrivate.delete(`/api/events/${eventId}`);
+          setEvents((prev) => prev.filter((event) => event._id !== eventId));
+          MySwal.fire("Deleted!", "The event has been deleted.", "success");
+        } catch (error) {
+          console.error("Error deleting event:", error);
+          MySwal.fire("Error!", "The event was not deleted.", "error");
+        }
+      }
+    });
   };
 
+  const filteredAndSortedEvents = events
+  .filter((event) => {
+    // Convert dates to locale string for better comparison.
+    const startDateStr = new Date(event.dateDebut).toLocaleDateString();
+    const endDateStr = new Date(event.dateFin).toLocaleDateString();
 
-  
-
-  
-
-
-  const sortEvents = (events) => {
-    switch (sortBy) {
-      case "Newest":
-        return events.slice().sort((a, b) => new Date(b.dateDebut) - new Date(a.dateDebut));
-      case "Oldest":
-        return events.slice().sort((a, b) => new Date(a.dateDebut) - new Date(b.dateDebut));
-      case "Free":
-        return events.filter(event => event.price === 0 || event.price === null || event.price === undefined)
-        .sort((a, b) => new Date(a.dateDebut) - new Date(b.dateDebut)); 
-      case "Paid":
-        return events.filter(event => event.price !== 0 && event.price !== null && event.price !== undefined)
-        .sort((a, b) => new Date(a.dateDebut) - new Date(b.dateDebut));
-      default:
-        return events;
-    }
-  };
-
-  const deleteEvents = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3001/event/events/${id}`);
-      const updatedEvents = events.filter((event) => event._id !== id);
-      setEvents(updatedEvents);
-      toast.success("Event Deleted successfully !!", {
-        autoClose: 1500,
-        style: { color: "green" },
-      });
-    } catch (error) {
-      console.error("Error deleting event:", error);
-      alert("Failed to delete event");
-    }
-  };
-
-  // Filter events based on search query
-  const filteredEvents = events.filter(
-    (event) =>
+    return (
+      !searchQuery ||
       event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.dateDebut.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.dateFin.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (event.price && event.price.toString().includes(searchQuery))
-  );
+      event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      startDateStr.includes(searchQuery) ||
+      endDateStr.includes(searchQuery)
+    );
+  })
+    .sort((a, b) =>
+      sortOption === "Newest"
+        ? new Date(b.dateDebut) - new Date(a.dateDebut)
+        : new Date(a.dateDebut) - new Date(b.dateDebut)
+    );
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setPagination({ ...pagination, currentPage: 1 }); // Reset pagination to first page when search query changes
-  };
+  const totalItems = filteredAndSortedEvents.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredAndSortedEvents.slice(indexOfFirstItem, indexOfLastItem);
 
-  const indexOfLastEntry = pagination.currentPage * pagination.entriesPerPage;
-  const indexOfFirstEntry = indexOfLastEntry - pagination.entriesPerPage;
-  const currentEntries = filteredEvents.slice(
-    indexOfFirstEntry,
-    indexOfLastEntry
-  );
-  const navigate = useNavigate();
-
-  const editEvents = (id) => {
-    navigate(`/editEvent/${id}`);
-  };
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div>
@@ -145,170 +88,167 @@ function Index() {
         <SideBar />
         <div className="page-content">
           <TopBarBack />
-          {open ? (
-            <Backdrop
-              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={open}
-            >
-              <GridLoader color={color} loading={loading} size={20} />
-            </Backdrop>
-          ) : error ? (
-            <h2>Error: {error}</h2>
-          ) : (
-            <div className="">
-              <Backdrop
-                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={open2}
-              >
-                <GridLoader color={color} loading={loading} size={20} />
-              </Backdrop>
-              <ToastContainer />
-              <div className="page-content-wrapper border">
-                <div className="row mb-3">
-                  <div className="col-12 d-sm-flex justify-content-between align-items-center">
-                    <h1 className="h3 mb-2 mb-sm-0">Events</h1>
-                    <a href="/addEvent" className="btn btn-sm btn-primary mb-0">
-                      Create an Event
-                    </a>
+          <div className="page-content-wrapper border">
+            <div className="row mb-3">
+              <div className="col-12 d-sm-flex justify-content-between align-items-center">
+                <h1 className="h3 mb-2 mb-sm-0">Events</h1>
+                <Link to="/addEvent" className="btn btn-sm btn-primary">
+                  Add an Event
+                </Link>
+              </div>
+            </div>
+            <div className="card bg-transparent border">
+              <div className="card-header bg-light border-bottom">
+                <div className="row g-3 align-items-center justify-content-between">
+                  <div className="col-md-8">
+                    <form className="rounded position-relative">
+                      <input
+                        className="form-control bg-body"
+                        type="search"
+                        placeholder="Search"
+                        aria-label="Search"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                      {searchQuery === "" && (
+                        <button
+                          className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                          type="submit"
+                        >
+                          <i className="fas fa-search fs-6" />
+                        </button>
+                      )}
+                    </form>
                   </div>
-                </div>
-  
-                <div className="card bg-transparent border">
-                  <div className="card-header bg-light border-bottom">
-                    <div className="row g-3 align-items-center justify-content-between">
-                      <div className="col-md-8">
-                        <form className="rounded position-relative">
-                          <input
-                            className="form-control bg-body"
-                            type="search"
-                            placeholder="Search"
-                            aria-label="Search"
-                            onChange={handleSearchChange}
-                          />
-                          <button
-                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-                            type="submit"
-                          >
-                            <i className="fas fa-search fs-6 " />
-                          </button>
-                        </form>
-                      </div>
-                      <div className="col-md-3">
-                        <form>
-                          <select
-                            className="form-select border-0 z-index-9"
-                            aria-label=".form-select-sm"
-                            value={sortBy}
-                            onChange={handleSortChange}
-                          >
-                            <option value="">Sort by</option>
-                            <option value="Newest">Newest</option>
-                            <option value="Oldest">Oldest</option>
-                            <option value="Free">Free</option>
-                            <option value="Paid">Paid</option>
-                          </select>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="card-body">
-                    <div className="table-responsive border-0 rounded-3">
-                      <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
-                        <thead>
-                          <tr>
-                            <th scope="col" className="border-0 rounded-start">
-                              Event Title
-                            </th>
-                            <th scope="col" className="border-0">
-                              Start Date
-                            </th>
-                            <th scope="col" className="border-0">
-                              End Date
-                            </th>
-                            <th scope="col" className="border-0">
-                              Price
-                            </th>
-                            <th scope="col" className="border-0 rounded-end">
-                              Actions
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {filteredEvents.map((event, index) => (
-                            <tr key={index}>
-                              <td>{event.title}</td>
-                              <td>{new Date(event.dateDebut).toLocaleDateString()}</td>
-                              <td>{new Date(event.dateFin).toLocaleDateString()}</td>
-                              <td>{event.price ? `${event.price} TND` : "Free"}</td>
-                              <td>
-                                <a
-                                  onClick={() => editEvents(event._id)}
-                                  className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
-                                >
-                                  <i className="bi bi-pencil-square"></i>
-                                </a>
-                                <button
-                                  onClick={() => deleteEvents(event._id)}
-                                  className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
-                                >
-                                  <i className="bi bi-trash"></i>
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
-                    <p className="mb-0 text-center text-sm-start">
-                      Showing {indexOfFirstEntry + 1} to{" "}
-                      {Math.min(indexOfLastEntry, filteredEvents.length)} of{" "}
-                      {filteredEvents.length} entries
-                    </p>
-                    <nav
-                      className="d-flex justify-content-center mb-0"
-                      aria-label="navigation"
+                  <div className="col-md-3">
+                    <select
+                      className="form-select border-0 z-index-9"
+                      value={sortOption}
+                      onChange={(e) => setSortOption(e.target.value)}
                     >
-                      <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
-                        <li className="page-item mb-0">
-                          <a className="page-link" href="#" tabIndex={-1}>
-                            <i className="fas fa-angle-left" />
-                          </a>
-                        </li>
-                        <li className="page-item mb-0">
-                          <a className="page-link" href="#">
-                            1
-                          </a>
-                        </li>
-                        <li className="page-item mb-0 active">
-                          <a className="page-link" href="#">
-                            2
-                          </a>
-                        </li>
-                        <li className="page-item mb-0">
-                          <a className="page-link" href="#">
-                            3
-                          </a>
-                        </li>
-                        <li className="page-item mb-0">
-                          <a className="page-link" href="#">
-                            <i className="fas fa-angle-right" />
-                          </a>
-                        </li>
-                      </ul>
-                    </nav>
+                      <option value="Newest">Newest</option>
+                      <option value="Oldest">Oldest</option>
+                    </select>
                   </div>
                 </div>
               </div>
+              <div className="card-body">
+                <div className="table-responsive border-0 rounded-3">
+                  <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col" className="border-0 rounded-start">
+                          Event Title
+                        </th>
+                        <th scope="col" className="border-0">
+                          Start Date
+                        </th>
+                        <th scope="col" className="border-0">
+                          End Date
+                        </th>
+                        <th scope="col" className="border-0 rounded-end">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentItems.map((event) => (
+                        <tr key={event._id}>
+                          <td>{event.title}</td>
+                          <td>{new Date(event.dateDebut).toLocaleDateString()}</td>
+                          <td>{new Date(event.dateFin).toLocaleDateString()}</td>
+                          <td>
+                            <Link
+                              to={`/editEvent/${event._id}`}
+                              className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+                            >
+                              <i className="bi bi-pencil-square"></i>
+                            </Link>
+                            <button
+                              onClick={() => handleDeleteEvent(event._id)}
+                              className="btn btn-danger-soft btn-round"
+                            >
+                              <i className="bi bi-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="card-footer bg-transparent pt-0 px-4">
+                <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
+                  <p className="mb-0 text-center text-sm-start">
+                    Showing {indexOfFirstItem + 1} to{" "}
+                    {Math.min(
+                      indexOfLastItem,
+                      filteredAndSortedEvents.length
+                    )}{" "}
+                    of {filteredAndSortedEvents.length} entries
+                  </p>
+                  <nav
+                    className="d-flex justify-content-center mb-0"
+                    aria-label="navigation"
+                  >
+                    <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
+                      <li
+                        className={`page-item ${
+                          currentPage === 1 && "disabled"
+                        }`}
+                      >
+                        {" "}
+                        <button
+                          className="page-link"
+                          onClick={() => paginate(currentPage - 1)}
+                          disabled={currentPage === 1}
+                        >
+                          <i className="fas fa-angle-left" />
+                        </button>
+                      </li>
+                      {Array.from(
+                        {
+                          length: totalPages
+                        },
+                        (_, index) => (
+                          <li
+                            key={index}
+                            className={`page-item ${
+                              index + 1 === currentPage ? "active" : ""
+                            }`}
+                          >
+                            <button
+                              className="page-link"
+                              onClick={() => paginate(index + 1)}
+                            >
+                              {index + 1}
+                            </button>
+                          </li>
+                        )
+                      )}
+                      <li
+                        className={`page-item ${
+                          currentPage === totalPages && "disabled"
+                        }`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => paginate(currentPage + 1)}
+                          disabled={currentPage === totalPages}
+                        >
+                          <i className="fas fa-angle-right" />
+                        </button>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </main>
     </div>
   );
-
-
 }
 
-export default Index;
+export default EventIndex;

@@ -394,17 +394,17 @@ Main Banner START */}
                   <div className="d-flex justify-content-between align-items-center">
                     {/* Icon */}
                     <span className="icon-lg bg-warning rounded-circle">
-                      <i className="fas fa-envelope text-white" />
+                      <i className="fas fa-music text-white" />
                     </span>
                     {/* Info */}
                     <div className="text-start ms-3">
                       <h6 className="mb-0 text-white">
-                        Congratulations{" "}
+                        Come experience our World{" "}
                         <span className="ms-4">
-                          <i className="fas fa-check-circle text-success" />
-                        </span>
+                        <i class='fas fa-music text-success'></i>
+                                                </span>
                       </h6>
-                      <p className="mb-0 small text-white">You are welcome</p>
+                      <p className="mb-0 small text-white">Where we all live </p>
                     </div>
                   </div>
                 </div>
