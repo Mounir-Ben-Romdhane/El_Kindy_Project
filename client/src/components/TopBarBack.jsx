@@ -224,6 +224,7 @@ function TopBarBack() {
                         French
                       </button>
                     </li>
+                    {/*** 
                     <li>
                       <button
                         className={`dropdown-item ${
@@ -238,7 +239,7 @@ function TopBarBack() {
                         />
                         Arabic
                       </button>
-                    </li>
+                    </li>*/}
                   </ul>
                 </li>
 

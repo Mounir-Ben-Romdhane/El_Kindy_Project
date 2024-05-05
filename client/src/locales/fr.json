@@ -26,7 +26,7 @@
     "form_email": "Adresse e-mail *",
     "form_message": "Message *"
   },
-  "navbar" :{
+  "navbar": {
     "home": "Accueil",
     "corsus": "Formations",
     "Category": "Catégorie",
@@ -43,7 +43,7 @@
     "Sign Out": "Se déconnecter",
     "Dark mode": "Mode sombre",
     "Sign In": "Se connecter",
-    "PLaymusic":"Jouer de la musique"
+    "PLaymusic": "Jouer de la musique"
   },
   "sidebar": {
     "Dashboard": "Tableau de bord",
@@ -65,33 +65,72 @@
     "Documentation": "Documentation",
     "Earnings": "Gains",
     "Account Settings": "Paramètres du compte"
-},
-"sidebarStudent": {
-  "My profile": "Mon profil",
-  "Dashboard": "Tableau de bord",
-  "Meeting En Ligne": "Réunion en ligne",
-  "Planning": "Planning",
-  "Assignment": "Affectation",
-  "Teachers": "Enseignants",
-  "Time Slots": "Plages horaires",
-  "Edit Profile": "Modifier le profil",
-  "Sign Out": "Déconnexion"
-},
-"sidebarTeacher": {
-  "My profile": "Mon profil",
-  "Dashboard": "Tableau de bord",
-  "Create Meeting En Ligne": "Créer une réunion en ligne",
-  "Planning": "Planning",
-  "Assignment": "Affectation",
-  "Messages": "Messages",
-  "Students Grades": "Notes des élèves",
-  "Time Slots": "Plages horaires",
-  "Edit Profile": "Modifier le profil",
-  "Sign Out": "Déconnexion"
-}
-
-
-
-  
-  
+  },
+  "sidebarStudent": {
+    "My profile": "Mon profil",
+    "Dashboard": "Tableau de bord",
+    "Meeting En Ligne": "Réunion en ligne",
+    "Planning": "Planning",
+    "Assignment": "Affectation",
+    "Teachers": "Enseignants",
+    "Time Slots": "Plages horaires",
+    "Edit Profile": "Modifier le profil",
+    "Sign Out": "Déconnexion"
+  },
+  "sidebarTeacher": {
+    "My profile": "Mon profil",
+    "Dashboard": "Tableau de bord",
+    "Create Meeting En Ligne": "Créer une réunion en ligne",
+    "Planning": "Planning",
+    "Assignment": "Affectation",
+    "Messages": "Messages",
+    "Students Grades": "Notes des élèves",
+    "Time Slots": "Plages horaires",
+    "Edit Profile": "Modifier le profil",
+    "Sign Out": "Déconnexion"
+  },
+  "admins_dashboard": {
+    "title": "Liste des administrateurs",
+    "search_placeholder": "Chercher",
+    "error_fetching": "Erreur de chargement des administrateurs. Veuillez réessayer plus tard.",
+    "showing_entries": "Affichage de {{start}} à {{end}} sur {{total}} entrées",
+    "import_admins": "Importer des administrateurs",
+    "upload_image": "Télécharger une image",
+    "open_google_sheets": "Ouvrir Google Sheets",
+    "add_new_admin": "Ajouter un nouvel administrateur",
+    "edit": "Modifier",
+    "remove": "Supprimer",
+    "date_of_birth": "Date de naissance :",
+    "address": "Adresse :",
+    "gender": "Genre :",
+    "phone_number": "Numéro de téléphone :",
+    "state": "État :",
+    "blocked": "Bloqué",
+    "active": "Actif",
+    "join_at": "Date d'adhésion :",
+    "message": "Message",
+    "unblock": "Débloquer",
+    "block": "Bloquer"
+  },
+  "confirm": {
+    "block_title": "Êtes-vous sûr?",
+    "block_text": "Voulez-vous bloquer cet utilisateur?",
+    "yes_block": "Oui, bloquez-le!",
+    "blocked": "Bloqué!",
+    "block_success": "L'utilisateur a été bloqué avec succès.",
+    "block_failure": "Échec du blocage de l'utilisateur.",
+    "unblock_title": "Êtes-vous sûr?",
+    "unblock_text": "Voulez-vous débloquer cet utilisateur?",
+    "yes_unblock": "Oui, débloquez-le!",
+    "unblocked": "Débloqué!",
+    "unblock_success": "L'utilisateur a été débloqué avec succès.",
+    "unblock_failure": "Échec du déblocage de l'utilisateur.",
+    "remove_title": "Êtes-vous sûr?",
+    "remove_text": "Vous ne pourrez pas revenir en arrière!",
+    "yes_remove": "Oui, supprimez-le!",
+    "removed": "Supprimé!",
+    "remove_success": "L'utilisateur a été supprimé avec succès.",
+    "remove_failure": "Échec de la suppression de l'utilisateur.",
+    "error": "Erreur!"
+  }
 }

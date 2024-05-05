@@ -391,6 +391,7 @@ function NavBar() {
                         French
                       </button>
                     </li>
+                    {/**
                     <li>
                       <button
                         className={`dropdown-item ${
@@ -405,7 +406,7 @@ function NavBar() {
                         />
                         Arabic
                       </button>
-                    </li>
+                    </li> */}
                   </ul>
                 </li>
               </ul>

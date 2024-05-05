@@ -87,6 +87,29 @@
       "Time Slots": "الفترات الزمنية",
       "Edit Profile": "تعديل الملف الشخصي",
       "Sign Out": "تسجيل الخروج"
+    },
+    "admins_dashboard": {
+      "title": "قائمة المدراء",
+      "search_placeholder": "بحث",
+      "error_fetching": "خطأ في جلب المدراء. يرجى المحاولة لاحقاً.",
+      "showing_entries": "يظهر من {{start}} إلى {{end}} من {{total}} مُدخل",
+      "import_admins": "استيراد المدراء",
+      "upload_image": "رفع صورة",
+      "open_google_sheets": "فتح جوجل شيتس",
+      "add_new_admin": "إضافة مدير جديد",
+      "edit": "تحرير",
+      "remove": "حذف",
+      "date_of_birth": "تاريخ الميلاد:",
+      "address": "العنوان:",
+      "gender": "الجنس:",
+      "phone_number": "رقم الهاتف:",
+      "state": "الحالة:",
+      "blocked": "محظور",
+      "active": "نشط",
+      "join_at": "تاريخ الانضمام:",
+      "message": "رسالة",
+      "unblock": "إلغاء الحظر",
+      "block": "حظر"
     }
   }
   

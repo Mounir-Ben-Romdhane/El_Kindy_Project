@@ -1,6 +1,8 @@
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+
 import { Link } from "react-router-dom";
 import {
   blockUser,
@@ -15,6 +17,10 @@ import GridLoader from "react-spinners/GridLoader";
 import { Button, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import UploadImageForm from "../../Azureimage/UploadImageForm";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import { useTranslation } from "react-i18next";
+import withReactContent from "sweetalert2-react-content";
+const MySwal = withReactContent(Swal);
+
 
 function AdminsDashboard() {
   const iconStyle = {
@@ -34,6 +40,9 @@ function AdminsDashboard() {
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
   const [showUploadPopup, setShowUploadPopup] = useState(false);
+
+  const { t, i18n } = useTranslation();
+
 
 
   const handleToggleUploadPopup = () => {
@@ -62,52 +71,68 @@ function AdminsDashboard() {
   };
 
   const handleBlockUser = async (userId) => {
-    setOpen2(true);
+    MySwal.fire({
+      title: t("confirm.block_title"),
+      text: t("confirm.block_text"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: t("confirm.yes_block"),
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setOpen2(true);
+        try {
+          const response = await blockUser(userId);
+          if (response.status === 200) {
+            setOpen2(false);
 
-    try {
-      // Make API call to block user
-      const response = await blockUser(userId);
-
-      if (response.status === 200) {
-        console.log("User blocked successfully!");
-        // Perform any additional actions if needed
-        fetchData();
-        setOpen2(false);
-      } else {
-        console.error("Error blocking user:", response.data);
-        setOpen2(false);
-
-        // Handle error here, e.g., show error message to the user
+            MySwal.fire(t("confirm.blocked"), t("confirm.block_success"), "success");
+            fetchData(); // Reload data
+          } else {
+            setOpen2(false);
+            throw new Error(response.data);
+            
+          }
+        } catch (error) {
+          setOpen2(false);
+          console.error("Error blocking user:", error);
+          MySwal.fire(t("confirm.error"), t("confirm.block_failure"), "error");
+        }
       }
-    } catch (error) {
-      console.error("Error blocking user:", error);
-      // Handle error here, e.g., show error message to the user
-      setOpen2(false);
-    }
+    });
   };
 
   const handleUnblockUser = async (userId) => {
-    setOpen2(true);
+    MySwal.fire({
+      title: t("confirm.unblock_title"),
+      text: t("confirm.unblock_text"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: t("confirm.yes_unblock"),
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setOpen2(true);
 
-    try {
-      // Make API call to unblock user
-      const response = await unblockUser(userId);
-
-      if (response.status === 200) {
-        console.log("User unblocked successfully!");
-        // Perform any additional actions if needed
-        fetchData();
-        setOpen2(false);
-      } else {
-        console.error("Error unblocking user:", response.data);
-        // Handle error here, e.g., show error message to the user
-        setOpen2(false);
+        try {
+          const response = await unblockUser(userId);
+          if (response.status === 200) {
+            setOpen2(false);
+            MySwal.fire(t("confirm.unblocked"), t("confirm.unblock_success"), "success");
+            fetchData(); // Reload data
+          } else {
+            setOpen2(false);
+            throw new Error(response.data);
+          }
+        } catch (error) {
+          setOpen2(false);
+          console.error("Error unblocking user:", error);
+          MySwal.fire(t("confirm.error"), t("confirm.unblock_failure"), "error");
+        }
       }
-    } catch (error) {
-      console.error("Error unblocking user:", error);
-      // Handle error here, e.g., show error message to the user
-      setOpen2(false);
-    }
+    });
   };
 
   const fetchData = async () => {
@@ -133,20 +158,35 @@ function AdminsDashboard() {
 
   // Function to handle user removal
   const handleRemoveUser = async (userId) => {
-    setOpen2(true);
-
-    try {
-      // Call the removeUser function from your service
-      const respense = await removeUser(userId);
-      if (respense.status === 200) {
-        fetchData();
-        setOpen2(false);
-        close();
+    MySwal.fire({
+      title: t("confirm.remove_title"),
+      text: t("confirm.remove_text"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: t("confirm.yes_remove"),
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setOpen2(true);
+        try {
+          const response = await removeUser(userId);
+          if (response.status === 200) {
+            setOpen2(false);
+            MySwal.fire(t("confirm.removed"), t("confirm.remove_success"), "success");
+            fetchData(); // Reload data
+          } else {
+            setOpen2(false);
+            throw new Error(response.data);
+          }
+        } catch (error) {
+          setOpen2(false);
+          console.error("Error removing user:", error);
+          MySwal.fire(t("confirm.error"), t("confirm.remove_failure"), "error");
+        }
       }
-    } catch (error) {
-      console.error("Error removing user:", error);
-      // Handle errors as needed
-    }
+    });
+  
   };
 
   const handleSearchChange = (e) => {
@@ -253,7 +293,7 @@ const filteredAdmins = admins.filter((admin) => {
 
               <div className="row">
                 <div className="col-12">
-                  <h1 className="h2 mb-2 mb-sm-0">Admins list</h1>
+                  <h1 className="h2 mb-2 mb-sm-0">{t('admins_dashboard.title')}</h1>
                 </div>
               </div>
               <div className="card bg-transparent">
@@ -264,7 +304,7 @@ const filteredAdmins = admins.filter((admin) => {
                         <input
                           className="form-control bg-transparent"
                           type="search"
-                          placeholder="Search"
+                          placeholder={t('admins_dashboard.search_placeholder')}
                           aria-label="Search"
                           value={searchQuery}
                           onChange={handleSearchChange}
@@ -290,7 +330,7 @@ const filteredAdmins = admins.filter((admin) => {
   >
     <i className="fas fa-file-import" style={{ width: "1em", marginRight: "5px" }}></i>{" "}
     <span className="d-none d-md-inline ms-1">
-      Import Admins
+      {t('admins_dashboard.import_admins')}
     </span>
   </button>
 
@@ -307,7 +347,7 @@ const filteredAdmins = admins.filter((admin) => {
   >
         <i className="fas fa-file-upload" style={{ width: "1em", marginRight: "5px" }}></i>{" "}
 
-    <span className="d-none d-md-inline ms-1"> Upload Image </span>
+    <span className="d-none d-md-inline ms-1">{t('admins_dashboard.upload_image')}</span>
   </button>
 
   <button
@@ -320,7 +360,7 @@ const filteredAdmins = admins.filter((admin) => {
   >
     <i className="fas fa-file-alt" style={{ width: "1em", marginRight: "7px" }}></i>
     <span className="d-none d-md-inline ms-1">
-      Open Google Sheets
+     {t('admins_dashboard.open_google_sheets')}
     </span>
   </button>
 
@@ -334,7 +374,7 @@ const filteredAdmins = admins.filter((admin) => {
   >
     <i className="fas fa-user" style={{ width: "1em", marginRight: "7px" }}></i>
     <span className="d-none d-md-inline ms-1">
-      Add New Admin
+    {t('admins_dashboard.add_new_admin')}
     </span>
   </button>
 </div>
@@ -416,7 +456,7 @@ const filteredAdmins = admins.filter((admin) => {
                                     >
                                       <span className="text-primary">
                                         <i className="bi bi-pencil-square fa-fw me-2" />
-                                        Edit
+                                        {t('admins_dashboard.edit')}
                                       </span>
                                     </a>
                                   </li>
@@ -430,7 +470,7 @@ const filteredAdmins = admins.filter((admin) => {
                                     >
                                       <span className="text-danger">
                                         <i className="bi bi-trash fa-fw me-2" />
-                                        Remove
+                                        {t('admins_dashboard.remove')}
                                       </span>
                                     </a>
                                   </li>
@@ -441,7 +481,7 @@ const filteredAdmins = admins.filter((admin) => {
                               <div>
                                 <p className="mb-1">
                                   <i className="bi bi-calendar-check me-2 text-primary" />
-                                  <strong>Date of Birth:</strong>{" "}
+                                  <strong>{t('admins_dashboard.date_of_birth')}</strong>{" "}
                                   {admin.dateOfBirth
                                     ? new Date(
                                         admin.dateOfBirth
@@ -450,18 +490,18 @@ const filteredAdmins = admins.filter((admin) => {
                                 </p>
                                 <p className="mb-1">
                                   <i className="bi bi-geo-alt me-2 text-primary" />
-                                  <strong>Address:</strong> {admin.address}
+                                  <strong>{t('admins_dashboard.address')}</strong> {admin.address}
                                 </p>
                               </div>
                               <div>
                                 <p className="mb-1">
                                   <i className="bi bi-gender-male me-2 text-primary" />
-                                  <strong>Gender:</strong>{" "}
+                                  <strong>{t('admins_dashboard.gender')}</strong>{" "}
                                   {admin.gender || "Not available"}
                                 </p>
                                 <p className="mb-1">
                                   <i className="bi bi-telephone me-2 text-primary" />
-                                  <strong>Phone Number:</strong>{" "}
+                                  <strong>{t('admins_dashboard.phone_number')}</strong>{" "}
                                   {admin.phoneNumber1 || "Not available"}
                                 </p>
                                 <p className="mb-1">
@@ -470,13 +510,13 @@ const filteredAdmins = admins.filter((admin) => {
                                   ) : (
                                     <i className="bi bi-check2-circle me-2 text-primary" />
                                   )}
-                                  <strong>State:</strong>{" "}
+                                  <strong>{t('admins_dashboard.state')}</strong>{" "}
                                   {admin.blocked ? (
                                     <span className="state-badge blocked">
-                                      Blocked
+                                      {t('admins_dashboard.blocked')}
                                     </span>
                                   ) : (
-                                    <span className="state-badge">Active</span>
+                                    <span className="state-badge">{t('admins_dashboard.active')}</span>
                                   )}
                                 </p>
                               </div>
@@ -486,7 +526,7 @@ const filteredAdmins = admins.filter((admin) => {
                               <div className="d-sm-flex justify-content-between align-items-center">
                                 <h6 className="mb-2 mb-sm-0">
                                   <i className="bi bi-calendar fa-fw text-orange me-2" />
-                                  <span className="text-body">Join at:</span>{" "}
+                                  <span className="text-body">{t('admins_dashboard.join_at')}</span>{" "}
                                   {new Date(
                                     admin.createdAt
                                   ).toLocaleDateString()}
@@ -497,7 +537,7 @@ const filteredAdmins = admins.filter((admin) => {
                                     className="btn btn-link text-body p-0 mb-0 me-2"
                                     data-bs-toggle="tooltip"
                                     data-bs-placement="top"
-                                    title="Message"
+                                    title={t('admins_dashboard.message')}
                                     aria-label="Message"
                                   >
                                     <span className="text-primary">
@@ -509,7 +549,7 @@ const filteredAdmins = admins.filter((admin) => {
                                       className="btn btn-link text-body p-0 mb-0"
                                       data-bs-toggle="tooltip"
                                       data-bs-placement="top"
-                                      title="Unblock"
+                                      title={t('admins_dashboard.unblock')}
                                       aria-label="Unblock"
                                       onClick={() =>
                                         handleUnblockUser(admin._id)
@@ -524,7 +564,7 @@ const filteredAdmins = admins.filter((admin) => {
                                       className="btn btn-link text-body p-0 mb-0"
                                       data-bs-toggle="tooltip"
                                       data-bs-placement="top"
-                                      title="Block"
+                                      title={t('admins_dashboard.block')}
                                       aria-label="Block"
                                       onClick={() => handleBlockUser(admin._id)}
                                     >
@@ -550,7 +590,7 @@ const filteredAdmins = admins.filter((admin) => {
                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                   {/* Content */}
                   <p className="mb-0 text-center text-sm-start">
-                    Showing {indexOfFirstEntry + 1} to{" "}
+                    Showing{indexOfFirstEntry + 1} to{" "}
                     {Math.min(indexOfLastEntry, filteredAdmins.length)} of{" "}
                     {filteredAdmins.length} entries
                   </p>

@@ -103,10 +103,15 @@ import TimeSlotsStudent from "./scenes/PlatformStudent/TimeSlots/index";
 import EditProfileStudent from "scenes/PlatformStudent/editProfileStudent";
 import Assignment from "./scenes/PlatformTeacher/Assignment";
 import AssignmentStudent from "./scenes/PlatformStudent/Assignment";
+import { useTranslation } from "react-i18next";
 
 
 function App() {
   const isAuth = Boolean(useSelector((state) => state.accessToken));
+  const { i18n } = useTranslation();
+  const dispatch = useDispatch();
+
+    
 
   const scriptsLoaded = useRef(false);
   /*'/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js',
