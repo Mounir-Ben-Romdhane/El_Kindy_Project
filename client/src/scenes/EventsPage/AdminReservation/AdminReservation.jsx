@@ -27,7 +27,7 @@ function Index() {
   const [searchTerm, setSearchTerm] = useState("");
   const [numberOfReservations, setNumberOfReservations] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
-  const [reservationsPerPage] = useState(10);
+  const [reservationsPerPage] = useState(8);
 
   const handleIncrement = () => {
     setNumberOfReservations(prevCount => prevCount + 1);
@@ -98,14 +98,25 @@ const getFilteredAndSortedReservations = () => {
   return processedReservations;
 };
 
- // Calculate the currently displayed reservations
- const indexOfLastReservation = currentPage * reservationsPerPage;
- const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
- const currentReservations = reservations.slice(indexOfFirstReservation, indexOfLastReservation);
- const totalReservations = reservations.length;
+ // Calculate total pages based on the filtered and sorted reservations
+const filteredReservations = getFilteredAndSortedReservations();
+const totalReservations = Math.ceil(filteredReservations.length / reservationsPerPage);
 
- // Pagination controls
- const paginate = pageNumber => setCurrentPage(pageNumber);
+// Ensure current page does not exceed available pages
+useEffect(() => {
+  if (currentPage > totalReservations && totalReservations !== 0) {
+    setCurrentPage(totalReservations);
+  }
+}, [currentPage, totalReservations]);
+
+// Pagination controls
+const paginate = pageNumber => setCurrentPage(pageNumber);
+
+// Calculate the currently displayed reservations based on filtered data
+const indexOfLastReservation = currentPage * reservationsPerPage;
+const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
+const currentReservations = filteredReservations.slice(indexOfFirstReservation, indexOfLastReservation);
+
 
   return (
     <div>
@@ -184,7 +195,7 @@ const getFilteredAndSortedReservations = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {getFilteredAndSortedReservations().map((reservation, index) => (
+                      {currentReservations.map((reservation, index) => (
                         <tr key={index}>
                           <td>
                             {reservation.eventId
@@ -243,12 +254,68 @@ const getFilteredAndSortedReservations = () => {
                       ))}
                     </tbody>
                   </table>
-                  <div className="pagination">
-              <p className="mb-0 text-center text-sm-start">
-                Showing {indexOfFirstReservation + 1} to {Math.min(indexOfLastReservation, totalReservations)} of {totalReservations} entries
-              </p>
-            
-            </div>
+                  <div className="card-footer bg-transparent pt-0 px-4 mt-3">
+  <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
+    <p className="mb-0 text-center text-sm-start">
+      Showing {indexOfFirstReservation + 1} to{" "}
+      {Math.min(
+        indexOfLastReservation,
+        filteredReservations.length
+      )}{" "}
+      of {filteredReservations.length} entries
+    </p>
+    <nav
+      className="d-flex justify-content-center mb-0"
+      aria-label="navigation"
+    >
+      <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
+        <li
+          className={`page-item ${currentPage === 1 && "disabled"}`}
+        >
+          <button
+            className="page-link"
+            onClick={() => paginate(Math.max(currentPage - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            <i className="fas fa-angle-left" />
+          </button>
+        </li>
+        {Array.from(
+          { length: totalReservations },
+          (_, index) => (
+            <li
+              key={index}
+              className={`page-item ${
+                index + 1 === currentPage ? "active" : ""
+              }`}
+            >
+              <button
+                className="page-link"
+                onClick={() => paginate(index + 1)}
+              >
+                {index + 1}
+              </button>
+            </li>
+          )
+        )}
+        <li
+          className={`page-item ${
+            currentPage === totalReservations && "disabled"
+          }`}
+        >
+          <button
+            className="page-link"
+            onClick={() => paginate(Math.min(currentPage + 1, totalReservations))}
+            disabled={currentPage === totalReservations}
+          >
+            <i className="fas fa-angle-right" />
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
                 </div>
               </div>
             </div>

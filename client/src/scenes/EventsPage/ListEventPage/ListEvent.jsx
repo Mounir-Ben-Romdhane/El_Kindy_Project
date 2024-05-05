@@ -6,6 +6,8 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
 
 const MySwal = withReactContent(Swal);
 
@@ -17,19 +19,30 @@ function EventIndex() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
   const axiosPrivate = useAxiosPrivate();
+  let [color, setColor] = useState("#399ebf");
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchEvents = async () => {
+      setOpen(true);
+
       try {
         const response = await axiosPrivate.get("/event/events");
         setEvents(response.data);
+        setOpen(false);
+
       } catch (error) {
         console.error("Error fetching events:", error);
+        setOpen(false);
+
       }
     };
 
     fetchEvents();
-  }, [axiosPrivate, searchQuery, sortOption]);
+  }, []);
 
   const handleDeleteEvent = async (eventId) => {
     MySwal.fire({
@@ -43,7 +56,7 @@ function EventIndex() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axiosPrivate.delete(`/api/events/${eventId}`);
+          await axiosPrivate.delete(`/event/events/${eventId}`);
           setEvents((prev) => prev.filter((event) => event._id !== eventId));
           MySwal.fire("Deleted!", "The event has been deleted.", "success");
         } catch (error) {
@@ -88,7 +101,25 @@ function EventIndex() {
         <SideBar />
         <div className="page-content">
           <TopBarBack />
-          <div className="page-content-wrapper border">
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <div className="page-content-wrapper border">
+              {/* Backdrop with GridLoader */}
+
+                  <Backdrop
+                      sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                      open={open2}
+                  >
+                      <GridLoader color={color} loading={loading} size={20} />
+                  </Backdrop>
             <div className="row mb-3">
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
                 <h1 className="h3 mb-2 mb-sm-0">Events</h1>
@@ -245,6 +276,7 @@ function EventIndex() {
               </div>
             </div>
           </div>
+          )}
         </div>
       </main>
     </div>

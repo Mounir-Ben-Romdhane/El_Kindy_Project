@@ -4,12 +4,16 @@ import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import AddTeacher from "../userCrud/addTeacher";
 import UpdateTeacher from "../userCrud/updateTeacher";
+import { Button, Dialog, DialogTitle, DialogContent } from "@mui/material";
+
 import {
   blockUser,
   getUsers,
   removeUser,
   unblockUser,
 } from "services/usersService/api";
+import GridLoader from "react-spinners/GridLoader";
+import Backdrop from "@mui/material/Backdrop";
 
 function TeachersDashboard() {
   const [teachers, setTeachers] = useState([]);
@@ -22,20 +26,30 @@ function TeachersDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [teachersPerPage] = useState(6);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  let [color, setColor] = useState("#399ebf");
 
   const iconStyle = {
     marginRight: "10px",
   };
 
   const fetchData = async () => {
+    setOpen(true);
+
     try {
       const response = await getUsers("teacher");
       setTeachers(response.data.data);
-      setLoading(false);
+      if (response.status === 200) {
+        setOpen(false);
+      } else {
+        setOpen(false);
+      }
     } catch (error) {
       console.error("Error fetching teachers:", error);
       setError("Error fetching teachers. Please try again later.");
       setLoading(false);
+      setOpen(false);
     }
   };
 
@@ -67,40 +81,54 @@ function TeachersDashboard() {
   };
 
   const handleBlockTeacher = async (teacherId) => {
+    setOpen2(true);
+
     try {
       const response = await blockUser(teacherId);
       if (response.status === 200) {
         console.log("Teacher blocked successfully!");
         fetchData();
+        setOpen2(false);
       } else {
         console.error("Error blocking teacher:", response.data);
+        setOpen2(false);
       }
     } catch (error) {
       console.error("Error blocking teacher:", error);
+      setOpen2(false);
     }
   };
 
   const handleUnblockTeacher = async (teacherId) => {
+    setOpen2(true);
+
     try {
       const response = await unblockUser(teacherId);
       if (response.status === 200) {
         console.log("Teacher unblocked successfully!");
         fetchData();
+        setOpen2(false);
       } else {
         console.error("Error unblocking teacher:", response.data);
+        setOpen2(false);
       }
     } catch (error) {
       console.error("Error unblocking teacher:", error);
+      setOpen2(false);
     }
   };
 
   const handleRemoveTeacher = async (teacherId) => {
+    setOpen2(true);
+
     try {
       await removeUser(teacherId);
       fetchData();
       close();
+      setOpen2(false);
     } catch (error) {
       console.error("Error removing teacher:", error);
+      setOpen2(false);
     }
   };
 
@@ -109,13 +137,44 @@ function TeachersDashboard() {
     setCurrentPage(1);
   };
 
-  const filteredTeachers = teachers.filter((teacher) =>
-    Object.values(teacher).some(
-      (value) =>
-        typeof value === "string" &&
-        value.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  );
+  const filteredTeachers = teachers.filter((teacher) => {
+    const lowerSearchQuery = searchQuery.toLowerCase();
+    // Check basic fields
+    const matchesBasicFields = (
+      `${teacher.firstName} ${teacher.lastName}`.toLowerCase().includes(lowerSearchQuery) ||
+      teacher.email.toLowerCase().includes(lowerSearchQuery) ||
+      (teacher.address && teacher.address.toLowerCase().includes(lowerSearchQuery)) ||
+      (teacher.phoneNumber1 && teacher.phoneNumber1.toLowerCase().includes(lowerSearchQuery)) ||
+      (teacher.gender && teacher.gender.toLowerCase().includes(lowerSearchQuery)) ||
+      (teacher.blocked && 'blocked'.includes(lowerSearchQuery)) ||
+      (!teacher.blocked && 'active'.includes(lowerSearchQuery)) ||
+      (teacher.dateOfBirth && new Date(teacher.dateOfBirth).toLocaleDateString().toLowerCase().includes(lowerSearchQuery))
+    );
+  
+    // Check nested arrays
+    const matchesCoursesTaught = teacher.teacherInfo.coursesTaught.some(course =>
+      course.title.toLowerCase().includes(lowerSearchQuery)
+    );
+  
+    const matchesClassesTeaching = teacher.teacherInfo.classesTeaching.some(classTeaching =>
+      classTeaching.className.toLowerCase().includes(lowerSearchQuery)
+    );
+  
+    const matchesStudentsTaught = teacher.teacherInfo.studentsTaught.some(student =>
+      `${student.firstName} ${student.lastName}`.toLowerCase().includes(lowerSearchQuery)
+    );
+  
+    // Combine checks
+    return matchesBasicFields || matchesCoursesTaught || matchesClassesTeaching || matchesStudentsTaught;
+  });
+  
+  
+
+
+
+
+
+  
 
   const indexOfLastTeacher = currentPage * teachersPerPage;
   const indexOfFirstTeacher = indexOfLastTeacher - teachersPerPage;
@@ -129,15 +188,21 @@ function TeachersDashboard() {
   //export admins
   const djangoapi = "http://127.0.0.1:8000/insertdata/teacher/";
   const addTeachers = async () => {
+    setOpen2(true);
+
     try {
       const response = await fetch(djangoapi); // Assuming your backend API is available at this endpoint
       if (response.status === 200) {
         fetchData();
+        setOpen2(false);
       } else {
+        setOpen2(false);
+
         throw new Error("Erreur lors de la récupération des données");
       }
     } catch (error) {
       console.error("Erreur lors de la requête GET:", error.message);
+      setOpen2(false);
     }
   };
 
@@ -156,12 +221,28 @@ function TeachersDashboard() {
         <SideBar />
         <div className="page-content">
           <TopBarBack />
-          {loading ? (
-            <h2>Loading...</h2>
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
           ) : error ? (
             <h2>Error: {error}</h2>
           ) : (
             <div className="page-content-wrapper border">
+              {/* Backdrop with GridLoader */}
+
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
               <div className="row">
                 <div className="col-12">
                   <h1 className="h2 mb-2 mb-sm-0">Teachers list</h1>
@@ -194,8 +275,15 @@ function TeachersDashboard() {
                       <button
                         className="btn btn-info m-2 text-wrap text-break"
                         onClick={addTeachers}
+                        style={{
+                          fontSize: "0.7rem", // Smaller font size
+                          padding: "0.45rem 0.6rem", // Smaller padding
+                        }}
                       >
-                        <i className="fas fa-file-import" style={iconStyle}></i>
+                        <i
+                          className="fas fa-file-import"
+                          style={{ width: "1em", marginRight: "5px" }}
+                        ></i>
                         <span className="d-none d-md-inline">
                           Import Teachers
                         </span>
@@ -204,18 +292,32 @@ function TeachersDashboard() {
                       <button
                         className="btn btn-success m-2 text-wrap text-break"
                         onClick={handleOpenSheets}
+                        style={{
+                          fontSize: "0.7rem", // Smaller font size
+                          padding: "0.45rem 0.6rem", // Smaller padding
+                        }}
                       >
-                        <i className="fas fa-file-alt " style={iconStyle}></i>
+                        <i
+                          className="fas fa-file-alt"
+                          style={{ width: "1em", marginRight: "7px" }}
+                        ></i>
                         <span className="d-none d-md-inline">
                           Open Google Sheets
                         </span>
                       </button>
+
                       <button
                         className="btn btn-primary m-2 text-wrap text-break"
                         onClick={handleToggleForm}
+                        style={{
+                          fontSize: "0.7rem", // Smaller font size
+                          padding: "0.45rem 0.6rem", // Smaller padding
+                        }}
                       >
-                        <i className="fas fa-user" style={iconStyle}></i>
-
+                        <i
+                          className="fas fa-user"
+                          style={{ width: "1em", marginRight: "7px" }}
+                        ></i>
                         <span className="d-none d-md-inline">
                           Add New Teacher
                         </span>
@@ -383,14 +485,23 @@ function TeachersDashboard() {
                                         {teacher.teacherInfo.coursesTaught
                                           .length > 0
                                           ? teacher.teacherInfo.coursesTaught.map(
-                                              (course) => (
-                                                <span key={course._id}>
-                                                  {course.title},{" "}
-                                                </span>
+                                              (course, index) => (
+                                                <React.Fragment
+                                                  key={course._id}
+                                                >
+                                                  {course.title}
+                                                  {index ===
+                                                  teacher.teacherInfo
+                                                    .coursesTaught.length -
+                                                    1
+                                                    ? "."
+                                                    : ", "}
+                                                </React.Fragment>
                                               )
                                             )
                                           : "None"}
                                       </p>
+
                                       {/* Classes Teaching */}
                                       <p className="mb-1">
                                         <i className="bi bi-people me-2 text-primary" />{" "}
@@ -401,10 +512,46 @@ function TeachersDashboard() {
                                         {teacher.teacherInfo.classesTeaching
                                           .length > 0
                                           ? teacher.teacherInfo.classesTeaching.map(
-                                              (classItem) => (
-                                                <span key={classItem._id}>
-                                                  {classItem.className},{" "}
-                                                </span>
+                                              (classItem, index) => (
+                                                <React.Fragment
+                                                  key={classItem._id}
+                                                >
+                                                  {classItem.className}
+                                                  {index ===
+                                                  teacher.teacherInfo
+                                                    .classesTeaching.length -
+                                                    1
+                                                    ? "."
+                                                    : ", "}
+                                                </React.Fragment>
+                                              )
+                                            )
+                                          : "None"}
+                                      </p>
+
+                                      {/* Students Taught */}
+                                      <p className="mb-1">
+                                        <i className="bi bi-people me-2 text-primary" />{" "}
+                                        {/* Icon for Students Taught */}
+                                        <strong>Students Taught:</strong>{" "}
+                                        {/* Heading for Students Taught */}
+                                        {/* Display studentsTaught */}
+                                        {teacher.teacherInfo.studentsTaught
+                                          .length > 0
+                                          ? teacher.teacherInfo.studentsTaught.map(
+                                              (student, index) => (
+                                                <React.Fragment
+                                                  key={student._id}
+                                                >
+                                                  {student.firstName}{" "}
+                                                  {student.lastName}
+                                                  {index ===
+                                                  teacher.teacherInfo
+                                                    .studentsTaught.length -
+                                                    1
+                                                    ? "."
+                                                    : ", "}
+                                                </React.Fragment>
                                               )
                                             )
                                           : "None"}

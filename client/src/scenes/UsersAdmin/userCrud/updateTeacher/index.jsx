@@ -4,6 +4,10 @@ import { getAllCourses } from 'services/courseService/api';
 import { getUsers, updateTeacher } from 'services/usersService/api';
 import '../../../../App.css';
 
+import GridLoader from "react-spinners/GridLoader";
+import Backdrop from "@mui/material/Backdrop";
+import useAxiosPrivate from 'hooks/useAxiosPrivate';
+
 function UpdateTeacher({ teacher, onClose, fetchData }) {
   const [formData, setFormData] = useState({
     firstName: teacher.firstName || '',
@@ -51,6 +55,9 @@ useEffect(() => {
   const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [formChanged, setFormChanged] = useState(false);
+  const [open, setOpen] = useState(false);
+  let [color, setColor] = useState("#399ebf");
+  const [loading, setLoading] = useState(true);
 
 
   // Function to handle cell click
@@ -125,13 +132,17 @@ useEffect(() => {
   const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
   const [errors, setErrors] = useState({});
+  const axiosPrivate = useAxiosPrivate();
+
 
 
 
   useEffect(() => {
+    setOpen(true);
+
     const fetchCourses = async () => {
       try {
-        const response = await getAllCourses();
+        const response = await getAllCourses(axiosPrivate);
         setCourses(response.data.data);
       } catch (error) {
         console.error('Error fetching courses:', error);
@@ -140,7 +151,7 @@ useEffect(() => {
 
     const fetchClasses = async () => {
       try {
-        const response = await getAllClasses();
+        const response = await getAllClasses(axiosPrivate);
         setClasses(response.data);
       } catch (error) {
         console.error('Error fetching classes:', error);
@@ -163,6 +174,8 @@ useEffect(() => {
     fetchStudents();
     fetchCourses();
     fetchClasses();
+    setOpen(false);
+
   }, []);
 
   const handleChange = (e) => {
@@ -251,17 +264,23 @@ useEffect(() => {
     if (Object.keys(formErrors).length > 0) {
       return;
     }
+    setOpen(true);
+
     try {
       const response = await updateTeacher(teacher._id, formData);
       if (response.status === 200) {
         console.log('Teacher updated successfully!');
+        setOpen(false);
+
         onClose();
         fetchData();
       } else {
         console.error('Error updating teacher:', response.data);
+        setOpen(false);
       }
     } catch (error) {
       console.error('Error updating teacher:', error);
+      setOpen(false);
     }
   };
 
@@ -273,6 +292,12 @@ useEffect(() => {
 
   return (
     <div className="page-content-wrapper border">
+      <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
       <div className="container position-relative">
         <button
           className="btn btn-link text-danger position-absolute top-0 end-0 m-3"

@@ -4,6 +4,9 @@ import { getAllClasses } from 'services/classesService/api';
 import { getAllCourses } from 'services/courseService/api';
 import { addStudent } from 'services/usersService/api';
 
+import GridLoader from "react-spinners/GridLoader";
+import Backdrop from "@mui/material/Backdrop";
+
 function AddStudent({ onClose, fetchData }) {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -27,6 +30,10 @@ function AddStudent({ onClose, fetchData }) {
   const [classes, setClasses] = useState([]);
   const [errors, setErrors] = useState({});
   const axiosPrivate = useAxiosPrivate();
+  
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  let [color, setColor] = useState("#399ebf");
 
 
 
@@ -160,22 +167,28 @@ function AddStudent({ onClose, fetchData }) {
       return;
     }else{
 
-    
+      setOpen(true);
+
     try {
       // Make API call to add student
       const response = await addStudent(formData);
       if (response.status === 201) {
         console.log('Student added successfully!');
+        setOpen(false);
         // Close the form
         onClose();
         // Fetch data
         fetchData();
       } else {
         console.error('Error adding student:', response.data);
+        setOpen(false);
+
         // Handle error here, e.g., show error message to the user
       }
     } catch (error) {
       console.error('Error adding student:', error);
+      setOpen(false);
+
       // Handle error here, e.g., show error message to the user
     }
 
@@ -253,6 +266,12 @@ function AddStudent({ onClose, fetchData }) {
   };
   return (
     <div className="page-content-wrapper border">
+     <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
       <div className="container position-relative">
         {/* Close icon */}
         <button

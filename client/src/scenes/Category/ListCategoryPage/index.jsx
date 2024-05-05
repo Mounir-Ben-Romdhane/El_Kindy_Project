@@ -21,15 +21,17 @@ function Index() {
   const [sortOption, setSortOption] = useState("");
   const [searchQuery, setSearchQuery] = useState(""); // State to hold the search query
 
-  const [open, setOpen] = useState(false);
-  const [open2, setOpen2] = useState(false);
-  let [color, setColor] = useState("#399ebf");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalEntries, setTotalEntries] = useState(0); // Initialize with total number of entries
   const entriesPerPage = 8; // Number of entries to display per page
   const axiosPrivate = useAxiosPrivate();
+  let [color, setColor] = useState("#399ebf");
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
 
   const fetchCategories = async () => {
+    setOpen(true);
+
     try {
       const response = await axiosPrivate.get("/api/categories");
       setCategories(response.data);
@@ -37,8 +39,14 @@ function Index() {
 
     } catch (error) {
       console.error("Error fetching categories:", error);
+      setOpen(false);
+
     }
   };
+
+  useEffect(() => {
+    fetchCategories();
+  }, [])
 
 
   const handleDeleteCategory = async (categoryId) => {
@@ -84,9 +92,9 @@ function Index() {
     );
 
   const totalItems = filteredAndSortedCategories.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const totalPages = Math.ceil(totalItems / entriesPerPage);
+  const indexOfLastItem = currentPage * entriesPerPage;
+  const indexOfFirstItem = indexOfLastItem - entriesPerPage;
   const currentItems = filteredAndSortedCategories.slice(
     indexOfFirstItem,
     indexOfLastItem
@@ -271,7 +279,7 @@ function Index() {
                       {Array.from(
                         {
                           length: Math.ceil(
-                            filteredAndSortedCategories.length / itemsPerPage
+                            filteredAndSortedCategories.length / entriesPerPage
                           ),
                         },
                         (_, index) => (
@@ -294,7 +302,7 @@ function Index() {
                         className={`page-item ${
                           currentPage ===
                           Math.ceil(
-                            filteredAndSortedCategories.length / itemsPerPage
+                            filteredAndSortedCategories.length / entriesPerPage
                           )
                             ? "disabled"
                             : ""
@@ -306,7 +314,7 @@ function Index() {
                           disabled={
                             currentPage ===
                             Math.ceil(
-                              filteredAndSortedCategories.length / itemsPerPage
+                              filteredAndSortedCategories.length / entriesPerPage
                             )
                           }
                         >
@@ -327,12 +335,7 @@ function Index() {
           </>
         )}
         {/* Page content END */}
-      </div>
-
-
-              </div>
-            </div>
-          </div>
+      
         </div>
       </main>
     </div>

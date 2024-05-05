@@ -3,7 +3,10 @@ import { getAllClasses } from "services/classesService/api";
 import { updateStudent } from "services/usersService/api";
 import "../../../../App.css";
 import { getAllCourses } from "services/courseService/api";
-import { axiosPrivate } from "api/axios";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
+
+import GridLoader from "react-spinners/GridLoader";
+import Backdrop from "@mui/material/Backdrop";
 
 function UpdateStudent({ student, onClose, fetchData }) {
   const [formData, setFormData] = useState({
@@ -50,6 +53,8 @@ function UpdateStudent({ student, onClose, fetchData }) {
   //table time
   const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
+  const axiosPrivate = useAxiosPrivate();
+
 
   // Function to handle cell click
   const handleCellClick = (day, startTime, endTime) => {
@@ -121,6 +126,11 @@ function UpdateStudent({ student, onClose, fetchData }) {
   const [courses, setCourses] = useState([]);
   const [errors, setErrors] = useState({});
   const [formChanged, setFormChanged] = useState(false);
+  
+  
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  let [color, setColor] = useState("#399ebf");
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -145,8 +155,6 @@ function UpdateStudent({ student, onClose, fetchData }) {
     fetchCourses();
     fetchClasses();
   }, []);
-
-  console.log("classes",classes);
 
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
@@ -271,17 +279,21 @@ function UpdateStudent({ student, onClose, fetchData }) {
     if (Object.keys(formErrors).length > 0) {
       return;
     } else {
+      setOpen(true);
       try {
         const response = await updateStudent(student._id, formData);
         if (response.status === 200) {
           console.log("Student updated successfully!");
+          setOpen(false);
           onClose();
           fetchData();
         } else {
           console.error("Error updating student:", response.data);
+          setOpen(false);
         }
       } catch (error) {
         console.error("Error updating student:", error);
+        setOpen(false);
       }
     }
   };
@@ -294,6 +306,12 @@ function UpdateStudent({ student, onClose, fetchData }) {
 
   return (
     <div className="page-content-wrapper border">
+      <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
       <div className="container position-relative">
         <button
           className="btn btn-link text-danger position-absolute top-0 end-0 m-3"

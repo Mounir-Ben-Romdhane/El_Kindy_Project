@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { addAdmin } from 'services/usersService/api';
-
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
 function AddUser({ onClose, fetchData }) {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -17,6 +18,11 @@ function AddUser({ onClose, fetchData }) {
   });
 
   const [errors, setErrors] = useState({});
+  const [open, setOpen] = useState(false);
+  let [color, setColor] = useState("#399ebf");
+  const [loading, setLoading] = useState(true);
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -76,17 +82,24 @@ function AddUser({ onClose, fetchData }) {
     if (Object.keys(formErrors).length > 0) {
       return;
     }
-    
+    setOpen(true);
+
     try {
       const response = await addAdmin(formData);
       if (response.status === 201) {
         console.log('User added successfully!');
+        setOpen(false);
+
         onClose();
         fetchData();
       } else {
+        setOpen(false);
+
         console.error('Error adding user:', response.data);
       }
     } catch (error) {
+      setOpen(false);
+
       console.error('Error adding user:', error);
     }
   };
@@ -96,6 +109,12 @@ function AddUser({ onClose, fetchData }) {
   
   return (
     <div className="page-content-wrapper border">
+      <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
       <div className="container position-relative">
         <button className="btn btn-link text-danger position-absolute top-0 end-0 m-3" onClick={onClose} style={{ fontSize: '1.3rem' }}>
           <i className="bi bi-x-lg"></i>

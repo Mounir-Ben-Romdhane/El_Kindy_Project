@@ -36,6 +36,7 @@ import AddAllClass from "../src/scenes/AllClass/AddAllClass";
 import PLaymusic from "../src/scenes/PLaymusic";
 
 import UploadImageForm from "../src/scenes/Azureimage/UploadImageForm";
+import ListEventsPage from "../src/scenes/EventsPage/ListEventPage/ListEvent"
 
 import ListShop from "../src/scenes/Shop/ShopHome/ListShop";
 import MeetingHomeStudent from "./scenes/PlatformStudent/MeetingHomeStudent";
@@ -71,7 +72,6 @@ import Review from './scenes/ReviewPage/Review'
 import Dashboard from './scenes/ReviewPage/Dashboard'
 import Reservationbyid from './scenes/EventsPage/ReservationListbyId/ReservationListbyId'
 
-import ListEventsAdmin from "./scenes/EventsPage/ListEventPage/ListEvent";
 
 import { jwtDecode } from "jwt-decode"; // Import jwt-decode library
 import { setLogout } from "../src/state";

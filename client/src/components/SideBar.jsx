@@ -216,18 +216,7 @@ function SideBar() {
                   </Link>
                 </li>
 
-                <li className="nav-item">
-                  <Link
-                    to="/listEvents"
-                    className={`nav-link ${activeNavItem === "/listEvents" ? "active" : ""}`}
-                    onClick={() => handleNavItemClick("/listEvents")}>
-                    <FontAwesomeIcon
-                      icon={faCalendarAlt}
-                      className="fa-fw me-1"
-                    />{" "}
-                    Events
-                  </Link>
-                </li> 
+                
 
                 {/* menu item events */}
                <li className="nav-item">
@@ -242,6 +231,17 @@ function SideBar() {
                     {t("sidebar.Events")}
                   </Link>
                 </li> 
+
+                <li className="nav-item">
+                  <Link
+                    to="/ListStage"
+                    className={`nav-link ${activeNavItem === "/ListStage" ? "active" : ""}`}
+                    onClick={() => handleNavItemClick("/ListStage")}>
+                    <FontAwesomeIcon icon={faBriefcase} className="fa-fw me-1" />{" "}
+                    {t("sidebar.Internship")}
+                  </Link>
+                </li>
+
                 {/* menu item Reservation */}
                 <li className="nav-item">
                   <Link

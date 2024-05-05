@@ -5,6 +5,8 @@ import withReactContent from "sweetalert2-react-content";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 const MySwal = withReactContent(Swal);
@@ -16,14 +18,25 @@ function Index() {
   const [sortOption, setSortOption] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
+  let [color, setColor] = useState("#399ebf");
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchCourses = async () => {
+      setOpen(true);
+
       try {
         const response = await axiosPrivate.get("/course/all");
         setCourses(response.data.data);
+        setOpen(false);
+
       } catch (error) {
         console.error("Error fetching courses:", error);
+        setOpen(false);
       }
     };
 
@@ -81,7 +94,25 @@ function Index() {
         <SideBar />
         <div className="page-content">
           <TopBarBack />
-          <div className="page-content-wrapper border">
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <div className="page-content-wrapper border">
+              {/* Backdrop with GridLoader */}
+
+                  <Backdrop
+                      sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                      open={open2}
+                  >
+                      <GridLoader color={color} loading={loading} size={20} />
+                  </Backdrop>
             <div className="row mb-3">
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
                 <h1 className="h3 mb-2 mb-sm-0">Courses</h1>
@@ -257,7 +288,8 @@ function Index() {
               </div>
             )}
           </div>
-        </div>
+          )}
+          </div>
       </main>
     </div>
   );

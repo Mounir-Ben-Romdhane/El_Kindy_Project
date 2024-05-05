@@ -78,7 +78,6 @@ function Index() {
             <div className="row mb-3">
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
                 <h1 className="h3 mb-2 mb-sm-0">List Internship Reservations</h1>
-                <Link to="/listEventUser" className="btn btn-sm btn-primary me-1 mb-1 mb-md-0">Add a Reservation</Link>
               </div>
             </div>
 
@@ -198,7 +197,7 @@ function Index() {
                       {/* Previous page button */}
                       <li className={`page-item ${currentPage * entriesPerPage >= totalEntries ? 'disabled' : ''}`}>
                         <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
-                          <i className="fas fa-angle-right" />
+                          <i className="fas fa-angle-left" />
                         </button>
                       </li>
 

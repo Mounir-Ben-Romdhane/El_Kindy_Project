@@ -111,9 +111,9 @@ function Index() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const activateUser = async () => {
+  const activateUser = async (id) => {
     try {
-      const response = await axios.patch(`/inscription/${id}/approve`);
+      const response = await axiosPrivate.patch(`/inscription/${id}/approve`);
       if (response.status === 200) {
         toast.success("Inscription Activated successfully for this User!", {
           autoClose: 1500,

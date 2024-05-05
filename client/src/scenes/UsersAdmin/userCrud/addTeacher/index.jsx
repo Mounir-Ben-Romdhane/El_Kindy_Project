@@ -4,6 +4,9 @@ import { getAllClasses } from 'services/classesService/api';
 import { getAllCourses } from 'services/courseService/api';
 import { addTeacher, getUsers } from 'services/usersService/api';
 
+import GridLoader from "react-spinners/GridLoader";
+import Backdrop from "@mui/material/Backdrop";
+
 function AddTeacher({ onClose, fetchData }) {
 
   const axiosPrivate = useAxiosPrivate();
@@ -33,6 +36,11 @@ function AddTeacher({ onClose, fetchData }) {
   const [students, setStudents] = useState([]);
   // Validation errors state
   const [errors, setErrors] = useState({});
+  const [open, setOpen] = useState(false);
+  let [color, setColor] = useState("#399ebf");
+  const [loading, setLoading] = useState(true);
+
+
 
   useEffect(() => {
     async function fetchCourses() {
@@ -180,7 +188,7 @@ function AddTeacher({ onClose, fetchData }) {
         const minDate = new Date();
         minDate.setFullYear(minDate.getFullYear() - 3);
         const selectedDate = new Date(value);
-        error = selectedDate > minDate ? 'Date of birth must be at least 3 years ago!' : '';
+        error = selectedDate > minDate || value === "" ? 'Date of birth must be at least 3 years ago!' : '';
         break;
       case 'qualifications':
         error = value < 6 ? 'Please select teacher qualifications !' : '';
@@ -213,21 +221,26 @@ function AddTeacher({ onClose, fetchData }) {
       return;
     }
     else{
+      setOpen(true);
 
     try {
       // Make API call to add teacher
       const response = await addTeacher(formData);
       if (response.status === 201) {
         console.log('Teacher added successfully!');
+        setOpen(false);
+
         // Close the form
         onClose();
         // Fetch data
         fetchData();
       } else {
+        setOpen(false);
         console.error('Error adding teacher:', response.data);
         // Handle error here, e.g., show error message to the user
       }
     } catch (error) {
+      setOpen(false);
       console.error('Error adding teacher:', error);
       // Handle error here, e.g., show error message to the user
     }
@@ -311,6 +324,12 @@ function AddTeacher({ onClose, fetchData }) {
 
   return (
     <div className="page-content-wrapper border">
+      <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
       <div className="container position-relative">
         {/* Close icon */}
         <button

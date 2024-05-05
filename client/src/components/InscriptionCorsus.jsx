@@ -23,7 +23,6 @@ function InscriptionCorsus(props) {
   let [loading, setLoading] = useState(true);
   let [color, setColor] = useState("#399ebf");
   const navigate = useNavigate();
-  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -40,58 +39,6 @@ function InscriptionCorsus(props) {
     likedCourses: [], // New field to hold the list of liked course IDs
     disponibilite: []
   });
-
-  const validateField = (name, value) => {
-    let error = '';
-    switch (name) {
-      case 'firstName':
-        error = value.trim() === '' ? 'Please enter student first name!' : '';
-        break;
-      case 'lastName':
-        error = value.trim() === '' ? 'Please enter student last name!' : '';
-        break;
-      case 'email':
-        error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Please enter a valid email address!';
-        break;
-      case 'city':
-        error = value.trim() === '' ? 'Please pick a city name!' : '';
-        break;
-      case 'parentName':
-        error = value.trim() === '' ? 'Please enter Parent  name!' : '';
-        break;
-      case 'parentProfession':
-        error = value.trim() === '' ? 'Please enter Parent  profession!' : '';
-        break;
-
-      case 'gender':
-        error = value === '' ? 'Please select student gender!' : '';
-        break;
-      case 'phoneNumber1':
-        error = /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(value) ? '' : 'Please enter a valid phone number!';
-        break;
-      case 'phoneNumber2':
-        // Validate phone number 2 only if a value is provided
-        if (value.trim() !== '') {
-          error = /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(value) ? '' : 'Please enter a valid phone number!';
-        }
-        break;
-      case 'niveauEtude':
-        error = value.trim() === '' ? 'Please enter level of study!' : '';
-        break;
-      case 'likedCourses':
-        error = value === '' ? 'Please select a course!' : '';
-        break;
-      case 'disponibilite':
-        error = value === '' ? 'Please select your disponiblity !' : '';
-        break;
-        case 'dateOfBirth':
-        error = value === '' ? 'Please select a stage finishDate!' : '';
-        break;
-      default:
-        break;
-    }
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
-  };
 
   const handleToggleFavorite = (courseId) => {
     if (formData.likedCourses.includes(courseId)) {
@@ -112,7 +59,6 @@ function InscriptionCorsus(props) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    validateField(name, value);
   };
 
   const toastShowError = (msg) => {
@@ -154,10 +100,6 @@ function InscriptionCorsus(props) {
 
   const addInscription = async (values, onSubmitProps) => {
     setOpen(true);
-    const formDataToSend = new FormData();
-    for (let key in formData) {
-      formDataToSend.append(key, formData[key]);
-    }
     try {
       const loggedInResponse = await fetch(
         "http://localhost:3001/inscription/add",
@@ -170,9 +112,6 @@ function InscriptionCorsus(props) {
       const loggedIn = await loggedInResponse.json();
       if (loggedInResponse.status === 500) {
         toastShowError("Server error, please try again later.");
-        for (let [key, value] of Object.entries(formData)) {
-          validateField(key, value);
-        }
         setOpen(false);
       } else if (loggedInResponse.status === 201) {
         console.log("Inscription sent successfully!!");
@@ -223,7 +162,6 @@ function InscriptionCorsus(props) {
       });
     };
   }, []);
-
 
   //table time
   const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
@@ -396,19 +334,13 @@ Contact form START */}
                                         </h6>
                                       </div>
                                       <div className="col-lg-8">
-                                      <input
-                        className={`form-control ${
-                          errors.firstName ? "is-invalid" : ""
-                        }`}
-                        name="firstName"
-                        type="text"
-                        placeholder="Enter firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                      />
-                      {errors.firstName && (
-                        <div className="invalid-feedback">{errors.firstName}</div>
-                      )}
+                                        <input
+                                          type="text"
+                                          name="firstName"
+                                          onChange={handleChange}
+                                          className="form-control"
+                                          id="firstName"
+                                        />
                                       </div>
                                     </div>
                                   </div>
@@ -422,19 +354,13 @@ Contact form START */}
                                         </h6>
                                       </div>
                                       <div className="col-lg-8">
-                                      <input
-                        className={`form-control ${
-                          errors.lastName ? "is-invalid" : ""
-                        }`}
-                        name="lastName"
-                        type="text"
-                        placeholder="Enter lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                      />
-                      {errors.lastName && (
-                        <div className="invalid-feedback">{errors.lastName}</div>
-                      )}
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          name="lastName"
+                                          onChange={handleChange}
+                                          id="lastName"
+                                        />
                                       </div>
                                     </div>
                                   </div>
@@ -492,7 +418,6 @@ Contact form START */}
                                     </div>
                                   </div>
 
-
                                   {/* Date of birth */}
                                   <div className="col-12">
                                     <div className="row g-xl-0 align-items-center">
@@ -504,19 +429,13 @@ Contact form START */}
                                       </div>
                                       <div className="col-lg-8">
                                         <div className="row g-2 g-sm-4 mx-0">
-                                        <input
-                        className={`form-control ${
-                          errors.dateOfBirth ? "is-invalid" : ""
-                        }`}
-                        name="dateOfBirth"
-                        type="date"
-                        placeholder="Enter dateOfBirth"
-                        value={formData.dateOfBirth}
-                        onChange={handleChange}
-                      />
-                      {errors.dateOfBirth && (
-                        <div className="invalid-feedback">{errors.dateOfBirth}</div>
-                      )}
+                                          <input
+                                            className="form-control"
+                                            type="date"
+                                            name="dateOfBirth"
+                                            required
+                                            onChange={handleChange}
+                                          />
                                         </div>
                                       </div>
                                     </div>
@@ -532,23 +451,16 @@ Contact form START */}
                                         </h6>
                                       </div>
                                       <div className="col-lg-8">
-                                      <input
-                        className={`form-control ${
-                          errors.email ? "is-invalid" : ""
-                        }`}
-                        name="dateOfBirth"
-                        type="email"
-                        placeholder="Enter email"
-                        value={formData.email}
-                        onChange={handleChange}
-                      />
-                      {errors.email && (
-                        <div className="invalid-feedback">{errors.email}</div>
-                      )}
-                                        </div>
+                                        <input
+                                          type="email"
+                                          name="email"
+                                          onChange={handleChange}
+                                          className="form-control"
+                                          id="email"
+                                        />
                                       </div>
                                     </div>
-                                  </div><br></br>
+                                  </div>
                                   {/* City */}
                                   <div className="col-12">
                                     <div className="row g-xl-0 align-items-center">
@@ -559,15 +471,12 @@ Contact form START */}
                                         </h6>
                                       </div>
                                       <div className="col-lg-8">
-                                      <select
-                        className={`form-select ${errors.city ? 'is-invalid' : ''}`}
-                        id="city"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleChange}
-                      >{errors.city && (
-                        <div className="invalid-feedback">{errors.city}</div>
-                      )}
+                                        <select
+                                          name="city"
+                                          onChange={handleChange}
+                                          className="form-select js-choice z-index-9 rounded-3 border-0 bg-light"
+                                          aria-label=".form-select-sm"
+                                        >
                                           <option value>Select city</option>
                                           <option>Ariana</option>
                                           <option>Beja</option>
@@ -596,7 +505,7 @@ Contact form START */}
                                         </select>
                                       </div>
                                     </div>
-                                  </div><br></br>
+                                  </div>
                                   {/* parent name */}
                                   <div className="col-12">
                                     <div className="row g-xl-0 align-items-center">
@@ -607,22 +516,16 @@ Contact form START */}
                                         </h6>
                                       </div>
                                       <div className="col-lg-8">
-                                      <input
-                        className={`form-control ${
-                          errors.parentName ? "is-invalid" : ""
-                        }`}
-                        name="parentName"
-                        type="texte"
-                        placeholder="Enter parentName"
-                        value={formData.parentName}
-                        onChange={handleChange}
-                      />
-                      {errors.parentName && (
-                        <div className="invalid-feedback">{errors.parentName}</div>
-                      )}
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          id="parentName"
+                                          name="parentName"
+                                          onChange={handleChange}
+                                        />
                                       </div>
                                     </div>
-                                  </div><br></br>
+                                  </div>
                                   {/* proffesion */}
                                   <div className="col-12">
                                     <div className="row g-xl-0 align-items-center">
@@ -633,22 +536,16 @@ Contact form START */}
                                         </h6>
                                       </div>
                                       <div className="col-lg-8">
-                                      <input
-                        className={`form-control ${
-                          errors.parentProfession ? "is-invalid" : ""
-                        }`}
-                        name="parentProfession"
-                        type="texte"
-                        placeholder="Enter parentProfession"
-                        value={formData.parentProfession}
-                        onChange={handleChange}
-                      />
-                      {errors.parentProfession && (
-                        <div className="invalid-feedback">{errors.parentProfession}</div>
-                      )}
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          id="parentProfession"
+                                          name="parentProfession"
+                                          onChange={handleChange}
+                                        />
                                       </div>
                                     </div>
-                                  </div><br></br>
+                                  </div>
                                   {/* niveauEtude */}
                                   <div className="col-12">
                                     <div className="row g-xl-0 align-items-center">
@@ -659,23 +556,16 @@ Contact form START */}
                                         </h6>
                                       </div>
                                       <div className="col-lg-8">
-                                      <input
-                        className={`form-control ${
-                          errors.niveauEtude ? "is-invalid" : ""
-                        }`}
-                        name="niveauEtude"
-                        type="texte"
-                        placeholder="Enter niveauEtude"
-                        value={formData.niveauEtude}
-                        onChange={handleChange}
-                      />
-                      {errors.niveauEtude && (
-                        <div className="invalid-feedback">{errors.niveauEtude}</div>
-                      )}
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          id="niveauEtude"
+                                          name="niveauEtude"
+                                          onChange={handleChange}
+                                        />
                                       </div>
                                     </div>
                                   </div>
-                                  <br></br>
                                   {/* Phone number */}
                                   <div className="col-12">
                                     <div className="row g-xl-0 align-items-center">
@@ -686,23 +576,16 @@ Contact form START */}
                                         </h6>
                                       </div>
                                       <div className="col-lg-8">
-                                      <input
-                        className={`form-control ${
-                          errors.phoneNumber1 ? "is-invalid" : ""
-                        }`}
-                        name="phoneNumber1"
-                        type="Number"
-                        placeholder="Enter phoneNumber1"
-                        value={formData.phoneNumber1}
-                        onChange={handleChange}
-                      />
-                      {errors.phoneNumber1 && (
-                        <div className="invalid-feedback">{errors.phoneNumber1}</div>
-                      )}
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          id="phoneNumber"
+                                          name="phoneNumber1"
+                                          onChange={handleChange}
+                                        />
                                       </div>
                                     </div>
                                   </div>
-                                  <br></br>
                                   {/* Phone number */}
                                   <div className="col-12">
                                     <div className="row g-xl-0 align-items-center">
@@ -713,19 +596,13 @@ Contact form START */}
                                         </h6>
                                       </div>
                                       <div className="col-lg-8">
-                                      <input
-                        className={`form-control ${
-                          errors.phoneNumber2 ? "is-invalid" : ""
-                        }`}
-                        name="phoneNumber2"
-                        type="Number"
-                        placeholder="Enter phoneNumber2"
-                        value={formData.phoneNumber2}
-                        onChange={handleChange}
-                      />
-                      {errors.phoneNumber2 && (
-                        <div className="invalid-feedback">{errors.phoneNumber2}</div>
-                      )}
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          id="phoneNumber"
+                                          name="phoneNumber2"
+                                          onChange={handleChange}
+                                        />
                                       </div>
                                     </div>
                                   </div>
@@ -809,48 +686,49 @@ Contact form START */}
                                                         {/* Render badge based on course level */}
                                                         {course.courseLevel ===
                                                           "Beginner" && (
-                                                            <a
-                                                              href="#"
-                                                              className="badge bg-info bg-opacity-10 text-info"
-                                                            >
-                                                              {course.courseLevel}
-                                                            </a>
-                                                          )}
+                                                          <a
+                                                            href="#"
+                                                            className="badge bg-info bg-opacity-10 text-info"
+                                                          >
+                                                            {course.courseLevel}
+                                                          </a>
+                                                        )}
                                                         {course.courseLevel ===
                                                           "All level" && (
-                                                            <a
-                                                              href="#"
-                                                              className="badge bg-info bg-opacity-10 text-info"
-                                                            >
-                                                              {course.courseLevel}
-                                                            </a>
-                                                          )}
+                                                          <a
+                                                            href="#"
+                                                            className="badge bg-info bg-opacity-10 text-info"
+                                                          >
+                                                            {course.courseLevel}
+                                                          </a>
+                                                        )}
                                                         {course.courseLevel ===
                                                           "Intermediate" && (
-                                                            <a
-                                                              href="#"
-                                                              className="badge bg-warning bg-opacity-10 text-warning"
-                                                            >
-                                                              {course.courseLevel}
-                                                            </a>
-                                                          )}
+                                                          <a
+                                                            href="#"
+                                                            className="badge bg-warning bg-opacity-10 text-warning"
+                                                          >
+                                                            {course.courseLevel}
+                                                          </a>
+                                                        )}
                                                         {course.courseLevel ===
                                                           "Advance" && (
-                                                            <a
-                                                              href="#"
-                                                              className="badge bg-danger bg-opacity-10 text-danger"
-                                                            >
-                                                              {course.courseLevel}
-                                                            </a>
-                                                          )}
+                                                          <a
+                                                            href="#"
+                                                            className="badge bg-danger bg-opacity-10 text-danger"
+                                                          >
+                                                            {course.courseLevel}
+                                                          </a>
+                                                        )}
                                                         {/* Favorite icon */}
                                                         <div
-                                                          className={`icon-circle ${formData.likedCourses.includes(
-                                                            course._id
-                                                          )
+                                                          className={`icon-circle ${
+                                                            formData.likedCourses.includes(
+                                                              course._id
+                                                            )
                                                               ? "liked"
                                                               : ""
-                                                            }`}
+                                                          }`}
                                                           onClick={() =>
                                                             handleToggleFavorite(
                                                               course._id
@@ -974,19 +852,21 @@ Contact form START */}
                                               <td
                                                 key={dayIndex}
                                                 className={`
-                        ${!isSelectable(day, startHour, parseInt(startMinute))
-                                                    ? "non-selectable-cell"
-                                                    : ""
-                                                  }
-                        ${selectedTimeSlots.some(
-                                                    (slot) =>
-                                                      slot.day === day &&
-                                                      slot.startTime === startTime &&
-                                                      slot.endTime === endTime
-                                                  )
-                                                    ? "selected"
-                                                    : ""
-                                                  }
+                        ${
+                          !isSelectable(day, startHour, parseInt(startMinute))
+                            ? "non-selectable-cell"
+                            : ""
+                        }
+                        ${
+                          selectedTimeSlots.some(
+                            (slot) =>
+                              slot.day === day &&
+                              slot.startTime === startTime &&
+                              slot.endTime === endTime
+                          )
+                            ? "selected"
+                            : ""
+                        }
                       `}
                                                 onClick={() =>
                                                   isSelectable(
@@ -1042,7 +922,7 @@ Contact form START */}
                         </div>
                         {/* FAQ END */}
                       </div>
-                    
+                    </div>
                   </form>
                 </div>
               </div>
