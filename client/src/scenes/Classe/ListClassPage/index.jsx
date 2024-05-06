@@ -12,7 +12,10 @@ function Index() {
   const [classes, setClasses] = useState([]);
   const [sortOption, setSortOption] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredClasses, setFilteredClasses] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalEntries, setTotalEntries] = useState(0);
+  const [itemsPerPage] = useState(8);
+
   useEffect(() => {
     // Fonction pour récupérer les catégories
     const fetchClasses = async () => {
@@ -35,20 +38,20 @@ function Index() {
     };
     fetchClasses();
   }, []);
-  
+
   const fetchClasses = async () => {
     try {
       const response = await axios.get("http://localhost:3001/salle");
       setClasses(response.data);
+      setTotalEntries(response.data.length); // Update the totalEntries state
+      console.log("Total Entries:", response.data.length);
+
     } catch (error) {
       console.error("Error fetching classes:", error);
     }
   };
 
-  useEffect(() => {
-    fetchClasses();
-  }, []);
-
+ 
 
   const handleDeleteClasses = (classeId) => {
     MySwal.fire({
@@ -84,36 +87,40 @@ function Index() {
       )
     }
   };
+ 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
+  const filteredClasses = classes.filter((classe) =>
+    [
+      classe.name.toLowerCase(),
+      classe.status.toLowerCase(),
+    ].some((text) => text.includes(searchQuery.toLowerCase()))
+  );
+
+const sortedClasses = filteredClasses.sort((a, b) => {
+  if (sortOption === "Newest") {
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  } else if (sortOption === "Oldest") {
+    return new Date(a.createdAt) - new Date(b.createdAt);
+  } else if (sortOption === "A-Z") {
+    return a.name.localeCompare(b.name);
+  } else if (sortOption === "Z-A") {
+    return b.name.localeCompare(a.name);
+  }
+  return 0;
+});
   
 
-  useEffect(() => {
-    setFilteredClasses(
-      classes.filter((classe) =>
-        classe.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    );
-  }, [classes, searchQuery]);
-  
-  // Sort courses based on the selected sorting option
-  
-  const sortedClass = filteredClasses.sort((a, b) => {
-    switch (sortOption) {
-      case "A-Z":
-        return a.name.localeCompare(b.name);
-      case "Z-A":
-        return b.name.localeCompare(a.name);
-      // Ajoutez d'autres options de tri selon vos besoins
-      default:
-        return 0;
-    }
-  });
+  // Get the current page of classes to display
+  const indexOfLastClass = currentPage * itemsPerPage;
+  const indexOfFirstClass = indexOfLastClass - itemsPerPage;
+  const currentClasses = sortedClasses.slice(indexOfFirstClass, indexOfLastClass);
 
-
-
-
-
-
+  const totalClasses = sortedClasses.length;
+  const totalPages = Math.ceil(totalClasses / itemsPerPage);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div>
@@ -143,40 +150,40 @@ function Index() {
                 <div className="row g-3 align-items-center justify-content-between">
                   {/* Search bar */}
                   <div className="col-md-8">
-                  <form className="rounded position-relative">
-                        <input
-                          className="form-control bg-body"
-                          type="search"
-                          placeholder="Search"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          />
-                        {searchQuery === "" && ( // Check if the search query is empty
-                          <button
-                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-                            onClick={(event) => event.preventDefault()}
-                          >
-                            <i className="fas fa-search fs-6 " />
-                          </button>
-                        )}
-                      </form>
+                    <form className="rounded position-relative">
+                      <input
+                        className="form-control bg-body"
+                        type="search"
+                        placeholder="Search"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                      {searchQuery === "" && ( // Check if the search query is empty
+                        <button
+                          className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                          onClick={(event) => event.preventDefault()}
+                        >
+                          <i className="fas fa-search fs-6 " />
+                        </button>
+                      )}
+                    </form>
 
                   </div>
                   {/* Select option */}
                   <div className="col-md-3">
-        <form>
-          <select
-            className="form-select  border-0 z-index-9"
-            aria-label=".form-select-sm"
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-          >
-            <option value="">Sort by</option>
-            <option value="A-Z">Ascendant</option>
-            <option value="Z-A">Descendant</option>
-          </select>
-        </form>
-      </div>
+                    <form>
+                      <select
+                        className="form-select  border-0 z-index-9"
+                        aria-label=".form-select-sm"
+                        value={sortOption}
+                        onChange={(e) => setSortOption(e.target.value)}
+                      >
+                        <option value="">Sort by</option>
+                        <option value="A-Z">Ascendant</option>
+                        <option value="Z-A">Descendant</option>
+                      </select>
+                    </form>
+                  </div>
                 </div>
                 {/* Search and select END */}
               </div>
@@ -189,30 +196,36 @@ function Index() {
                   <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
                     {/* Table head */}
                     <thead>
-  <tr>
-    <th scope="col" className="border-0 rounded-start">Name</th>
-    <th scope="col" className="border-0">Capcité</th>
-    <th scope="col" className="border-0">Status</th> {/* Nouvelle colonne pour l'image */}
-    <th scope="col" className="border-0 rounded-end">Action</th>
-  </tr>
-</thead>
-<tbody>
-{sortedClass.map((classe) => (
-  <tr key={classe._id}>
-  <td>{classe.name}</td>
-      <td>{classe.capacity}</td>
-      <td>{classe.status}</td>
-
-      
-      <td>
-        <Link to={`/edit-classe/${classe._id}`} className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0">
-            <i class="bi bi-pencil-square"></i>
-        </Link>
-        <button onClick={() => handleDeleteClasses(classe._id)} className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"><i class="bi bi-trash"></i></button>
-      </td>
-    </tr>
-  ))}
-</tbody>
+                      <tr>
+                        <th scope="col" className="border-0 rounded-start">Name</th>
+                        <th scope="col" className="border-0">Capcité</th>
+                        <th scope="col" className="border-0">Status</th> {/* Nouvelle colonne pour l'image */}
+                        <th scope="col" className="border-0 rounded-end">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentClasses.map((classe) => (
+                        <tr key={classe._id}>
+                          <td>{classe.name}</td>
+                          <td>{classe.capacity}</td>
+                          <td>{classe.status}</td>
+                          <td>
+                            <Link
+                              to={`/edit-classe/${classe._id}`}
+                              className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+                            >
+                              <i className="bi bi-pencil-square"></i>
+                            </Link>
+                            <button
+                              onClick={() => handleDeleteClasses(classe._id)}
+                              className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
+                            >
+                              <i className="bi bi-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
 
                     {/* Table body END */}
                   </table>
@@ -222,50 +235,81 @@ function Index() {
               </div>
               {/* Card body END */}
               {/* Card footer START */}
-              <div className="card-footer bg-transparent pt-0">
-                {/* Pagination START */}
-                <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
-                  {/* Content */}
-                  <p className="mb-0 text-center text-sm-start">
-                    Showing 1 to 8 of 20 entries
-                  </p>
-                  {/* Pagination */}
-                  <nav
-                    className="d-flex justify-content-center mb-0"
-                    aria-label="navigation"
-                  >
-                    <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#" tabIndex={-1}>
-                          <i className="fas fa-angle-left" />
-                        </a>
-                      </li>
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#">
-                          1
-                        </a>
-                      </li>
-                      <li className="page-item mb-0 active">
-                        <a className="page-link" href="#">
-                          2
-                        </a>
-                      </li>
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#">
-                          3
-                        </a>
-                      </li>
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#">
-                          <i className="fas fa-angle-right" />
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
+
+              <div className="card-footer bg-transparent pt-0 px-4">
+                  <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
+                    <p className="mb-0 text-center text-sm-start">
+                      Showing {indexOfFirstClass + 1} to{" "}
+                      {Math.min(indexOfLastClass, filteredClasses.length)} of{" "}
+                      {filteredClasses.length} entries
+                    </p>
+                    <nav
+                      className="d-flex justify-content-center mb-0"
+                      aria-label="navigation"
+                    >
+                      <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
+                        <li
+                          className={`page-item ${
+                            currentPage === 1 && "disabled"
+                          }`}
+                        >
+                          {" "}
+                          <button
+                            className="page-link"
+                            onClick={() => paginate(currentPage - 1)}
+                            disabled={currentPage === 1}
+                          >
+                            <i className="fas fa-angle-left" />
+                          </button>
+                        </li>
+                        {Array.from(
+                          {
+                            length: Math.ceil(
+                              filteredClasses.length / itemsPerPage
+                            ),
+                          },
+                          (_, index) => (
+                            <li
+                              key={index}
+                              className={`page-item ${
+                                index + 1 === currentPage ? "active" : ""
+                              }`}
+                            >
+                              <button
+                                className="page-link"
+                                onClick={() => paginate(index + 1)}
+                              >
+                                {index + 1}
+                              </button>
+                            </li>
+                          )
+                        )}
+                        <li
+                          className={`page-item ${
+                            currentPage ===
+                            Math.ceil(filteredClasses.length / itemsPerPage)
+                              ? "disabled"
+                              : ""
+                          }`}
+                        >
+                          <button
+                            className="page-link"
+                            onClick={() => paginate(currentPage + 1)}
+                            disabled={
+                              currentPage ===
+                              Math.ceil(filteredClasses.length / itemsPerPage)
+                            }
+                          >
+                            <i className="fas fa-angle-right" />
+                          </button>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
                 </div>
-                {/* Pagination END */}
-              </div>
               {/* Card footer END */}
+
+
             </div>
             {/* Card END */}
           </div>

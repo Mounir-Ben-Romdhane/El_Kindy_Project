@@ -1,6 +1,8 @@
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+
 import { Link } from "react-router-dom";
 import {
   blockUser,
@@ -12,6 +14,13 @@ import AddUser from "../userCrud/addUser";
 import UpdateUser from "../userCrud/updateUser";
 import Backdrop from "@mui/material/Backdrop";
 import GridLoader from "react-spinners/GridLoader";
+import { Button, Dialog, DialogTitle, DialogContent } from '@mui/material';
+import UploadImageForm from "../../Azureimage/UploadImageForm";
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import { useTranslation } from "react-i18next";
+import withReactContent from "sweetalert2-react-content";
+const MySwal = withReactContent(Swal);
+
 
 function AdminsDashboard() {
   const iconStyle = {
@@ -30,9 +39,15 @@ function AdminsDashboard() {
   let [color, setColor] = useState("#399ebf");
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
+  const [showUploadPopup, setShowUploadPopup] = useState(false);
+
+  const { t, i18n } = useTranslation();
 
 
-  const [totalEntries, setTotalEntries] = useState(0);
+
+  const handleToggleUploadPopup = () => {
+    setShowUploadPopup(!showUploadPopup);
+  };
 
   const handleToggleForm = () => {
     setShowForm(!showForm);
@@ -56,52 +71,68 @@ function AdminsDashboard() {
   };
 
   const handleBlockUser = async (userId) => {
-    setOpen2(true);
+    MySwal.fire({
+      title: t("confirm.block_title"),
+      text: t("confirm.block_text"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: t("confirm.yes_block"),
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setOpen2(true);
+        try {
+          const response = await blockUser(userId);
+          if (response.status === 200) {
+            setOpen2(false);
 
-    try {
-      // Make API call to block user
-      const response = await blockUser(userId);
-
-      if (response.status === 200) {
-        console.log("User blocked successfully!");
-        // Perform any additional actions if needed
-        fetchData();
-        setOpen2(false);
-      } else {
-        console.error("Error blocking user:", response.data);
-        setOpen2(false);
-
-        // Handle error here, e.g., show error message to the user
+            MySwal.fire(t("confirm.blocked"), t("confirm.block_success"), "success");
+            fetchData(); // Reload data
+          } else {
+            setOpen2(false);
+            throw new Error(response.data);
+            
+          }
+        } catch (error) {
+          setOpen2(false);
+          console.error("Error blocking user:", error);
+          MySwal.fire(t("confirm.error"), t("confirm.block_failure"), "error");
+        }
       }
-    } catch (error) {
-      console.error("Error blocking user:", error);
-      // Handle error here, e.g., show error message to the user
-      setOpen2(false);
-    }
+    });
   };
 
   const handleUnblockUser = async (userId) => {
-    setOpen2(true);
+    MySwal.fire({
+      title: t("confirm.unblock_title"),
+      text: t("confirm.unblock_text"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: t("confirm.yes_unblock"),
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setOpen2(true);
 
-    try {
-      // Make API call to unblock user
-      const response = await unblockUser(userId);
-
-      if (response.status === 200) {
-        console.log("User unblocked successfully!");
-        // Perform any additional actions if needed
-        fetchData();
-        setOpen2(false);
-      } else {
-        console.error("Error unblocking user:", response.data);
-        // Handle error here, e.g., show error message to the user
-        setOpen2(false);
+        try {
+          const response = await unblockUser(userId);
+          if (response.status === 200) {
+            setOpen2(false);
+            MySwal.fire(t("confirm.unblocked"), t("confirm.unblock_success"), "success");
+            fetchData(); // Reload data
+          } else {
+            setOpen2(false);
+            throw new Error(response.data);
+          }
+        } catch (error) {
+          setOpen2(false);
+          console.error("Error unblocking user:", error);
+          MySwal.fire(t("confirm.error"), t("confirm.unblock_failure"), "error");
+        }
       }
-    } catch (error) {
-      console.error("Error unblocking user:", error);
-      // Handle error here, e.g., show error message to the user
-      setOpen2(false);
-    }
+    });
   };
 
   const fetchData = async () => {
@@ -127,20 +158,35 @@ function AdminsDashboard() {
 
   // Function to handle user removal
   const handleRemoveUser = async (userId) => {
-    setOpen2(true);
-
-    try {
-      // Call the removeUser function from your service
-      const respense = await removeUser(userId);
-      if (respense.status === 200) {
-        fetchData();
-        setOpen2(false);
-        close();
+    MySwal.fire({
+      title: t("confirm.remove_title"),
+      text: t("confirm.remove_text"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: t("confirm.yes_remove"),
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setOpen2(true);
+        try {
+          const response = await removeUser(userId);
+          if (response.status === 200) {
+            setOpen2(false);
+            MySwal.fire(t("confirm.removed"), t("confirm.remove_success"), "success");
+            fetchData(); // Reload data
+          } else {
+            setOpen2(false);
+            throw new Error(response.data);
+          }
+        } catch (error) {
+          setOpen2(false);
+          console.error("Error removing user:", error);
+          MySwal.fire(t("confirm.error"), t("confirm.remove_failure"), "error");
+        }
       }
-    } catch (error) {
-      console.error("Error removing user:", error);
-      // Handle errors as needed
-    }
+    });
+  
   };
 
   const handleSearchChange = (e) => {
@@ -148,14 +194,31 @@ function AdminsDashboard() {
     setCurrentPage(1); // Reset to first page when searching
   };
 
-  // Filter admins based on search query
-  const filteredAdmins = admins.filter((admin) =>
-    Object.values(admin).some(
-      (value) =>
-        value &&
-        value.toString().toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  );
+// Filter admins based on search query
+const filteredAdmins = admins.filter((admin) => {
+  // Convert each field value to lowercase for case-insensitive search
+  const lowerSearchQuery = searchQuery.toLowerCase();
+
+  // Check if any field value contains the search query
+  return Object.entries(admin).some(([key, value]) => {
+    if (key === "dateOfBirth") {
+      // If the field is the date of birth, format the date and check if it matches the search query
+      const formattedDateOfBirth = value
+        ? new Date(value).toLocaleDateString().toLowerCase()
+        : "";
+      return formattedDateOfBirth.includes(lowerSearchQuery);
+    } else if (key === "blocked") {
+      // If the field is the state (blocked or active), check if it matches the search query
+      const stateString = value ? "blocked" : "active";
+      return stateString.includes(lowerSearchQuery);
+    } else {
+      // For other fields, check if the value contains the search query
+      return value ? value.toString().toLowerCase().includes(lowerSearchQuery) : false;
+    }
+  });
+});
+
+
 
   // Pagination
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -177,8 +240,10 @@ function AdminsDashboard() {
         fetchData();
         setOpen2(false);
       } else {
-        throw new Error("Erreur lors de la récupération des données");
+
         setOpen2(false);
+
+        throw new Error("Erreur lors de la récupération des données");
 
       }
     } catch (error) {
@@ -202,7 +267,10 @@ function AdminsDashboard() {
       <main>
         <SideBar />
         <div className="page-content">
+        
           <TopBarBack />
+
+         
           {open ? (
             <Backdrop
               sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -225,18 +293,18 @@ function AdminsDashboard() {
 
               <div className="row">
                 <div className="col-12">
-                  <h1 className="h2 mb-2 mb-sm-0">Admins list</h1>
+                  <h1 className="h2 mb-2 mb-sm-0">{t('admins_dashboard.title')}</h1>
                 </div>
               </div>
               <div className="card bg-transparent">
                 <div className="card-header bg-transparent border-bottom px-0">
                   <div className="row g-3 align-items-center justify-content-between">
-                    <div className="col-md-6">
+                    <div className="col-md-5">
                       <form className="rounded position-relative">
                         <input
                           className="form-control bg-transparent"
                           type="search"
-                          placeholder="Search"
+                          placeholder={t('admins_dashboard.search_placeholder')}
                           aria-label="Search"
                           value={searchQuery}
                           onChange={handleSearchChange}
@@ -251,150 +319,103 @@ function AdminsDashboard() {
                         )}
                       </form>
                     </div>
-                    <div className="col-md-6 d-flex justify-content-end align-items-center">
-                      <button
-                        className="btn btn-info btn-sm m-2 d-flex align-items-center text-wrap text-break"
-                        onClick={addAdmins}
-                        style={{
-                          fontSize: "0.8rem",
-                          padding: "0.5rem 0.9rem",
-                        }} // Ensure padding is consistent
-                      >
-                        <i
-                          className="fas fa-file-import"
-                          style={{ width: "1em", marginRight: "7px" }}
-                        ></i>{" "}
-                        <span className="d-none d-md-inline ms-1">
-                          Import Admins
-                        </span>
-                      </button>
-                      <button
-                        className="btn btn-success btn-sm m-2 d-flex align-items-center text-wrap text-break"
-                        onClick={handleOpenSheets}
-                        style={{
-                          fontSize: "0.8rem",
-                          padding: "0.5rem 0.9rem",
-                        }}
-                      >
-                        <i
-                          className="fas fa-file-alt"
-                          style={{ width: "1em", marginRight: "7px" }}
-                        ></i>
-                        <span className="d-none d-md-inline ms-1">
-                          Open Google Sheets
-                        </span>
-                      </button>
-                      <button
-                        className="btn btn-primary btn-sm m-2 d-flex align-items-center text-wrap text-break"
-                        onClick={handleToggleForm}
-                        style={{
-                          fontSize: "0.8rem",
-                          padding: "0.56rem 0.9rem",
-                        }}
-                      >
-                        <i className="fas fa-user" style={{ width: "1em", marginRight: "7px" }}></i>
-                        <span className="d-none d-md-inline ms-1">
-                          Add New Admin
-                        </span>
-                      </button>
-                    </div>
+                    <div className="col-md-7 d-flex justify-content-end align-items-center">
+  <button
+    className="btn btn-info btn-sm m-2 d-flex align-items-center text-wrap text-break"
+    onClick={addAdmins}
+    style={{
+      fontSize: "0.7rem", // Smaller font size
+      padding: "0.45rem 0.6rem", // Smaller padding
+    }}
+  >
+    <i className="fas fa-file-import" style={{ width: "1em", marginRight: "5px" }}></i>{" "}
+    <span className="d-none d-md-inline ms-1">
+      {t('admins_dashboard.import_admins')}
+    </span>
+  </button>
+
+  <button
+      className="btn btn-primary btn-sm m-2 d-flex align-items-center text-wrap text-break"
+
+    variant="contained"
+    style={{
+      fontSize: "0.7rem", // Smaller font size
+      padding: "0.45rem 0.6rem", // Smaller padding
+    }}
+    color="primary"
+    onClick={handleToggleUploadPopup}
+  >
+        <i className="fas fa-file-upload" style={{ width: "1em", marginRight: "5px" }}></i>{" "}
+
+    <span className="d-none d-md-inline ms-1">{t('admins_dashboard.upload_image')}</span>
+  </button>
+
+  <button
+    className="btn btn-success btn-sm m-2 d-flex align-items-center text-wrap text-break"
+    onClick={handleOpenSheets}
+    style={{
+      fontSize: "0.7rem", // Smaller font size
+      padding: "0.45rem 0.6rem", // Smaller padding
+    }}
+  >
+    <i className="fas fa-file-alt" style={{ width: "1em", marginRight: "7px" }}></i>
+    <span className="d-none d-md-inline ms-1">
+     {t('admins_dashboard.open_google_sheets')}
+    </span>
+  </button>
+
+  <button
+    className="btn btn-primary btn-sm m-2 d-flex align-items-center text-wrap text-break"
+    onClick={handleToggleForm}
+    style={{
+      fontSize: "0.7rem", // Smaller font size
+      padding: "0.45rem 0.6rem", // Smaller padding
+    }}
+  >
+    <i className="fas fa-user" style={{ width: "1em", marginRight: "7px" }}></i>
+    <span className="d-none d-md-inline ms-1">
+    {t('admins_dashboard.add_new_admin')}
+    </span>
+  </button>
+</div>
+
+                    
+      <Dialog
+        open={showUploadPopup}
+        onClose={handleToggleUploadPopup}
+        aria-labelledby="form-dialog-title"
+        fullWidth={true}
+        maxWidth="sm" 
+      >
+        <DialogTitle id="form-dialog-title">Optical Character Recognition</DialogTitle>
+        <DialogContent>
+          <UploadImageForm />
+        </DialogContent>
+      </Dialog>
                   </div>
                 </div>
               </div>
               <div className="card-body px-0">
-
-                  <div className="tab-content">
-                    <div
-                      className="tab-pane fade show active"
-                      id="nav-preview-tab-1"
-                    >
-
-                      <div className="row g-4">
-                        {currentAdmins.map((admin) => (
-                          <div key={admin._id} className="col-md-6 col-xxl-4">
-                            <div className="card bg-transparent border h-100">
-                              <div className="card-header bg-transparent border-bottom d-flex justify-content-between">
-                                <div className="d-sm-flex align-items-center">
-                                  <div className="avatar avatar-md flex-shrink-0">
-                                    <img
-                                      className="avatar-img rounded-circle"
-                                      src={
-                                        admin.picturePath ||
-                                        "assets/images/element/02.jpg"
-                                      }
-                                      alt="avatar"
-                                    />
-                                  </div>
-                                  <div className="ms-0 ms-sm-2 mt-2 mt-sm-0">
-                                    <h6 className="mb-0">
-                                      {admin.firstName} {admin.lastName}
-                                      {admin.verified ? (
-                                        <i className="bi bi-check-circle-fill text-success ms-2" />
-                                      ) : (
-                                        <i className="bi bi-exclamation-circle-fill text-warning ms-2" />
-                                      )}
-                                    </h6>
-                                    <span className="text-body small">
-                                      {admin.email}
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="dropdown text-end">
-                                  <a
-                                    href="#"
-                                    className="btn btn-sm btn-light btn-round small mb-0"
-                                    role="button"
-                                    id="dropdownShare2"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                  >
-                                    <i className="bi bi-three-dots fa-fw" />
-                                  </a>
-                                  <ul
-                                    className="dropdown-menu dropdown-w-sm dropdown-menu-end min-w-auto shadow rounded"
-                                    aria-labelledby="dropdownShare2"
-                                  >
-                                    <li>
-                                      <a className="dropdown-item" href="#" onClick={() => handleToggleFormUpdate(admin)}>
-                                        <span className="text-primary">
-                                          <i className="bi bi-pencil-square fa-fw me-2" />
-                                          Edit
-                                        </span>
-                                      </a>
-                                    </li>
-                                    <li>
-                                      <a
-                                        className="dropdown-item"
-                                        href="#"
-                                        onClick={() =>
-                                          handleRemoveUser(admin._id)
-                                        }
-                                      >
-                                        <span className="text-danger">
-                                          <i className="bi bi-trash fa-fw me-2" />
-                                          Remove
-                                        </span>
-                                      </a>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
-                              <div className="card-body">
-                                <div>
-                                  <p className="mb-1">
-                                    <i className="bi bi-calendar-check me-2 text-primary" />
-                                    <strong>Date of Birth:</strong>{" "}
-                                    {admin.dateOfBirth
-                                      ? new Date(
-                                          admin.dateOfBirth
-                                        ).toLocaleDateString()
-                                      : "Not available"}
-                                  </p>
-                                  <p className="mb-1">
-                                    <i className="bi bi-geo-alt me-2 text-primary" />
-                                    <strong>Address:</strong> {admin.address}
-                                  </p>
-
+                <div className="tab-content">
+                  <div
+                    className="tab-pane fade show active"
+                    id="nav-preview-tab-1"
+                  >
+                    <div className="row g-4">
+                      {currentAdmins.map((admin) => (
+                        <div key={admin._id} className="col-md-6 col-xxl-4">
+                          <div className="card bg-transparent border h-100">
+                            <div className="card-header bg-transparent border-bottom d-flex justify-content-between">
+                              <div className="d-sm-flex align-items-center">
+                                <div className="avatar avatar-md flex-shrink-0">
+                                  <img
+                                    className="avatar-img rounded-circle"
+                                    src={
+                                      admin.picturePath ||
+                                      "assets/images/element/02.jpg"
+                                    }
+                                    alt="avatar"
+                                  />
                                 </div>
                                 <div className="ms-0 ms-sm-2 mt-2 mt-sm-0">
                                   <h6 className="mb-0">
@@ -435,7 +456,7 @@ function AdminsDashboard() {
                                     >
                                       <span className="text-primary">
                                         <i className="bi bi-pencil-square fa-fw me-2" />
-                                        Edit
+                                        {t('admins_dashboard.edit')}
                                       </span>
                                     </a>
                                   </li>
@@ -449,7 +470,7 @@ function AdminsDashboard() {
                                     >
                                       <span className="text-danger">
                                         <i className="bi bi-trash fa-fw me-2" />
-                                        Remove
+                                        {t('admins_dashboard.remove')}
                                       </span>
                                     </a>
                                   </li>
@@ -460,7 +481,7 @@ function AdminsDashboard() {
                               <div>
                                 <p className="mb-1">
                                   <i className="bi bi-calendar-check me-2 text-primary" />
-                                  <strong>Date of Birth:</strong>{" "}
+                                  <strong>{t('admins_dashboard.date_of_birth')}</strong>{" "}
                                   {admin.dateOfBirth
                                     ? new Date(
                                         admin.dateOfBirth
@@ -469,18 +490,18 @@ function AdminsDashboard() {
                                 </p>
                                 <p className="mb-1">
                                   <i className="bi bi-geo-alt me-2 text-primary" />
-                                  <strong>Address:</strong> {admin.address}
+                                  <strong>{t('admins_dashboard.address')}</strong> {admin.address}
                                 </p>
                               </div>
                               <div>
                                 <p className="mb-1">
                                   <i className="bi bi-gender-male me-2 text-primary" />
-                                  <strong>Gender:</strong>{" "}
+                                  <strong>{t('admins_dashboard.gender')}</strong>{" "}
                                   {admin.gender || "Not available"}
                                 </p>
                                 <p className="mb-1">
                                   <i className="bi bi-telephone me-2 text-primary" />
-                                  <strong>Phone Number:</strong>{" "}
+                                  <strong>{t('admins_dashboard.phone_number')}</strong>{" "}
                                   {admin.phoneNumber1 || "Not available"}
                                 </p>
                                 <p className="mb-1">
@@ -489,13 +510,13 @@ function AdminsDashboard() {
                                   ) : (
                                     <i className="bi bi-check2-circle me-2 text-primary" />
                                   )}
-                                  <strong>State:</strong>{" "}
+                                  <strong>{t('admins_dashboard.state')}</strong>{" "}
                                   {admin.blocked ? (
                                     <span className="state-badge blocked">
-                                      Blocked
+                                      {t('admins_dashboard.blocked')}
                                     </span>
                                   ) : (
-                                    <span className="state-badge">Active</span>
+                                    <span className="state-badge">{t('admins_dashboard.active')}</span>
                                   )}
                                 </p>
                               </div>
@@ -505,7 +526,7 @@ function AdminsDashboard() {
                               <div className="d-sm-flex justify-content-between align-items-center">
                                 <h6 className="mb-2 mb-sm-0">
                                   <i className="bi bi-calendar fa-fw text-orange me-2" />
-                                  <span className="text-body">Join at:</span>{" "}
+                                  <span className="text-body">{t('admins_dashboard.join_at')}</span>{" "}
                                   {new Date(
                                     admin.createdAt
                                   ).toLocaleDateString()}
@@ -516,7 +537,7 @@ function AdminsDashboard() {
                                     className="btn btn-link text-body p-0 mb-0 me-2"
                                     data-bs-toggle="tooltip"
                                     data-bs-placement="top"
-                                    title="Message"
+                                    title={t('admins_dashboard.message')}
                                     aria-label="Message"
                                   >
                                     <span className="text-primary">
@@ -528,7 +549,7 @@ function AdminsDashboard() {
                                       className="btn btn-link text-body p-0 mb-0"
                                       data-bs-toggle="tooltip"
                                       data-bs-placement="top"
-                                      title="Unblock"
+                                      title={t('admins_dashboard.unblock')}
                                       aria-label="Unblock"
                                       onClick={() =>
                                         handleUnblockUser(admin._id)
@@ -543,7 +564,7 @@ function AdminsDashboard() {
                                       className="btn btn-link text-body p-0 mb-0"
                                       data-bs-toggle="tooltip"
                                       data-bs-placement="top"
-                                      title="Block"
+                                      title={t('admins_dashboard.block')}
                                       aria-label="Block"
                                       onClick={() => handleBlockUser(admin._id)}
                                     >
@@ -556,182 +577,9 @@ function AdminsDashboard() {
                               </div>
                             </div>
                           </div>
+                        </div>
                       ))}
                     </div>
-
-                     <div className="row g-4">
-  {currentAdmins
-    .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
-    .map((admin) => (
-      <div key={admin._id} className="col-md-6 col-xxl-4">
-        <div className="card bg-transparent border h-100">
-          <div className="card-header bg-transparent border-bottom d-flex justify-content-between">
-            <div className="d-sm-flex align-items-center">
-              <div className="avatar avatar-md flex-shrink-0">
-                <img
-                  className="avatar-img rounded-circle"
-                  src={
-                    admin.picturePath ||
-                    "assets/images/element/02.jpg"
-                  }
-                  alt="avatar"
-                />
-              </div>
-              <div className="ms-0 ms-sm-2 mt-2 mt-sm-0">
-                <h6 className="mb-0">
-                  {admin.firstName} {admin.lastName}
-                  {admin.verified ? (
-                    <i className="bi bi-check-circle-fill text-success ms-2" />
-                  ) : (
-                    <i className="bi bi-exclamation-circle-fill text-warning ms-2" />
-                  )}
-                </h6>
-                <span className="text-body small">
-                  {admin.email}
-                </span>
-              </div>
-            </div>
-            <div className="dropdown text-end">
-              <a
-                href="#"
-                className="btn btn-sm btn-light btn-round small mb-0"
-                role="button"
-                id="dropdownShare2"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <i className="bi bi-three-dots fa-fw" />
-              </a>
-              <ul
-                className="dropdown-menu dropdown-w-sm dropdown-menu-end min-w-auto shadow rounded"
-                aria-labelledby="dropdownShare2"
-              >
-                <li>
-                  <a className="dropdown-item" href="#" onClick={() => handleToggleFormUpdate(admin)}>
-                    <span className="text-primary">
-                      <i className="bi bi-pencil-square fa-fw me-2" />
-                      Edit
-                    </span>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className="dropdown-item"
-                    href="#"
-                    onClick={() =>
-                      handleRemoveUser(admin._id)
-                    }
-                  >
-                    <span className="text-danger">
-                      <i className="bi bi-trash fa-fw me-2" />
-                      Remove
-                    </span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="card-body">
-            <div>
-              <p className="mb-1">
-                <i className="bi bi-calendar-check me-2 text-primary" />
-                <strong>Date of Birth:</strong>{" "}
-                {admin.dateOfBirth
-                  ? new Date(
-                      admin.dateOfBirth
-                    ).toLocaleDateString()
-                  : "Not available"}
-              </p>
-              <p className="mb-1">
-                <i className="bi bi-geo-alt me-2 text-primary" />
-                <strong>Address:</strong> {admin.address}
-              </p>
-            </div>
-            <div>
-              <p className="mb-1">
-                <i className="bi bi-gender-male me-2 text-primary" />
-                <strong>Gender:</strong>{" "}
-                {admin.gender || "Not available"}
-              </p>
-              <p className="mb-1">
-                <i className="bi bi-telephone me-2 text-primary" />
-                <strong>Phone Number:</strong>{" "}
-                {admin.phoneNumber1 || "Not available"}
-              </p>
-              <p className="mb-1">
-                {admin.blocked ? (
-                  <i className="bi bi-lock me-2 text-primary" />
-                ) : (
-                  <i className="bi bi-check2-circle me-2 text-primary" />
-                )}
-                <strong>State:</strong>{" "}
-                {admin.blocked ? (
-                  <span className="state-badge blocked">Blocked</span>
-                ) : (
-                  <span className="state-badge">Active</span>
-                )}
-              </p>
-            </div>
-          </div>
-          {/* Card footer */}
-          <div className="card-footer bg-transparent border-top">
-            <div className="d-sm-flex justify-content-between align-items-center">
-              <h6 className="mb-2 mb-sm-0">
-                <i className="bi bi-calendar fa-fw text-orange me-2" />
-                <span className="text-body">Join at:</span>{" "}
-                {new Date(
-                  admin.createdAt
-                ).toLocaleDateString()}
-              </h6>
-              <div className="text-end text-primary-hover">
-                <a
-                  href="#"
-                  className="btn btn-link text-body p-0 mb-0 me-2"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  title="Message"
-                  aria-label="Message"
-                >
-                  <span className="text-primary">
-                    <i className="bi bi-envelope-fill me-1" />
-                  </span>
-                </a>
-                {admin.blocked ? (
-                  <button
-                    className="btn btn-link text-body p-0 mb-0"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Unblock"
-                    aria-label="Unblock"
-                    onClick={() => handleUnblockUser(admin._id)}
-                  >
-                    <span className="text-danger">
-                      <i className="bi bi-lock-fill me-1" />
-                    </span>
-                  </button>
-                ) : (
-                  <button
-                    className="btn btn-link text-body p-0 mb-0"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Block"
-                    aria-label="Block"
-                    onClick={() => handleBlockUser(admin._id)}
-                  >
-                    <span className="text-danger">
-                      <i className="bi bi-unlock-fill me-1" />
-                    </span>
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    ))}
-</div>
-
-
                   </div>
                 </div>
               </div>
@@ -742,7 +590,7 @@ function AdminsDashboard() {
                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                   {/* Content */}
                   <p className="mb-0 text-center text-sm-start">
-                    Showing {indexOfFirstEntry + 1} to{" "}
+                    Showing{indexOfFirstEntry + 1} to{" "}
                     {Math.min(indexOfLastEntry, filteredAdmins.length)} of{" "}
                     {filteredAdmins.length} entries
                   </p>
