@@ -72,17 +72,16 @@ function Index() {
   };
   
   const updateReservationStatus = async (reservationId, status) => {
-    setOpen2(true);
+    
     try {
       await axiosPrivate.patch(`/events/reservations/${reservationId}`, {
         status,
       });
-      setOpen2(false);
       MySwal.fire("Updated!", `The reservation has been ${status}.`, "success");
       fetchReservations();
     } catch (error) {
       console.error(`Error updating reservation status to ${status}:`, error);
-      setOpen2(false);
+
       MySwal.fire(
         "Error!",
         `The reservation status could not be updated to ${status}. Please try again later.`,
