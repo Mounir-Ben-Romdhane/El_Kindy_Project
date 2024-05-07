@@ -4,7 +4,8 @@ import { updateStudent } from "services/usersService/api";
 import "../../../../App.css";
 import { getAllCourses } from "services/courseService/api";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
-
+import { ToastContainer, toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import GridLoader from "react-spinners/GridLoader";
 import Backdrop from "@mui/material/Backdrop";
 
@@ -54,7 +55,7 @@ function UpdateStudent({ student, onClose, fetchData }) {
   const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const axiosPrivate = useAxiosPrivate();
-
+  const { t } = useTranslation();
 
   // Function to handle cell click
   const handleCellClick = (day, startTime, endTime) => {
@@ -126,8 +127,7 @@ function UpdateStudent({ student, onClose, fetchData }) {
   const [courses, setCourses] = useState([]);
   const [errors, setErrors] = useState({});
   const [formChanged, setFormChanged] = useState(false);
-  
-  
+
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   let [color, setColor] = useState("#399ebf");
@@ -169,12 +169,10 @@ function UpdateStudent({ student, onClose, fetchData }) {
       }));
       setFormChanged(true); // Set form changed state to true
       validateField(name, value);
-
     } else {
       setFormData({ ...formData, [name]: value });
       setFormChanged(true); // Set form changed state to true
       validateField(name, value);
-
     }
   };
 
@@ -205,10 +203,7 @@ function UpdateStudent({ student, onClose, fetchData }) {
             : "";
         break;
       case "classLevel":
-        error =
-          formData.classLevel.length === 0
-            ? "Please enter student class level !"
-            : "";
+        error = value.length === 0 ? "Please enter student class level !" : "";
         break;
       case "dateOfBirth":
         // Calculate 3 years ago date
@@ -278,23 +273,48 @@ function UpdateStudent({ student, onClose, fetchData }) {
 
     if (Object.keys(formErrors).length > 0) {
       return;
-    } else {
-      setOpen(true);
-      try {
-        const response = await updateStudent(student._id, formData);
-        if (response.status === 200) {
-          console.log("Student updated successfully!");
-          setOpen(false);
+    }
+    setOpen(true);
+    try {
+      const response = await updateStudent(student._id, formData, axiosPrivate);
+      if (response.status === 200) {
+        toast.success(t("student_dashboard.update_student_success"), {
+          autoClose: 1000,
+          style: { color: "green" },
+        });
+        setOpen(false);
+
+        setTimeout(() => {
           onClose();
           fetchData();
-        } else {
-          console.error("Error updating student:", response.data);
-          setOpen(false);
-        }
-      } catch (error) {
-        console.error("Error updating student:", error);
-        setOpen(false);
+        }, 1500); // 1500 milliseconds delay, same as autoClose time
       }
+    } catch (error) {
+      setOpen(false);
+      if (error.response) {
+        if (error.response.status === 404) {
+          toast.error(t("student_dashboard.student_not_found"), {
+            autoClose: 2000,
+            style: { color: "red" },
+          });
+        } else if (error.response.status === 400) {
+          toast.error(t("student_dashboard.add_student_exist"), {
+            autoClose: 2000,
+            style: { color: "red" },
+          });
+        } else {
+          toast.error(t("student_dashboard.update_student_error"), {
+            autoClose: 2000,
+            style: { color: "red" },
+          });
+        }
+      } else {
+        toast.error(t("student_dashboard.update_student_error"), {
+          autoClose: 2000,
+          style: { color: "red" },
+        });
+      }
+      console.error("Error updating student:", error);
     }
   };
 
@@ -306,12 +326,14 @@ function UpdateStudent({ student, onClose, fetchData }) {
 
   return (
     <div className="page-content-wrapper border">
+      <ToastContainer />
+
       <Backdrop
-              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={open}
-            >
-              <GridLoader color={color} loading={loading} size={20} />
-            </Backdrop>
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <GridLoader color={color} loading={loading} size={20} />
+      </Backdrop>
       <div className="container position-relative">
         <button
           className="btn btn-link text-danger position-absolute top-0 end-0 m-3"
@@ -538,9 +560,7 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         }`}
                       />
                       {errors.address && (
-                        <div className="invalid-feedback">
-                          {errors.address}
-                        </div>
+                        <div className="invalid-feedback">{errors.address}</div>
                       )}
                     </div>
                   </div>
@@ -558,14 +578,17 @@ function UpdateStudent({ student, onClose, fetchData }) {
                         name="gender"
                         value={formData.gender}
                         onChange={handleChange}
-                        className={`form-control ${errors.gender ? 'is-invalid' : ''}`}
-                        >
+                        className={`form-control ${
+                          errors.gender ? "is-invalid" : ""
+                        }`}
+                      >
                         <option value="">Select gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                       </select>
-                      {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
-
+                      {errors.gender && (
+                        <div className="invalid-feedback">{errors.gender}</div>
+                      )}
                     </div>
                   </div>
                 </div>

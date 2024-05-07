@@ -9,6 +9,8 @@ import "react-notifications/lib/notifications.css";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
+import { GridLoader } from "react-spinners";
+import Backdrop from "@mui/material/Backdrop";
 
 function EditEvent() {
   const [formState, setFormState] = useState({
@@ -30,17 +32,22 @@ function EditEvent() {
   const [errors, setErrors] = useState({});
   const { id } = useParams();
   const axiosPrivate = useAxiosPrivate();
+  let [color, setColor] = useState("#399ebf");
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    setOpen(true);
     const fetchEvent = async () => {
       try {
         const response = await axiosPrivate.get(
           `http://localhost:3001/event/events/${id}`
         );
-
-        const eventData = response.data;
+        if (response.status === 200) {
+          const eventData = response.data;
         setFormState({
           title: eventData.title,
           description: eventData.description,
@@ -52,7 +59,12 @@ function EditEvent() {
           place: eventData.place,
           picturePath: eventData.picturePath,
         });
+        setOpen(false);
+        }
+
+        
       } catch (error) {
+        setOpen(false);
         console.error("Error Fetching Event:", error);
       }
     };
@@ -170,28 +182,30 @@ function EditEvent() {
     formData.append("place", formState.place);
     if (imageFile) {
       formData.append("picture", imageFile);
+      formData.append("picturePath", imageName);
     }
 
     try {
-      const response = await axios.patch(
-        `http://localhost:3001/event/update/${id}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+      setOpen2(true);
+      const response = await axiosPrivate.patch(
+        `event/update/${id}`,
+        formData
       );
       if (response.status === 200) {
+        setOpen2(false);
         toast.success("Event updated successfully !!", {
-          autoClose: 1500,
+          autoClose: 1000,
           style: { color: "green" },
         });
-        navigate("/listEvents");
+        setTimeout(() => {
+          navigate("/listEvents");
+        }, 1500);
       } else {
+        setOpen2(false);
         toast.error("Failed to update event");
       }
     } catch (error) {
+      setOpen2(false);
       console.error("Error Updating Event:", error);
       toast.error("Failed to update event");
     }
@@ -203,6 +217,24 @@ function EditEvent() {
       <main>
         <div className="page-content">
           <TopBarBack />
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : (
+            <>
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
           <ToastContainer />
           <div className="page-content-wrapper border">
             <BannerStart
@@ -331,9 +363,10 @@ function EditEvent() {
                                 alt="Uploaded image"
                                 className="img-fluid mb-2"
                                 style={{
-                                  maxWidth: "300px",
-                                  maxHeight: "300px",
-                                }} // Limit image dimensions
+                                  height: "auto", // Maintain aspect ratio
+                                  width: "auto", // Allow width to scale with the height
+                                  objectFit: "contain", // Ensures the image is scaled to maintain its aspect ratio while fitting within the frame
+                                 }} // Limit image dimensions
                                 required
                               />
                               <p className="mb-0">Uploaded image</p>
@@ -400,6 +433,7 @@ function EditEvent() {
                 </div>
                 <div className="d-md-flex justify-content-end align-items-start mt-4">
                   <button
+                    disabled={!formModified} 
                     type="submit"
                     className="btn btn-success mb-2 mb-sm-0"
                   >
@@ -409,6 +443,8 @@ function EditEvent() {
               </form>
             </div>
           </div>
+          </>
+          )}
         </div>
       </main>
     </div>

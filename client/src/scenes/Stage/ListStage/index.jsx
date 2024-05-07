@@ -3,6 +3,14 @@ import TopBarBack from "components/TopBarBack";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
+import NoData from "components/NoData";
+
+const MySwal = withReactContent(Swal);
+
 
 function Index() {
   const axiosPrivate = useAxiosPrivate();
@@ -11,14 +19,22 @@ function Index() {
   const [sortOption, setSortOption] = useState("Newest");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
+  let [color, setColor] = useState("#399ebf");
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setOpen(true);
     const fetchStages = async () => {
       try {
         const response = await axiosPrivate.get("/stage");
         setStages(response.data.stages);
-        console.log("response", response.data.stages);
+        //console.log("response", response.data.stages);
+        setOpen(false);
       } catch (error) {
+        setOpen(false);
         console.error("Error fetching stages:", error);
       }
     };
@@ -27,26 +43,51 @@ function Index() {
   }, [axiosPrivate]);
 
   const handleDelete = async (id) => {
-    try {
-      await axiosPrivate.delete(`/stage/${id}`);
-      setStages((prevStages) => prevStages.filter((stage) => stage._id !== id));
-    } catch (error) {
-      console.error("Error deleting stage:", error);
-    }
+    MySwal.fire({
+      title: "Are you sure?",
+      text: "You will not be able to undo this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        
+        try {
+          await axiosPrivate.delete(`/stage/${id}`);
+          MySwal.fire("Deleted!", "The stage has been deleted.", "success");
+          setStages((prevStages) => prevStages.filter((stage) => stage._id !== id));
+        } catch (error) {
+          console.error("Error deleting stage:", error);
+          MySwal.fire("Error!", "The stage was not deleted.", "error");
+        }
+      }
+    });
   };
+  
 
   const filteredAndSortedStages = stages
     .filter(
-      (stage) =>
+      (stage) => {
+
+        // Convert dates to locale string for better comparison.
+        const startDateStr = new Date(stage.startDate).toISOString().split('T')[0];
+        const endDateStr = new Date(stage.finishDate).toISOString().split('T')[0];
+      return (
         !searchQuery ||
         stage.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         stage.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        startDateStr.includes(searchQuery) ||
+        endDateStr.includes(searchQuery) ||
         (stage.price &&
           stage.price
             .toString()
             .toLowerCase()
             .includes(searchQuery.toLowerCase()))
-    )
+         
+     );
+     })
     .sort((a, b) => {
       if (sortOption === "Newest") {
         return new Date(b.createdAt) - new Date(a.createdAt); // Assuming `createdAt` is the field storing the creation date
@@ -73,8 +114,29 @@ function Index() {
         <SideBar />
         <div className="page-content">
           <TopBarBack />
-          <div className="page-content-wrapper border">
-            <div className="row mb-3">
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <div className="page-content-wrapper border">
+              {/* Backdrop with GridLoader */}
+
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>           
+               <div className="row mb-3">
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
                 <h1 className="h3 mb-2 mb-sm-0">Internships</h1>
                 <Link to="/addStage" className="btn btn-sm btn-primary mb-0">
@@ -82,6 +144,9 @@ function Index() {
                 </Link>
               </div>
             </div>
+            {stages.length === 0 ? (
+              <NoData />
+            ) : (
             <div className="card bg-transparent border">
               <div className="card-header bg-light border-bottom">
                 <div className="row g-3 align-items-center justify-content-between">
@@ -128,15 +193,12 @@ function Index() {
                         <th scope="col" className="border-0 rounded-start">
                           Internship Title
                         </th>
+                        
+                        <th scope="col" className="border-0">
+                          description
+                        </th>
                         <th scope="col" className="border-0">
                           Picture
-                        </th>
-
-                        <th scope="col" className="border-0">
-                          startDate
-                        </th>
-                        <th scope="col" className="border-0">
-                          finishDate
                         </th>
                         <th scope="col" className="border-0">
                           Places
@@ -144,9 +206,14 @@ function Index() {
                         <th scope="col" className="border-0">
                           Price
                         </th>
+                        
                         <th scope="col" className="border-0">
-                          description
+                          startDate
                         </th>
+                        <th scope="col" className="border-0">
+                          finishDate
+                        </th>
+                        
                         <th scope="col" className="border-0 rounded-end">
                           Action
                         </th>
@@ -164,26 +231,6 @@ function Index() {
                             <td>{stage.title}</td>
                           </td>
                           <td>
-                            {stage.picturePath ? (
-                              <img
-                                src={`http://localhost:3001/assets/${stage.picturePath}`}
-                                alt="Stage"
-                                style={{
-                                  width: "100px",
-                                  height: "80px",
-                                  borderRadius: "15%",
-                                }} // Adjust size and border radius as needed
-                              />
-                            ) : (
-                              <span>No Image</span>
-                            )}
-                          </td>
-                          <td>{stage.startDate}</td>
-                          <td>{stage.finishDate}</td>
-
-                          <td>{stage.place}</td>
-                          <td>{stage.price ? `${stage.price} TND` : "Free"}</td>
-                          <td>
                             {stage.description
                               .substring(0, 50)
                               .match(/.{1,30}/g)
@@ -198,6 +245,28 @@ function Index() {
                                 </React.Fragment>
                               ))}
                           </td>
+                          <td>
+                            {stage.picturePath ? (
+                              <img
+                                src={`http://localhost:3001/assets/${stage.picturePath}`}
+                                alt="Stage"
+                                style={{
+                                  width: "130px",
+                                  height: "110px",
+                                  borderRadius: "15%",
+                                }} // Adjust size and border radius as needed
+                              />
+                            ) : (
+                              <span>No Image</span>
+                            )}
+                          </td>
+                          
+                          <td>{stage.place}</td>
+                          <td>{stage.price ? `${stage.price} TND` : "Free"}</td>
+                          
+                          <td>{stage.startDate}</td>
+                          <td>{stage.finishDate}</td>
+
 
                           <td>
                             <Link
@@ -295,7 +364,9 @@ function Index() {
                 </div>
               </div>
             </div>
+            )}
           </div>
+          )}
         </div>
       </main>
     </div>

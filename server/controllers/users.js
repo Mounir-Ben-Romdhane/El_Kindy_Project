@@ -32,6 +32,14 @@ const addTeacher = async (req, res) => {
       const salt = await bcrypt.genSalt(saltRounds);
       const passwordHash = await bcrypt.hash(password, salt);
 
+      // Check if a user with the same email already exists
+      const existingUser = await User.findOne({ email });
+
+      // If a user with the same email already exists, return a status indicating that the email is already in use
+      if (existingUser) {
+          return res.status(400).json({ message: 'Email already exists' });
+      }
+
       // Create a new user with the role of 'teacher' and provided details
       const newTeacher = new User({
           firstName,
@@ -188,10 +196,13 @@ const addStudentAndParent = async (req, res) => {
             parentPhone
         } = req.body;
 
-         // Check if all required fields are provided
-         if (!firstName || !lastName || !email || !password) {
-            return res.status(400).json({ error: 'All required fields must be provided' });
-        }
+         // Check if a user with the same email already exists
+    const existingUser = await User.findOne({ email: email });
+
+    // If a user with the same email already exists, return a status indicating that the email is already in use
+    if (existingUser) {
+        return res.status(400).json({ message: 'Email already exists' });
+    }
 
         const saltRounds = 10;
         const salt = await bcrypt.genSalt(saltRounds);
@@ -355,10 +366,13 @@ const addAdmin = async (req, res) => {
             // Add any additional fields here as needed
         } = req.body;
 
-        // Check if all required fields are provided
-        if (!firstName || !lastName || !email || !password) {
-            return res.status(400).json({ error: 'All required fields must be provided' });
-        }
+         // Check if a user with the same email already exists
+          const existingUser = await User.findOne({ email });
+
+          // If a user with the same email already exists, return a status indicating that the email is already in use
+          if (existingUser) {
+              return res.status(400).json({ message: 'Email already exists' });
+          }
 
         const saltRounds = 10;
         const salt = await bcrypt.genSalt(saltRounds);
@@ -520,6 +534,8 @@ const updateUser = async (req, res) => {
       userData.password = passwordHash;
     }
 
+    
+
     const updatedUser = await User.findByIdAndUpdate(userId, userData, { new: true });
     
     if (!updatedUser) {
@@ -549,6 +565,8 @@ const updateTeacher = async (req, res) => {
       teacherData.passwordDecoded = teacherData.password; // Update decoded password
       teacherData.password = passwordHash;
     }
+
+    
     
     // Update user fields
     const updatedTeacher = await User.findByIdAndUpdate(
@@ -602,6 +620,7 @@ const updateStudent = async (req, res) => {
           studentData.passwordDecoded = studentData.password; // Update decoded password
           studentData.password = passwordHash;
       }
+
 
       // Update user fields
       const updatedStudent = await User.findByIdAndUpdate(

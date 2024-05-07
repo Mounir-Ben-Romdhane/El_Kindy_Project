@@ -3,55 +3,50 @@ import { Link } from "react-router-dom"; // Assurez-vous d'importer Link depuis 
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import { ToastContainer, toast } from "react-toastify";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 function Index() {
-  const [courses, setCourses] = useState([]);
-
+        const [courses, setCourses] = useState([]);
         const [classes, setClasses] = useState([]);
         const [searchQuery, setSearchQuery] = useState("");
-        const [filteredClasses, setFilteredClasses] = useState([]);
         const [sortOption, setSortOption] = useState(""); // State to hold the sorting option
+        const [itemsPerPage] = useState(8);
+        const [currentPage, setCurrentPage] = useState(1);
+        const [color, setColor] = useState("#399ebf");
+        const [loading, setLoading] = useState(true);
+        const [error, setError] = useState(null);
+        const [open, setOpen] = useState(false);
+        const [open2, setOpen2] = useState(false);
+        const axiosPrivate = useAxiosPrivate();
+
         useEffect(() => {
           const fetchCourses = async () => {
+            setOpen(true);
+      
             try {
-              const response = await fetch("http://localhost:3001/course/allCourses", {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              });
-              const responseData = await response.json();
-              const { data } = responseData;
-              if (Array.isArray(data)) {
-                setCourses(data);
-              }
+              const response = await axiosPrivate.get("/course/all");
+              setCourses(response.data.data);
+              setOpen(false);
+      
             } catch (error) {
               console.error("Error fetching courses:", error);
+              setOpen(false);
             }
           };
+      
           fetchCourses();
-        }, []);
+        }, [axiosPrivate]);
+       
         const fetchData = async () => {
             try {
-                const response = await fetch("http://localhost:3001/classes/getAll", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setClasses(data || []); // Assurez-vous de gérer les cas où data.data peut être undefined
-                    console.log(data)
-                } else {
-                    const errorMessage = await response.text();
-                    throw new Error(errorMessage);
-                }
+                const response = await axiosPrivate.get("/classes/getAll");
+                console.log("response",response.data);
+                
+                setClasses(response.data);
             } catch (error) {
                 console.error("Error fetching classes:", error);
             }
         };
-    
       
         useEffect(() => {
           fetchData();
@@ -59,9 +54,7 @@ function Index() {
 
         const handleDelete = async (id) => {
             try {
-              await fetch(`http://localhost:3001/classes/${id}`, {
-                method: "DELETE",
-              });
+              await axiosPrivate.delete(`/classes/${id}`);
         
               toast.success("classe deleted successfully !!", {
                 autoClose: 1500,
@@ -77,14 +70,24 @@ function Index() {
             }
           };
 
-
-          useEffect(() => {
-            setFilteredClasses(
-              classes.filter((classe) =>
-                classe.className.toLowerCase().includes(searchQuery.toLowerCase())
-              )
-            );
-          }, [classes, searchQuery]);
+          const filteredClasses = classes ? classes.filter((classe) => {
+            // Check class properties and course titles within each class
+            const coursesTitles = classe.courses.map((courseId) => {
+              const course = courses.find((course) => course._id === courseId);
+              return course ? course.title.toLowerCase() : '';
+            });
+          
+            return [
+              classe.className.toLowerCase(),
+              String(classe.capacity),
+              String(classe.order),
+              ...coursesTitles, // Spread the titles into the searchable array
+            ].some((text) => text.toLowerCase().includes(searchQuery.toLowerCase()));
+          }) : [];
+          
+          
+          
+          
           // Sort courses based on the selected sorting option
           const sortedClass = filteredClasses.sort((a, b) => {
             switch (sortOption) {
@@ -98,7 +101,25 @@ function Index() {
             }
           });
           
-   
+         
+          
+          const handleSearchChange = (e) => {
+            setSearchQuery(e.target.value);
+          };
+        
+          const indexOfLastClasse = currentPage * itemsPerPage;
+          const indexOfFirstClasse = indexOfLastClasse - itemsPerPage;
+          const currentClasses = sortedClass.slice(
+            indexOfFirstClasse,
+            indexOfLastClasse
+          );
+        
+          const totalClasses = sortedClass.length;
+          const totalPages = Math.ceil(totalClasses / itemsPerPage);
+        
+          const paginate = (pageNumber) => setCurrentPage(pageNumber);
+        
+          
     return (
         <div>
         {/* **************** MAIN CONTENT START **************** */}
@@ -135,7 +156,7 @@ function Index() {
                           type="search"
                           placeholder="Search"
                           value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
+                          onChange={handleSearchChange}
                           />
                         {searchQuery === "" && ( // Check if the search query is empty
                           <button
@@ -170,7 +191,7 @@ function Index() {
                   {/* Card header END */}
                   {/* Card body START */}
                   <div className="card-body">
-                    {/* Course table START */}
+                    {/* Classe table START */}
                     <div className="table-responsive border-0 rounded-3">
                       {/* Table START */}
                       <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
@@ -181,7 +202,7 @@ function Index() {
                             Class Name
                             </th>
                             <th scope="col" className="border-0">
-                            Classes 
+                            Courses 
                             </th>
                             <th scope="col" className="border-0 ">
                             Capacity
@@ -198,7 +219,7 @@ function Index() {
                         </thead>
                         {/* Table body START */}
                         <tbody style={{ whiteSpace: "nowrap" }}>
-                        {sortedClass.map((classe) => (
+                        {currentClasses.map((classe) => (
   <tr key={classe._id}>
     <td>{classe.className}</td>
     <td>
@@ -234,49 +255,81 @@ function Index() {
                       </table>
                       {/* Table END */}
                     </div>
-                    {/* Course table END */}
+                    {/* Classe table END */}
                   </div>
                   {/* Card body END */}
                   {/* Card ffooter START */}
                   <div className="card-footer bg-transparent pt-0">
                     {/* Pagination START */}
                     <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
-                      {/* Content */}
-  
-                      {/* Pagination */}
-                      <nav
-                        className="d-flex justify-content-center mb-0"
-                        aria-label="navigation"
-                      >
-                        <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
-                          <li className="page-item mb-0">
-                            <a className="page-link" href="#" tabIndex={-1}>
-                              <i className="fas fa-angle-left" />
-                            </a>
-                          </li>
-                          <li className="page-item mb-0">
-                            <a className="page-link" href="#">
-                              1
-                            </a>
-                          </li>
-                          <li className="page-item mb-0 active">
-                            <a className="page-link" href="#">
-                              2
-                            </a>
-                          </li>
-                          <li className="page-item mb-0">
-                            <a className="page-link" href="#">
-                              3
-                            </a>
-                          </li>
-                          <li className="page-item mb-0">
-                            <a className="page-link" href="#">
-                              <i className="fas fa-angle-right" />
-                            </a>
-                          </li>
-                        </ul>
-                      </nav>
-                    </div>
+                    <p className="mb-0 text-center text-sm-start">
+                      Showing {indexOfFirstClasse + 1} to{" "}
+                      {Math.min(indexOfLastClasse, filteredClasses.length)} of{" "}
+                      {filteredClasses.length} entries
+                    </p>
+                    <nav
+                      className="d-flex justify-content-center mb-0"
+                      aria-label="navigation"
+                    >
+                      <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
+                        <li
+                          className={`page-item ${
+                            currentPage === 1 && "disabled"
+                          }`}
+                        >
+                          {" "}
+                          <button
+                            className="page-link"
+                            onClick={() => paginate(currentPage - 1)}
+                            disabled={currentPage === 1}
+                          >
+                            <i className="fas fa-angle-left" />
+                          </button>
+                        </li>
+                        {Array.from(
+                          {
+                            length: Math.ceil(
+                              filteredClasses.length / itemsPerPage
+                            ),
+                          },
+                          (_, index) => (
+                            <li
+                              key={index}
+                              className={`page-item ${
+                                index + 1 === currentPage ? "active" : ""
+                              }`}
+                            >
+                              <button
+                                className="page-link"
+                                onClick={() => paginate(index + 1)}
+                              >
+                                {index + 1}
+                              </button>
+                            </li>
+                          )
+                        )}
+                        <li
+                          className={`page-item ${
+                            currentPage ===
+                            Math.ceil(filteredClasses.length / itemsPerPage)
+                              ? "disabled"
+                              : ""
+                          }`}
+                        >
+                          <button
+                            className="page-link"
+                            onClick={() => paginate(currentPage + 1)}
+                            disabled={
+                              currentPage ===
+                              Math.ceil(filteredClasses.length / itemsPerPage)
+                            }
+                          >
+                            <i className="fas fa-angle-right" />
+                          </button>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
                     {/* Pagination END */}
                   </div>
                   {/* Card footer END */}

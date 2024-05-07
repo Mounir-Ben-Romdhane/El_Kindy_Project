@@ -7,6 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-notifications/lib/notifications.css";
 import { Link, useNavigate } from "react-router-dom";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
+import { GridLoader } from "react-spinners";
+import Backdrop from "@mui/material/Backdrop";
 
 function AddEvent() {
   const [isPaid, setIsPaid] = useState(false);
@@ -23,6 +25,10 @@ function AddEvent() {
     imageFile: null,
   });
   const [errors, setErrors] = useState({});
+  let [color, setColor] = useState("#399ebf");
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const axiosPrivate = useAxiosPrivate();
 
@@ -82,7 +88,10 @@ function AddEvent() {
         error = value === "" ? "Please select a course level !" : "";
         break;
       case "price":
-        error = value === 0 || value === null || value < 0 ? "Please add a price !" : "";
+        if(isPaid) {
+          error = value === 0 || value === null || value < 0 ? "Please add a price !" : "";
+          break;
+        }
         break;
       case "place":
         error = value === "" ? "Please select a course category !" : "";
@@ -113,21 +122,30 @@ function AddEvent() {
     formDataToSend.append("picturePath", formData.picture.name);
 
     try {
+      setOpen2(true);
+
       const response = await axiosPrivate.post("/event/add", formDataToSend);
-      const savedCourse = response.data;
-      console.log("Event added!");
+      //const savedCourse = response.data;
+      //console.log("Event added!");
       //console.log("Course", savedCourse);
       // Show the toast notification with autoClose: false
-      toast.success("Event added successfully !!", {
-        autoClose: 1500,
-        style: {
-          color: "green", // Text color
-        },
-      });
-      setTimeout(() => {
-        navigate("/listEvents");
-      }, 2000);
+      if(response.status === 201) {
+        toast.success("Event added successfully !!", {
+          autoClose: 1000,
+          style: {
+            color: "green", // Text color
+          },
+        });
+        setOpen2(false);
+
+        setTimeout(() => {
+          navigate("/listEvents");
+        }, 1500);
+      }
+      
     } catch (error) {
+      setOpen2(false);
+
       console.error("Error adding course:", error);
       // Handle error
       toast.error("Failed to add course. Please try again.");
@@ -174,6 +192,15 @@ function AddEvent() {
       <main>
         <div className="page-content">
           <TopBarBack />
+          <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
           <ToastContainer />
           <div className="page-content-wrapper border">
             <BannerStart
@@ -375,8 +402,11 @@ function AddEvent() {
                               alt="Uploaded image"
                               className="img-fluid mb-2"
                               style={{
-                                maxWidth: "300px",
+                                maxWidth: "100%", // This makes the image responsive
                                 maxHeight: "300px",
+                                height: "auto", // Maintain aspect ratio
+                                width: "auto", // Allow width to scale with the height
+                                objectFit: "contain", // Ensures the image is scaled to maintain its aspect ratio while fitting within the frame
                               }}
                             />
                             <p className="mb-0">Uploaded image</p>

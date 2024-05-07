@@ -5,13 +5,15 @@ import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import { ToastContainer, toast } from "react-toastify";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
-import { BASE_URL } from "api/axios";
 
 import { Backdrop } from "@mui/material";
 import { GridLoader } from "react-spinners";
 
 import { useNavigate, useParams } from "react-router-dom";
-
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
+import NoData from "components/NoData";
+const MySwal = withReactContent(Swal);
 
 function Index() {
   const [inscriptions, setInscriptions] = useState([]);
@@ -28,48 +30,74 @@ function Index() {
   // Refresh token
   const axiosPrivate = useAxiosPrivate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setOpen(true);
+  const fetchData = async () => {
+    setOpen(true);
 
-      try {
-        const response = await axiosPrivate.get("/inscription/all");
-        if (response.status === 200) {
-          setInscriptions(response.data.data);
-          setOpen(false);
+    try {
+      const response = await axiosPrivate.get("/inscription/all");
+      if (response.status === 200) {
+        setInscriptions(response.data.data);
+        setOpen(false);
+      } else {
+        setOpen(false);
 
-        } else {
-          throw new Error("Failed to fetch inscriptions");
-        }
-      } catch (error) {
-        console.error("Error fetching inscriptions:", error);
-        // Handle error
+        throw new Error("Failed to fetch inscriptions");
       }
-    };
+    } catch (error) {
+      setOpen(false);
 
+      console.error("Error fetching inscriptions:", error);
+      // Handle error
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
   const handleDelete = async (id) => {
-    try {
-      const response = await axiosPrivate.delete(`/inscription/delete/${id}`);
-
-      if (response.status === 200) {
-        toast.success("Inscription deleted successfully !!", {
-          autoClose: 1500,
-          style: {
-            color: "green",
-          },
-        });
-        setInscriptions((prevInscriptions) =>
-          prevInscriptions.filter((inscription) => inscription._id !== id)
-        );
-      } else {
-        throw new Error("Failed to delete inscription");
+    MySwal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to delete this inscription? This process cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axiosPrivate.delete(
+            `/inscription/delete/${id}`
+          );
+          if (response.status === 200) {
+            toast.success("Inscription deleted successfully!", {
+              autoClose: 1000,
+              style: { color: "green" },
+            });
+            // Update the state to remove the deleted inscription
+            setInscriptions((prevInscriptions) =>
+              prevInscriptions.filter((inscription) => inscription._id !== id)
+            );
+          } else {
+            toast.error("Failed to delete inscription. Please try again.", {
+              autoClose: 1500,
+              style: { color: "red" },
+            });
+            throw new Error("Failed to delete inscription");
+          }
+        } catch (error) {
+          console.error("Error deleting inscription:", error);
+          toast.error(
+            "Failed to delete inscription. Please check the console for more details.",
+            {
+              autoClose: 1500,
+              style: { color: "red" },
+            }
+          );
+        }
       }
-    } catch (error) {
-      console.error("Error deleting inscription:", error);
-    }
+    });
   };
 
   const handleSearchChange = (e) => {
@@ -108,33 +136,57 @@ function Index() {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const navigate = useNavigate();
-  const { id } = useParams();
-
   const activateUser = async (id) => {
-    try {
-      const response = await axiosPrivate.patch(`/inscription/${id}/approve`);
-      if (response.status === 200) {
-        toast.success("Inscription Activated successfully for this User!", {
-          autoClose: 1500,
-          style: { color: "green" },
-        });
-      } else {
-        toast.error("Activation failed. Please try again.", {
-          autoClose: 1500,
-          style: { color: "red" },
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error(
-        "Error activating inscription. Please check the console for more details.",
-        {
-          autoClose: 1500,
-          style: { color: "red" },
+    MySwal.fire({
+      title: "Are you sure?",
+      text: "Do you want to activate this inscription?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, activate it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setOpen2(true);
+        try {
+          const response = await axiosPrivate.patch(
+            `/inscription/${id}/approve`
+          );
+          if (response.status === 200) {
+            setOpen2(false);
+            toast.success("Inscription Activated successfully for this User!", {
+              autoClose: 1000,
+              style: { color: "green" },
+            });
+            fetchData();
+          } else {
+            toast.error("Error activating inscription.", {
+              autoClose: 1500,
+              style: { color: "red" },
+            });
+            setOpen2(false);
+            throw new Error("Failed to activate inscription");
+          }
+        } catch (error) {
+          setOpen2(false);
+          console.error(error);
+          if (error.response && error.response.status === 400) {
+            toast.error("Email already exists.", {
+              autoClose: 1500,
+              style: { color: "red" },
+            });
+          } else {
+            toast.error(
+              "Error activating inscription. Please check the console for more details.",
+              {
+                autoClose: 1500,
+                style: { color: "red" },
+              }
+            );
+          }
         }
-      );
-    }
+      }
+    });
   };
 
   return (
@@ -156,246 +208,270 @@ function Index() {
           ) : (
             <div>
               <Backdrop
-                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
                 open={open2}
               >
                 <GridLoader color={color} loading={loading} size={20} />
               </Backdrop>
-          <div className="page-content-wrapper border">
-            <ToastContainer />
-            <div className="row mb-3">
-              <div className="col-12 d-sm-flex justify-content-between align-items-center">
-                <h1 className="h3 mb-2 mb-sm-0">Inscriptions</h1>
-              </div>
-            </div>
-
-            {/* Render text if inscriptions array is empty */}
-            {inscriptions.length === 0 && <h2>No inscriptions available.</h2>}
-
-            {/* Card START */}
-            {inscriptions.length !== 0 && (
-              <div className="card bg-transparent border">
-                <div className="card-header bg-light border-bottom">
-                  <div className="row g-3 align-items-center justify-content-between">
-                    {/* Search bar */}
-                    <div className="col-md-8">
-                      <form className="rounded position-relative">
-                        <input
-                          className="form-control bg-body"
-                          type="search"
-                          placeholder="Search"
-                          aria-label="Search"
-                          onChange={handleSearchChange}
-                        />
-                        {searchQuery === "" && ( // Check if the search query is empty
-                          <button
-                            className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
-                            type="submit"
-                          >
-                            <i className="fas fa-search fs-6 " />
-                          </button>
-                        )}
-                      </form>
-                    </div>
-                    {/* Select option */}
-                    <div className="col-md-3">
-                      <form>
-                        <select
-                          className="form-select border-0 z-index-9"
-                          aria-label=".form-select-sm"
-                          onChange={handleSort}
-                        >
-                          <option value="">Sort by Status</option>
-                          <option value="accepted">Accepted</option>
-                          <option value="refused">Refused</option>
-                          <option value="pending">Pending</option>
-                        </select>
-                      </form>
-                    </div>
+              <div className="page-content-wrapper border">
+                <ToastContainer />
+                <div className="row mb-3">
+                  <div className="col-12 d-sm-flex justify-content-between align-items-center">
+                    <h1 className="h3 mb-2 mb-sm-0">Inscriptions</h1>
                   </div>
                 </div>
-                <div className="card-body">
-                  <div className="table-responsive border-0 rounded-3">
-                    <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
-                      <thead style={{ whiteSpace: "nowrap" }}>
-                        <tr>
-                          <th scope="col" className="border-0 rounded-start">
-                            Full Name
-                          </th>
-                          <th scope="col" className="border-0">
-                            Email
-                          </th>
-                          <th scope="col" className="border-0">
-                            Parent name
-                          </th>
-                          <th scope="col" className="border-0">
-                            Phone number N°1
-                          </th>
-                          <th scope="col" className="border-0">
-                            Status
-                          </th>
-                          <th scope="col" className="border-0 rounded-end">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody style={{ whiteSpace: "nowrap" }}>
-                        {/* Table row */}
-                        {currentEntries.map((inscription) => (
-                          <tr key={inscription._id}>
-                            <td>
-                              {inscription.firstName} {inscription.lastName}
-                            </td>
-                            <td>{inscription.email}</td>
-                            <td>{inscription.parentName}</td>
-                            <td>{inscription.phoneNumber1}</td>
-                            <td>
-                              {inscription.status === "pending" && (
-                                <span className="badge bg-warning bg-opacity-15 text-warning">
-                                  Pending
-                                </span>
-                              )}
-                              {inscription.status === "accepted" && (
-                                <span className="badge bg-success bg-opacity-15 text-success">
-                                  Accepted
-                                </span>
-                              )}
 
-                              {inscription.status === "refused" && (
-                                <span className="badge bg-danger bg-opacity-15 text-danger">
-                                  Refused</span>
-                                )}
+                {/* Render image and text if inscriptions array is empty */}
+                {inscriptions.length === 0 && (
+                  <NoData />
+                )}
 
-                              {inscription.status === "active" && (
-                                <span className="badge bg-danger bg-opacity-15 text-primary">
-                                  active user
-                                </span>
-                              )}
-                              {inscription.status === "not paid" && (
-                                <span className="badge bg-info bg-opacity-15 text-danger ">
-                                  Not Paid
-
-                                </span>
-                              )}
-                            </td>
-                            <td>
-                              <Link
-                                to={`/inscriptionDetails/${inscription._id}`}
-                                className="btn btn-info-soft btn-round mb-1 me-1 mb-md-0"
-                              >
-                                <i className="bi bi-eye"></i>
-                              </Link>
+                {/* Card START */}
+                {inscriptions.length !== 0 && (
+                  <div className="card bg-transparent border">
+                    <div className="card-header bg-light border-bottom">
+                      <div className="row g-3 align-items-center justify-content-between">
+                        {/* Search bar */}
+                        <div className="col-md-8">
+                          <form className="rounded position-relative">
+                            <input
+                              className="form-control bg-body"
+                              type="search"
+                              placeholder="Search"
+                              aria-label="Search"
+                              onChange={handleSearchChange}
+                            />
+                            {searchQuery === "" && ( // Check if the search query is empty
                               <button
-                                className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
-                                data-bs-toggle="tooltip"
-                                data-bs-placement="top"
-                                title=""
-                                data-bs-original-title="Delete"
-                                onClick={() => handleDelete(inscription._id)}
+                                className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                                type="submit"
                               >
-                                <i className="bi bi-trash"></i>
+                                <i className="fas fa-search fs-6 " />
                               </button>
-                              <button
-                                className="btn btn-info-soft btn-round me-1 mb-1 mb-md-0"
-                                data-bs-toggle="tooltip"
-                                data-bs-placement="top"
-                                title="Activate User"
-                                onClick={() => activateUser(inscription._id)}
+                            )}
+                          </form>
+                        </div>
+                        {/* Select option */}
+                        <div className="col-md-3">
+                          <form>
+                            <select
+                              className="form-select border-0 z-index-9"
+                              aria-label=".form-select-sm"
+                              onChange={handleSort}
+                            >
+                              <option value="">Sort by Status</option>
+                              <option value="confirmed">Accepted</option>
+                              <option value="refused">Refused</option>
+                              <option value="pending">Pending</option>
+                              <option value="not paid">Not Paid</option>
+                              <option value="active">Active</option>
+                            </select>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="card-body">
+                      <div className="table-responsive border-0 rounded-3">
+                        <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
+                          <thead style={{ whiteSpace: "nowrap" }}>
+                            <tr>
+                              <th
+                                scope="col"
+                                className="border-0 rounded-start"
                               >
-                                <i className="bi bi-check-circle"></i> 
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div className="card-footer bg-transparent pt-0 px-4">
-                  <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
-                    <p className="mb-0 text-center text-sm-start">
-                      Showing {indexOfFirstEntry + 1} to{" "}
-                      {Math.min(indexOfLastEntry, sortedInscriptions.length)} of{" "}
-                      {sortedInscriptions.length} entries
-                    </p>
-                    <nav
-                      className="d-flex justify-content-center mb-0"
-                      aria-label="navigation"
-                    >
-                      <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
-                        <li
-                          className={`page-item ${
-                            currentPage === 1 && "disabled"
-                          }`}
+                                Full Name
+                              </th>
+                              <th scope="col" className="border-0">
+                                Email
+                              </th>
+                              <th scope="col" className="border-0">
+                                Parent name
+                              </th>
+                              <th scope="col" className="border-0">
+                                Phone number N°1
+                              </th>
+                              <th scope="col" className="border-0">
+                                Status
+                              </th>
+                              <th scope="col" className="border-0 rounded-end">
+                                Action
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody style={{ whiteSpace: "nowrap" }}>
+                            {/* Table row */}
+                            {currentEntries.map((inscription) => (
+                              <tr key={inscription._id}>
+                                <td>
+                                  {inscription.firstName} {inscription.lastName}
+                                </td>
+                                <td>{inscription.email}</td>
+                                <td>{inscription.parentName}</td>
+                                <td>{inscription.phoneNumber1}</td>
+                                <td>
+                                  {inscription.status === "pending" && (
+                                    <span className="badge bg-warning bg-opacity-15 text-warning">
+                                      Pending
+                                    </span>
+                                  )}
+                                  {inscription.status === "confirmed" && (
+                                    <span className="badge bg-success bg-opacity-15 text-success">
+                                      Paid
+                                    </span>
+                                  )}
+                                  {inscription.status === "refused" && (
+                                    <span className="badge bg-danger bg-opacity-15 text-danger">
+                                      Refused
+                                    </span>
+                                  )}
+                                  {inscription.status === "active" && (
+                                    <span
+                                      className="badge"
+                                      style={{
+                                        backgroundColor: "#28a745",
+                                        color: "white",
+                                        opacity: 0.6,
+                                      }}
+                                    >
+                                      Active User
+                                    </span>
+                                  )}
+                                  {inscription.status === "not paid" && (
+                                    <span className="badge bg-info bg-opacity-15 text-info">
+                                      Not Paid
+                                    </span>
+                                  )}
+                                </td>
+
+                                <td>
+                                  <Link
+                                    to={`/inscriptionDetails/${inscription._id}`}
+                                    className="btn btn-info-soft btn-round mb-1 me-1 mb-md-0"
+                                  >
+                                    <i className="bi bi-eye"></i>
+                                  </Link>
+                                  
+
+                                  {inscription.status !== "active" && (
+                                    <button
+                                      className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+                                      data-bs-toggle="tooltip"
+                                      data-bs-placement="top"
+                                      title="Activate User"
+                                      onClick={() =>
+                                        activateUser(inscription._id)
+                                      }
+                                    >
+                                      <i className="bi bi-check-circle"></i>
+                                    </button>
+                                  )}
+                                  <button
+                                    className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    title=""
+                                    data-bs-original-title="Delete"
+                                    onClick={() =>
+                                      handleDelete(inscription._id)
+                                    }
+                                  >
+                                    <i className="bi bi-trash"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div className="card-footer bg-transparent pt-0 px-4">
+                      <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
+                        <p className="mb-0 text-center text-sm-start">
+                          Showing {indexOfFirstEntry + 1} to{" "}
+                          {Math.min(
+                            indexOfLastEntry,
+                            sortedInscriptions.length
+                          )}{" "}
+                          of {sortedInscriptions.length} entries
+                        </p>
+                        <nav
+                          className="d-flex justify-content-center mb-0"
+                          aria-label="navigation"
                         >
-                          {" "}
-                          <button
-                            className="page-link"
-                            onClick={() => paginate(currentPage - 1)}
-                            disabled={currentPage === 1}
-                          >
-                            <i className="fas fa-angle-left" />
-                          </button>
-                        </li>
-                        {Array.from(
-                          {
-                            length: Math.ceil(
-                              sortedInscriptions.length / entriesPerPage
-                            ),
-                          },
-                          (_, index) => (
+                          <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
                             <li
-                              key={index}
                               className={`page-item ${
-                                index + 1 === currentPage ? "active" : ""
+                                currentPage === 1 && "disabled"
+                              }`}
+                            >
+                              {" "}
+                              <button
+                                className="page-link"
+                                onClick={() => paginate(currentPage - 1)}
+                                disabled={currentPage === 1}
+                              >
+                                <i className="fas fa-angle-left" />
+                              </button>
+                            </li>
+                            {Array.from(
+                              {
+                                length: Math.ceil(
+                                  sortedInscriptions.length / entriesPerPage
+                                ),
+                              },
+                              (_, index) => (
+                                <li
+                                  key={index}
+                                  className={`page-item ${
+                                    index + 1 === currentPage ? "active" : ""
+                                  }`}
+                                >
+                                  <button
+                                    className="page-link"
+                                    onClick={() => paginate(index + 1)}
+                                  >
+                                    {index + 1}
+                                  </button>
+                                </li>
+                              )
+                            )}
+                            <li
+                              className={`page-item ${
+                                currentPage ===
+                                Math.ceil(
+                                  sortedInscriptions.length / entriesPerPage
+                                )
+                                  ? "disabled"
+                                  : ""
                               }`}
                             >
                               <button
                                 className="page-link"
-                                onClick={() => paginate(index + 1)}
+                                onClick={() => paginate(currentPage + 1)}
+                                disabled={
+                                  currentPage ===
+                                  Math.ceil(
+                                    sortedInscriptions.length / entriesPerPage
+                                  )
+                                }
                               >
-                                {index + 1}
+                                <i className="fas fa-angle-right" />
                               </button>
                             </li>
-                          )
-                        )}
-                        <li
-                          className={`page-item ${
-                            currentPage ===
-                            Math.ceil(
-                              sortedInscriptions.length / entriesPerPage
-                            )
-                              ? "disabled"
-                              : ""
-                          }`}
-                        >
-                          <button
-                            className="page-link"
-                            onClick={() => paginate(currentPage + 1)}
-                            disabled={
-                              currentPage ===
-                              Math.ceil(
-                                sortedInscriptions.length / entriesPerPage
-                              )
-                            }
-                          >
-                            <i className="fas fa-angle-right" />
-                          </button>
-                        </li>
-                      </ul>
-                    </nav>
+                          </ul>
+                        </nav>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
-            )}
-          </div>
-        </div>
+            </div>
           )}
-           </div>
-    
+        </div>
       </main>
-     
-
     </div>
   );
 }

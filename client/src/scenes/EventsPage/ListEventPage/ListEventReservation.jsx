@@ -7,16 +7,19 @@ import Navbar  from "components/NavBar";
 import Footer from "components/Footer";
 import '../../Style.css';
 import BannerStartHome from "components/BannerStartHome";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
+
 
 function ListEventUser() {
   const [events, setEvents] = useState([]);
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     // Fetch events when the component mounts
     const fetchEvents = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/event/events");
-        console.log('Response Data:', response.data);
+        const response = await axiosPrivate.get("/event/events");
+        //console.log('Response Data:', response.data);
         const filteredEvents = response.data.filter(event => {
           // Convert event start date and current date to Date objects
           const eventStartDate = new Date(event.dateDebut);
@@ -41,28 +44,7 @@ function ListEventUser() {
 
   return ( 
     <div>
-      <div>
-  <title>Eduport - LMS, Education and Course Theme</title>
-  {/* Meta Tags */}
-  <meta charSet="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <meta name="author" content="Webestica.com" />
-  <meta name="description" content="Eduport- LMS, Education and Course Theme" />
-  {/* Favicon */}
-  <link rel="shortcut icon" href="assets/images/favicon.ico" />
-  {/* Google Font */}
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" />
-  {/* Plugins CSS */}
-  <link rel="stylesheet" type="text/css" href="assets/vendor/font-awesome/css/all.min.css" />
-  <link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap-icons/bootstrap-icons.css" />
-  <link rel="stylesheet" type="text/css" href="assets/vendor/tiny-slider/tiny-slider.css" />
-  <link rel="stylesheet" type="text/css" href="assets/vendor/glightbox/css/glightbox.css" />
   
-  {/* Theme CSS */}
-  <link id="style-switch" rel="stylesheet" type="text/css" href="assets/css/style.css" />
-  {/* Top header START */}
 <Navbar />
   {/* Top header END */}
   {/* Header START */}
@@ -283,15 +265,7 @@ Footer END */}
       </div>
     </div>
   </div>
-  {/* Cookie alert box END */}
-  {/* Back to top */}
-  <div className="back-top"><i className="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle" /></div>
-  {/* Bootstrap JS */}
-  {/* Vendors */}
-  {/* Template Functions */}
 </div>
-
-    </div>
   );
   
 }

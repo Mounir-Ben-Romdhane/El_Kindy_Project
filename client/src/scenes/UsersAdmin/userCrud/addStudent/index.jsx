@@ -6,6 +6,8 @@ import { addStudent } from 'services/usersService/api';
 
 import GridLoader from "react-spinners/GridLoader";
 import Backdrop from "@mui/material/Backdrop";
+import { useTranslation } from "react-i18next";
+import { ToastContainer, toast } from "react-toastify";
 
 function AddStudent({ onClose, fetchData }) {
   const [formData, setFormData] = useState({
@@ -34,6 +36,7 @@ function AddStudent({ onClose, fetchData }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   let [color, setColor] = useState("#399ebf");
+  const { t } = useTranslation();
 
 
 
@@ -113,7 +116,7 @@ function AddStudent({ onClose, fetchData }) {
         error = value.trim() === '' || value.length < 6 ? 'Please enter student full address !' : '';
         break;
       case 'classLevel':
-        error = formData.classLevel.length === 0 ? 'Please enter student class level !' : '';
+        error = value.length === 0 ? 'Please enter student class level !' : '';
         break;
       case 'dateOfBirth':
         // Calculate 3 years ago date
@@ -162,37 +165,50 @@ function AddStudent({ onClose, fetchData }) {
         formErrors[key] = errors[key];
       }
     });
+
+    // Check if the email field is empty
+    if (!formData.email || formData.email.trim() === '') {
+      
+      return;
+    }
     
     if (Object.keys(formErrors).length > 0) {
       return;
-    }else{
+    }
 
       setOpen(true);
 
     try {
       // Make API call to add student
-      const response = await addStudent(formData);
+      const response = await addStudent(formData, axiosPrivate);
       if (response.status === 201) {
-        console.log('Student added successfully!');
-        setOpen(false);
-        // Close the form
-        onClose();
-        // Fetch data
-        fetchData();
-      } else {
-        console.error('Error adding student:', response.data);
-        setOpen(false);
-
-        // Handle error here, e.g., show error message to the user
-      }
+        toast.success(t("student_dashboard.add_student_success"), {
+          autoClose: 1500,
+          style: { color: "green" },
+        });    
+            setOpen(false);
+        setTimeout(() => {
+          onClose();
+          fetchData();
+        }, 1500); // 1500 milliseconds delay, same as autoClose time
+      } 
     } catch (error) {
-      console.error('Error adding student:', error);
       setOpen(false);
-
-      // Handle error here, e.g., show error message to the user
+        if (error.response && error.response.status === 400) {
+          // Handle 400 status code error
+          toast.error(t("student_dashboard.add_student_exist"), {
+            autoClose: 1500,
+            style: { color: "red" },
+          });
+        } else {
+          // Handle other errors
+          toast.error(t("student_dashboard.add_student_failure"), {
+            autoClose: 1500,
+            style: { color: "red" },
+          });
+        }
     }
 
-  }
   };
 
   //table time
@@ -266,6 +282,8 @@ function AddStudent({ onClose, fetchData }) {
   };
   return (
     <div className="page-content-wrapper border">
+            <ToastContainer />
+
      <Backdrop
               sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
               open={open}

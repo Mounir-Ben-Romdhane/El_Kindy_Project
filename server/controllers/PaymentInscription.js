@@ -13,6 +13,14 @@ export async function addInscriptionWithPayment(req, res) {
       return res.status(404).json({ message: "Inscription not found" });
     }
 
+    // Check if a user with the same email already exists
+    const existingUser = await User.findOne({ email: inscription.email });
+
+    // If a user with the same email already exists, return a status indicating that the email is already in use
+    if (existingUser) {
+        return res.status(400).json({ message: 'Email already exists' });
+    }
+
     const paymentAmount = 100000;
 
     // Prepare payload for payment API, assuming payment needs to be initiated
@@ -119,8 +127,8 @@ export async function addInscriptionWithPayment(req, res) {
         <div class="content">
           <h2>Dear ${inscription.firstName} ${inscription.lastName},</h2>
           <p>Thank you for registering with us. Your registration has been approved, and you are just one step away from completing the process.</p>
-          <p>Please complete your payment by clicking the link below:</p>
-          <a href="${paymentLink}" class="payment-link">Complete Payment</a>
+          <p>Please complete your payment by clicking the button below:</p>
+          <a href="${paymentLink}" class="payment-link" style="color: black;">Complete Payment</a>
           <p>If you have any questions or need further assistance, feel free to contact us.</p>
         </div>
         <div class="footer">
@@ -134,7 +142,7 @@ export async function addInscriptionWithPayment(req, res) {
     await sendEmail(inscription.email, "Welcome to Elkindy", body);
 
     // Send response with payment link
-    res.json({
+    res.status(200).json({
       paymentLink: paymentLink,
       paymentId: paymentId,
       message: "Payment initiated. Please complete the payment.",

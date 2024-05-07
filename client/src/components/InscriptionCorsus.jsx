@@ -649,7 +649,7 @@ Contact form START */}
                                               {/* SVG START */}
                                               <span className="position-absolute top-50 start-50 translate-middle z-index-n1">
                                                 <svg
-                                                  width="163.9px"
+                                                  width="250.9px"
                                                   height="48.6px"
                                                 >
                                                   <path

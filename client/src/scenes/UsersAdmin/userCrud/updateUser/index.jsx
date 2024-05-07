@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { updateAdmin } from 'services/usersService/api';
 import Backdrop from "@mui/material/Backdrop";
 import GridLoader from "react-spinners/GridLoader";
+import { ToastContainer, toast } from "react-toastify";
+import { useTranslation } from 'react-i18next';
+import useAxiosPrivate from 'hooks/useAxiosPrivate';
+
 
 function UpdateUser({ user, onClose, fetchData }) {
   const [formData, setFormData] = useState({
@@ -24,6 +28,10 @@ function UpdateUser({ user, onClose, fetchData }) {
   let [color, setColor] = useState("#399ebf");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
+  const axiosPrivate = useAxiosPrivate();
+
+
 
 
 
@@ -55,37 +63,55 @@ function UpdateUser({ user, onClose, fetchData }) {
   };
 
   const validateField = (name, value) => {
-    let error = '';
+    let error = "";
     switch (name) {
-      case 'firstName':
-        error = value.trim() === '' ? 'Please enter your first name!' : '';
+      case "firstName":
+        error = value.trim() === "" ? t("add_user.errors.first_name_required") : "";
         break;
-      case 'lastName':
-        error = value.trim() === '' ? 'Please enter your last name!' : '';
+      case "lastName":
+        error = value.trim() === "" ? t("add_user.errors.last_name_required") : "";
         break;
-      case 'email':
-        error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Please enter a valid email address!';
+      case "email":
+        error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+          ? ""
+          : t("add_user.errors.email_invalid");;
         break;
-      case 'password':
-        error = value.length < 6 ? 'Password must be at least 6 characters long!' : '';
+      case "password":
+        error =
+          value.length < 6
+            ? t("add_user.errors.password_length")
+            : "";
         break;
-      case 'address':
-        error = value.trim() === '' || value.length < 6 ? 'Please enter your full address!' : '';
+      case "address":
+        error =
+          value.trim() === "" || value.length < 6
+            ? t("add_user.errors.address_required")
+            : "";
         break;
-      case 'gender':
-        error = value === '' ? 'Please select your gender!' : '';
+      case "gender":
+        error = value === "" ? t("add_user.errors.gender_required")  : "";
         break;
-      case 'phoneNumber1':
-        error = /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(value) ? '' : 'Please enter a valid phone number!';
+      case "phoneNumber1":
+        error =
+          /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(
+            value
+          )
+            ? ""
+            : t("add_user.errors.phone_number_invalid");
         break;
-      case 'phoneNumber2':
+      case "phoneNumber2":
         // Validate phone number 2 only if a value is provided
-        if (value.trim() !== '') {
-          error = /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(value) ? '' : 'Please enter a valid phone number!';
+        if (value.trim() !== "") {
+          error =
+            /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(
+              value
+            )
+              ? ""
+              : t("add_user.errors.phone_number_invalid");
         }
         break;
-      case 'dateOfBirth':
-        error = value === '' ? 'Please select your date of birth!' : '';
+      case "dateOfBirth":
+        error = value === "" ?  t("add_user.errors.date_of_birth_required") : "";
         break;
       default:
         break;
@@ -109,19 +135,29 @@ function UpdateUser({ user, onClose, fetchData }) {
     setOpen(true);
 
     try {
-      const response = await updateAdmin(user._id, formData);
+      const response = await updateAdmin(user._id, formData, axiosPrivate);
       if (response.status === 200) {
+        toast.success(t("admins_dashboard.success"), { autoClose: 2000,style: { color: "green" }, });
         setOpen(false);
 
-        console.log('User updated successfully!');
-        onClose();
-        fetchData();
-      } else {
-        setOpen(false);
-        console.error('Error updating user:', response.data);
+        setTimeout(() => {
+          onClose();
+          fetchData();
+        }, 1500); // 1500 milliseconds delay, same as autoClose time
       }
-    } catch (error) {
+    }  catch (error) {
       setOpen(false);
+      if (error.response) {
+        if (error.response.status === 404) {
+          toast.error(t("admins_dashboard.not_found"), { autoClose: 2000, style: { color: "red" }, });
+        } else if (error.response.status === 400) {
+          toast.error(t("admins_dashboard.add_admin_exist"), { autoClose: 2000, style: { color: "red" }, });
+        } else {
+          toast.error(t("admins_dashboard.update_error"), { autoClose: 2000, style: { color: "red" }, });
+        }
+      } else {
+        toast.error(t("admins_dashboard.update_error"), { autoClose: 2000, style: { color: "red" }, });
+      }
       console.error('Error updating user:', error);
     }
   };
@@ -134,6 +170,8 @@ function UpdateUser({ user, onClose, fetchData }) {
 
   return (
     <div className="page-content-wrapper border">
+            <ToastContainer />
+
       <Backdrop
               sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
               open={open}
@@ -146,14 +184,14 @@ function UpdateUser({ user, onClose, fetchData }) {
         </button>
         <form onSubmit={handleSubmit}>
           <div className="mt-5">
-            <h5 className="font-base">Update Admin Info</h5>
+            <h5 className="font-base">{t("add_user.header_update")}</h5>
             <div>
               <div className="accordion-body mt-3">
                 <div className="row g-4">
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">First name <span className="text-danger">*</span></h6>
+                        <h6 className="mb-lg-0"> {t("add_user.first_name")}<span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -170,7 +208,7 @@ function UpdateUser({ user, onClose, fetchData }) {
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Last name <span className="text-danger">*</span></h6>
+                        <h6 className="mb-lg-0">{t("add_user.last_name")} <span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -187,7 +225,7 @@ function UpdateUser({ user, onClose, fetchData }) {
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Email <span className="text-danger">*</span></h6>
+                        <h6 className="mb-lg-0">{t("add_user.email")} <span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -204,7 +242,7 @@ function UpdateUser({ user, onClose, fetchData }) {
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Password <span className="text-danger">*</span></h6>
+                        <h6 className="mb-lg-0">{t("add_user.password")} <span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -221,7 +259,7 @@ function UpdateUser({ user, onClose, fetchData }) {
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Address</h6>
+                        <h6 className="mb-lg-0">{t("add_user.address")}<span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -238,7 +276,7 @@ function UpdateUser({ user, onClose, fetchData }) {
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Gender</h6>
+                        <h6 className="mb-lg-0">{t("add_user.gender")} <span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <select
@@ -247,9 +285,9 @@ function UpdateUser({ user, onClose, fetchData }) {
                           onChange={handleChange}
                           className={`form-select ${errors.gender ? 'is-invalid' : ''}`}
                         >
-                          <option value="">Select gender</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
+                          <option value="">{t("add_user.select_gender")}</option>
+                          <option value="Male">{t("add_user.male")}</option>
+                          <option value="Female">{t("add_user.female")}</option>
                         </select>
                         {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
                       </div>
@@ -258,7 +296,7 @@ function UpdateUser({ user, onClose, fetchData }) {
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Phone Number 1 <span className="text-danger">*</span></h6>
+                        <h6 className="mb-lg-0">{t("add_user.phone_number_1")} <span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -275,7 +313,7 @@ function UpdateUser({ user, onClose, fetchData }) {
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Phone Number 2</h6>
+                        <h6 className="mb-lg-0">{t("add_user.phone_number_2")}</h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -292,7 +330,7 @@ function UpdateUser({ user, onClose, fetchData }) {
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Date of Birth <span className="text-danger">*</span></h6>
+                        <h6 className="mb-lg-0">{t("add_user.date_of_birth")}<span className="text-danger">*</span></h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -312,7 +350,7 @@ function UpdateUser({ user, onClose, fetchData }) {
           </div>
           <div className="text-center">
             <button type="submit" className="btn btn-primary" disabled={!formChanged || isFormDisabled()}>
-              Update
+              {t("add_user.update_button")}
             </button>
           </div>
         </form>

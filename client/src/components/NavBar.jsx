@@ -440,7 +440,7 @@ function NavBar() {
                 >
                   <img
                     className="avatar-img rounded-circle"
-                    src={getAvatarSrc()}
+                    src="/assets/images/element/02.jpg"
                     alt="avatar"
                   />
                 </a>

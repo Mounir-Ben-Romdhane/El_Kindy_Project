@@ -1,31 +1,31 @@
-import useAxiosPrivate from 'hooks/useAxiosPrivate';
-import React, { useEffect, useState } from 'react';
-import { getAllClasses } from 'services/classesService/api';
-import { getAllCourses } from 'services/courseService/api';
-import { addTeacher, getUsers } from 'services/usersService/api';
+import useAxiosPrivate from "hooks/useAxiosPrivate";
+import React, { useEffect, useState } from "react";
+import { getAllClasses } from "services/classesService/api";
+import { getAllCourses } from "services/courseService/api";
+import { addTeacher, getUsers } from "services/usersService/api";
 
 import GridLoader from "react-spinners/GridLoader";
 import Backdrop from "@mui/material/Backdrop";
+import { useTranslation } from "react-i18next";
+import { ToastContainer, toast } from "react-toastify";
 
 function AddTeacher({ onClose, fetchData }) {
-
   const axiosPrivate = useAxiosPrivate();
 
-  
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
     coursesTaught: [],
     classesTeaching: [], // Add classesTeaching
     studentsTaught: [], // Add studentsTaught field
-    dateOfBirth: '',
-    address: '',
-    gender: '',
-    phoneNumber1: '',
-    phoneNumber2: '',
-    qualifications: '',
+    dateOfBirth: "",
+    address: "",
+    gender: "",
+    phoneNumber1: "",
+    phoneNumber2: "",
+    qualifications: "",
     experienceYears: 0,
     disponibilite: [],
   });
@@ -39,8 +39,8 @@ function AddTeacher({ onClose, fetchData }) {
   const [open, setOpen] = useState(false);
   let [color, setColor] = useState("#399ebf");
   const [loading, setLoading] = useState(true);
-
-
+  const { t, i18n } = useTranslation();
+  
 
   useEffect(() => {
     async function fetchCourses() {
@@ -48,7 +48,7 @@ function AddTeacher({ onClose, fetchData }) {
         const response = await getAllCourses(axiosPrivate);
         setCourses(response.data.data);
       } catch (error) {
-        console.error('Error fetching courses:', error);
+        console.error("Error fetching courses:", error);
       }
     }
 
@@ -61,7 +61,7 @@ function AddTeacher({ onClose, fetchData }) {
         const classesData = await getAllClasses(axiosPrivate);
         setClasses(classesData.data);
       } catch (error) {
-        console.error('Error fetching classes:', error);
+        console.error("Error fetching classes:", error);
       }
     };
 
@@ -73,135 +73,96 @@ function AddTeacher({ onClose, fetchData }) {
     const fetchStudents = async () => {
       try {
         // Make an API call to fetch students data
-         const response = await getUsers("student");
+        const response = await getUsers("student");
         // Set the fetched students data to the state
         setStudents(response.data.data);
       } catch (error) {
-        console.error('Error fetching students:', error);
+        console.error("Error fetching students:", error);
       }
     };
 
     fetchStudents();
   }, []);
 
-  
-
-
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
-    if (name === 'coursesTaught') {
-      const selectedCourseId = value;
+    if (
+      name === "coursesTaught" ||
+      name === "classesTeaching" ||
+      name === "studentsTaught"
+    ) {
+      const selectedId = value;
       const isChecked = checked;
-      if (isChecked) {
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          coursesTaught: [...prevFormData.coursesTaught, selectedCourseId],
-        }));
-        validateField(name, value);
-
-        
-      } else {
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          coursesTaught: prevFormData.coursesTaught.filter((id) => id !== selectedCourseId),
-        }));
-        validateField(name, value);
-
-      }
-    } else if (name === 'classesTeaching') {
-      const selectedClassId = value;
-      const isChecked = checked;
-      if (isChecked) {
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          classesTeaching: [...prevFormData.classesTeaching, selectedClassId],
-        }));
-        validateField(name, value);
-
-      } else {
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          classesTeaching: prevFormData.classesTeaching.filter((id) => id !== selectedClassId),
-        }));
-        validateField(name, value);
-
-      }
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: isChecked
+          ? [...prevFormData[name], selectedId]
+          : prevFormData[name].filter((id) => id !== selectedId),
+      }));
     } else {
       setFormData({ ...formData, [name]: value });
-      validateField(name, value);
     }
+    validateField(name, value);
   };
 
-  // Function to handle changes in selected students
-  const handleStudentChange = (e) => {
-    const { value, checked } = e.target;
-    const selectedStudentId = value;
-
-    if (checked) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        studentsTaught: [...prevFormData.studentsTaught, selectedStudentId],
-      }));
-      
-    } else {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        studentsTaught: prevFormData.studentsTaught.filter(
-          (id) => id !== selectedStudentId
-        ),
-      }));
-    }
-  };
-  
   const validateField = (name, value) => {
-    let error = '';
+    let error = "";
     switch (name) {
-      case 'firstName':
-        error = value.trim() === '' ? 'Please enter teacher first name !' : '';
+      case "firstName":
+        error = value.trim() === "" ? t("teacher_form.enter_first_name") : "";
         break;
-      case 'lastName':
-        error = value.trim() === '' ? 'Please enter teacher last name !' : '';
+      case "lastName":
+        error = value.trim() === "" ? t("teacher_form.enter_last_name") : "";
         break;
-      case 'email':
-        error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Please enter a valid email address !';
+      case "email":
+        error = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+          ? ""
+          : t("teacher_form.enter_valid_email");
         break;
-      case 'password':
-        error = value.length < 6 ? 'Password must be at least 6 characters long !' : '';
+      case "password":
+        error = value.length < 6 ? t("teacher_form.password_length") : "";
         break;
-      case 'address':
-        error = value.trim() === '' || value.length < 6 ? 'Please enter teacher full address !' : '';
+      case "address":
+        error =
+          value.trim() === "" || value.length < 6
+            ? t("teacher_form.enter_address")
+            : "";
         break;
-      case 'gender':
-        error = value === '' ? 'Please select teacher gender !' : '';
+      case "gender":
+        error = value === "" ? t("teacher_form.enter_valid_phone_number") : "";
         break;
-      case 'phoneNumber1':
-        error = /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(value) ? '' : 'Please enter a valid phone number !';
+      case "phoneNumber1":
+        error =
+          /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(
+            value
+          )
+            ? ""
+            : t("teacher_form.enter_valid_phone_number");
         break;
-      case 'phoneNumber2':
-        // Validate phone number 2 only if a value is provided
-        if (value.trim() !== '') {
-          error = /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(value) ? '' : 'Please enter a valid phone number !';
+      case "phoneNumber2":
+        if (value.trim() !== "") {
+        error =
+          /^(20|21|22|23|24|25|26|27|28|29|50|51|52|53|54|55|56|57|58|59|90|91|92|93|94|95|96|97|98|99)\d{6}$/.test(
+            value
+          )
+            ? ""
+            : t("teacher_form.enter_valid_phone_number");
         }
         break;
-      case 'dateOfBirth':
-        // Calculate 3 years ago date
+      case "dateOfBirth":
         const minDate = new Date();
         minDate.setFullYear(minDate.getFullYear() - 3);
         const selectedDate = new Date(value);
-        error = selectedDate > minDate || value === "" ? 'Date of birth must be at least 3 years ago!' : '';
-        break;
-      case 'qualifications':
-        error = value < 6 ? 'Please select teacher qualifications !' : '';
-        break;
-      case 'experienceYears':
-        error = value < 0 ? 'Please select teacher experience years !' : '';
+        error =
+          selectedDate > minDate || value === ""
+            ? t("teacher_form.select_date_of_birth")
+            : "";
         break;
       default:
         break;
     }
     setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
   };
-  
 
   // Submit form
   const handleSubmit = async (e) => {
@@ -216,35 +177,48 @@ function AddTeacher({ onClose, fetchData }) {
         formErrors[key] = errors[key];
       }
     });
-    
+
+    // Check if the email field is empty
+    if (!formData.email || formData.email.trim() === "") {
+      return;
+    }
+
     if (Object.keys(formErrors).length > 0) {
       return;
     }
-    else{
-      setOpen(true);
+    setOpen(true);
 
     try {
       // Make API call to add teacher
-      const response = await addTeacher(formData);
+      const response = await addTeacher(formData, axiosPrivate);
       if (response.status === 201) {
-        console.log('Teacher added successfully!');
+        toast.success(t("teachers_dashboard.add_teacherr_success"), {
+          autoClose: 1500,
+          style: { color: "green" },
+        });
         setOpen(false);
 
-        // Close the form
-        onClose();
-        // Fetch data
-        fetchData();
-      } else {
-        setOpen(false);
-        console.error('Error adding teacher:', response.data);
-        // Handle error here, e.g., show error message to the user
+        setTimeout(() => {
+          onClose();
+          fetchData();
+        }, 1500); // 1500 milliseconds delay, same as autoClose time
       }
     } catch (error) {
       setOpen(false);
-      console.error('Error adding teacher:', error);
-      // Handle error here, e.g., show error message to the user
+      if (error.response && error.response.status === 400) {
+        // Handle 400 status code error
+        toast.error(t("teachers_dashboard.add_teacher_exist"), {
+          autoClose: 1500,
+          style: { color: "red" },
+        });
+      } else {
+        // Handle other errors
+        toast.error(t("teachers_dashboard.add_teacherr_failure"), {
+          autoClose: 1500,
+          style: { color: "red" },
+        });
+      }
     }
-  }
   };
 
   //table time
@@ -317,25 +291,27 @@ function AddTeacher({ onClose, fetchData }) {
     return !nonSelectableHours.includes(currentTime);
   };
 
-   // State for controlling the visibility of modals
+  // State for controlling the visibility of modals
   const [showAddCourseModal, setShowAddCourseModal] = useState(false);
   const [showAddClassModal, setShowAddClassModal] = useState(false);
   const [showAddStudentModal, setShowAddStudentModal] = useState(false);
 
   return (
     <div className="page-content-wrapper border">
+      <ToastContainer />
+
       <Backdrop
-              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={open}
-            >
-              <GridLoader color={color} loading={loading} size={20} />
-            </Backdrop>
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <GridLoader color={color} loading={loading} size={20} />
+      </Backdrop>
       <div className="container position-relative">
         {/* Close icon */}
         <button
           className="btn btn-link text-danger position-absolute top-0 end-0 m-3"
           onClick={onClose}
-          style={{ fontSize: '1.3rem' }}
+          style={{ fontSize: "1.3rem" }}
         >
           <i className="bi bi-x-lg"></i>
         </button>
@@ -343,7 +319,7 @@ function AddTeacher({ onClose, fetchData }) {
         <form onSubmit={handleSubmit}>
           {/* Personal information */}
           <div className="mt-5">
-            <h5 className=" font-base">Personal information</h5>
+            <h5 className=" font-base">{t("teacher_form.header")}</h5>
             <div>
               <div className="accordion-body mt-3">
                 <div className="row g-4">
@@ -352,7 +328,8 @@ function AddTeacher({ onClose, fetchData }) {
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
                         <h6 className="mb-lg-0">
-                          First name <span className="text-danger">*</span>
+                          {t("teacher_form.first_name")}{" "}
+                          <span className="text-danger">*</span>
                         </h6>
                       </div>
                       <div className="col-lg-8">
@@ -361,9 +338,15 @@ function AddTeacher({ onClose, fetchData }) {
                           name="firstName"
                           value={formData.firstName}
                           onChange={handleChange}
-                          className={`form-control ${errors.firstName ? 'is-invalid' : ''}`}
+                          className={`form-control ${
+                            errors.firstName ? "is-invalid" : ""
+                          }`}
                         />
-                        {errors.firstName && <div className="invalid-feedback">{errors.firstName}</div>}
+                        {errors.firstName && (
+                          <div className="invalid-feedback">
+                            {errors.firstName}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -372,7 +355,8 @@ function AddTeacher({ onClose, fetchData }) {
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
                         <h6 className="mb-lg-0">
-                          Last name <span className="text-danger">*</span>
+                          {t("teacher_form.last_name")}{" "}
+                          <span className="text-danger">*</span>
                         </h6>
                       </div>
                       <div className="col-lg-8">
@@ -381,9 +365,15 @@ function AddTeacher({ onClose, fetchData }) {
                           name="lastName"
                           value={formData.lastName}
                           onChange={handleChange}
-                          className={`form-control ${errors.lastName ? 'is-invalid' : ''}`}
+                          className={`form-control ${
+                            errors.lastName ? "is-invalid" : ""
+                          }`}
                         />
-                        {errors.lastName && <div className="invalid-feedback">{errors.lastName}</div>}
+                        {errors.lastName && (
+                          <div className="invalid-feedback">
+                            {errors.lastName}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -392,7 +382,8 @@ function AddTeacher({ onClose, fetchData }) {
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
                         <h6 className="mb-lg-0">
-                          Email <span className="text-danger">*</span>
+                          {t("teacher_form.email")}{" "}
+                          <span className="text-danger">*</span>
                         </h6>
                       </div>
                       <div className="col-lg-8">
@@ -401,11 +392,14 @@ function AddTeacher({ onClose, fetchData }) {
                           name="email"
                           value={formData.email}
                           onChange={handleChange}
-                          className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                          className={`form-control ${
+                            errors.email ? "is-invalid" : ""
+                          }`}
                         />
-                                                {errors.email && <div className="invalid-feedback">{errors.email}</div>}
-
-                        </div>
+                        {errors.email && (
+                          <div className="invalid-feedback">{errors.email}</div>
+                        )}
+                      </div>
                     </div>
                   </div>
                   {/* Password */}
@@ -413,7 +407,8 @@ function AddTeacher({ onClose, fetchData }) {
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
                         <h6 className="mb-lg-0">
-                          Password <span className="text-danger">*</span>
+                          {t("teacher_form.password")}
+                          <span className="text-danger">*</span>
                         </h6>
                       </div>
                       <div className="col-lg-8">
@@ -422,111 +417,138 @@ function AddTeacher({ onClose, fetchData }) {
                           name="password"
                           value={formData.password}
                           onChange={handleChange}
-                          className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                          className={`form-control ${
+                            errors.password ? "is-invalid" : ""
+                          }`}
                         />
-                        {errors.password && <div className="invalid-feedback">{errors.password}</div>}
+                        {errors.password && (
+                          <div className="invalid-feedback">
+                            {errors.password}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
-                          {/* Courses taught */}
-                    <div className="col-12">
-                      <div className="row g-xl-0 align-items-center">
-                        <div className="col-lg-4">
-                          <h6 className="mb-lg-0">
-                            Courses Taught{' '}
-                            <span className="text-danger">*</span>
-                          </h6>
-                        </div>
-                        <div className="col-lg-8">
-                          <div className="row row-cols-3">
-                            {courses.map((course) => (
-                              <div key={course._id} className="col">
-                                <div className="form-check">
-                                  <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id={course._id}
-                                    name="coursesTaught"
-                                    value={course._id}
-                                    onChange={handleChange}
-                                  />
-                                  <label className="form-check-label" htmlFor={course._id}>
-                                    {course.title}
-                                  </label>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
+                  {/* Courses taught */}
+                  <div className="col-12">
+                    <div className="row g-xl-0 align-items-center">
+                      <div className="col-lg-4">
+                        <h6 className="mb-lg-0">
+                          {t("teacher_form.courses_taught")}{" "}
+                          <span className="text-danger">*</span>
+                        </h6>
                       </div>
-                    </div>
-                    {/* Classes Teaching */}
-                    <div className="col-12">
-                      <div className="row g-xl-0 align-items-center">
-                        <div className="col-lg-4">
-                          <h6 className="mb-lg-0">
-                            Classes Teaching{' '}
-                            <span className="text-danger">*</span>
-                          </h6>
-                        </div>
-                        <div className="col-lg-8">
-                          {classes.map((classItem) => (
-                              <div key={classItem._id} className="form-check form-check-inline">
-                                  <input
-                                      type="checkbox"
-                                      name="classesTeaching"
-                                      value={classItem._id}
-                                      checked={formData.classesTeaching.includes(classItem._id)}
-                                      onChange={handleChange}
-                                      className="form-check-input"
-                                      id={classItem._id}
-                                  />
-                                  <label className="form-check-label" htmlFor={classItem._id}>
-                                      {classItem.className}
-                                  </label>
+                      <div className="col-lg-8">
+                        <div className="row row-cols-3">
+                          {courses.map((course) => (
+                            <div key={course._id} className="col">
+                              <div className="form-check">
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  id={course._id}
+                                  name="coursesTaught"
+                                  value={course._id}
+                                  onChange={handleChange}
+                                />
+                                <label
+                                  className="form-check-label"
+                                  htmlFor={course._id}
+                                >
+                                  {course.title}
+                                </label>
                               </div>
+                            </div>
                           ))}
-                      </div>
-
+                        </div>
                       </div>
                     </div>
+                  </div>
+                  {/* Classes Teaching */}
+                  <div className="col-12">
+                    <div className="row g-xl-0 align-items-center">
+                      <div className="col-lg-4">
+                        <h6 className="mb-lg-0">
+                          {t("teacher_form.classes_teaching")}{" "}
+                          <span className="text-danger">*</span>
+                        </h6>
+                      </div>
+                      <div className="col-lg-8">
+                        {classes.map((classItem) => (
+                          <div
+                            key={classItem._id}
+                            className="form-check form-check-inline"
+                          >
+                            <input
+                              type="checkbox"
+                              name="classesTeaching"
+                              value={classItem._id}
+                              checked={formData.classesTeaching.includes(
+                                classItem._id
+                              )}
+                              onChange={handleChange}
+                              className="form-check-input"
+                              id={classItem._id}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor={classItem._id}
+                            >
+                              {classItem.className}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
 
-                    {/* Students taught */}
-        <div className="col-12">
-          <div className="row g-xl-0 align-items-center">
-            <div className="col-lg-4">
-              <h6 className="mb-lg-0">
-                Students Taught{' '}
-                <span className="text-danger">*</span>
-              </h6>
-            </div>
-            <div className="col-lg-8">
-              {students.map((student) => (
-                <div key={student._id} className="form-check form-check-inline">
-                  <input
-                    type="checkbox"
-                    name="studentsTaught"
-                    value={student._id}
-                    checked={formData.studentsTaught.includes(student._id)}
-                    onChange={handleStudentChange}
-                    className="form-check-input"
-                    id={student._id}
-                  />
-                  <label className="form-check-label" htmlFor={student._id}>
-                    {student.firstName} {student.lastName}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+                  {/* Students taught */}
+                  <div className="col-12">
+                    <div className="row g-xl-0 align-items-center">
+                      <div className="col-lg-4">
+                        <h6 className="mb-lg-0">
+                          {t("teacher_form.students_taught")}{" "}
+                          <span className="text-danger">*</span>
+                        </h6>
+                      </div>
+                      <div className="col-lg-8">
+                        {students.map((student) => (
+                          <div
+                            key={student._id}
+                            className="form-check form-check-inline"
+                          >
+                            <input
+                              type="checkbox"
+                              name="studentsTaught"
+                              value={student._id}
+                              checked={formData.studentsTaught.includes(
+                                student._id
+                              )}
+                              onChange={handleChange}
+                              className="form-check-input"
+                              id={student._id}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor={student._id}
+                            >
+                              {student.firstName} {student.lastName}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
 
                   {/* Date of Birth */}
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Date of Birth {' '}
-                            <span className="text-danger">*</span></h6>
+                        <h6 className="mb-lg-0">
+                          {" "}
+                          {t("teacher_form.date_of_birth")}{" "}
+                          <span className="text-danger">*</span>
+                        </h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -534,9 +556,15 @@ function AddTeacher({ onClose, fetchData }) {
                           name="dateOfBirth"
                           value={formData.dateOfBirth}
                           onChange={handleChange}
-                          className={`form-control ${errors.dateOfBirth ? 'is-invalid' : ''}`}
+                          className={`form-control ${
+                            errors.dateOfBirth ? "is-invalid" : ""
+                          }`}
                         />
-                        {errors.dateOfBirth && <div className="invalid-feedback">{errors.dateOfBirth}</div>}
+                        {errors.dateOfBirth && (
+                          <div className="invalid-feedback">
+                            {errors.dateOfBirth}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -544,8 +572,10 @@ function AddTeacher({ onClose, fetchData }) {
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Address{' '}
-                            <span className="text-danger">*</span></h6>
+                        <h6 className="mb-lg-0">
+                          {t("teacher_form.address")}{" "}
+                          <span className="text-danger">*</span>
+                        </h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -553,10 +583,15 @@ function AddTeacher({ onClose, fetchData }) {
                           name="address"
                           value={formData.address}
                           onChange={handleChange}
-                          className={`form-control ${errors.address ? 'is-invalid' : ''}`}
+                          className={`form-control ${
+                            errors.address ? "is-invalid" : ""
+                          }`}
                         />
-                        {errors.address && <div className="invalid-feedback">{errors.address}</div>}
-
+                        {errors.address && (
+                          <div className="invalid-feedback">
+                            {errors.address}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -564,22 +599,33 @@ function AddTeacher({ onClose, fetchData }) {
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Gender{' '}
-                            <span className="text-danger">*</span></h6>
+                        <h6 className="mb-lg-0">
+                          {t("teacher_form.gender")}{" "}
+                          <span className="text-danger">*</span>
+                        </h6>
                       </div>
                       <div className="col-lg-8">
                         <select
                           name="gender"
                           value={formData.gender}
                           onChange={handleChange}
-                          className={`form-select ${errors.gender ? 'is-invalid' : ''}`}
+                          className={`form-select ${
+                            errors.gender ? "is-invalid" : ""
+                          }`}
                         >
-                          <option value="">Select gender</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
+                          <option value="">
+                            {t("teacher_form.select_gender")}
+                          </option>
+                          <option value="Male">{t("teacher_form.male")}</option>
+                          <option value="Female">
+                            {t("teacher_form.female")}
+                          </option>
                         </select>
-                        {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
-                      
+                        {errors.gender && (
+                          <div className="invalid-feedback">
+                            {errors.gender}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -588,7 +634,8 @@ function AddTeacher({ onClose, fetchData }) {
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
                         <h6 className="mb-lg-0">
-                          Phone Number 1 <span className="text-danger">*</span>
+                          {t("teacher_form.phone_number_1")}
+                          <span className="text-danger">*</span>
                         </h6>
                       </div>
                       <div className="col-lg-8">
@@ -597,9 +644,15 @@ function AddTeacher({ onClose, fetchData }) {
                           name="phoneNumber1"
                           value={formData.phoneNumber1}
                           onChange={handleChange}
-                          className={`form-control ${errors.phoneNumber1 ? 'is-invalid' : ''}`}
+                          className={`form-control ${
+                            errors.phoneNumber1 ? "is-invalid" : ""
+                          }`}
                         />
-                        {errors.phoneNumber1 && <div className="invalid-feedback">{errors.phoneNumber1}</div>}
+                        {errors.phoneNumber1 && (
+                          <div className="invalid-feedback">
+                            {errors.phoneNumber1}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -607,7 +660,10 @@ function AddTeacher({ onClose, fetchData }) {
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Phone Number 2</h6>
+                        <h6 className="mb-lg-0">
+                          {t("teacher_form.phone_number_2")}
+                          <span className="text-danger">*</span>
+                        </h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -615,17 +671,25 @@ function AddTeacher({ onClose, fetchData }) {
                           name="phoneNumber2"
                           value={formData.phoneNumber2}
                           onChange={handleChange}
-                          className={`form-control ${errors.phoneNumber2 ? 'is-invalid' : ''}`}
-                          />
-                          {errors.phoneNumber2 && <div className="invalid-feedback">{errors.phoneNumber2}</div>}
-                        </div>
+                          className={`form-control ${
+                            errors.phoneNumber2 ? "is-invalid" : ""
+                          }`}
+                        />
+                        {errors.phoneNumber2 && (
+                          <div className="invalid-feedback">
+                            {errors.phoneNumber2}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                   {/* Qualifications */}
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Qualifications</h6>
+                        <h6 className="mb-lg-0">
+                          {t("teacher_form.qualifications")}
+                        </h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -633,9 +697,15 @@ function AddTeacher({ onClose, fetchData }) {
                           name="qualifications"
                           value={formData.qualifications}
                           onChange={handleChange}
-                          className={`form-control ${errors.qualifications ? 'is-invalid' : ''}`}
+                          className={`form-control ${
+                            errors.qualifications ? "is-invalid" : ""
+                          }`}
                         />
-                        {errors.qualifications && <div className="invalid-feedback">{errors.qualifications}</div>}
+                        {errors.qualifications && (
+                          <div className="invalid-feedback">
+                            {errors.qualifications}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -643,7 +713,9 @@ function AddTeacher({ onClose, fetchData }) {
                   <div className="col-12">
                     <div className="row g-xl-0 align-items-center">
                       <div className="col-lg-4">
-                        <h6 className="mb-lg-0">Experience Years</h6>
+                        <h6 className="mb-lg-0">
+                          {t("teacher_form.experience_years")}
+                        </h6>
                       </div>
                       <div className="col-lg-8">
                         <input
@@ -651,23 +723,24 @@ function AddTeacher({ onClose, fetchData }) {
                           name="experienceYears"
                           value={formData.experienceYears}
                           onChange={handleChange}
-                          className={`form-control ${errors.experienceYears ? 'is-invalid' : ''}`}
+                          className={`form-control ${
+                            errors.experienceYears ? "is-invalid" : ""
+                          }`}
                         />
-                        {errors.experienceYears && <div className="invalid-feedback">{errors.experienceYears}</div>}
+                        {errors.experienceYears && (
+                          <div className="invalid-feedback">
+                            {errors.experienceYears}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
                   {/* Availability */}
                   <div className="mb-3">
-                    <h6
-                      className="mb-lg-0"
-                      id="heading-3"
-                    >
-                      AVAILABLE TIME SLOTS
+                    <h6 className="mb-lg-0" id="heading-3">
+                      {t("teacher_form.availability")}
                     </h6>
-                    <div
-                      
-                    >
+                    <div>
                       <div className=" mt-3">
                         <div className="table-responsive">
                           <table className="calendar-table">
@@ -681,8 +754,7 @@ function AddTeacher({ onClose, fetchData }) {
                             </thead>
                             <tbody>
                               {[...Array(20)].map((_, index) => {
-                                const startHour =
-                                  Math.floor(index / 2) + 10;
+                                const startHour = Math.floor(index / 2) + 10;
                                 const startMinute =
                                   index % 2 === 0 ? "00" : "30";
                                 const endHour =
@@ -741,12 +813,8 @@ function AddTeacher({ onClose, fetchData }) {
                                             endTime
                                           )
                                         }
-                                        onMouseDown={() =>
-                                          setIsMouseDown(true)
-                                        }
-                                        onMouseUp={() =>
-                                          setIsMouseDown(false)
-                                        }
+                                        onMouseDown={() => setIsMouseDown(true)}
+                                        onMouseUp={() => setIsMouseDown(false)}
                                       ></td>
                                     ))}
                                   </tr>
@@ -766,7 +834,7 @@ function AddTeacher({ onClose, fetchData }) {
           {/* Submit button */}
           <div className="text-center">
             <button type="submit" className="btn btn-primary">
-              Submit
+              {t("teacher_form.submit_button")}
             </button>
           </div>
         </form>

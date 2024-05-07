@@ -36,7 +36,7 @@ router.get("/verify-account/:id/verify",verifyToken,verifyAccount);
 router.post("/facebooklogin", facebooklogin); 
 router.get('/getAll', verifyToken,getAllUsers);
 router.post("/googleAuth", googleAuth);
-router.get('/getAllUserByRole/:role',getAllUserByRole);
+router.get('/getAllUserByRole/:role', verifyToken, getAllUserByRole);
 router.get('/getTeacher/:teacherId', getTeacherById);
 router.get('/getClassesTaughtByTeacher/:teacherId', getClassesTaughtByTeacher);
 router.get('/getStudentsEnrolledInClass/:classId', getStudentsEnrolledInClass);
@@ -47,27 +47,27 @@ router.get('/getCoursesByStudent/:studentId', getCoursesByStudent);
 router.get('/getCoursesTaughtByTeacher/:teacherId', getCoursesTaughtByTeacher);
 router.get('/getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher/:courseId/:teacherId', getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher);
 //Add users
-router.post("/addAdmin", addAdmin);
-router.post("/addTeacher", addTeacher);
-router.post("/addStudentAndParent", addStudentAndParent);
+router.post("/addAdmin",verifyToken, addAdmin);
+router.post("/addTeacher",verifyToken, addTeacher);
+router.post("/addStudentAndParent",verifyToken, addStudentAndParent);
 
 // Remove user
-router.delete("/removeUser/:userId", removeUser);
+router.delete("/removeUser/:userId",verifyToken, removeUser);
 
 //get user
-router.get("/userById/:id", getUserById);
+router.get("/userById/:id",verifyToken, getUserById);
 
 //get disponibilite
 router.get( "/teacher/disponibility" , getDispo );
 
 // Update user
-router.put("/updateAdmin/:userId", updateUser);
-router.put("/updateTeacher/:teacherId", updateTeacher);
-router.put("/updateStudent/:studentId", updateStudent);
+router.put("/updateAdmin/:userId",verifyToken, updateUser);
+router.put("/updateTeacher/:teacherId",verifyToken, updateTeacher);
+router.put("/updateStudent/:studentId",verifyToken, updateStudent);
 
 // blockUser and unblockUser
-router.put("/blockUser/:userId", blockUser);
-router.put("/unblockUser/:userId", unblockUser);
+router.put("/blockUser/:userId",verifyToken, blockUser);
+router.put("/unblockUser/:userId",verifyToken, unblockUser);
 
 //update user email
 // Assuming you have a route like this in your Express router
@@ -81,6 +81,6 @@ router.post('/ajouter2FA/:email',verifyToken, ajouter2FA);
 
 //added by ahmed
 router.get('/teachers', getTeachers);
-router.get('/getAllUserByRole/:role',getAllUserByRole);
+//router.get('/getAllUserByRole/:role',verifyToken,getAllUserByRole);
 
 export default router;

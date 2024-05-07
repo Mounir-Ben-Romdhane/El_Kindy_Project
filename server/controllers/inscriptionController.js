@@ -7,7 +7,7 @@ import Course from "../models/Course.js"
 
 
 function generateRandomPassword(length) {
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]\:;?><,./-=";
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let password = "";
     for (let i = 0; i < length; ++i) {
       const randomIndex = Math.floor(Math.random() * charset.length);
@@ -180,19 +180,24 @@ export const studentsCount = async (req, res) => {
 // Method to approve inscription
 export const approveInscription = async (req, res) => {
   try {
-    const inscription = await Inscription.findByIdAndUpdate(
-      req.params.id,
-      { status: "active" },
-      { new: true }
-    );
-
+    
+    const inscription1 = await Inscription.findById(req.params.id);
     // Check if a user with the same email already exists
-    const existingUser = await User.findOne({ email: inscription.email });
+    const existingUser = await User.findOne({ email: inscription1.email });
 
     // If a user with the same email already exists, return a status indicating that the email is already in use
     if (existingUser) {
         return res.status(400).json({ message: 'Email already exists' });
     }
+
+      const inscription = await Inscription.findByIdAndUpdate(
+        req.params.id,
+        { status: "active" },
+        { new: true }
+      );
+    
+
+
 
     // Generate a random password for the new user
     const randomPassword = generateRandomPassword(10);

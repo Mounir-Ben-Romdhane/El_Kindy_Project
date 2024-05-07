@@ -8,6 +8,13 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { GridLoader } from "react-spinners";
+import Backdrop from "@mui/material/Backdrop";
+import NoData from "components/NoData";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 function Index() {
   const [formData, setFormData] = useState({
@@ -17,6 +24,13 @@ function Index() {
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  let [color, setColor] = useState("#399ebf");
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+
   
   // Refresh token
   const axiosPrivate = useAxiosPrivate();
@@ -87,6 +101,7 @@ function Index() {
     formDataToSend.append('picturePath', formData.picture.name);
   
     try {
+      setOpen2(true);
       const savedCategoryResponse = await axiosPrivate.post("/api/categories/add", formDataToSend);
       const savedCategory = savedCategoryResponse.data;
   
@@ -97,14 +112,21 @@ function Index() {
             color: "green",
           },
         });
+        setOpen2(false);
         setTimeout(() => {
           navigate("/listCategories");
         }, 2000);
       }
     } catch (error) {
+      setOpen2(false);
+      toast.error("Error adding category.", {
+        autoClose: 1500,
+        style: { color: "red" },
+      });
       console.error("Error adding category:", error);
     }
   };
+  
   
 
   const handleFormSubmit = async (event) => {
@@ -147,6 +169,26 @@ function Index() {
       <main>
         <div className="page-content">
           <TopBarBack />
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <>
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
           <ToastContainer />
           <div className="page-content-wrapper border">
             <BannerStart
@@ -210,8 +252,12 @@ function Index() {
                                 alt="Uploaded image"
                                 className="img-fluid mb-2"
                                 style={{
-                                  maxWidth: "300px",
+                                  maxWidth: "100%",  // This makes the image responsive
                                   maxHeight: "300px",
+                                  height: "auto",     // Maintain aspect ratio
+                                  width: "auto",      // Allow width to scale with the height
+                                  objectFit: "contain" // Ensures the image is scaled to maintain its aspect ratio while fitting within the frame
+                                
                                 }}
                               />
                               <p className="mb-0">Uploaded image</p>
@@ -277,6 +323,8 @@ function Index() {
               </form>
             </div>
           </div>
+          </>
+          )}
         </div>
       </main>
     </div>

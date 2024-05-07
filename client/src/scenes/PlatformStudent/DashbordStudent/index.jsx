@@ -10,12 +10,16 @@ import SideBarStudent from 'components/SideBarStudent';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
 import ReviewPopup from '../../ReviewPage/PopupReview';
 import { CircularProgress } from '@mui/material';
+import useAxiosPrivate from 'hooks/useAxiosPrivate';
 
 function Index() {
     const [openPopup, setOpenPopup] = useState(false);
     const [teachers, setTeachers] = useState([]);
     const [selectedTeacher, setSelectedTeacher] = useState(null);
     const [loading, setLoading] = useState(false);
+    
+  // Refresh token
+  const axiosPrivate = useAxiosPrivate();
 
   
     useEffect(() => {
@@ -26,7 +30,7 @@ function Index() {
 
     const fetchTeachers = async () => {
         try {
-            const response = await axios.get('/auth/getAllUserByRole/teacher');
+            const response = await axiosPrivate.get('/auth/getAllUserByRole/teacher');
             console.log("API response data:", response.data.data);  // Check what's being received from the API
             setTeachers(response.data.data);
             if (Array.isArray(response.data.data) && response.data.data.length > 0) {

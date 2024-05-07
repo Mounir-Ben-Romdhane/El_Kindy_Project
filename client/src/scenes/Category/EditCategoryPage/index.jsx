@@ -7,6 +7,8 @@ import BannerStart from "components/BannerStart";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { GridLoader } from "react-spinners";
+import Backdrop from "@mui/material/Backdrop";
 
 function CategoryForm() {
   const [formData, setFormData] = useState({
@@ -21,14 +23,24 @@ function CategoryForm() {
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
   const [formModified, setFormModified] = useState(false); // State variable to track form modification
+  let [color, setColor] = useState("#399ebf");
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchCategoryData = async () => {
+      setOpen(true);
       try {
         const response = await axiosPrivate.get(`/api/categories/${id}`);
         //console.log(response.data);
-        setFormData(response.data);
+        if (response.status === 200) {
+          setFormData(response.data);
+          setOpen(false);
+        }
       } catch (error) {
+        setOpen(false);
         console.error("Failed to fetch category data:", error);
         setMessage("Failed to load category data.");
       }
@@ -42,7 +54,6 @@ function CategoryForm() {
   // State to hold the image file
   const [imageFile, setImageFile] = useState(null);
 
-
   // Function to handle selecting an image
   const handleImageSelect = (event) => {
     // Get the selected file
@@ -51,7 +62,6 @@ function CategoryForm() {
     setImageName(selectedFile.name);
     // Set the image file
     setImageFile(selectedFile);
-
 
     // Remove red border when an image is selected
     event.target.parentElement.classList.remove("border-danger");
@@ -79,7 +89,6 @@ function CategoryForm() {
     setImageFile(null);
     // Reset the input field value to allow selecting the same file again
     document.getElementById("image").value = "";
-
 
     if (formData.picturePath === "") {
       // Update the error status for the picture field
@@ -150,62 +159,68 @@ function CategoryForm() {
             for (let value in formValues) {
               formDataToSend.append(value, formValues[value]);
             }
-            formDataToSend.append('picturePath', formValues.picture.name);
-             // If form data has changed, send the updated data
-          const response = await axiosPrivate.put(
-            `/api/categories/update/${id}`,
-            formDataToSend,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          );
-          if (response.status === 200) {
-            toast.success("Category updated successfully !!", {
-              autoClose: 1500,
-              style: {
-                color: "green",
-              },
-            });
-            setTimeout(() => {
-              navigate("/listCategories");
-            }, 2000);
-          } else {
-            console.log("cant update!!!");
-          }
-          } else {
+            formDataToSend.append("picturePath", formValues.picture.name);
+            setOpen2(true);
             // If form data has changed, send the updated data
-          const response = await axiosPrivate.put(
-            `/api/categories/update/${id}`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
+            const response = await axiosPrivate.put(
+              `/api/categories/update/${id}`,
+              formDataToSend,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+            if (response.status === 200) {
+              toast.success("Category updated successfully !!", {
+                autoClose: 1000,
+                style: {
+                  color: "green",
+                },
+              });
+              setOpen2(false);
+              setTimeout(() => {
+                navigate("/listCategories");
+              }, 1500);
+            } else {
+              setOpen2(false);
+              console.log("cant update!!!");
             }
-          );
-          if (response.status === 200) {
-            toast.success("Category updated successfully !!", {
-              autoClose: 1500,
-              style: {
-                color: "green",
-              },
-            });
-            setTimeout(() => {
-              navigate("/listCategories");
-            }, 2000);
           } else {
-            console.log("cant update!!!");
+            setOpen2(true);
+            // If form data has changed, send the updated data
+            const response = await axiosPrivate.put(
+              `/api/categories/update/${id}`,
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+            if (response.status === 200) {
+              toast.success("Category updated successfully !!", {
+                autoClose: 1500,
+                style: {
+                  color: "green",
+                },
+              });
+              setOpen2(false);
+              setTimeout(() => {
+                navigate("/listCategories");
+              }, 2000);
+            } else {
+              setOpen2(false);
+              console.log("cant update!!!");
+            }
           }
-          }
-
-          
         } else {
           // If no changes were made, simply navigate away
+          setOpen2(false);
           navigate("/listCategories");
         }
       } catch (error) {
+        setOpen2(false);
         console.error("Failed to update category:", error);
         setMessage("Failed to update Category. Please try again.");
       }
@@ -218,154 +233,191 @@ function CategoryForm() {
       <main>
         <div className="page-content">
           <TopBarBack />
-          <ToastContainer />
-          <div className="page-content-wrapper border">
-            <BannerStart
-              title="Update Category"
-              description="Make changes to your category details below."
-            />
-            <div className="card bg-transparent border rounded-3 mt-4">
-              <div className="card-header bg-light border-bottom px-lg-3">
-                <div className="">
-                  <h2 className="p-2 " style={{ color: "#1d3b53" }}>
-                    Category details
-                  </h2>
-                </div>
-              </div>
-
-              <form onSubmit={handleSubmit}>
-                <div className="m-4">
-                  <div className="row g-4">
-                    <div className="col-12">
-                      <label className="form-label">Category Name</label>
-                      <input
-                        className={`form-control ${
-                          errors.name ? "is-invalid" : ""
-                        }`}
-                        name="name"
-                        type="text"
-                        placeholder="Enter category name"
-                        value={formData.name}
-                        onChange={handleChange}
-                      />
-                      {errors.name && (
-                        <div className="invalid-feedback">{errors.name}</div>
-                      )}
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <>
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
+              <ToastContainer />
+              <div className="page-content-wrapper border">
+                <BannerStart
+                  title="Update Category"
+                  description="Make changes to your category details below."
+                />
+                <div className="card bg-transparent border rounded-3 mt-4">
+                  <div className="card-header bg-light border-bottom px-lg-3">
+                    <div className="">
+                      <h2 className="p-2 " style={{ color: "#1d3b53" }}>
+                        Category details
+                      </h2>
                     </div>
-                    <div className="col-12">
-                      <label className="form-label">Description</label>
-                      <textarea
-                        className={`form-control ${
-                          errors.description ? "is-invalid" : ""
-                        }`}
-                        name="description"
-                        rows={2}
-                        placeholder="Enter description"
-                        value={formData.description}
-                        onChange={handleChange}
-                      />
-                      {errors.description && (
-                        <div className="invalid-feedback">
-                          {errors.description}
-                        </div>
-                      )}
-                    </div>
+                  </div>
 
-                    {/* Image */}
-                    <div className="col-12">
-                      <div
-                        className={`text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3 ${
-                          errors.picture ? "border-danger" : ""
-                        }`}
-                      >
-                        {/* Display the image */}
-                        {imageFile ? (
-                          <div>
-                            <img
-                              src={URL.createObjectURL(imageFile)}
-                              alt="Uploaded image"
-                              className="img-fluid mb-2"
-                              style={{ maxWidth: "300px", maxHeight: "300px" }} // Limit image dimensions
-                              required
-                            />
-                            <p className="mb-0">Uploaded image</p>
-                          </div>
-                        ) : (
-                          <div>
-                            <img
-                              src={`http://localhost:3001/assets/${formData.picturePath}`}
-                              alt="Uploaded image"
-                              className="img-fluid mb-2"
-                              style={{ maxWidth: "300px", maxHeight: "300px" }} // Limit image dimensions
-                              required
-                            />
-                            <p className="mb-0">{formData.picturePath}</p>
-                          </div>
-                        )}
-                        {/* Upload image button */}
-                        <div className="mb-3">
-                          <h6 className="my-2">
-                            Upload course image here, or{" "}
-                            <span
-                              className="text-primary"
-                              style={{ cursor: "pointer" }}
-                            >
-                              Browse
-                            </span>
-                          </h6>
-                          {/* File input */}
+                  <form onSubmit={handleSubmit}>
+                    <div className="m-4">
+                      <div className="row g-4">
+                        <div className="col-12">
+                          <label className="form-label">Category Name</label>
                           <input
-                            className="form-control"
-                            type="file"
-                            name="picture"
-                            id="image"
-                            accept="image/gif, image/jpeg, image/png"
-                            onChange={handleImageSelect}
+                            className={`form-control ${
+                              errors.name ? "is-invalid" : ""
+                            }`}
+                            name="name"
+                            type="text"
+                            placeholder="Enter category name"
+                            value={formData.name}
+                            onChange={handleChange}
                           />
-                          {/* Note */}
-                          <p className="small mb-0 mt-2">
-                            <b>Note:</b> Only JPG, JPEG, and PNG formats are
-                            supported. Our suggested dimensions are 600px *
-                            450px. Larger images will be cropped to fit our
-                            thumbnails/previews.
+                          {errors.name && (
+                            <div className="invalid-feedback">
+                              {errors.name}
+                            </div>
+                          )}
+                        </div>
+                        <div className="col-12">
+                          <label className="form-label">Description</label>
+                          <textarea
+                            className={`form-control ${
+                              errors.description ? "is-invalid" : ""
+                            }`}
+                            name="description"
+                            rows={2}
+                            placeholder="Enter description"
+                            value={formData.description}
+                            onChange={handleChange}
+                          />
+                          {errors.description && (
+                            <div className="invalid-feedback">
+                              {errors.description}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Image */}
+                        <div className="m-4">
+                          <div className="col-12">
+                            <div
+                              className={`text-center justify-content-center align-items-center mx-5 my-5 p-sm-5 border border-2 border-dashed position-relative rounded-3 ${
+                                errors.picture ? "border-danger" : ""
+                              }`}
+                            >
+                              {/* Display the image */}
+                              {imageFile ? (
+                                <div>
+                                  <img
+                                    src={URL.createObjectURL(imageFile)}
+                                    alt="Uploaded image"
+                                    className="img-fluid mb-2"
+                                    style={{
+                                      maxWidth: "100%", // This makes the image responsive
+                                      maxHeight: "300px",
+                                      height: "auto", // Maintain aspect ratio
+                                      width: "auto", // Allow width to scale with the height
+                                      objectFit: "contain", // Ensures the image is scaled to maintain its aspect ratio while fitting within the frame
+                                    }} // Limit image dimensions
+                                  />
+                                  <p className="mb-0">Uploaded image</p>
+                                </div>
+                              ) : (
+                                <div>
+                                  <img
+                                    src={`http://localhost:3001/assets/${formData.picturePath}`}
+                                    alt="Uploaded image"
+                                    className="img-fluid mb-2"
+                                    style={{
+                                      maxWidth: "100%", // This makes the image responsive
+                                      maxHeight: "300px",
+                                      height: "auto", // Maintain aspect ratio
+                                      width: "auto", // Allow width to scale with the height
+                                      objectFit: "contain", // Ensures the image is scaled to maintain its aspect ratio while fitting within the frame
+                                    }} // Limit image dimensions
+                                    required
+                                  />
+                                  <p className="mb-0">{formData.picturePath}</p>
+                                </div>
+                              )}
+                              {/* Upload image button */}
+                              <div className="mb-3">
+                                <h6 className="my-2">
+                                  Upload course image here, or{" "}
+                                  <span
+                                    className="text-primary"
+                                    style={{ cursor: "pointer" }}
+                                  >
+                                    Browse
+                                  </span>
+                                </h6>
+                                {/* File input */}
+                                <input
+                                  className="form-control"
+                                  type="file"
+                                  name="picture"
+                                  id="image"
+                                  accept="image/gif, image/jpeg, image/png"
+                                  onChange={handleImageSelect}
+                                />
+                                {/* Note */}
+                                <p className="small mb-0 mt-2">
+                                  <b>Note:</b> Only JPG, JPEG, and PNG formats
+                                  are supported. Our suggested dimensions are
+                                  600px * 450px. Larger images will be cropped
+                                  to fit our thumbnails/previews.
+                                </p>
+                              </div>
+                              {/* Remove image button */}
+                              {imageName && (
+                                <div className="d-sm-flex justify-content-end mt-2">
+                                  <button
+                                    type="button"
+                                    className="btn btn-sm btn-danger-soft mb-3"
+                                    onClick={handleRemoveImage}
+                                  >
+                                    Remove image
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Submit button */}
+                      <div className="d-md-flex justify-content-end align-items-start mt-4">
+                        <div className="text-md-end">
+                          <button
+                            className="btn btn-success mb-2 mb-sm-0"
+                            type="submit"
+                            disabled={!formModified} // Disable button if form is not modified
+                          >
+                            Update Category
+                          </button>
+                          <p className="mb-0 small mt-1">
+                            Once you click "Update Category", your changes will
+                            be saved.
                           </p>
                         </div>
-                        {/* Remove image button */}
-                        {imageName && (
-                          <div className="d-sm-flex justify-content-end mt-2">
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-danger-soft mb-3"
-                              onClick={handleRemoveImage}
-                            >
-                              Remove image
-                            </button>
-                          </div>
-                        )}
                       </div>
                     </div>
-                  </div>
-
-                  {/* Submit button */}
-                  <div className="d-md-flex justify-content-end align-items-start mt-4">
-                    <div className="text-md-end">
-                      <button
-                        className="btn btn-success mb-2 mb-sm-0"
-                        type="submit"
-                        disabled={!formModified} // Disable button if form is not modified
-                      >
-                        Update Category
-                      </button>
-                      <p className="mb-0 small mt-1">
-                        Once you click "Update Category", your changes will be
-                        saved.
-                      </p>
-                    </div>
-                  </div>
+                  </form>
                 </div>
-              </form>
-            </div>
-          </div>
+              </div>
+            </>
+          )}
         </div>
       </main>
     </div>

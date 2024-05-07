@@ -1,6 +1,7 @@
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 
 import {
   blockUser,
@@ -13,6 +14,11 @@ import UpdateStudent from "../userCrud/updateStudent";
 import Backdrop from "@mui/material/Backdrop";
 import GridLoader from "react-spinners/GridLoader";
 import { Button, Dialog, DialogTitle, DialogContent } from '@mui/material';
+import { useTranslation } from "react-i18next";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
+const MySwal = withReactContent(Swal);
 
 
 function StudentsDashboard() {
@@ -34,6 +40,11 @@ function StudentsDashboard() {
   let [color, setColor] = useState("#399ebf");
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
+  const axiosPrivate = useAxiosPrivate();
+
+
+  const { t, i18n } = useTranslation();
+
 
 
   const handleToggleMore = (studentId) => {
@@ -65,64 +76,87 @@ function StudentsDashboard() {
   };
 
   const handleBlockStudent = async (studentId) => {
-    setOpen2(true);
-
-    try {
-      // Make API call to block student
-      const response = await blockUser(studentId);
-
-      if (response.status === 200) {
-        console.log("Student blocked successfully!");
-        // Perform any additional actions if needed
-        fetchData();
-        setOpen2(false);
-
-      } else {
-        console.error("Error blocking student:", response.data);
-        setOpen2(false);
-
-        // Handle error here, e.g., show error message to the user
+    MySwal.fire({
+      title: t("confirm.block_title"),
+      text: t("confirm.block_text"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: t("confirm.yes_block"),
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setOpen2(true);
+        try {
+          const response = await blockUser(studentId, axiosPrivate);
+          if (response.status === 200) {
+            MySwal.fire(
+              t("confirm.blocked"),
+              t("confirm.block_success"),
+              "success"
+            );
+            fetchData();
+            setOpen2(false);
+          } else {
+            throw new Error(response.data);
+          }
+        } catch (error) {
+          console.error("Error blocking student:", error);
+          MySwal.fire(
+            t("confirm.error"),
+            t("confirm.block_failure"),
+            "error"
+          );
+          setOpen2(false);
+        }
       }
-    } catch (error) {
-      console.error("Error blocking student:", error);
-      setOpen2(false);
-
-      // Handle error here, e.g., show error message to the user
-    }
+    });
   };
-
+  
   const handleUnblockStudent = async (studentId) => {
-    setOpen2(true);
-
-    try {
-      // Make API call to unblock student
-      const response = await unblockUser(studentId);
-
-      if (response.status === 200) {
-        console.log("Student unblocked successfully!");
-        // Perform any additional actions if needed
-        fetchData();
-        setOpen2(false);
-
-      } else {
-        console.error("Error unblocking student:", response.data);
-        setOpen2(false);
-
-        // Handle error here, e.g., show error message to the user
+    MySwal.fire({
+      title: t("confirm.unblock_title"),
+      text: t("confirm.unblock_text"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: t("confirm.yes_unblock"),
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setOpen2(true);
+        try {
+          const response = await unblockUser(studentId, axiosPrivate);
+          if (response.status === 200) {
+            MySwal.fire(
+              t("confirm.unblocked"),
+              t("confirm.unblock_success"),
+              "success"
+            );
+            fetchData();
+            setOpen2(false);
+          } else {
+            throw new Error(response.data);
+          }
+        } catch (error) {
+          console.error("Error unblocking student:", error);
+          MySwal.fire(
+            t("confirm.error"),
+            t("confirm.unblock_failure"),
+            "error"
+          );
+          setOpen2(false);
+        }
       }
-    } catch (error) {
-      console.error("Error unblocking student:", error);
-      setOpen2(false);
-
-      // Handle error here, e.g., show error message to the user
-    }
+    });
   };
+  
 
   const fetchData = async () => {
     setOpen(true);
 
     try {
-      const response = await getUsers("student");
+      const response = await getUsers("student", axiosPrivate);
       setStudents(response.data.data);
       if (response.status === 200) {
         setOpen(false);
@@ -134,6 +168,15 @@ function StudentsDashboard() {
       setError("Error fetching students. Please try again later.");
       setLoading(false);
       setOpen(false);
+
+      // Multilingual toast message
+      toast.error(
+        t("admins_dashboard.get_data_failed"), // Translation key for failed data retrieval
+        {
+          autoClose: 1500,
+          style: { color: "red" },
+        }
+      );
     }
   };
 
@@ -141,24 +184,45 @@ function StudentsDashboard() {
     fetchData();
   }, []);
 
-  // Function to handle student removal
   const handleRemoveStudent = async (studentId) => {
-    setOpen2(true);
-
-    try {
-      // Call the removeStudent function from your service
-      await removeUser(studentId);
-      fetchData();
-      close();
-      setOpen2(false);
-
-    } catch (error) {
-      console.error("Error removing student:", error);
-      // Handle errors as needed
-      setOpen2(false);
-
-    }
+    MySwal.fire({
+      title: t("confirm.remove_title"),
+      text: t("confirm.remove_text"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: t("confirm.yes_remove"),
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setOpen2(true);
+        try {
+          const response = await removeUser(studentId, axiosPrivate);
+          if (response.status === 200) {
+            MySwal.fire(
+              t("confirm.removed"),
+              t("confirm.remove_success"),
+              "success"
+            );
+            fetchData();
+            close();
+            setOpen2(false);
+          } else {
+            throw new Error("Failed to remove student.");
+          }
+        } catch (error) {
+          console.error("Error removing student:", error);
+          MySwal.fire(
+            t("confirm.error"),
+            t("confirm.remove_failure"),
+            "error"
+          );
+          setOpen2(false);
+        }
+      }
+    });
   };
+  
 
   // Search functionality
   const handleSearchChange = (event) => {
@@ -219,18 +283,19 @@ function StudentsDashboard() {
     try {
       const response = await fetch(djangoapi); // Assuming your backend API is available at this endpoint
       if (response.status === 200) {
+        toast.success(t("student_dashboard.add_students_success"), {
+          autoClose: 1500,
+          style: { color: "green" },
+        });
         fetchData();
         setOpen2(false);
 
-      } else {
-        setOpen2(false);
-
-        throw new Error("Erreur lors de la récupération des données");
-
-      }
+      } 
     } catch (error) {
-      console.error("Erreur lors de la requête GET:", error.message);
-      setOpen2(false);
+      toast.error(t("student_dashboard.add_students_failure"), {
+        autoClose: 1500,
+        style: { color: "red" },
+      });       setOpen2(false);
 
     }
   };
@@ -262,6 +327,7 @@ function StudentsDashboard() {
           ) : (
             <div className="page-content-wrapper border">
               {/* Backdrop with GridLoader */}
+              <ToastContainer />
 
               <Backdrop
               sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

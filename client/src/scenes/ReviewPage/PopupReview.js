@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, MenuItem, CircularProgress, Snackbar } from '@mui/material';
 import axios from 'axios';
+import useAxiosPrivate from 'hooks/useAxiosPrivate';
 
 function ReviewPopup({ open, handleClose, teachers, selectedTeacher, setSelectedTeacher }) {
     console.log('Props in ReviewPopup:', { setSelectedTeacher });
     const [reviewText, setReviewText] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+    
+  // Refresh token
+  const axiosPrivate = useAxiosPrivate();
 
     const handleReviewSubmit = (isSuccess) => {
         if (isSuccess) {
@@ -21,7 +25,7 @@ function ReviewPopup({ open, handleClose, teachers, selectedTeacher, setSelected
     
         setIsSubmitting(true);
         try {
-            const response = await axios.post('/azure/analyze-sentiment', payload);
+            const response = await axiosPrivate.post('/azure/analyze-sentiment', payload);
             console.log('Review Submitted:', response.data);
             setSnackbarOpen(true); 
             setTimeout(() => {

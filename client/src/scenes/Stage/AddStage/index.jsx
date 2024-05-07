@@ -7,6 +7,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'react-notifications/lib/notifications.css';
 import { useNavigate } from 'react-router-dom';
 import useAxiosPrivate from "hooks/useAxiosPrivate";
+import { GridLoader } from "react-spinners";
+import Backdrop from "@mui/material/Backdrop";
 
 function Index() {
   const [dataTheme, setDataTheme] = useState('');
@@ -14,6 +16,10 @@ function Index() {
   const navigate = useNavigate();
   const [imageName, setImageName] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  let [color, setColor] = useState("#399ebf");
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -110,21 +116,24 @@ function Index() {
     formDataToSend.append('picturePath', formData.picture.name);
 
     try {
+      setOpen2(true);
+
       const response = await axiosPrivate.post("/api/stage", formDataToSend);
-      const savedCourse = response.data;
-      console.log("stage added!");
-      console.log("stage", savedCourse);
-      // Show the toast notification with autoClose: false
-      toast.success("Stage added successfully !!", {
-        autoClose: 1500,
-        style: {
-          color: "green", // Text color
-        },
-      });
-      setTimeout(() => {
-        navigate("/listStage");
-      }, 2000);
+      if (response.status === 201) {
+        toast.success("Stage added successfully !!", {
+          autoClose: 1000,
+          style: {
+            color: "green", // Text color
+          },
+        });
+        setOpen2(false);
+        setTimeout(() => {
+          navigate("/ListStage");
+        }, 1500);
+      }
+      
     } catch (error) {
+      setOpen2(false);
       console.error("Error adding stage:", error);
       // Handle error
       toast.error("Failed to add stage. Please try again.");
@@ -171,6 +180,15 @@ function Index() {
       <main>
         <div className="page-content">
           <TopBarBack />
+          <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
           <ToastContainer />
           <div className="page-content-wrapper border">
             <BannerStart
@@ -227,8 +245,11 @@ function Index() {
                                   alt="Uploaded image"
                                   className="img-fluid mb-2"
                                   style={{
-                                    maxWidth: "300px",
+                                    maxWidth: "100%", // This makes the image responsive
                                     maxHeight: "300px",
+                                    height: "auto", // Maintain aspect ratio
+                                    width: "auto", // Allow width to scale with the height
+                                    objectFit: "contain", // Ensures the image is scaled to maintain its aspect ratio while fitting within the frame
                                   }}
                                 />
                                 <p className="mb-0">Uploaded image</p>

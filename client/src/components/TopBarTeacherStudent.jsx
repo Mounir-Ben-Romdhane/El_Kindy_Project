@@ -64,7 +64,7 @@ import { getUserById } from 'services/usersService/api';
                                             <div className="avatar avatar-xxl mt-n3">
                                             <img
                                                 className="avatar-img rounded-circle"
-                                                src={getAvatarSrc()}
+                                                src="/assets/images/element/02.jpg"
                                                 alt="avatar"
                                                 />          
                                              </div>

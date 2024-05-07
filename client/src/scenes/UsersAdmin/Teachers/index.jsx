@@ -4,6 +4,8 @@ import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import AddTeacher from "../userCrud/addTeacher";
 import UpdateTeacher from "../userCrud/updateTeacher";
+import { ToastContainer, toast } from "react-toastify";
+
 import { Button, Dialog, DialogTitle, DialogContent } from "@mui/material";
 
 import {
@@ -14,6 +16,12 @@ import {
 } from "services/usersService/api";
 import GridLoader from "react-spinners/GridLoader";
 import Backdrop from "@mui/material/Backdrop";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
+import { useTranslation } from "react-i18next";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
+
+const MySwal = withReactContent(Swal);
 
 function TeachersDashboard() {
   const [teachers, setTeachers] = useState([]);
@@ -29,6 +37,10 @@ function TeachersDashboard() {
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
   let [color, setColor] = useState("#399ebf");
+  const axiosPrivate = useAxiosPrivate();
+
+
+  const { t, i18n } = useTranslation();
 
   const iconStyle = {
     marginRight: "10px",
@@ -38,11 +50,9 @@ function TeachersDashboard() {
     setOpen(true);
 
     try {
-      const response = await getUsers("teacher");
+      const response = await getUsers("teacher", axiosPrivate);
       setTeachers(response.data.data);
       if (response.status === 200) {
-        setOpen(false);
-      } else {
         setOpen(false);
       }
     } catch (error) {
@@ -50,6 +60,14 @@ function TeachersDashboard() {
       setError("Error fetching teachers. Please try again later.");
       setLoading(false);
       setOpen(false);
+      // Multilingual toast message
+      toast.error(
+        t("teachers_dashboard.error_fetching"), // Translation key for failed data retrieval
+        {
+          autoClose: 1500,
+          style: { color: "red" },
+        }
+      );
     }
   };
 
@@ -81,54 +99,90 @@ function TeachersDashboard() {
   };
 
   const handleBlockTeacher = async (teacherId) => {
-    setOpen2(true);
+    const result = await MySwal.fire({
+      title: t("teachers_dashboard.confirm_block"),
+      text: t("teachers_dashboard.block_teacher"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: t("teachers_dashboard.block_teacher"),
+    });
 
-    try {
-      const response = await blockUser(teacherId);
-      if (response.status === 200) {
-        console.log("Teacher blocked successfully!");
-        fetchData();
-        setOpen2(false);
-      } else {
-        console.error("Error blocking teacher:", response.data);
-        setOpen2(false);
+    if (result.isConfirmed) {
+      setOpen2(true);
+      try {
+        const response = await blockUser(teacherId, axiosPrivate);
+        if (response.status === 200) {
+          MySwal.fire(t("teachers_dashboard.teacher_blocked"), "", "success");
+          fetchData();
+        } else {
+          throw new Error(response.data);
+        }
+      } catch (error) {
+        console.error("Error blocking teacher:", error);
+        MySwal.fire(t("teachers_dashboard.action_failed"), "", "error");
       }
-    } catch (error) {
-      console.error("Error blocking teacher:", error);
       setOpen2(false);
     }
   };
 
   const handleUnblockTeacher = async (teacherId) => {
-    setOpen2(true);
+    const result = await MySwal.fire({
+      title: t("teachers_dashboard.confirm_unblock"),
+      text: t("teachers_dashboard.unblock_teacher"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: t("teachers_dashboard.unblock_teacher"),
+    });
 
-    try {
-      const response = await unblockUser(teacherId);
-      if (response.status === 200) {
-        console.log("Teacher unblocked successfully!");
-        fetchData();
-        setOpen2(false);
-      } else {
-        console.error("Error unblocking teacher:", response.data);
-        setOpen2(false);
+    if (result.isConfirmed) {
+      setOpen2(true);
+      try {
+        const response = await unblockUser(teacherId, axiosPrivate);
+        if (response.status === 200) {
+          MySwal.fire(t("teachers_dashboard.teacher_unblocked"), "", "success");
+          fetchData();
+        } else {
+          throw new Error(response.data);
+        }
+      } catch (error) {
+        console.error("Error unblocking teacher:", error);
+        MySwal.fire(t("teachers_dashboard.action_failed"), "", "error");
       }
-    } catch (error) {
-      console.error("Error unblocking teacher:", error);
       setOpen2(false);
     }
   };
 
   const handleRemoveTeacher = async (teacherId) => {
-    setOpen2(true);
+    const result = await MySwal.fire({
+      title: t("teachers_dashboard.confirm_delete"),
+      text: t("teachers_dashboard.delete_teacher"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: t("teachers_dashboard.delete_teacher"),
+    });
 
-    try {
-      await removeUser(teacherId);
-      fetchData();
+    if (result.isConfirmed) {
+      setOpen2(true);
+      try {
+        const response = await removeUser(teacherId, axiosPrivate);
+        if (response.status === 200) {
+          MySwal.fire(t("teachers_dashboard.teacher_deleted"), "", "success");
+          fetchData();
+        } else {
+          throw new Error(response.data);
+        }
+      } catch (error) {
+        console.error("Error removing teacher:", error);
+        MySwal.fire(t("teachers_dashboard.action_failed"), "", "error");
+      }
+      setOpen2(false);
       close();
-      setOpen2(false);
-    } catch (error) {
-      console.error("Error removing teacher:", error);
-      setOpen2(false);
     }
   };
 
@@ -140,41 +194,50 @@ function TeachersDashboard() {
   const filteredTeachers = teachers.filter((teacher) => {
     const lowerSearchQuery = searchQuery.toLowerCase();
     // Check basic fields
-    const matchesBasicFields = (
-      `${teacher.firstName} ${teacher.lastName}`.toLowerCase().includes(lowerSearchQuery) ||
+    const matchesBasicFields =
+      `${teacher.firstName} ${teacher.lastName}`
+        .toLowerCase()
+        .includes(lowerSearchQuery) ||
       teacher.email.toLowerCase().includes(lowerSearchQuery) ||
-      (teacher.address && teacher.address.toLowerCase().includes(lowerSearchQuery)) ||
-      (teacher.phoneNumber1 && teacher.phoneNumber1.toLowerCase().includes(lowerSearchQuery)) ||
-      (teacher.gender && teacher.gender.toLowerCase().includes(lowerSearchQuery)) ||
-      (teacher.blocked && 'blocked'.includes(lowerSearchQuery)) ||
-      (!teacher.blocked && 'active'.includes(lowerSearchQuery)) ||
-      (teacher.dateOfBirth && new Date(teacher.dateOfBirth).toLocaleDateString().toLowerCase().includes(lowerSearchQuery))
-    );
-  
+      (teacher.address &&
+        teacher.address.toLowerCase().includes(lowerSearchQuery)) ||
+      (teacher.phoneNumber1 &&
+        teacher.phoneNumber1.toLowerCase().includes(lowerSearchQuery)) ||
+      (teacher.gender &&
+        teacher.gender.toLowerCase().includes(lowerSearchQuery)) ||
+      (teacher.blocked && "blocked".includes(lowerSearchQuery)) ||
+      (!teacher.blocked && "active".includes(lowerSearchQuery)) ||
+      (teacher.dateOfBirth &&
+        new Date(teacher.dateOfBirth)
+          .toLocaleDateString()
+          .toLowerCase()
+          .includes(lowerSearchQuery));
+
     // Check nested arrays
-    const matchesCoursesTaught = teacher.teacherInfo.coursesTaught.some(course =>
-      course.title.toLowerCase().includes(lowerSearchQuery)
+    const matchesCoursesTaught = teacher.teacherInfo.coursesTaught.some(
+      (course) => course.title.toLowerCase().includes(lowerSearchQuery)
     );
-  
-    const matchesClassesTeaching = teacher.teacherInfo.classesTeaching.some(classTeaching =>
-      classTeaching.className.toLowerCase().includes(lowerSearchQuery)
+
+    const matchesClassesTeaching = teacher.teacherInfo.classesTeaching.some(
+      (classTeaching) =>
+        classTeaching.className.toLowerCase().includes(lowerSearchQuery)
     );
-  
-    const matchesStudentsTaught = teacher.teacherInfo.studentsTaught.some(student =>
-      `${student.firstName} ${student.lastName}`.toLowerCase().includes(lowerSearchQuery)
+
+    const matchesStudentsTaught = teacher.teacherInfo.studentsTaught.some(
+      (student) =>
+        `${student.firstName} ${student.lastName}`
+          .toLowerCase()
+          .includes(lowerSearchQuery)
     );
-  
+
     // Combine checks
-    return matchesBasicFields || matchesCoursesTaught || matchesClassesTeaching || matchesStudentsTaught;
+    return (
+      matchesBasicFields ||
+      matchesCoursesTaught ||
+      matchesClassesTeaching ||
+      matchesStudentsTaught
+    );
   });
-  
-  
-
-
-
-
-
-  
 
   const indexOfLastTeacher = currentPage * teachersPerPage;
   const indexOfFirstTeacher = indexOfLastTeacher - teachersPerPage;
@@ -193,15 +256,18 @@ function TeachersDashboard() {
     try {
       const response = await fetch(djangoapi); // Assuming your backend API is available at this endpoint
       if (response.status === 200) {
+        toast.success(t("teachers_dashboard.add_teacher_success"), {
+          autoClose: 1500,
+          style: { color: "green" },
+        });
         fetchData();
         setOpen2(false);
-      } else {
-        setOpen2(false);
-
-        throw new Error("Erreur lors de la récupération des données");
       }
     } catch (error) {
-      console.error("Erreur lors de la requête GET:", error.message);
+      toast.error(t("teachers_dashboard.add_teacher_failure"), {
+        autoClose: 1500,
+        style: { color: "red" },
+      });
       setOpen2(false);
     }
   };
@@ -233,6 +299,7 @@ function TeachersDashboard() {
           ) : (
             <div className="page-content-wrapper border">
               {/* Backdrop with GridLoader */}
+              <ToastContainer />
 
               <Backdrop
                 sx={{
@@ -245,7 +312,9 @@ function TeachersDashboard() {
               </Backdrop>
               <div className="row">
                 <div className="col-12">
-                  <h1 className="h2 mb-2 mb-sm-0">Teachers list</h1>
+                  <h1 className="h2 mb-2 mb-sm-0">
+                    {t("teachers_dashboard.title")}
+                  </h1>
                 </div>
               </div>
               <div className="card bg-transparent">
@@ -285,7 +354,7 @@ function TeachersDashboard() {
                           style={{ width: "1em", marginRight: "5px" }}
                         ></i>
                         <span className="d-none d-md-inline">
-                          Import Teachers
+                          {t("teachers_dashboard.import_teachers")}
                         </span>
                       </button>
 
@@ -302,7 +371,7 @@ function TeachersDashboard() {
                           style={{ width: "1em", marginRight: "7px" }}
                         ></i>
                         <span className="d-none d-md-inline">
-                          Open Google Sheets
+                          {t("teachers_dashboard.open_google_sheets")}
                         </span>
                       </button>
 
@@ -319,7 +388,7 @@ function TeachersDashboard() {
                           style={{ width: "1em", marginRight: "7px" }}
                         ></i>
                         <span className="d-none d-md-inline">
-                          Add New Teacher
+                          {t("teachers_dashboard.add_new_teacher")}
                         </span>
                       </button>
                     </div>
@@ -387,7 +456,7 @@ function TeachersDashboard() {
                                     >
                                       <span className="text-primary">
                                         <i className="bi bi-pencil-square fa-fw me-2" />
-                                        Edit
+                                        {t("teachers_dashboard.edit")}
                                       </span>
                                     </a>
                                   </li>
@@ -401,7 +470,7 @@ function TeachersDashboard() {
                                     >
                                       <span className="text-danger">
                                         <i className="bi bi-trash fa-fw me-2" />
-                                        Remove
+                                        {t("teachers_dashboard.remove")}
                                       </span>
                                     </a>
                                   </li>
@@ -412,7 +481,9 @@ function TeachersDashboard() {
                               <div>
                                 <p className="mb-1">
                                   <i className="bi bi-calendar-check me-2 text-primary" />
-                                  <strong>Date of Birth:</strong>{" "}
+                                  <strong>
+                                    {t("teachers_dashboard.date_of_birth")}
+                                  </strong>{" "}
                                   {teacher.dateOfBirth
                                     ? new Date(
                                         teacher.dateOfBirth
@@ -421,18 +492,25 @@ function TeachersDashboard() {
                                 </p>
                                 <p className="mb-1">
                                   <i className="bi bi-geo-alt me-2 text-primary" />
-                                  <strong>Address:</strong> {teacher.address}
+                                  <strong>
+                                    {t("teachers_dashboard.address")}
+                                  </strong>{" "}
+                                  {teacher.address}
                                 </p>
                               </div>
                               <div>
                                 <p className="mb-1">
                                   <i className="bi bi-gender-male me-2 text-primary" />
-                                  <strong>Gender:</strong>{" "}
+                                  <strong>
+                                    {t("teachers_dashboard.gender")}
+                                  </strong>{" "}
                                   {teacher.gender || "Not available"}
                                 </p>
                                 <p className="mb-1">
                                   <i className="bi bi-telephone me-2 text-primary" />
-                                  <strong>Phone Number:</strong>{" "}
+                                  <strong>
+                                    {t("teachers_dashboard.phone_number")}
+                                  </strong>{" "}
                                   {teacher.phoneNumber1 || "Not available"}
                                 </p>
                                 <p className="mb-1">
@@ -441,13 +519,17 @@ function TeachersDashboard() {
                                   ) : (
                                     <i className="bi bi-check2-circle me-2 text-primary" />
                                   )}
-                                  <strong>State:</strong>{" "}
+                                  <strong>
+                                    {t("teachers_dashboard.state")}
+                                  </strong>{" "}
                                   {teacher.blocked ? (
                                     <span className="state-badge blocked">
-                                      Blocked
+                                      {t("teachers_dashboard.blocked")}
                                     </span>
                                   ) : (
-                                    <span className="state-badge">Active</span>
+                                    <span className="state-badge">
+                                      {t("teachers_dashboard.active")}
+                                    </span>
                                   )}
                                 </p>
                                 <div className="teacher-more">
@@ -459,15 +541,12 @@ function TeachersDashboard() {
                                   >
                                     {teacherDetails[teacher._id] ? (
                                       <>
-                                        See less{" "}
+                                        {t("teachers_dashboard.see_less")}{" "}
                                         <i className="fas fa-angle-up ms-2" />
                                       </>
                                     ) : (
                                       <>
-                                        See{" "}
-                                        <span className="see-more ms-1">
-                                          more
-                                        </span>
+                                        {t("teachers_dashboard.see_more")}{" "}
                                         <i className="fas fa-angle-down ms-2" />
                                       </>
                                     )}
@@ -479,7 +558,11 @@ function TeachersDashboard() {
                                       <p className="mb-1">
                                         <i className="bi bi-journal-text me-2 text-primary" />{" "}
                                         {/* Icon for Courses Taught */}
-                                        <strong>Courses Taught:</strong>{" "}
+                                        <strong>
+                                          {t(
+                                            "teachers_dashboard.courses_taught"
+                                          )}
+                                        </strong>{" "}
                                         {/* Heading for Courses Taught */}
                                         {/* Display coursesTaught */}
                                         {teacher.teacherInfo.coursesTaught
@@ -506,7 +589,11 @@ function TeachersDashboard() {
                                       <p className="mb-1">
                                         <i className="bi bi-people me-2 text-primary" />{" "}
                                         {/* Icon for Classes Teaching */}
-                                        <strong>Classes Teaching:</strong>{" "}
+                                        <strong>
+                                          {t(
+                                            "teachers_dashboard.classes_teaching"
+                                          )}
+                                        </strong>{" "}
                                         {/* Heading for Classes Teaching */}
                                         {/* Display classesTeaching */}
                                         {teacher.teacherInfo.classesTeaching
@@ -533,7 +620,11 @@ function TeachersDashboard() {
                                       <p className="mb-1">
                                         <i className="bi bi-people me-2 text-primary" />{" "}
                                         {/* Icon for Students Taught */}
-                                        <strong>Students Taught:</strong>{" "}
+                                        <strong>
+                                          {t(
+                                            "teachers_dashboard.students_taught"
+                                          )}
+                                        </strong>{" "}
                                         {/* Heading for Students Taught */}
                                         {/* Display studentsTaught */}
                                         {teacher.teacherInfo.studentsTaught
@@ -566,7 +657,9 @@ function TeachersDashboard() {
                                   {/* Rating star */}
                                   <h6 className="mb-2 mb-sm-0">
                                     <i className="bi bi-calendar fa-fw text-orange me-2" />
-                                    <span className="text-body">Join at:</span>{" "}
+                                    <span className="text-body">
+                                      {t("teachers_dashboard.join_at")}
+                                    </span>{" "}
                                     {new Date(
                                       teacher.createdAt
                                     ).toLocaleDateString()}
@@ -636,9 +729,11 @@ function TeachersDashboard() {
                 <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
                   {/* Content */}
                   <p className="mb-0 text-center text-sm-start">
-                    Showing {indexOfFirstTeacher + 1} to{" "}
-                    {Math.min(indexOfLastTeacher, filteredTeachers.length)} of{" "}
-                    {filteredTeachers.length} entries
+                    {t("teachers_dashboard.showing")} {indexOfFirstTeacher + 1}{" "}
+                    {t("teachers_dashboard.to")}{" "}
+                    {Math.min(indexOfLastTeacher, filteredTeachers.length)}{" "}
+                    {t("teachers_dashboard.of")} {filteredTeachers.length}{" "}
+                    {t("teachers_dashboard.entries")}
                   </p>
                   {/* Pagination */}
                   <nav

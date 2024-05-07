@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAccessToken, setLogout } from "../../../state";
 import refreshToken from "scenes/Authentification/TokenService/tokenService";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
+import { GridLoader } from "react-spinners";
+import Backdrop from "@mui/material/Backdrop";
 
 function EditStage() {
 
@@ -31,21 +33,29 @@ function EditStage() {
   const [formModified, setFormModified] = useState(false); // State variable to track form modification
   //const dispatch = useDispatch();
   const navigate = useNavigate();
+  let [color, setColor] = useState("#399ebf");
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
 
 
   useEffect(() => {
     const fetchData = async () => {
+      setOpen(true);
       try {
         const response = await axiosPrivate.get(`/stage/stage/${id}`);
-        console.log("response:", response);
+        //console.log("response:", response);
         if (response.status === 200) {
           const data = await response.data;
-          console.log("data:", data);
+          //console.log("data:", data);
           setStage(data);
+          setOpen(false);
         } else {
+          setOpen(false);
           throw new Error("Failed to fetch stage data");
         }
       } catch (error) {
+        setOpen(false);
         console.error("Error fetching stage data:", error);
       }
     };
@@ -86,7 +96,6 @@ function EditStage() {
     setFormModified(true); // Set form as modified when image is selected
 
   };
-  // Function to handle removing the image
   // Function to handle removing the image
   const handleRemoveImage = () => {
     // Reset the image name to null
@@ -173,6 +182,7 @@ function EditStage() {
       return;
     } else {
       try {
+        setOpen2(true);
         // Check if any form data has changed
         const formDataChanged = Object.keys(formValues).some((key) => {
           return formValues[key] !== formData[key];
@@ -192,24 +202,21 @@ function EditStage() {
             // If form data has changed, send the updated data
             const response = await axiosPrivate.patch(
               `/api/stage/${id}`,
-              formDataToSend,
-              {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              }
+              formDataToSend
             );
             if (response.status === 200) {
               toast.success("stage updated successfully !!", {
-                autoClose: 1500,
+                autoClose: 1000,
                 style: {
                   color: "green",
                 },
               });
+              setOpen2(false);
               setTimeout(() => {
                 navigate("/liststage");
-              }, 2000);
+              }, 1500);
             } else {
+              setOpen2(false);
               console.log("cant update!!!");
             }
           } else {
@@ -219,32 +226,31 @@ function EditStage() {
             // If form data has changed, send the updated data
             const response = await axiosPrivate.patch(
               `/api/stage/${id}`,
-              formData,
-              {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              }
+              formData
             );
             if (response.status === 200) {
               toast.success("Stage updated successfully !!", {
-                autoClose: 1500,
+                autoClose: 1000,
                 style: {
                   color: "green",
                 },
               });
+              setOpen2(false);
               setTimeout(() => {
                 navigate("/listStage");
-              }, 2000);
+              }, 1500);
             } else {
+              setOpen2(false);
               console.log("cant update!!!");
             }
           }
         } else {
+          setOpen2(false);
           // If no changes were made, simply navigate away
-          navigate("/listStage");
+          navigate("/ListStage");
         }
       } catch (error) {
+        setOpen2(false);
         console.error("Failed to update Stage:", error);
       }
     }
@@ -261,6 +267,24 @@ function EditStage() {
         {/* Page content START */}
         <div className="page-content">
           <TopBarBack />
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : (
+            <>
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
           <ToastContainer />
 
           {/* Page main content START */}
@@ -343,11 +367,15 @@ function EditStage() {
                               <img
                                 src={URL.createObjectURL(imageFile)}
                                 alt="Uploaded image"
+                                
                                 className="img-fluid mb-2"
                                 style={{
-                                  maxWidth: "300px",
-                                  maxHeight: "300px",
-                                }} // Limit image dimensions
+                                  maxWidth: "100%", // This makes the image responsive
+                                      maxHeight: "300px",
+                                      height: "auto", // Maintain aspect ratio
+                                      width: "auto", // Allow width to scale with the height
+                                      objectFit: "contain", // Ensures the image is scaled to maintain its aspect ratio while fitting within the frame
+                                     }} // Limit image dimensions
                                 required
                               />
                               <p className="mb-0">Uploaded image</p>
@@ -433,8 +461,8 @@ function EditStage() {
     className={`form-control ${errors.finishDate ? "is-invalid" : ""}`}
     type="date"
     name="finishDate"
+    onChange={handleChange}
     value={stage.finishDate}
-    onChange={(e) => setStage({ ...stage, finishDate: e.target.value })}
   />
       {errors.finishDate && <div className="invalid-feedback">{errors.finishDate}</div>}
 
@@ -447,9 +475,9 @@ function EditStage() {
     className={`form-control ${errors.place ? "is-invalid" : ""}`}
     type="number"
     name="place"
+    
     value={stage.place}
-    onChange={(e) => setStage({ ...stage, place: e.target.value })}
-  />
+    onChange={handleChange}  />
         {errors.place && <div className="invalid-feedback">{errors.place}</div>}
 
 </div>
@@ -462,8 +490,7 @@ function EditStage() {
     type="number"
     name="price"
     value={stage.price}
-    onChange={(e) => setStage({ ...stage, price: e.target.value })}
-  />
+    onChange={handleChange}  />
           {errors.price && <div className="invalid-feedback">{errors.price}</div>}
 
 </div>
@@ -496,6 +523,8 @@ function EditStage() {
 
 
           </div>
+          </>
+          )}
         </div>
       </main>
     </div>

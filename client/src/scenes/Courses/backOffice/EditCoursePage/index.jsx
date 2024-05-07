@@ -5,15 +5,17 @@ import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-notifications/lib/notifications.css";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { setAccessToken, setLogout } from "../../../../state";
-import refreshToken from "scenes/Authentification/TokenService/tokenService";
-import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
+import { GridLoader } from "react-spinners";
+import Backdrop from "@mui/material/Backdrop";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 const modules = {
   toolbar: [
@@ -36,6 +38,10 @@ function EditCourse() {
 
   // Inside your component function
   const [fullDescription, setFullDescription] = useState("");
+  let [color, setColor] = useState("#399ebf");
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [course, setCourse] = useState({
     title: "",
     description: "",
@@ -52,6 +58,7 @@ function EditCourse() {
 
 
   const fetchCategories = async () => {
+
     try {
       const response = await axiosPrivate.get("/api/categories");
       setCategories(response.data);
@@ -66,16 +73,23 @@ function EditCourse() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setOpen(true);
       try {
         const response = await axiosPrivate.get(`/course/${id}`);
         if (response.status === 200) {
           const data = await response.data.course;
           console.log("data:", data);
           setCourse(data);
+          setOpen(false);
+
         } else {
+          setOpen(false);
+
           throw new Error("Failed to fetch course data");
         }
       } catch (error) {
+        setOpen(false);
+
         console.error("Error fetching course data:", error);
       }
     };
@@ -188,7 +202,7 @@ function EditCourse() {
 
     // Check if there are any errors
     if (Object.values(errors).some((error) => error !== "")) {
-      console.log("aefbaefoaefni");
+      //console.log("aefbaefoaefni");
       return;
     } else {
       try {
@@ -200,6 +214,7 @@ function EditCourse() {
         if (formDataChanged) {
           if (imageFile) {
             //console.log("changed");
+            setOpen2(true);
             const formDataToSend = new FormData();
             for (let value in formValues) {
               formDataToSend.append(value, formValues[value]);
@@ -221,20 +236,22 @@ function EditCourse() {
             );
             if (response.status === 200) {
               toast.success("Course updated successfully !!", {
-                autoClose: 1500,
+                autoClose: 1000,
                 style: {
                   color: "green",
                 },
               });
+              setOpen2(false);
               setTimeout(() => {
                 navigate("/listCourses");
-              }, 2000);
+              }, 1500);
             } else {
               console.log("cant update!!!");
             }
           } else {
             //console.log("not changed");
             //console.log("formData : ", formData);
+            setOpen2(true);
 
             formData.append("fullDescription", fullDescription); // Append full description to form data
             // If form data has changed, send the updated data
@@ -249,23 +266,28 @@ function EditCourse() {
             );
             if (response.status === 200) {
               toast.success("Course updated successfully !!", {
-                autoClose: 1500,
+                autoClose: 1000,
                 style: {
                   color: "green",
                 },
               });
+              setOpen2(false);
               setTimeout(() => {
                 navigate("/listCourses");
-              }, 2000);
+              }, 1500);
             } else {
               console.log("cant update!!!");
             }
           }
         } else {
+          setOpen2(false);
+
           // If no changes were made, simply navigate away
           navigate("/listCourses");
         }
       } catch (error) {
+        setOpen2(false);
+
         console.error("Failed to update category:", error);
       }
     }
@@ -288,6 +310,24 @@ function EditCourse() {
         {/* Page content START */}
         <div className="page-content">
           <TopBarBack />
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : (
+            <>
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
           <ToastContainer />
 
           {/* Page main content START */}
@@ -393,9 +433,12 @@ function EditCourse() {
                                 alt="Uploaded image"
                                 className="img-fluid mb-2"
                                 style={{
-                                  maxWidth: "300px",
-                                  maxHeight: "300px",
-                                }} // Limit image dimensions
+                                  maxWidth: "100%", // This makes the image responsive
+                                      maxHeight: "300px",
+                                      height: "auto", // Maintain aspect ratio
+                                      width: "auto", // Allow width to scale with the height
+                                      objectFit: "contain", // Ensures the image is scaled to maintain its aspect ratio while fitting within the frame
+                                    }} // Limit image dimensions
                                 required
                               />
                               <p className="mb-0">{course.picturePath}</p>
@@ -541,6 +584,8 @@ function EditCourse() {
               </form>
             </div>
           </div>
+          </>
+          )}
         </div>
       </main>
     </div>

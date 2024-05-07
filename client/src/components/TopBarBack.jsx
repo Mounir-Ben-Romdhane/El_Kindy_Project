@@ -38,6 +38,7 @@ function TopBarBack() {
   }, []);
 
   const getAvatarSrc = () => {
+    console.log("userData",userData);
     if (userData && userData.picturePath !== "" && userData.authSource === "local") {
       // If user has a custom picture path
       return `http://localhost:3001/assets/${userData.picturePath}`;
@@ -316,6 +317,7 @@ function TopBarBack() {
                     {/* Profile dropdown START */}
                     <li className="nav-item ms-2 ms-md-3 dropdown">
                       {/* Avatar */}
+                      {/*src={getAvatarSrc()} */}
                       <a
                         className="avatar avatar-sm p-0"
                         href="#"
@@ -328,7 +330,8 @@ function TopBarBack() {
                       >
                         <img
                           className="avatar-img rounded-circle"
-                          src={getAvatarSrc()}
+                          
+                          src="http://localhost:3001/assets/logoo.jpg"
                           alt="avatar"
                         />
                       </a>
