@@ -8,6 +8,7 @@ import ChatBox from "../../../components/ChatBox/ChatBox";
 import Backdrop from "@mui/material/Backdrop";
 import GridLoader from "react-spinners/GridLoader";
 import { io } from "socket.io-client";
+
 import { jwtDecode } from "jwt-decode";
 import { createChat, findChat } from '../../../api/ChatRequests';
 import Footer from 'components/Footer';

@@ -47,6 +47,7 @@ router.get('/getCoursesByStudent/:studentId', getCoursesByStudent);
 router.get('/getCoursesTaughtByTeacher/:teacherId', getCoursesTaughtByTeacher);
 router.get('/getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher/:courseId/:teacherId', getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher);
 router.get('/getStudentsTaughtByTeacher/:teacherId', getStudentsTaughtByTeacher);
+router.get('/getCoursesByStudentId/:studentId',getCoursesByStudentId);
 //Add users
 router.post("/addAdmin", addAdmin);
 router.post("/addTeacher", addTeacher);

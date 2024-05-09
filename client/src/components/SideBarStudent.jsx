@@ -108,7 +108,7 @@ import { useTranslation } from "react-i18next";
                       to="/TeachersList"
                       onClick={() => handleNavItemClick("/TeachersList")}
                     >
-                      <i className="bi bi-people fa-fw me-2" />
+                      <i className="bi bi-chat-dots-fill fa-fw me-2" />
                       {t("sidebarStudent.Teachers")}
                     </Link>
                     <Link
@@ -139,15 +139,7 @@ import { useTranslation } from "react-i18next";
                       GradeStudent
                     </Link>
 
-                    <Link
-                      className={`list-group-item ${activeNavItem === "/TeachersList" ? "active" : ""
-                        }`}
-                      to="/TeachersList"
-                      onClick={() => handleNavItemClick("/TeachersList")}
-                    >
-                      <i className="bi bi-people fa-fw me-2" />
-                      Teachers
-                    </Link>
+                   
 
 
                     <a className="list-group-item" href="instructor-edit-profile.html"><i className="bi bi-pencil-square fa-fw me-2" />Edit Profile</a>

@@ -488,6 +488,7 @@ export const getCoursesByStudent = async (req, res) => {
 
   try {
       const student = await User.findById(studentId).populate('studentInfo.coursesEnrolled');
+      
       res.status(200).json(student.studentInfo.coursesEnrolled);  
   } catch (error) {
       res.status(500).json({ message: error.message });
