@@ -1,7 +1,7 @@
 .ChatBox-container {
-    position: fixed;
+    position: fixed; /* or absolute, depending on your layout */
     background-image: url('../../../public/assets/images/bgchat.jpg');
-    background-size: 100%;
+    background-size: cover;
     background-position: center;
     bottom: 0;
     right: 0;
@@ -11,8 +11,9 @@
     border-radius: 8px 8px 0 0;
     padding: 0;
     border: 1px solid #ccc; /* Add border line */
-
+    z-index: 1; /* Higher than the footer */
 }
+
 
 .chat-body {
     display: flex;
@@ -52,13 +53,13 @@
     background-color: rgb(236, 236, 236);
     position: sticky; /* Rend l'en-tête collant */
     top: 0; /* Fixe l'en-tête en haut de la fenêtre */
-    z-index: 1; /* Assure que l'en-tête est au-dessus du contenu défilant */
+    z-index: 2; /* Assure que l'en-tête est au-dessus du contenu défilant */
 }
 
 .sticky-header {
     position: sticky;
     top: 0;
-    z-index: 1;
+    z-index: 2;
     background-color: white;
   }
   

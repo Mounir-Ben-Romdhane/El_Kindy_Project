@@ -5,7 +5,7 @@ import { verifyToken, verifyRoles } from "../middleware/auth.js";
 const router = express.Router();
 
 // Route pour créer une nouvelle classe
-router.post('/create', createClass);
+router.post('/create', verifyToken,createClass);
 
 // Route pour obtenir la liste de toutes les classes
 router.get('/getAll',verifyToken, getAllClasses);

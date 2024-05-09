@@ -1,122 +1,64 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // Assurez-vous d'importer Link depuis react-router-dom
-import "react-confirm-alert/src/react-confirm-alert.css"; // Importez les styles CSS
+import { Link } from "react-router-dom";
+import "react-confirm-alert/src/react-confirm-alert.css";
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import { ToastContainer, toast } from "react-toastify";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
 
 function Index() {
   const [shop, setShop] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredClasses, setFilteredClasses] = useState([]);
-  const [sortOption, setSortOption] = useState(""); // State to hold the sorting option
-  const fetchData = async () => {
-    try {
-      const response = await fetch("http://localhost:3001/shops", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setShop(data);
-      } else {
-        const errorMessage = await response.text();
-        //dispatch(setLogout()); // Log out user if token refresh fails
-        throw new Error(errorMessage);
+  const [filteredShopss, setFilteredShopss] = useState([]);
+  const [sortOption, setSortOption] = useState("");
+  const [itemsPerPage] = useState(8);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const axiosPrivate = useAxiosPrivate();
+  const MySwal = withReactContent(Swal);
+  let [color, setColor] = useState("#399ebf");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setOpen(true);
+      try {
+        const response = await axiosPrivate.get("/shops/get");
+        if (response.status === 200) {
+          setShop(response.data);
+          setOpen(false);
+        } else {
+          const errorMessage = response.statusText;
+          throw new Error(errorMessage);
+        }
+      } catch (error) {
+        console.error("Error fetching shops:", error);
+        // Handle error
       }
-    } catch (error) {
-      console.error("Error fetching courses:", error);
-      // Handle error
-    }
-  };
+    };
 
-  useEffect(() => {
     fetchData();
-  }, []);
+  }, [axiosPrivate]);
 
-  const handleDelete = async (id) => {
-    try {
-      await fetch(`http://localhost:3001/shops/${id}`, {
-        method: "DELETE",
-      });
-
-      toast.success("Instrument deleted successfully !!", {
-        autoClose: 1500,
-        style: {
-          color: "green", // Text color
-        },
-      });
-      setShop((prevStages) =>
-        prevStages.filter((shop) => shop._id !== id)
-      ); // Assuming `_id` is the unique identifier
-    } catch (error) {
-      console.error("Error deleting stage:", error);
-    }
-  };
-
-  const handleSold = async (id) => {
-    try {
-      // Update the shop status to "sold" here
-      await fetch(`http://localhost:3001/shops/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ etat: "sold" }), // Update etat to "sold"
-      });
-  
-      // Refetch data to update the shop state
-      fetchData();
-  
-      toast.success("Instrument marked as sold !!", {
-        autoClose: 1500,
-        style: {
-          color: "green", // Text color
-        },
-      });
-    } catch (error) {
-      console.error("Error marking instrument as sold:", error);
-    }
-  };
-  
-  const handleUnsold = async (id) => {
-    try {
-      // Update the shop status to "unsold" here
-      await fetch(`http://localhost:3001/shops/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ etat: "unsold" }), // Update etat to "unsold"
-      });
-  
-      // Refetch data to update the shop state
-      fetchData();
-  
-      toast.success("Instrument marked as unsold !!", {
-        autoClose: 1500,
-        style: {
-          color: "green", // Text color
-        },
-      });
-    } catch (error) {
-      console.error("Error marking instrument as unsold:", error);
-    }
-  };
-  
- 
   useEffect(() => {
-    setFilteredClasses(
-      shop.filter((shops) =>
-        shops.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        (sortOption === "" || shops.status === sortOption || shops.etat === sortOption)
+    setFilteredShopss(
+      shop.filter(
+        (shops) =>
+          shops.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+          (sortOption === "" ||
+            shops.status === sortOption ||
+            shops.etat === sortOption)
       )
     );
   }, [shop, searchQuery, sortOption]);
 
-  const sortedClass = filteredClasses.sort((a, b) => {
+  const sortedShop = filteredShopss.sort((a, b) => {
     switch (sortOption) {
       case "A-Z":
         return a.name.localeCompare(b.name);
@@ -126,17 +68,111 @@ function Index() {
         return 0;
     }
   });
+  const handleDelete = async (id) => {
+    // Show confirmation dialog before deleting
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this shop!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axiosPrivate.delete(`/shops/${id}`);
+          setShop((prevShops) => prevShops.filter((shop) => shop._id !== id));
+          Swal.fire("Deleted!", "Shop has been deleted.", "success");
+        } catch (error) {
+          console.error("Error deleting shop:", error);
+          Swal.fire("Failed!", "Failed to delete the shop.", "error");
+        }
+      }
+    });
+  };
+  
+  
+
+  const handleSold = async (id) => {
+    try {
+      await axiosPrivate.patch(`/shops/${id}`, {
+        etat: "sold",
+      });
+
+      setShop((prevShops) =>
+        prevShops.map((shop) =>
+          shop._id === id ? { ...shop, etat: "sold" } : shop
+        )
+      );
+
+      toast.success("Instrument marked as sold !!", {
+        autoClose: 1500,
+        style: {
+          color: "green",
+        },
+      });
+    } catch (error) {
+      console.error("Error marking instrument as sold:", error);
+    }
+  };
+
+  const handleUnsold = async (id) => {
+    try {
+      await axiosPrivate.patch(`/shops/${id}`, {
+        etat: "unsold",
+      });
+
+      setShop((prevShops) =>
+        prevShops.map((shop) =>
+          shop._id === id ? { ...shop, etat: "unsold" } : shop
+        )
+      );
+
+      toast.success("Instrument marked as unsold !!", {
+        autoClose: 1500,
+        style: {
+          color: "green",
+        },
+      });
+    } catch (error) {
+      console.error("Error marking instrument as unsold:", error);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const indexOfLastShops = currentPage * itemsPerPage;
+  const indexOfFirstShops = indexOfLastShops - itemsPerPage;
+  const currentShopss = sortedShop.slice(indexOfFirstShops, indexOfLastShops);
+
+  const totalShopss = sortedShop.length;
+  const totalPages = Math.ceil(totalShopss / itemsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <div>
-      {/* **************** MAIN CONTENT START **************** */}
       <main>
         <SideBar />
-        {/* Page content START */}
         <div className="page-content">
           <TopBarBack />
-
-          {/* Page main content START */}
-          <div className="page-content-wrapper border">
+          {open ? (
+            <Backdrop
+              sx={{
+                color: "#fff",
+                zIndex: (theme) => theme.zIndex.drawer + 1,
+              }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <div className="page-content-wrapper border">
             <ToastContainer />
             {/* Title */}
             <div className="row mb-3">
@@ -232,7 +268,7 @@ function Index() {
                     <tbody style={{ whiteSpace: "nowrap" }}>
                       {/* Table row */}
                       {shop && shop.length > 0 ? (
-  sortedClass.map((shop) => (
+  sortedShop.map((shop) => (
     <tr key={shop._id}>
       <td>{shop.name}</td>
       <td>{shop.marque}</td>
@@ -318,50 +354,83 @@ function Index() {
               {/* Card body END */}
               {/* Card ffooter START */}
               <div className="card-footer bg-transparent pt-0">
-                {/* Pagination START */}
-                <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
-                  {/* Content */}
-
-                  {/* Pagination */}
-                  <nav
-                    className="d-flex justify-content-center mb-0"
-                    aria-label="navigation"
-                  >
-                    <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#" tabIndex={-1}>
-                          <i className="fas fa-angle-left" />
-                        </a>
-                      </li>
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#">
-                          1
-                        </a>
-                      </li>
-                      <li className="page-item mb-0 active">
-                        <a className="page-link" href="#">
-                          2
-                        </a>
-                      </li>
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#">
-                          3
-                        </a>
-                      </li>
-                      <li className="page-item mb-0">
-                        <a className="page-link" href="#">
-                          <i className="fas fa-angle-right" />
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
-                </div>
-                {/* Pagination END */}
+               {/* Pagination START */}
+                    <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
+                    <p className="mb-0 text-center text-sm-start">
+                      Showing {indexOfFirstShops + 1} to{" "}
+                      {Math.min(indexOfLastShops, filteredShopss.length)} of{" "}
+                      {filteredShopss.length} entries
+                    </p>
+                    <nav
+                      className="d-flex justify-content-center mb-0"
+                      aria-label="navigation"
+                    >
+                      <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
+                        <li
+                          className={`page-item ${
+                            currentPage === 1 && "disabled"
+                          }`}
+                        >
+                          {" "}
+                          <button
+                            className="page-link"
+                            onClick={() => paginate(currentPage - 1)}
+                            disabled={currentPage === 1}
+                          >
+                            <i className="fas fa-angle-left" />
+                          </button>
+                        </li>
+                        {Array.from(
+                          {
+                            length: Math.ceil(
+                              filteredShopss.length / itemsPerPage
+                            ),
+                          },
+                          (_, index) => (
+                            <li
+                              key={index}
+                              className={`page-item ${
+                                index + 1 === currentPage ? "active" : ""
+                              }`}
+                            >
+                              <button
+                                className="page-link"
+                                onClick={() => paginate(index + 1)}
+                              >
+                                {index + 1}
+                              </button>
+                            </li>
+                          )
+                        )}
+                        <li
+                          className={`page-item ${
+                            currentPage ===
+                            Math.ceil(filteredShopss.length / itemsPerPage)
+                              ? "disabled"
+                              : ""
+                          }`}
+                        >
+                          <button
+                            className="page-link"
+                            onClick={() => paginate(currentPage + 1)}
+                            disabled={
+                              currentPage ===
+                              Math.ceil(filteredShopss.length / itemsPerPage)
+                            }
+                          >
+                            <i className="fas fa-angle-right" />
+                          </button>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
+                    {/* Pagination END */}
               </div>
               {/* Card footer END */}
             </div>
             {/* Card END */}
           </div>
+          )}
           {/* Page main content END */}
         </div>
         {/* Page content END */}

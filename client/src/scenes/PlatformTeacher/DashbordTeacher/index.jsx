@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SideBarTeacher from 'components/SideBarTeacher';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
 import NavBar from 'components/NavBar';
-import FooterClient from 'components/FooterClient';
+import FooterClient from 'components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook } from '@fortawesome/free-solid-svg-icons';
 

@@ -8,6 +8,7 @@ import TopBarBack from "components/TopBarBack";
 import Backdrop from "@mui/material/Backdrop";
 import GridLoader from "react-spinners/GridLoader";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
+import NoData from "components/NoData";
 
 const MySwal = withReactContent(Swal);
 
@@ -44,14 +45,27 @@ function Index() {
   }, [axiosPrivate]);
 
   const handleDelete = async (id) => {
-    try {
-      await axiosPrivate.delete(`/course/delete/${id}`);
-      setCourses(courses.filter((course) => course._id !== id));
-      MySwal.fire("Deleted!", "Course has been deleted.", "success");
-    } catch (error) {
-      console.error("Failed to delete course:", error);
-      MySwal.fire("Failed!", "Failed to delete the course.", "error");
-    }
+    // Show confirmation dialog before deleting
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this course!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axiosPrivate.delete(`/course/delete/${id}`);
+          setCourses(courses.filter((course) => course._id !== id));
+          Swal.fire("Deleted!", "Course has been deleted.", "success");
+        } catch (error) {
+          console.error("Failed to delete course:", error);
+          Swal.fire("Failed!", "Failed to delete the course.", "error");
+        }
+      }
+    });
   };
 
   const handleSearchChange = (e) => {
@@ -122,7 +136,7 @@ function Index() {
               </div>
             </div>
             {courses.length === 0 ? (
-              <h2>No courses available.</h2>
+              <NoData />
             ) : (
               <div className="card bg-transparent border">
                 <div className="card-header bg-light border-bottom">
@@ -136,6 +150,14 @@ function Index() {
                           value={searchQuery}
                           onChange={handleSearchChange}
                         />
+                        {searchQuery === "" && (
+                              <button
+                                className="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y"
+                                type="submit"
+                              >
+                                <i className="fas fa-search fs-6" />
+                              </button>
+                            )}
                       </form>
                     </div>
                     <div className="col-md-3">
@@ -180,13 +202,29 @@ function Index() {
                         {currentCourses.map((course) => (
                           <tr key={course._id}>
                             <td>{course.title}</td>
-                            <td>{course.description}</td>
+                            <td>
+                                  {" "}
+                                  {course.description
+                                    .substring(0, 100)
+                                    .match(/.{1,40}/g)
+                                    .map((chunk, index, array) => (
+                                      <React.Fragment key={index}>
+                                        {chunk}
+                                        {index === array.length - 1 &&
+                                        course.description.length > 50
+                                          ? "..."
+                                          : ""}
+                                        <br />
+                                      </React.Fragment>
+                                    ))}{" "}
+                                </td>{" "}
                             <td>
                               {course.picturePath ? (
                                 <img
                                   src={`http://localhost:3001/assets/${course.picturePath}`}
                                   alt="Course"
-                                  style={{ width: "130px", height: "110px" }}
+                                  style={{ width: "130px", height: "110px",borderRadius: "15%",
+                                }}
                                 />
                               ) : (
                                 <span>No Image</span>
@@ -203,7 +241,7 @@ function Index() {
                               </Link>
                               <button
                                 onClick={() => handleDelete(course._id)}
-                                className="btn btn-danger-soft btn-round"
+                                className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
                               >
                                 <i className="bi bi-trash"></i>
                               </button>

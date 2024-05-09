@@ -591,3 +591,16 @@ export const getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher = async (
     res.status(500).json({ message: error.message });
   }
 };
+//get students taught by teacher 
+export const getStudentsTaughtByTeacher = async (req, res) => {
+  const teacherId = req.params.teacherId;
+
+  try {
+      const teacher = await User.findById(teacherId).populate('teacherInfo.studentsTaught');
+      const studentsTaught = teacher.teacherInfo.studentsTaught;
+
+      res.status(200).json(studentsTaught);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};

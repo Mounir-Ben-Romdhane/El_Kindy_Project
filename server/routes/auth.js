@@ -2,7 +2,7 @@ import express from "express";
 
 
 
-import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord, getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher,verifyAccount,getUser,getAllUserByRole, getCoursesTaughtByTeacher,getCoursesByStudent,getAssignmentsByCourseIdForStudent,getCoursesByStudentId,getClassByStudent,getStudentsInClassByCourseAndClass,getCoursesTaughtByTeacherInClass,
+import { login, register,refreshToken, getAllUsers, forgetPassord, resetPassord, getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher,verifyAccount,getUser,getAllUserByRole,getStudentsTaughtByTeacher, getCoursesTaughtByTeacher,getCoursesByStudent,getAssignmentsByCourseIdForStudent,getCoursesByStudentId,getClassByStudent,getStudentsInClassByCourseAndClass,getCoursesTaughtByTeacherInClass,
  getStudents, getUserById, getTeacherById,getClassesTaughtByTeacher,getStudentsEnrolledInClass , getStudentById, 
  getTeachers} from "../controllers/auth.js"
 
@@ -46,6 +46,7 @@ router.get('/getClassByStudent/:studentId', getClassByStudent);
 router.get('/getCoursesByStudent/:studentId', getCoursesByStudent);
 router.get('/getCoursesTaughtByTeacher/:teacherId', getCoursesTaughtByTeacher);
 router.get('/getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher/:courseId/:teacherId', getClassesAndStudentsNotEnrolledInClassByCourseAndTeacher);
+router.get('/getStudentsTaughtByTeacher/:teacherId', getStudentsTaughtByTeacher);
 //Add users
 router.post("/addAdmin", addAdmin);
 router.post("/addTeacher", addTeacher);

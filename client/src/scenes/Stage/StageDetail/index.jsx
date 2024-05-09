@@ -21,7 +21,7 @@ function Index() {
     phoneNumber: "",
     message: "",
   });
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -41,7 +41,7 @@ function Index() {
         setError("Failed to load event details. Please try again later.");
       }
     };
-  
+
     if (id) fetchData();
   }, [id]);
   useEffect(() => {
@@ -59,7 +59,7 @@ function Index() {
   const handleReservationSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-  
+
     try {
       if (!stageDetails.price) {
         // Event is free, submit reservation directly
@@ -86,9 +86,9 @@ function Index() {
         message: reservation.message,
         amount: stageDetails.price,
       };
-      
+
       console.log("Sending reservation data:", dataToSend);
-  
+
       const response = await axios.post(url, dataToSend);
       console.log("Reservation response:", response.data);
       toast.success("Reservation successful!", {
@@ -100,9 +100,9 @@ function Index() {
       throw new Error("Failed to submit reservation.");
     }
   };
-  
-  
-  const totalAmount = stageDetails.price  * 1000;
+
+
+  const totalAmount = stageDetails.price * 1000;
 
   const initiatePayment = async () => {
     try {
@@ -114,19 +114,19 @@ function Index() {
         phoneNumber: reservation.phoneNumber,
         message: reservation.message
       };
-  
+
       const response = await axios.post(
         `http://localhost:3001/payment/paymentStage`,
         paymentData
       );
-  
+
       console.log("Payment initiation response:", response.data);
-  
+
       if (response.data && response.data.paymentLink) {
         const paymentLink = response.data.paymentLink;
-  
+
         window.open(paymentLink, '_blank');
-  
+
         const paymentId = response.data.paymentId;
       } else {
         console.error("Payment link not found in the response.");
@@ -136,7 +136,7 @@ function Index() {
       // Handle error
     }
   };
-  
+
 
   const verifyPayment = async (paymentId) => {
     try {
@@ -148,17 +148,17 @@ function Index() {
           'appsecret': process.env.flouci_secret
         }
       });
-  
+
       // Assuming payment verification is successful
       console.log("Payment verification response:", verifyResponse.data);
-  
+
       // Proceed with reservation after payment verification
       submitReservation();
     } catch (error) {
       console.error("Error verifying payment:", error);
     }
   };
-  
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -265,12 +265,12 @@ function Index() {
                           type="text"
                           className="form-control form-control-lg"
                           value={reservation.userName}
-onChange={(e) =>
-  setReservation({
-    ...reservation,
-    [e.target.name]: e.target.value,
-  })
-}
+                          onChange={(e) =>
+                            setReservation({
+                              ...reservation,
+                              [e.target.name]: e.target.value,
+                            })
+                          }
                           name="userName"  // Make sure this attribute is correct
                           id="yourName"
                         />
@@ -313,15 +313,15 @@ onChange={(e) =>
 
                       {/* Button */}
                       <div className="d-grid">
-                      <div className="d-grid">
-    <button
-      type="submit"
-      className="btn btn-primary btn-lg"
-      disabled={isSubmitting}
-    >
-      Submit Reservation
-    </button>
-  </div>
+                        <div className="d-grid">
+                          <button
+                            type="submit"
+                            className="btn btn-primary btn-lg"
+                            disabled={isSubmitting}
+                          >
+                            Submit Reservation
+                          </button>
+                        </div>
                       </div>
                     </form>
                   </div>

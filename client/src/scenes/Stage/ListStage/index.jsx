@@ -174,7 +174,7 @@ function Index() {
 <td>
                               {stage.stageId && (
                                 <div>
-                                  <p>{stage.stageId.title}</p>
+                                  <p>{stage.title}</p>
 
                                 </div>
                               )}                          <td>{stage.title}</td>

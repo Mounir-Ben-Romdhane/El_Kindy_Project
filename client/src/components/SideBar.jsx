@@ -55,7 +55,9 @@ function SideBar() {
       {/* Sidebar START */}
       <nav className="navbar sidebar navbar-expand-xl navbar-dark bg-dark">
         {/* Navbar brand for xl START */}
-        <div className="d-flex align-items-center justify-content-center">
+        <div className="d-flex align-items-center justify-content-center offcanvas offcanvas-start flex-row custom-scrollbar h-100" data-bs-backdrop="true"
+          tabIndex={-1}
+          id="offcanvasSidebar">
           <Link className="navbar-brand" to="/dashboard-admin">
             <img
               className="navbar-brand-item"
@@ -71,9 +73,10 @@ function SideBar() {
           data-bs-backdrop="true"
           tabIndex={-1}
           id="offcanvasSidebar"
-        >
-          <div className="offcanvas-body sidebar-content d-flex flex-column bg-dark">
-            <div className="fares">
+        >           
+         <div className="fares">
+
+          <div className="offcanvas-body sidebar-content d-flex flex-column bg-dark mb-3 pb-5 ">
               {/* Sidebar menu START */}
               <ul className="navbar-nav flex-column" id="navbar-sidebar">
                 {/* Menu item 1 */}
