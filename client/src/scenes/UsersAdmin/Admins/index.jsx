@@ -252,7 +252,7 @@ function AdminsDashboard() {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   //export admins
-  const djangoapi = "http://127.0.0.1:8000/insertdata/";
+  const djangoapi = "https://elkindy-django-1.onrender.com/insertdata/";
   const addAdmins = async () => {
     setOpen2(true);
     try {

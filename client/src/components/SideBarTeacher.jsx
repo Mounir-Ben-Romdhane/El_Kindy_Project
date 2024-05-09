@@ -59,7 +59,7 @@ const Index = () => {
             </div>
             {/* Offcanvas body */}
             <div className="offcanvas-body p-3 p-xl-0">
-              <div className="bg-dark border rounded-3 pb-0 p-3 w-100">
+              <div className="bg-blue border rounded-3 pb-0 p-3 w-100">
                 {/* Dashboard menu */}
                 <div className="list-group list-group-dark list-group-borderless">
                   <Link

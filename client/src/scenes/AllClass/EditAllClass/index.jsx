@@ -7,6 +7,9 @@ import BannerStart from "components/BannerStart"; // If you have this component
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { getAllCourses } from 'services/courseService/api';
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
+import useAxiosPrivate from 'hooks/useAxiosPrivate';
 
 function ClassesForm() {
   const [formState, setFormState] = useState({
@@ -20,23 +23,34 @@ function ClassesForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
+  const [color, setColor] = useState("#399ebf");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     const fetchClasseData = async () => {
+      setOpen(true);
       try {
-        const response = await axios.get(
-          `http://localhost:3001/classes/${id}`
+        const response = await axiosPrivate.get(
+          `/classes/${id}`
         );
+        if(response.status === 200){
         setFormState({
           className: response.data.className,
           capacity: response.data.capacity,
           ordre: response.data.ordre,
           courses: response.data.courses
         });
+        setOpen(false);
+      }
         // Assuming response.data has a imagePath attribute
       } catch (error) {
         console.error("Failed to fetch class data:", error);
         setMessage("Failed to load class data.");
+        setOpen(false);
       }
     };
 
@@ -48,7 +62,6 @@ function ClassesForm() {
   
     if (name === 'courses') {
       const selectedValue = value;
-      const courseId = value;
       const isChecked = checked;
   
       setFormState((prevFormData) => ({
@@ -98,57 +111,76 @@ function ClassesForm() {
     setErrors(errors);
 
     if (Object.keys(errors).length === 0) {
+      setOpen2(true);
       try {
-        await axios.put(`http://localhost:3001/classes/${id}`, formValues, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-  
-        toast.success("Class edited successfully !!", {
-          autoClose: 1500,
-          style: {
-            color: "green",
-          },
-        });
-  
-        setTimeout(() => {
-          navigate('/ListAllClasse');
-        }, 2000);
+        const respense = await axiosPrivate.put(`/classes/${id}`, formValues
+        );
+        if(respense.status === 200){
+          toast.success("Class edited successfully !!", {
+            autoClose: 1000,
+            style: {
+              color: "green",
+            },
+          });
+          setOpen2(false);
+          setTimeout(() => {
+            navigate('/ListAllClasse');
+          }, 1500);
+        }
+        
       } catch (error) {
         console.error("Failed to update class:", error);
         setMessage("Failed to update Class. Please try again.");
+        setOpen2(false);
       }
     }
   };
-useEffect(() => {
+  useEffect(() => {
     const fetchCourses = async () => {
+      setOpen(true);  // Assuming setOpen manages a loading indicator
+
       try {
-        const response = await fetch("http://localhost:3001/course/allCourses", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const responseData = await response.json();
-        const { data } = responseData;
-        if (Array.isArray(data)) {
-          setCourses(data);
+        const response = await axiosPrivate.get("/course/all");
+        if (response.data && Array.isArray(response.data.data)) {
+          setCourses(response.data.data);
         }
+        setOpen(false);  // Hide loading indicator on success
       } catch (error) {
         console.error("Error fetching courses:", error);
+        setOpen(false);  // Hide loading indicator on failure
       }
     };
+
     fetchCourses();
-  }, []);
+}, [axiosPrivate]);  // Dependency on axiosPrivate to re-run if the instance
   return (
     <main>
       <SideBar />
       <div className="page-content">
         <TopBarBack />
-        <ToastContainer />
-        <div className="page-content-wrapper border">
-          {/* Add your banner component if you have one */}
+        {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <div className="page-content-wrapper border">
+              {/* Backdrop with GridLoader */}
+
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
+              <ToastContainer />
           <BannerStart
             title="Update Class"
             description="Make changes to your class details below."
@@ -254,6 +286,7 @@ useEffect(() => {
             </form>
           </div>
         </div>
+          )}
       </div>
     </main>
   );

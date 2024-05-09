@@ -64,7 +64,7 @@ export const login = async (req, res) => {
         await user.save();
 
         const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
-        roles: user.roles,  email : user.email, picturePath: user.picturePath, authSource: user.authSource, gender: user.gender  }, process.env.JWT_SECRET, {expiresIn:"10s"});
+        roles: user.roles,  email : user.email, picturePath: user.picturePath, authSource: user.authSource, gender: user.gender  }, process.env.JWT_SECRET, {expiresIn:"10m"});
      
 
         if(!user.verified) {
@@ -211,8 +211,8 @@ export const refreshToken = async (req, res) => {
        
 
         const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
-
-        roles: user.roles,  email : user.email, picturePath : user.picturePath  }, process.env.JWT_SECRET, { expiresIn: "30s" });
+        roles: user.roles,  email : user.email, picturePath: user.picturePath, authSource: user.authSource, gender: user.gender  }, process.env.JWT_SECRET, {expiresIn:"10m"});
+     
 
         res.json({ accessToken });
     } catch (error) {

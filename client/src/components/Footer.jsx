@@ -8,13 +8,13 @@ Footer START */}
 
 <div>
 
-  <footer className="bg-dark p-3">
+  <footer className="bg-blue p-3">
     <div className="container">
       <div className="row align-items-center">
         {/* Widget */}
         <div className="col-md-4 text-center text-md-start mb-3 mb-md-0">
           {/* Logo START */}
-          <a href="index.html"> <img className="h-20px" src="/assets/images/logo/logo.png" style={{ width: '80px', height: '100px' }} alt="logo" /> </a>
+          <a href="index.html"> <img  src="/assets/images/logo/logo.png" style={{ width: '130px', height: '40px' }} alt="logo" /> </a>
         </div>
         {/* Widget */}
         <div className="col-md-4 mb-3 mb-md-0">

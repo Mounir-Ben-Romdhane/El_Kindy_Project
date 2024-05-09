@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 const Modal = ({
   onClose,
@@ -82,6 +83,8 @@ const Modal = ({
   };
   const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
+  const axiosPrivate = useAxiosPrivate();
+
 
   const rooms = eventDetails.rooms || []; // Retrieve the list of rooms from eventDetails
   const handleRoomChange = (e) => {
@@ -140,7 +143,7 @@ const Modal = ({
   };
 
   const getStudentByTeacher = (teacherId) => {
-    axios
+    axiosPrivate
       .get(`http://localhost:3001/auth/getAllUserByRole/teacher`)
       .then((response) => {
         console.log("Response Data:", response.data);
@@ -174,8 +177,8 @@ const Modal = ({
   };
 
   const getClassesByTeacher = (teacherId) => {
-    axios
-      .get(`http://localhost:3001/auth/getAllUserByRole/teacher`)
+    axiosPrivate
+      .get(`/auth/getAllUserByRole/teacher`)
       .then((response) => {
         const teachers = response.data.data; // Assuming response.data contains the array of teachers
 

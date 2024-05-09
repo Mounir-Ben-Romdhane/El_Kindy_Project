@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import NavBar from 'components/NavBar';
-import FooterClient from 'components/FooterClient';
+import Footer from 'components/Footer';
 import SideBarTeacher from 'components/SideBarTeacher';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
 import Swal from 'sweetalert2'; // Importez SweetAlert2
@@ -47,13 +47,12 @@ const HomePagee = () => {
               <SideBarTeacher />
               <div className="col-xl-9">
               
-                <br></br>
                 {/* Student review START */}
-                <div className="card border bg-transparent rounded-3">
+                <div className="card border-2 bg-transparent rounded-3">
                 <div className="card">
                             <div className="card-body d-flex justify-content-between align-items-center">
                                 <h4>Check your list of meeting</h4>
-                                <button className="btn btn-primary-soft ms-2 px-5 mb-0 flex-shrink-0"><Link to="/listMeeting"><i className="fas fa-sign-in-alt me-2" />List Meeting</Link></button>
+                                <button className="btn btn-primary-soft ms-2 px-5 mb-0 flex-shrink-0"><Link to="/listMeeting" className="link-text"><i className="fas fa-sign-in-alt me-2" />List Meeting</Link></button>
                             </div>
                         </div>
 
@@ -97,7 +96,7 @@ const HomePagee = () => {
 
 
 
-<FooterClient />
+<Footer />
       </main>
       {/* **************** MAIN CONTENT END **************** */}
 

@@ -5,6 +5,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
+import useAxiosPrivate from 'hooks/useAxiosPrivate';
 
 function Index() {
   const [courses, setCourses] = useState([]);
@@ -12,29 +15,33 @@ function Index() {
   const [orderError, setOrderError] = useState(''); // State to hold order error message
   const [errors, setErrors] = useState({}); // State to hold form errors
   const navigate = useNavigate();
+  const [color, setColor] = useState("#399ebf");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const axiosPrivate = useAxiosPrivate();
 
-  // Fetch courses from API
+
   useEffect(() => {
     const fetchCourses = async () => {
-      try {
-        const response = await fetch("http://localhost:3001/course/allCourses", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const responseData = await response.json();
-        const { data } = responseData;
+      setOpen(true);  // Assuming setOpen manages a loading indicator
 
-        if (Array.isArray(data)) {
-          setCourses(data);
+      try {
+        const response = await axiosPrivate.get("/course/all");
+        if (response.data && Array.isArray(response.data.data)) {
+          setCourses(response.data.data);
         }
+        setOpen(false);  // Hide loading indicator on success
       } catch (error) {
         console.error("Error fetching courses:", error);
+        setOpen(false);  // Hide loading indicator on failure
       }
     };
+
     fetchCourses();
-  }, []);
+}, [axiosPrivate]);  // Dependency on axiosPrivate to re-run if the instance
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -79,34 +86,28 @@ function Index() {
 
     // Update the errors state
     setErrors(errors);
-console.log(formValues)
+    //console.log(formValues)
     // Check if there are any errors
     if (Object.keys(errors).length === 0) {
       try {
-        const savedClassesResponse = await fetch("http://localhost:3001/classes/create", {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formValues),
-        });
-
-        const savedClasses = await savedClassesResponse.json();
-
+        setOpen2(true);  // Show a loading indicator
+        const savedClassesResponse = await axiosPrivate.post("/classes/create", formValues);
+        const savedClasses = savedClassesResponse.data;
+      
         if (savedClasses) {
-          console.log('Class added!', savedClasses);
+          //console.log('Class added!', savedClasses);
           toast.success("Class added successfully !!", {
-            autoClose: 1500,
+            autoClose: 1000,
             style: {
               color: 'green',
             },
           });
           setTimeout(() => {
-            navigate('/ListAllClasse');
-          }, 2000);
+            navigate('/ListAllClasse');  // Navigate after success
+          }, 1500);
         } else {
-          toast.error("Failed to add class", {
-            autoClose: 5000,
+          toast.error("Failed to add class", {  // Show error toast if response is falsy
+            autoClose: 2000,
             style: {
               color: 'red',
             },
@@ -115,12 +116,15 @@ console.log(formValues)
       } catch (error) {
         console.error("Error adding class:", error);
         toast.error("Error adding class", {
-          autoClose: 5000,
+          autoClose: 2000,
           style: {
             color: 'red',
           },
         });
+      } finally {
+        setOpen2(false);  // Hide loading indicator regardless of the outcome
       }
+      
     }
   };
 
@@ -130,8 +134,29 @@ console.log(formValues)
       <main>
         <div className="page-content">
           <TopBarBack />
-          <ToastContainer />
-          <div className="page-content-wrapper border">
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <div className="page-content-wrapper border">
+              {/* Backdrop with GridLoader */}
+
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
+              <ToastContainer />
             <BannerStart
               title="Submit a new Class"
               description="Read our Before you create a class article before submitting!"
@@ -211,7 +236,9 @@ console.log(formValues)
                 </div>
               </form>
             </div>
+            
           </div>
+          )}
         </div>
       </main>
     </div>

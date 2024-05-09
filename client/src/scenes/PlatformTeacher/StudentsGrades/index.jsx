@@ -4,6 +4,8 @@ import TopBarTeacherTeacher from 'components/TopBarTeacherStudent';
 import NavBar from "components/NavBar";
 import axios from "api/axios";
 import { jwtDecode } from "jwt-decode";
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
 import { useSelector } from "react-redux";
 import Footer from 'components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -19,16 +21,23 @@ function Index() {
   const [classesData, setClassesData] = useState([]);
   const [studentsData, setStudentsData] = useState([]);
   const [soloStudentGrade, setSoloStudentGrade] = useState({});
-
+  let [color, setColor] = useState("#399ebf");
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const userId = accessToken ? jwtDecode(accessToken).id : "";
+        setOpen(true)
         const response = await axios.get(`/auth/getCoursesTaughtByTeacher/${userId}`);
         setCourses(response.data);
+        setOpen(false)
       } catch (error) {
         console.error('Error fetching courses:', error);
+        setOpen(false)
       }
     };
 
@@ -111,16 +120,6 @@ function Index() {
     }
   };
 
-  /* const getGradeByStudentId = async (studentId) => {
-      try {
-        const response = await axios.get(`/grades/getGradeByStudentId/${studentId}`);
-        console.log('Student grade:', response.data);
-        setSoloStudentGrade(response.data);
-      } catch (error) {
-        console.error('Error fetching grade:', error);
-      }
-    };*/
-
   const affectGradeWithoutClass = async (studentId, courseId, grade) => {
     try {
       const response = await axios.post('/grades/affectGradeWithoutClass', { studentId, courseId, grade });
@@ -133,7 +132,9 @@ function Index() {
           ...prevGradesData[studentId],
           grade: grade // Update the grade for the specific student
         }
-      }));
+
+      })); window.location.reload();
+
     } catch (error) {
       console.error('Error affecting grade:', error);
     }
@@ -231,224 +232,242 @@ function Index() {
     <div>
       <NavBar />
       <TopBarTeacherTeacher />
-      <div className="container">
+  
+      <div className='container'>
         <div className="row">
           <SideBarTeacher />
-          <div className="container col-md-8 mt-3">
-            <div className="col-xl-9">
-              <div className="card border bg-transparent rounded-3">
-                <div className="card-header bg-transparent border-bottom">
-                  <h3 className="mb-0">Student Grade Dashboard</h3>
-                  <div className="table-responsive border-0">
-                    <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
-                      <thead>
-                        <tr>
-                          <th scope="col" className="border-0 rounded-start">Course Name</th>
-                          <th scope="col" className="border-0">Show Classes and Students</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {courses.map((courseItem) => (
-                          <tr key={courseItem._id}>
-                            <td>{courseItem.title}</td>
-                            <td>
-                              <button className="btn btn-sm btn-success-soft btn-round me-1 mb-0 ml-3" onClick={() => toggleClasses(accessToken ? jwtDecode(accessToken).id : "", courseItem._id)}>
-                                <FontAwesomeIcon icon={faEye} />
-                                <span className="visually-hidden">
-                                  {showClasses[courseItem._id] ? 'Hide Classes' : 'Show Classes'}
-                                </span>
-                              </button>
-                            </td>
+          <div className="col-xl-9">
+            {open ? (
+              <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={open}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
+            ) : error ? (
+              <h2>Error: {error}</h2>
+            ) : (
+              <>
+                {/* Backdrop with GridLoader */}
+                <Backdrop
+                  sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                  open={open2}
+                >
+                  <GridLoader color={color} loading={loading} size={20} />
+                </Backdrop>
+                <div className="card border-2 bg-transparent rounded-3">
+                  <div className="card-header bg-transparent border-bottom">
+                    <h3 className="mb-0">Student Grade Dashboard</h3>
+                    <div className="table-responsive border-0">
+                      <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
+                        <thead>
+                          <tr>
+                            <th scope="col" className="border-0 rounded-start">Course Name</th>
+                            <th scope="col" className="border-0">Show Classes and Students</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  {Object.keys(showClasses).map((courseId) => (
-                    showClasses[courseId] && (
-                      <div key={courseId}>
-                        <table className="table table-striped">
-                          <thead>
-                            <tr>
-                              <th>Class Name</th>
-                              <th>Show Grades</th>
-                              <th>Edit</th>
+                        </thead>
+                        <tbody>
+                          {courses.map((courseItem) => (
+                            <tr key={courseItem._id}>
+                              <td>{courseItem.title}</td>
+                              <td>
+                                <button className="btn btn-sm btn-success-soft btn-round me-1 mb-0 ml-3" onClick={() => toggleClasses(accessToken ? jwtDecode(accessToken).id : "", courseItem._id)}>
+                                  <FontAwesomeIcon icon={faEye} />
+                                  <span className="visually-hidden">
+                                    {showClasses[courseItem._id] ? 'Hide Classes' : 'Show Classes'}
+                                  </span>
+                                </button>
+                              </td>
                             </tr>
-                          </thead>
-                          <tbody>
-                            {classesData.map(({ courseId, classes }) => (
-                              showClasses[courseId] && (
-                                <>
-                                  {classes.map((classItem) => (
-                                    <React.Fragment key={classItem._id}>
-                                      <tr>
-                                        <td>Class Name: {classItem.className}</td>
-                                        <td>Show Students</td>
-
-                                        <td>
-                                          <button
-                                            className="btn btn-sm btn-success-soft btn-round me-1 mb-0 ml-3"
-                                            onClick={() => toggleStudents(accessToken ? jwtDecode(accessToken).id : "", classItem._id, courseId)}
-                                          >
-                                            <i className="fas fa-fw fa-eye"></i>
-                                            <span className="visually-hidden">
-                                              {showStudents[classItem._id] ? 'Hide Students' : 'Show Students'}
-                                            </span>
-                                          </button>
-                                        </td>
-                                      </tr>
-                                      {showStudents[classItem._id] && showStudents[classItem._id][courseId] && (
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {Object.keys(showClasses).map((courseId) => (
+                      showClasses[courseId] && (
+                        <div key={courseId}>
+                          <table className="table table-dark-gray align-middle p-4 mb-0 table-hover mt-3">
+                            <thead>
+                              <tr>
+                                <th>Class Name</th>
+                                <th>Show Grades</th>
+                                <th>Edit</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {classesData.map(({ courseId, classes }) => (
+                                showClasses[courseId] && (
+                                  <>
+                                    {classes.map((classItem) => (
+                                      <React.Fragment key={classItem._id}>
                                         <tr>
-                                          <td colSpan="4">
-                                            {showStudents[classItem._id][courseId].length > 0 ? (
-                                              <table className="table table-striped">
-                                                <thead>
-                                                  <tr>
-                                                    <th>First Name</th>
-                                                    <th>Last Name</th>
-                                                    <th>Semester Grade</th>
-                                                    <th>Action</th>
-                                                  </tr>
-                                                </thead>
-                                                <tbody>
-                                                  {showStudents[classItem._id][courseId].map((student, index) => {
-                                                    const grades = showGrades[courseId]?.[classItem._id]?.filter(grade => grade.student === student._id);
-                                                    const grade = grades && grades.length > 0 ? grades[0].grade : 'N/A';
-                                                    return (
-                                                      <tr key={index}>
-                                                        <td>{student.firstName}</td>
-                                                        <td>{student.lastName}</td>
-                                                        <td>
-                                                          <span>{grade}</span>
-                                                        </td>
-                                                        <td>
-                                                          <button
-                                                            className="btn btn-sm btn-success-soft btn-round me-1 mb-0"
-                                                            data-bs-target={`#addQuestion-${student._id}`}
-                                                            data-bs-toggle="modal"
-                                                            onClick={() => {
-                                                              if (editingGrade !== student._id) {
-                                                                setEditingGrade(student._id);
-                                                              }
-                                                            }}
-                                                          >
-                                                            <i className="far fa-fw fa-edit"></i>
-                                                          </button>
-                                                          <td> </td>
-                                                          <div className="modal fade" id={`addQuestion-${student._id}`} tabIndex={-1} aria-labelledby={`addQuestionLabel-${student._id}`} aria-hidden="true" data-bs-backdrop="false">
-                                                            <div className="modal-dialog">
-                                                              <div className="modal-content">
-                                                                <div className="modal-header bg-dark">
-                                                                  <h5 className="modal-title text-white" id={`addQuestionLabel-${student._id}`}>Add Student Grade</h5>
-                                                                  <button type="button" className="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i className="bi bi-x-lg" /></button>
-                                                                </div>
-                                                                <div className="modal-body">
-                                                                  <form className="row text-start g-3" onSubmit={(e) => handleFormSubmit(e, student._id, courseId, classItem._id)}>
-                                                                    <div className="col-6">
-                                                                      <h5>{student.lastName} {student.firstName}</h5>
-                                                                    </div>
-                                                                    <input className="form-control" name="studentId" type="hidden" value={student._id} />
-                                                                    <input className="form-control" name="courseId" type="hidden" value={courseId} />
-                                                                    <input className="form-control" name="classId" type="hidden" value={classItem._id} />
-                                                                    <input type="text" name="grade" defaultValue={grade} />
-                                                                    <div className="modal-footer">
-                                                                      <button type="button" className="btn btn-danger-soft my-0" data-bs-dismiss="modal">Close</button>
-                                                                      <button className="btn btn-success my-0" type="submit">Add Student Grade</button>
-                                                                    </div>
-                                                                  </form>
+                                          <td>Class : {classItem.className}</td>
+                                          <td>Show Students</td>
+                                          <td>
+                                            <button
+                                              className="btn btn-sm btn-success-soft btn-round me-1 mb-0 ml-3"
+                                              onClick={() => toggleStudents(accessToken ? jwtDecode(accessToken).id : "", classItem._id, courseId)}
+                                            >
+                                              <i className="fas fa-fw fa-eye"></i>
+                                              <span className="visually-hidden">
+                                                {showStudents[classItem._id] ? 'Hide Students' : 'Show Students'}
+                                              </span>
+                                            </button>
+                                          </td>
+                                        </tr>
+                                        {showStudents[classItem._id] && showStudents[classItem._id][courseId] && (
+                                          <tr>
+                                            <td colSpan="4">
+                                              {showStudents[classItem._id][courseId].length > 0 ? (
+                                                <table className="table table-striped">
+                                                  <thead>
+                                                    <tr>
+                                                      <th>First Name</th>
+                                                      <th>Last Name</th>
+                                                      <th>Semester Grade</th>
+                                                      <th>Action</th>
+                                                    </tr>
+                                                  </thead>
+                                                  <tbody>
+                                                    {showStudents[classItem._id][courseId].map((student, index) => {
+                                                      const grades = showGrades[courseId]?.[classItem._id]?.filter(grade => grade.student === student._id);
+                                                      const grade = grades && grades.length > 0 ? grades[0].grade : 'N/A';
+                                                      return (
+                                                        <tr key={index}>
+                                                          <td>{student.firstName}</td>
+                                                          <td>{student.lastName}</td>
+                                                          <td>
+                                                            <span>{grade}</span>
+                                                          </td>
+                                                          <td>
+                                                            <button
+                                                              className="btn btn-sm btn-success-soft btn-round me-1 mb-0"
+                                                              data-bs-target={`#addQuestion-${student._id}`}
+                                                              data-bs-toggle="modal"
+                                                              onClick={() => {
+                                                                if (editingGrade !== student._id) {
+                                                                  setEditingGrade(student._id);
+                                                                }
+                                                              }}
+                                                            >
+                                                              <i className="far fa-fw fa-edit"></i>
+                                                            </button>
+                                                            <td> </td>
+                                                            <div className="modal fade" id={`addQuestion-${student._id}`} tabIndex={-1} aria-labelledby={`addQuestionLabel-${student._id}`} aria-hidden="true" data-bs-backdrop="false">
+                                                              <div className="modal-dialog">
+                                                                <div className="modal-content">
+                                                                  <div className="modal-header bg-dark">
+                                                                    <h5 className="modal-title text-white" id={`addQuestionLabel-${student._id}`}>Add Student Grade</h5>
+                                                                    <button type="button" className="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i className="bi bi-x-lg" /></button>
+                                                                  </div>
+                                                                  <div className="modal-body">
+                                                                    <form className="row text-start g-3" onSubmit={(e) => handleFormSubmit(e, student._id, courseId, classItem._id)}>
+                                                                      <div className="col-6">
+                                                                        <h5>{student.lastName} {student.firstName}</h5>
+                                                                      </div>
+                                                                      <input className="form-control" name="studentId" type="hidden" value={student._id} />
+                                                                      <input className="form-control" name="courseId" type="hidden" value={courseId} />
+                                                                      <input className="form-control" name="classId" type="hidden" value={classItem._id} />
+                                                                      <input type="text" name="grade" defaultValue={grade} />
+                                                                      <div className="modal-footer">
+                                                                        <button type="button" className="btn btn-danger-soft my-0" data-bs-dismiss="modal">Close</button>
+                                                                        <button className="btn btn-success my-0" type="submit">Add Student Grade</button>
+                                                                      </div>
+                                                                    </form>
+                                                                  </div>
                                                                 </div>
                                                               </div>
                                                             </div>
-                                                          </div>
-                                                        </td>
-                                                      </tr>
-                                                    );
-                                                  })}
-                                                </tbody>
-                                              </table>
-                                            ) : (
-                                              <div className="alert alert-info" role="alert">
-                                                No students enrolled in this class yet.
-                                              </div>
-                                            )}
-                                          </td>
-                                        </tr>
-                                      )}
-
-                                    </React.Fragment>
-                                  ))}
-
-                                  {studentsData.find(item => item.courseId === courseId)?.students.map((student) => {
-                                    const grade = soloStudentGrade[student._id]?.[0]?.grade || 'N/A'; // Access grade using student ID as key
-                                    return (
-                                      <tr key={student._id}>
-                                        <td>Student Name: {student.firstName} {student.lastName}</td>
-                                        <td>{grade}</td>
-                                        <td>
-                                          <button
-                                            className="btn btn-sm btn-success-soft btn-round me-1 mb-0"
-                                            data-bs-target={`#addGrade-${student._id}`}
-                                            data-bs-toggle="modal"
-                                            onClick={() => {
-                                              if (editingGrade !== student._id) {
-                                                setEditingGrade(student._id);
-                                              }
-                                            }}
-                                          >
-                                            <i className="far fa-fw fa-edit"></i>
-                                            <span className="visually-hidden"></span>
-                                          </button>
-                                          <div className="modal fade" id={`addGrade-${student._id}`} tabIndex={-1} aria-labelledby={`addQuestionLabel-${student._id}`} aria-hidden="true" data-bs-backdrop="false">
-                                            <div className="modal-dialog">
-                                              <div className="modal-content">
-                                                <div className="modal-header bg-dark">
-                                                  <h5 className="modal-title text-white" id={`addQuestionLabel-${student._id}`}>Add Student Grade</h5>
-                                                  <button type="button" className="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i className="bi bi-x-lg" /></button>
+                                                          </td>
+                                                        </tr>
+                                                      );
+                                                    })}
+                                                  </tbody>
+                                                </table>
+                                              ) : (
+                                                <div className="alert alert-info" role="alert">
+                                                  No students enrolled in this class yet.
                                                 </div>
-                                                <div className="modal-body">
-                                                  <form className="row text-start g-3" onSubmit={(e) => handleFormSubmit1(e, student._id, courseId)}>
-                                                    <div className="col-6">
-                                                      <h5>{student.lastName} {student.firstName}</h5>
-                                                    </div>
-                                                    <input className="form-control" name="studentId" type="hidden" value={student._id} />
-                                                    <input className="form-control" name="courseId" type="hidden" value={courseId} />
-                                                    <input type="text" name="grade" defaultValue={grade} />
-                                                    <div className="modal-footer">
-                                                      <button type="button" className="btn btn-danger-soft my-0" data-bs-dismiss="modal">Close</button>
-                                                      <button className="btn btn-success my-0" type="submit">Add Student Grade</button>
-                                                    </div>
-                                                  </form>
+                                              )}
+                                            </td>
+                                          </tr>
+                                        )}
+                                      </React.Fragment>
+                                    ))}
+  
+                                    {studentsData.find(item => item.courseId === courseId)?.students.map((student) => {
+                                      const grade = soloStudentGrade[student._id]?.[0]?.grade || 'N/A'; // Access grade using student ID as key
+                                      return (
+                                        <tr key={student._id}>
+                                          <td>Individual Student : {student.firstName} {student.lastName}</td>
+                                          <td>{grade}</td>
+                                          <td>
+                                            <button
+                                              className="btn btn-sm btn-success-soft btn-round me-1 mb-0"
+                                              data-bs-target={`#addGrade-${student._id}`}
+                                              data-bs-toggle="modal"
+                                              onClick={() => {
+                                                if (editingGrade !== student._id) {
+                                                  setEditingGrade(student._id);
+                                                }
+                                              }}
+                                            >
+                                              <i className="far fa-fw fa-edit"></i>
+                                              <span className="visually-hidden"></span>
+                                            </button>
+                                            <div className="modal fade" id={`addGrade-${student._id}`} tabIndex={-1} aria-labelledby={`addQuestionLabel-${student._id}`} aria-hidden="true" data-bs-backdrop="false">
+                                              <div className="modal-dialog">
+                                                <div className="modal-content">
+                                                  <div className="modal-header bg-dark">
+                                                    <h5 className="modal-title text-white" id={`addQuestionLabel-${student._id}`}>Add Student Grade</h5>
+                                                    <button type="button" className="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i className="bi bi-x-lg" /></button>
+                                                  </div>
+                                                  <div className="modal-body">
+                                                    <form className="row text-start g-3" onSubmit={(e) => handleFormSubmit1(e, student._id, courseId)}>
+                                                      <div className="col-6">
+                                                        <h5>{student.lastName} {student.firstName}</h5>
+                                                      </div>
+                                                      <input className="form-control" name="studentId" type="hidden" value={student._id} />
+                                                      <input className="form-control" name="courseId" type="hidden" value={courseId} />
+                                                      <input type="text" name="grade" defaultValue={grade} />
+                                                      <div className="modal-footer">
+                                                        <button type="button" className="btn btn-danger-soft my-0" data-bs-dismiss="modal">Close</button>
+                                                        <button className="btn btn-success my-0" type="submit">Add Student Grade</button>
+                                                      </div>
+                                                    </form>
+                                                  </div>
                                                 </div>
                                               </div>
                                             </div>
-                                          </div>
-                                        </td>
-                                      </tr>
-                                    );
-                                  })}
-
-
-
-                                </>
-                              )
-                            ))}
-                          </tbody>
-
-
-                        </table>
-                      </div>
-                    )
-                  ))}
-
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
+  
+                                  </>
+                                )
+                              ))}
+                            </tbody>
+  
+  
+                          </table>
+                        </div>
+                      )
+                    ))}
+  
+                  </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
           </div>
         </div>
-        <Footer />
       </div>
+      <br />
+      <br />
+      <Footer />
     </div>
   );
+  
 }
 
-export default Index;
+          export default Index;

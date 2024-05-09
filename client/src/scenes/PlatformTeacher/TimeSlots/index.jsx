@@ -2,16 +2,25 @@ import NavBar from "components/NavBar";
 import React, { useEffect, useState } from "react";
 import TopBarTeacherStudent from "components/TopBarTeacherStudent";
 import SideBarTeacher from "components/SideBarTeacher";
-import FooterClient from "components/FooterClient";
+import FooterClient from "components/Footer";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 import { getUserById } from "services/usersService/api";
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
+import { ToastContainer, toast } from "react-toastify";
+
 
 function TimeSlots() {
   const accessToken = useSelector((state) => state.accessToken);
   const tokenUser = accessToken ? jwtDecode(accessToken) : "";
   const [userData, setUserData] = useState({});
+  let [color, setColor] = useState("#399ebf");
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   //refresh token
   const axiosPrivate = useAxiosPrivate();
@@ -22,11 +31,14 @@ function TimeSlots() {
 
   useEffect(() => {
     const getUser = async () => {
+      setOpen(true);
       try {
-        const response = await getUserById(tokenUser.id);
+        const response = await getUserById(tokenUser.id, axiosPrivate);
         setUserData(response.data.user);
         setSelectedTimeSlots(response.data.user.disponibilite || []);
+        setOpen(false);
       } catch (error) {
+        setOpen(false);
         console.log(error);
       }
     };
@@ -101,6 +113,7 @@ function TimeSlots() {
 
   // Function to send updated time slots to backend
   const handleUpdateTimeSlots = async () => {
+    setOpen2(true);
     try {
       const response = await axiosPrivate.put(
         `/auth/updateTimeSlots/${tokenUser.id}`,
@@ -110,14 +123,20 @@ function TimeSlots() {
       );
       if (response.status === 200) {
         // Password updated successfully
-        alert('Time slots updated successfully!');
-
+        setOpen2(false);
+        toast.success("Time slouts updated successfully !!", {
+          autoClose: 1000,
+          style: {
+            color: "green",
+          },
+        });
       } else {
         console.error('Failed to update timeSlot ', response.data.message);
-        alert('Failed to update time Slots. Please try again later.');
+        setOpen2(false);
       }
       // Handle success response as needed
     } catch (error) {
+      setOpen2(false);
       console.error("Error updating time slots:", error);
       // Handle error response as needed
     }
@@ -128,21 +147,45 @@ function TimeSlots() {
       <main>
         <NavBar />
         <TopBarTeacherStudent />
+
         <section className="pt-0">
           <div className="container">
             <div className="row">
               <SideBarTeacher />
-              {/* Main content START */}
+              {open ? (
+                <>
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+            
+            
+      </>
+          ) : (
               <div className="col-xl-9">
-                <div className="card bg-transparent border rounded-3 ">
+                <Backdrop
+            sx={{
+              color: "#fff",
+              zIndex: (theme) => theme.zIndex.drawer + 1,
+            }}
+            open={open2}
+          >
+            <GridLoader color={color} loading={loading} size={20} />
+          </Backdrop>
+          <ToastContainer />
+
+                <div className="card bg-transparent border-2 rounded-3 ">
                   {/* Availability */}
+                  
                   <div className="m-3">
                     <h6 className="mb-lg-0" id="heading-3">
                       AVAILABLE TIME SLOTS
                     </h6>
                     <div>
                       <div className=" mt-3">
-                        <div className="table-responsive">
+                        <div className="table-responsive rounded-2">
                           <table className="calendar-table">
                             <thead>
                               <tr>
@@ -236,7 +279,8 @@ function TimeSlots() {
                     </button>
                   </div>
                 </div>
-              </div>
+              </div> )}
+              
             </div>
           </div>
         </section>

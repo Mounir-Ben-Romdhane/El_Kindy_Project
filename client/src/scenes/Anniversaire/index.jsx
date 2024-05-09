@@ -39,9 +39,10 @@ function App() {
   }));
 
   return (
-    <div className="app-container">
-      <SideBar />
+    <div >
       <main>
+      <SideBar />
+      <div className="page-content">
         <TopBarBack />
         {/* Utilisation de Backdrop pour afficher un chargement */}
         {open ? (
@@ -55,14 +56,14 @@ function App() {
           // Affichage de l'erreur
           <h2>Error: {error}</h2>
         ) : (
-          <div>
+          <div className="page-content-wrapper border">
             <Backdrop
               sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
               open={open2}
             >
               <GridLoader color={color} loading={loading} size={20} />
             </Backdrop>
-            <div className="page-content">
+            <div>
               <h1>Birthday Calendar</h1>
               <FullCalendar
                 plugins={[dayGridPlugin]}
@@ -72,6 +73,7 @@ function App() {
             </div>
           </div>
         )}
+        </div>
       </main>
     </div>
   );

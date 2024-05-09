@@ -7,8 +7,8 @@ import SideBar from "components/SideBar"; // Adjust import paths as needed
 import TopBarBack from "components/TopBarBack"; // Adjust import paths as needed
 import Backdrop from "@mui/material/Backdrop";
 import GridLoader from "react-spinners/GridLoader";
-import { axiosPrivate } from "api/axios";
 import NoData from "components/NoData";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 const MySwal = withReactContent(Swal);
 
@@ -37,6 +37,7 @@ function Index() {
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
   const [loading, setLoading] = useState(true);
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     fetchReservations();
@@ -70,18 +71,19 @@ function Index() {
       }
     });
   };
-  
+
   const updateReservationStatus = async (reservationId, status) => {
-    
+    setOpen2(true);
     try {
       await axiosPrivate.patch(`/events/reservations/${reservationId}`, {
         status,
       });
       MySwal.fire("Updated!", `The reservation has been ${status}.`, "success");
       fetchReservations();
+      setOpen2(false);
     } catch (error) {
       console.error(`Error updating reservation status to ${status}:`, error);
-
+      setOpen2(false);
       MySwal.fire(
         "Error!",
         `The reservation status could not be updated to ${status}. Please try again later.`,
@@ -89,7 +91,30 @@ function Index() {
       );
     }
   };
-  
+
+  const handleDelete = async (id) => {
+    // Show confirmation dialog before deleting
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You will not be able to recover this reservation!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axiosPrivate.delete(`/events/reservation/delete/${id}`);
+          setReservations(reservations.filter((course) => course._id !== id));
+          Swal.fire("Deleted!", "Reservation has been deleted.", "success");
+        } catch (error) {
+          console.error("Failed to delete reservation:", error);
+          Swal.fire("Failed!", "Failed to delete the reservation.", "error");
+        }
+      }
+    });
+  };
 
   const handleSearch = debounce((term) => {
     setSearchTerm(term.toLowerCase());
@@ -285,27 +310,35 @@ function Index() {
                               </td>
 
                               <td>
-  {reservation.status !== "accepted" && (
-    <button
-      onClick={() =>
-        confirmUpdate(reservation._id, "accepted")
-      }
-      className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
-    >
-      <i className="bi bi-check fs-4"></i> {/* Accept icon */}
-    </button>
-  )}
-  {reservation.status !== "refused" && (
-    <button
-      onClick={() =>
-        confirmUpdate(reservation._id, "refused")
-      }
-      className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
-    >
-      <i className="bi bi-x fs-4"></i> {/* Refuse icon */}
-    </button>
-  )}
-</td>
+                                {reservation.status !== "accepted" && (
+                                  <button
+                                    onClick={() =>
+                                      confirmUpdate(reservation._id, "accepted")
+                                    }
+                                    className="btn btn-success-soft btn-round me-1 mb-1 mb-md-0"
+                                  >
+                                    <i className="bi bi-check fs-4"></i>{" "}
+                                    {/* Accept icon */}
+                                  </button>
+                                )}
+                                {reservation.status !== "refused" && (
+                                  <button
+                                    onClick={() =>
+                                      confirmUpdate(reservation._id, "refused")
+                                    }
+                                    className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
+                                  >
+                                    <i className="bi bi-x fs-4"></i>{" "}
+                                    {/* Refuse icon */}
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => handleDelete(reservation._id)}
+                                  className="btn btn-danger-soft btn-round me-1 mb-1 mb-md-0"
+                                >
+                                  <i className="bi bi-trash"></i>
+                                </button>
+                              </td>
                             </tr>
                           ))}
                         </tbody>

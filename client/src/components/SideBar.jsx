@@ -19,7 +19,10 @@ import {
   faCalendarAlt,
   faBriefcase,
   faSchool,
-  faShoppingCart
+  faShoppingCart,
+  faBirthdayCake,
+  faExclamationCircle,
+  faChalkboard
 } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from "react-i18next";
 
@@ -185,7 +188,7 @@ function SideBar() {
                     to="/Planning"
                     className={`nav-link ${activeNavItem === "/Planning" ? "active" : ""}`}
                     onClick={() => handleNavItemClick("/Planning")}>
-                    <FontAwesomeIcon icon={faTags} className="fa-fw me-1" />{" "}
+                    <FontAwesomeIcon icon={faCalendarAlt} className="fa-fw me-1" />{" "}
                     {/* Category Courses */}{t("sidebar.Planning")}
                   </Link>
 
@@ -195,7 +198,7 @@ function SideBar() {
                     to="/anniversaire"
                     className={`nav-link ${activeNavItem === "/anniversaire" ? "active" : ""}`}
                     onClick={() => handleNavItemClick("/anniversaire")}>
-                    <FontAwesomeIcon icon={faTags} className="fa-fw me-1" />{" "}
+                    <FontAwesomeIcon icon={faBirthdayCake} className="fa-fw me-1" />{" "}
                     {/* Category Courses */}Anniversaire
                   </Link>
 
@@ -295,7 +298,7 @@ function SideBar() {
                     to="/ListAllClasse"
                     className={`nav-link ${activeNavItem === "/ListAllClasse" ? "active" : ""}`}
                     onClick={() => handleNavItemClick("/ListAllClasse")}>
-                    <FontAwesomeIcon icon={faSchool} className="fa-fw me-1" />{" "}
+                    <FontAwesomeIcon icon={faChalkboard} className="fa-fw me-1" />{" "}
                     {t("sidebar.Classes")}
                   </Link>
                 </li>
@@ -305,8 +308,8 @@ function SideBar() {
                     to="/ContactBack"
                     className={`nav-link ${activeNavItem === "/ContactBack" ? "active" : ""}`}
                     onClick={() => handleNavItemClick("/ContactBack")}>
-                    <FontAwesomeIcon icon={faSchool} className="fa-fw me-1" />{" "}
-                    claim
+                    <FontAwesomeIcon icon={faExclamationCircle} className="fa-fw me-1" />{" "}
+                    Claims
                   </Link>
                 </li>
                 {/* Menu item 7 */}
@@ -318,9 +321,9 @@ function SideBar() {
                   </a>
                 </li>
               </ul>
-              {/* Sidebar menu end */}</div>
+              {/* Sidebar menu end */}
             {/* Sidebar footer START */}
-            <div className="px-3 mt-auto pt-3">
+            <div className="px-3 mt-auto pt-3 ">
               <div className="d-flex align-items-center justify-content-between text-primary-hover">
                 <Link
                   className="h5 mb-0 text-body"
@@ -342,6 +345,7 @@ function SideBar() {
                   <i className="bi bi-power" />
                 </a>
               </div>
+            </div>
             </div>
             {/* Sidebar footer END */}
           </div>

@@ -5,7 +5,7 @@ function Footer() {
     <div>
         {/* =======================
 Footer START */}
-<footer className="pt-0 bg-blue rounded-4 position-relative mx-2 mx-md-4 mb-3">
+<footer className="pt-0 bg-blue rounded-4 position-relative mx-2 mx-md-4">
   {/* SVG decoration for curve */}
   <figure className="mb-0">
     <svg className="fill-body rotate-180" width="100%" height={120} viewBox="0 0 500 150" preserveAspectRatio="none">

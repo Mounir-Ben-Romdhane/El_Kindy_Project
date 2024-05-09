@@ -322,7 +322,7 @@ function CategoryForm() {
                                   <img
                                     src={URL.createObjectURL(imageFile)}
                                     alt="Uploaded image"
-                                    className="img-fluid mb-2"
+                                    className="img-fluid p-2 mb-2"
                                     style={{
                                       maxWidth: "100%", // This makes the image responsive
                                       maxHeight: "300px",
@@ -338,7 +338,7 @@ function CategoryForm() {
                                   <img
                                     src={`http://localhost:3001/assets/${formData.picturePath}`}
                                     alt="Uploaded image"
-                                    className="img-fluid mb-2"
+                                    className="img-fluid p-2 mb-2"
                                     style={{
                                       maxWidth: "100%", // This makes the image responsive
                                       maxHeight: "300px",
@@ -396,7 +396,6 @@ function CategoryForm() {
                         </div>
                       </div>
 
-                      {/* Submit button */}
                       <div className="d-md-flex justify-content-end align-items-start mt-4">
                         <div className="text-md-end">
                           <button

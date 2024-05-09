@@ -917,7 +917,7 @@ const editUserProfile = async (req, res) => {
   try {
     
     // Update user fields
-    const updatedUser = await User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
       userId,
       {
         $set: {
@@ -941,11 +941,15 @@ const editUserProfile = async (req, res) => {
       { new: true }
     );
 
-    if (!updatedUser) {
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json({ message: "User profile updated successfully", user: updatedUser });
+    const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
+        roles: user.roles,  email : user.email, picturePath: user.picturePath, authSource: user.authSource, gender: user.gender  }, process.env.JWT_SECRET, {expiresIn:"10s"});
+     
+
+    res.status(200).json({ message: "User profile updated successfully", user: user, accessToken });
   } catch (error) {
     console.error("Error updating user profile:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -958,17 +962,21 @@ const updateEmail = async (req, res) => {
   const userId = req.params.id; // Assuming you have middleware to extract user ID from JWT
 
   try {
-    const updatedUser = await User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
       userId,
       { email: req.body.email },
       { new: true }
     );
 
-    if (!updatedUser) {
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json({ message: "Email updated successfully", user: updatedUser });
+    const accessToken = jwt.sign({ id: user._id, fullName: user.firstName + " " + user.lastName,
+        roles: user.roles,  email : user.email, picturePath: user.picturePath, authSource: user.authSource, gender: user.gender  }, process.env.JWT_SECRET, {expiresIn:"10s"});
+     
+
+    res.status(200).json({ message: "Email updated successfully", user: user, accessToken });
   } catch (error) {
     console.error("Error updating email:", error);
     res.status(500).json({ message: "Internal server error" });

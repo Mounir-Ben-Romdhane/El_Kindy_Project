@@ -2,12 +2,14 @@ import NavBar from "components/NavBar";
 import React, { useEffect, useState } from "react";
 import TopBarTeacherStudent from "components/TopBarTeacherStudent";
 import SideBarTeacher from "components/SideBarTeacher";
-import FooterClient from "components/FooterClient";
-import { useSelector } from "react-redux";
+import FooterClient from "components/Footer";
+import { useDispatch, useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { getUserById } from "services/usersService/api";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
+import { setAccessToken, setLogout } from "../../../state";
+
 
 
 
@@ -25,6 +27,8 @@ function EditProfile() {
   //refresh token
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
 
 
 
@@ -46,7 +50,7 @@ function EditProfile() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const response = await getUserById(tokenUser.id);
+        const response = await getUserById(tokenUser.id, axiosPrivate);
         setUserData(response.data.user);
         setCurrentPassword(response.data.user.passwordDecoded);
         setUser({
@@ -69,7 +73,7 @@ function EditProfile() {
     };
 
     getUser();
-  }, []);
+  }, [accessToken]);
 
   const handleEmailUpdate = async (e) => {
     e.preventDefault();
@@ -83,6 +87,7 @@ function EditProfile() {
       if (response.status === 200) {
         // Email updated successfully
         alert("Email updated successfully!");
+        dispatch(setAccessToken({ accessToken: response.data.accessToken }));
       } else {
         // Handle other response statuses if needed
         console.error("Failed to update email:", response.data.message);
@@ -201,6 +206,7 @@ function EditProfile() {
     }
   };
 
+
   const updateUserProfile = async (userId, userData) => {
     const formData = new FormData();
     for (let value in userData) {
@@ -222,7 +228,8 @@ function EditProfile() {
       );
       if (response.status === 200) {
         // Navigate to the desired path
-        navigate("/dashboard-teacher");
+        dispatch(setAccessToken({ accessToken: response.data.accessToken }));
+        //navigate("/dashboard-teacher");
       }
       return response.data;
     } catch (error) {
@@ -551,7 +558,6 @@ function EditProfile() {
                               className="form-control"
                               type="text"
                               placeholder="Enter current password"
-                              value={currentPassword}
                               onChange={(e) =>
                                 setCurrentPassword(e.target.value)
                               }

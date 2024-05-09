@@ -6,6 +6,7 @@ import { setLogout } from '../state';
 import { jwtDecode } from "jwt-decode";
 import { getUserById } from 'services/usersService/api';
 import { useTranslation } from 'react-i18next';
+import useAxiosPrivate from 'hooks/useAxiosPrivate';
 
 function TopBarBack() {
 
@@ -18,6 +19,7 @@ function TopBarBack() {
   const accessToken = useSelector((state) => state.accessToken);
   const user = accessToken ? jwtDecode(accessToken) : "";
   const role = accessToken ? jwtDecode(accessToken).roles : null;
+  const axiosPrivate = useAxiosPrivate();
 
 
   const { t, i18n } = useTranslation();
@@ -27,7 +29,7 @@ function TopBarBack() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const response = await getUserById(user.id);
+        const response = await getUserById(user.id, axiosPrivate);
         setUserData(response.data.user);
       } catch (err) {
         console.log(err);
@@ -331,7 +333,7 @@ function TopBarBack() {
                         <img
                           className="avatar-img rounded-circle"
                           
-                          src="http://localhost:3001/assets/logoo.jpg"
+                          src={getAvatarSrc()}
                           alt="avatar"
                         />
                       </a>

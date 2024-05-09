@@ -4,48 +4,117 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getShop } from "services/shopService/api";
 import axios from "axios";
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
+import { ToastContainer, toast } from "react-toastify";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 
+const MySwal = withReactContent(Swal);
 
 function Index() {
   const { id } = useParams();
   const [shop, setShop] = useState("");
   const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  let [color, setColor] = useState("#399ebf");
+
 
 
   useEffect(() => {
+    setOpen(true);
     const fetchData = async () => {
       try {
         const shop = await getShop(id);
-        console.log("shop", shop.data);
+        //console.log("shop", shop.data);
         setShop(shop.data);
+        setOpen(false);
       } catch (err) {
         console.log(err);
+        setOpen(false);
       }
     };
     fetchData();
   }, []);
 
   const approveShop = async (id) => {
-    try {
-      const response = await axios.patch(
-        `http://localhost:3001/shops/${id}/approve`
-      );
-      navigate("/BackListShop");
-    } catch (error) {
-      console.error(error);
-    }
+    MySwal.fire({
+      title: "Are you sure?",
+      text: "Do you want to approve this product?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, approve it!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          setOpen2(true);
+          const response = await axiosPrivate.patch(`/shops/${id}/approve`);
+          if (response.status === 200) {
+            setOpen2(false);
+            toast.success("Product approved successfully!", {
+              autoClose: 1000,
+              style: { color: "green" },
+            });
+            setTimeout(() => {
+              navigate("/BackListShop");
+            }, 1500);
+          }
+        } catch (error) {
+          setOpen2(false);
+          console.error(error);
+          toast.error("Issue encountered during approval.", {
+            autoClose: 1500,
+            style: { color: "red" },
+          });
+        }
+      }
+    });
   };
+  
 
   const rejectShop = async (id) => {
-    try {
-      const response = await axios.patch(
-        `http://localhost:3001/shops/${id}/reject`
-      );
-      navigate("/BackListShop");
-    } catch (error) {
-      console.error(error);
-    }
+    MySwal.fire({
+      title: "Are you sure?",
+      text: "Do you want to reject this product?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, reject it!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          setOpen2(true);
+          const response = await axiosPrivate.patch(`/shops/${id}/reject`);
+          if (response.status === 200) {
+            setOpen2(false);
+            toast.success("Product rejected successfully!", {
+              autoClose: 1000,
+              style: { color: "green" },
+            });
+            setTimeout(() => {
+              navigate("/BackListShop");
+            }, 1500);
+          }
+        } catch (error) {
+          setOpen2(false);
+          console.error(error);
+          toast.error("Product rejection error.", {
+            autoClose: 1000,
+            style: { color: "red" },
+          });
+        }
+      }
+    });
   };
+  
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
     const formattedDate = new Date(dateString).toLocaleString('en-US', options);
@@ -60,15 +129,30 @@ function Index() {
         {/* Page content START */}
         <div className="page-content">
           <TopBarBack />
-
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+            <div>
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
+          <ToastContainer />
           {/* Page main content START */}
           <div className="page-content-wrapper border">
             {/* Title */}
-            <div className="row">
-              <div className="col-12 mb-3">
-                <h1 className="h3 mb-2 mb-sm-0">Instrument detail</h1>
-              </div>
-            </div>
             <div className="row g-4">
               {/* Personal information START */}
               <div className="col-xxl-7">
@@ -76,7 +160,7 @@ function Index() {
                   {/* Card header */}
                   <div className="card-header bg-light border-bottom">
                     <h5 className="card-header-title mb-0">
-                      Personal Information
+                    Instrument detail
                     </h5>
                   </div>
                  
@@ -89,9 +173,12 @@ function Index() {
                         alt=""
                         src={`http://localhost:3001/assets/${shop.picturePath}`}
                         style={{
-                          width: '300px', // Taille agrandie de l'image
-                          height: '300px'
-                        }}
+                          maxWidth: "300px", // This makes the image responsive
+                          maxHeight: "300px",
+                          height: "auto", // Maintain aspect ratio
+                          width: "auto", // Allow width to scale with the height
+                          objectFit: "contain", // Ensures the image is scaled to maintain its aspect ratio while fitting within the frame
+                       }}
                         />
 
                       ) : (
@@ -211,6 +298,9 @@ function Index() {
             {/* Row END */}
           </div>
           {/* Page main content END */}
+          
+        </div>
+        )}
         </div>
       </main>
     </div>

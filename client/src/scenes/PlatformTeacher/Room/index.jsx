@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
-import { Link } from 'react-router-dom';
-import FooterClient from "components/FooterClient";
+import { Link } from "react-router-dom";
+import Footer from "components/Footer";
 import NavBar from "components/NavBar";
 import SideBarTeacher from "components/SideBarTeacher";
 import { useSelector } from "react-redux";
@@ -37,8 +37,8 @@ const Room = () => {
 
   const myMeeting = (element) => {
     if (!meetingLoaded && decodeToken && decodeToken.fullName) {
-      const appID = 601284725;
-      const serverSecret = "6407863a0afd45265fe09958043e1193";
+      const appID = 1956154710;
+      const serverSecret = "239e33d628013771c3d065c6c53298c1";
       const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
         appID,
         serverSecret,
@@ -119,14 +119,11 @@ const Room = () => {
           students: "",
         });
         setShowLinkInterface(false);
-
       } else {
         console.error("Error creating meeting:", response.statusText);
-        
       }
     } catch (error) {
       console.error("Error creating meeting:", error);
-      
     }
   };
 
@@ -135,8 +132,7 @@ const Room = () => {
     const fetchInscriptions = async () => {
       try {
         const response = await axiosPrivate.get("/inscription/all");
-          setStudentsList(response.data.data);
-        
+        setStudentsList(response.data.data);
       } catch (error) {
         console.error("Error fetching inscriptions:", error.message);
       } finally {
@@ -148,8 +144,8 @@ const Room = () => {
   return (
     <div>
       {/* **************** MAIN CONTENT START **************** */}
-      <main>   
-         <NavBar />
+      <main>
+        <NavBar />
 
         {/* hedha l partie l fou9aneya  */}
         <TopBarTeacherStudent />
@@ -159,32 +155,19 @@ const Room = () => {
           <div className="container">
             <div className="row">
               <SideBarTeacher />
-
-              <div className="col-xl-9">
-                {/* Student review START */}
-                
-                <div className="card border bg-transparent rounded-3">
-                  
-                  {/* Reviews START */}
+              <div className="col-12 col-md-9">
+                <div className="card border-2 bg-transparent rounded-3">
                   <div className="card-body mt-2 mt-sm-4">
-                    {/* Review item START */}
-                    <div className="d-sm-flex">
-                      <div>
-                        <div className="mb-3 d-sm-flex justify-content-sm-between align-items-center">
-                          {/* Title */}
-                          <div>
-                            
-                            <h5 className="m-0">Communicate effectively with your students</h5>
-                          </div>
-                        </div>
-
-                        {/* Button */}
-                        <div className="text-end">
-                          <div ref={myMeeting} />
-                        </div>
-                      </div>
+                    <h5 className="m-0">
+                      Communicate effectively with your students
+                    </h5>
+                    {/* This div will hold the meeting interface */}
+                    <div className="text-end" style={{ width: "100%" }}>
+                      <div
+                        ref={myMeeting}
+                        style={{ width: "100%", height: "500px" }}
+                      />
                     </div>
-                    {/* Divider */}
                     <hr />
                     <div>
                       <button
@@ -283,8 +266,6 @@ const Room = () => {
                               >
                                 spread
                               </button>
-
-
                             </div>
                           </form>
                           {/* Form END */}
@@ -303,7 +284,8 @@ const Room = () => {
           </div>
         </section>
         {/* =======================
-  Page content END */}<FooterClient />
+  Page content END */}
+        <Footer />
       </main>
       {/* **************** MAIN CONTENT END **************** */}
     </div>

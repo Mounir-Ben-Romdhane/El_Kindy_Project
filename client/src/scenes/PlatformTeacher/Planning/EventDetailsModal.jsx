@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import useAxiosPrivate from 'hooks/useAxiosPrivate';
+
 
 const Modal = ({ onClose, onSave, eventDetails, rooms, courses, teachers, students }) => {
   const [course, setCourse] = useState({
-    title: eventDetails.title || '',
+    title: "eventDetails.title" || '',
     courseId: '',
-    roomId: eventDetails.resourceId || ''
+    roomId: "eventDetails.resourceId" || ''
   });
+  const axiosPrivate = useAxiosPrivate();
+
 
   // Initialiser la couleur avec la couleur de l'événement sélectionné, s'il y en a un
-  const initialColor = eventDetails.color || '#000000';
+  const initialColor = '#000000';
   const [color, setColor] = useState(initialColor);
   const [selectedTeacherId, setSelectedTeacherId] = useState('');
   const [selectedStudentId, setSelectedStudentId] = useState('');
@@ -45,7 +49,7 @@ const Modal = ({ onClose, onSave, eventDetails, rooms, courses, teachers, studen
 
     const event = {
       ...course,
-      title: selectedCourse.title,
+      title: "selectedCourse.title",
       start: new Date(eventDetails.start),
       end: new Date(eventDetails.end),
       resourceId: roomId,

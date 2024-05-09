@@ -361,12 +361,14 @@ function EditEvent() {
                               <img
                                 src={URL.createObjectURL(imageFile)}
                                 alt="Uploaded image"
-                                className="img-fluid mb-2"
+                                className="img-fluid p-2 mb-2"
                                 style={{
-                                  height: "auto", // Maintain aspect ratio
-                                  width: "auto", // Allow width to scale with the height
-                                  objectFit: "contain", // Ensures the image is scaled to maintain its aspect ratio while fitting within the frame
-                                 }} // Limit image dimensions
+                                  maxWidth: "100%", // This makes the image responsive
+                                      maxHeight: "300px",
+                                      height: "auto", // Maintain aspect ratio
+                                      width: "auto", // Allow width to scale with the height
+                                      objectFit: "contain", // Ensures the image is scaled to maintain its aspect ratio while fitting within the frame
+                                   }} // Limit image dimensions
                                 required
                               />
                               <p className="mb-0">Uploaded image</p>
@@ -376,11 +378,14 @@ function EditEvent() {
                               <img
                                 src={`http://localhost:3001/assets/${formState.picturePath}`}
                                 alt="Uploaded image"
-                                className="img-fluid mb-2"
+                                className="img-fluid p-2 mb-2"
                                 style={{
-                                  maxWidth: "300px",
+                                  maxWidth: "100%", // This makes the image responsive
                                   maxHeight: "300px",
-                                }} // Limit image dimensions
+                                  height: "auto", // Maintain aspect ratio
+                                  width: "auto", // Allow width to scale with the height
+                                  objectFit: "contain", // Ensures the image is scaled to maintain its aspect ratio while fitting within the frame
+                               }} // Limit image dimensions
                                 required
                               />
                               <p className="mb-0">{formState.picturePath}</p>

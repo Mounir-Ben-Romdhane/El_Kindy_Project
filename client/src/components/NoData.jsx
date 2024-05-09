@@ -13,7 +13,7 @@ function NoData() {
                     }}
                   >
                     <img
-                      src="/assets/images/no_data.jpg"
+                      src="/assets/images/no_data.png"
                       alt="No inscriptions available"
                       style={{
                         maxWidth: "60%", // Limit the width to 50% of its container

@@ -3,7 +3,7 @@ import axios from "axios";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import FooterClient from "components/FooterClient";
+import Footer from "components/Footer";
 import NavBar from "components/NavBar";
 import SideBarTeacher from "components/SideBarTeacher";
 import SideBarStudent from "components/SideBarStudent";
@@ -12,6 +12,8 @@ import useAxiosPrivate from "hooks/useAxiosPrivate";
 import { useSelector } from "react-redux"; // Importez useSelector depuis React Redux
 import { jwtDecode } from "jwt-decode";
 import EventDetailsModal from './EventDetailsModal';
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
 
 const localizer = momentLocalizer(moment);
 const MyCalendar = () => {
@@ -29,6 +31,13 @@ const MyCalendar = () => {
   const accessToken = useSelector((state) => state.accessToken); // Récupérez le jeton d'accès du store Redux
   const decodeToken = accessToken ? jwtDecode(accessToken) : "";
   const [courseName, setCourseName] = useState("");
+  let [color, setColor] = useState("#399ebf");
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const axiosPrivate = useAxiosPrivate();
+
 
   const handleEventClick = async (event) => {
     try {
@@ -48,6 +57,7 @@ const MyCalendar = () => {
   useEffect(() => {
     const fetchPlannings = async () => {
       try {
+        setOpen(true);
         const response = await axios.get(`http://localhost:3001/planning/teacher/${decodeToken.id}`, {
           headers: {
             "Authorization": `Bearer ${accessToken}`,
@@ -64,7 +74,9 @@ const MyCalendar = () => {
           teacherId: planning.teacherId,
           studentId: planning.studentId,
         })));
+        setOpen(false);
       } catch (error) {
+        setOpen(false);
         console.error('Erreur lors de la récupération des plannings', error);
         // Affichez un message d'erreur à l'utilisateur ou effectuez d'autres actions en cas d'erreur
       }
@@ -85,8 +97,8 @@ const MyCalendar = () => {
       .catch((error) => {
         console.error("There was an error fetching the rooms", error);
       });
-      axios
-      .get("http://localhost:3001/course/all")
+      axiosPrivate
+      .get("/course/all")
       .then((response) => {
         setCourses(response.data);
         console.log(response.data);
@@ -96,7 +108,7 @@ const MyCalendar = () => {
       .catch((error) => {
         console.error("There was an error fetching the courses", error);
       });
-      axios
+      axiosPrivate
       .get("http://localhost:3001/classes/getAll") // Récupérez la liste des cours
       .then((response) => {
         setClasses(response.data); // Stockez les cours dans l'état
@@ -213,16 +225,28 @@ return (
       <NavBar />
       <TopBarTeacherStudent />
       <section className="pt-0">
-        <div className="container">
+      <div className="container"> {/* Use container-fluid for full width */}
           <div className="row">
             <SideBarTeacher />
             <div className="col-xl-9">
-              <div className="card border bg-transparent rounded-3">
+            {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : error ? (
+            <h2>Error: {error}</h2>
+          ) : (
+              <div className="card border-2 bg-transparent rounded-3">
                 <div className="card-body">
                   <div className="d-sm-flex">
-                    <div>
-                      <div className="mb-3 d-sm-flex justify-content-sm-between">
-                        <div>
+                      <div style={{
+                      overflowX: 'auto', // Horizontal scroll
+                      overflowY: 'auto', // Vertical scroll
+                      maxHeight: '700px', // Maximum height before vertical scroll
+                    }}>
                           <Calendar
                             components={{
                               event: MyEvent,
@@ -248,7 +272,7 @@ return (
                             startAccessor="start"
                             endAccessor="end"
                             dayLayoutAlgorithm={'overlap'}
-                            style={{ height: '700px', width: "101%" }}
+                            style={{ width: '100%', minHeight: '700px' }} // Ensure full width and sufficient height
                             formats={formats}
                             eventPropGetter={(event) => ({
                               style: { backgroundColor: event.color },
@@ -268,19 +292,17 @@ return (
                             />
                           )}
                         </div>
-                      </div>
-                      <div className="text-end"></div>
-                    </div>
                   </div>
                   <hr />
                   <div></div>
                 </div>
               </div>
+          )}
             </div>
           </div>
         </div>
       </section>
-      <FooterClient />
+      <Footer />
     </main>
   </div>
 );

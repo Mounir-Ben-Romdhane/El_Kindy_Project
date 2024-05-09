@@ -19,6 +19,7 @@ import { faBasketShopping } from "@fortawesome/free-solid-svg-icons";
 
 import { useTranslation } from "react-i18next";
 import { getUserById } from "services/usersService/api";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 function NavBar() {
   const accessToken = useSelector((state) => state.accessToken);
@@ -27,6 +28,8 @@ function NavBar() {
   const location = useLocation();
   const [activeNavItem, setActiveNavItem] = useState("");
   const [userData, setUserData] = useState({});
+  const axiosPrivate = useAxiosPrivate();
+
 
   const userRole = useSelector((state) => state.userRole);
   const role = accessToken ? jwtDecode(accessToken).roles : null;
@@ -38,7 +41,7 @@ function NavBar() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const response = await getUserById(userToken.id);
+        const response = await getUserById(userToken.id, axiosPrivate);
         setUserData(response.data.user);
       } catch (err) {
         console.log(err);
@@ -57,19 +60,23 @@ function NavBar() {
   };
 
   const getAvatarSrc = () => {
-    if (userData && userData.picturePath !== "" && userData.authSource === "local") {
+    if (userToken && userToken.picturePath !== "" && userToken.authSource === "local") {
       // If user has a custom picture path
-      return `http://localhost:3001/assets/${userData.picturePath}`;
-    } else if (userData && userData.picturePath === "" && userData.gender !== "") {
+      return `http://localhost:3001/assets/${userToken.picturePath}`;
+    } else if (userToken && userToken.picturePath === "" && userToken.gender !== "") {
       // If user has no custom picture but has a gender
-      return userData.gender === "Male"
+      return userToken.gender === "Male"
         ? "/assets/images/element/02.jpg"
         : "/assets/images/element/01.jpg";
     } else {
       // Default avatar if no picture path or gender is available
-      return userData.picturePath;
+      return userToken.picturePath;
     }
   };
+
+  useEffect(() => {
+    getAvatarSrc();
+  },[accessToken]);
 
   const getDashboardLink = () => {
     if (!role) return "/"; // Default link if role is not available
@@ -440,7 +447,7 @@ function NavBar() {
                 >
                   <img
                     className="avatar-img rounded-circle"
-                    src="/assets/images/element/02.jpg"
+                    src={getAvatarSrc()}
                     alt="avatar"
                   />
                 </a>
@@ -463,7 +470,7 @@ function NavBar() {
                         <a className="h6 mt-2 mt-sm-0 text-truncate" href="#">
                           {userToken?.fullName}
                         </a>
-                        <p className="small m-0">{userData?.email}</p>
+                        <p className="small m-0">{userToken?.email}</p>
                       </div>
                     </div>
                     <hr />

@@ -6,6 +6,10 @@ import 'react-confirm-alert/src/react-confirm-alert.css'; // Importez les styles
 import SideBar from "components/SideBar";
 import TopBarBack from "components/TopBarBack";
 import Swal from 'sweetalert2'; // Importez SweetAlert2
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
+import NoData from "components/NoData";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 const MySwal = withReactContent(Swal);
 
 function Index() {
@@ -15,38 +19,30 @@ function Index() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalEntries, setTotalEntries] = useState(0);
   const [itemsPerPage] = useState(8);
+  let [color, setColor] = useState("#399ebf");
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     // Fonction pour récupérer les catégories
-    const fetchClasses = async () => {
-      try {
-        const response = await fetch("http://localhost:3001/salle", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const data = await response.json();
-
-        if (data) {
-          setClasses(data); // Stocke les catégories dans l'état
-          console.log("classes", data);
-        }
-      } catch (error) {
-        console.error("Error fetching classes:", error);
-      }
-    };
+     
     fetchClasses();
   }, []);
 
   const fetchClasses = async () => {
+    setOpen(true);
     try {
-      const response = await axios.get("http://localhost:3001/salle");
+      const response = await axiosPrivate.get("/salle");
       setClasses(response.data);
       setTotalEntries(response.data.length); // Update the totalEntries state
+      setOpen(false);
       console.log("Total Entries:", response.data.length);
 
     } catch (error) {
+      setOpen(false);
       console.error("Error fetching classes:", error);
     }
   };
@@ -71,7 +67,7 @@ function Index() {
 
   const deleteClasses = async (classeId) => {
     try {
-      await axios.delete(`http://localhost:3001/salle/${classeId}`);
+      await axiosPrivate.delete(`/salle/${classeId}`);
       fetchClasses(); // Re-fetch categories to update the list after deletion
       MySwal.fire(
         'Supprimé!',
@@ -132,19 +128,27 @@ const sortedClasses = filteredClasses.sort((a, b) => {
         {/* Page content START */}
         <div className="page-content">
           <TopBarBack />
-
-          {/* Page main content START */}
+          {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) :
           <div className="page-content-wrapper border">
             {/* Title */}
             <div className="row mb-3">
               <div className="col-12 d-sm-flex justify-content-between align-items-center">
                 <h1 className="h3 mb-2 mb-sm-0">class</h1>
-                <Link to="/add-classe" className="btn btn-sm btn-primary me-1 mb-1 mb-md-0">Ajouter une salle</Link>
+                <Link to="/add-classe" className="btn btn-sm btn-primary me-1 mb-1 mb-md-0">Add class</Link>
 
               </div>
             </div>
 
-            {/* Card START */}
+            {classes.length === 0 ? (
+                <NoData />
+              ) : (
             <div className="card bg-transparent border">
               {/* Card header START */}
               <div className="card-header bg-light border-bottom">
@@ -313,9 +317,9 @@ const sortedClasses = filteredClasses.sort((a, b) => {
 
 
             </div>
-            {/* Card END */}
+              )}
           </div>
-          {/* Page main content END */}
+          }
         </div>
         {/* Page content END */}
       </main>

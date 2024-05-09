@@ -417,7 +417,7 @@ function EditCourse() {
                               <img
                                 src={URL.createObjectURL(imageFile)}
                                 alt="Uploaded image"
-                                className="img-fluid mb-2"
+                                className="img-fluid p-2 mb-2"
                                 style={{
                                   maxWidth: "300px",
                                   maxHeight: "300px",
@@ -431,7 +431,7 @@ function EditCourse() {
                               <img
                                 src={`http://localhost:3001/assets/${course.picturePath}`}
                                 alt="Uploaded image"
-                                className="img-fluid mb-2"
+                                className="img-fluid p-2 mb-2"
                                 style={{
                                   maxWidth: "100%", // This makes the image responsive
                                       maxHeight: "300px",

@@ -19,6 +19,8 @@ function Index() {
   let [color, setColor] = useState("#399ebf");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sortOption, setSortOption] = useState("");
+
 
   // pagination
   const [searchQuery, setSearchQuery] = useState("");
@@ -82,9 +84,19 @@ function Index() {
       contact.message.toLowerCase(),
     ].some((text) => text.includes(searchQuery.toLowerCase()))
   );
+
+  const sortedContact = filteredContacts.sort((a, b) => {
+    if (sortOption === "Newest") {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    } else if (sortOption === "Oldest") {
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    }
+    return 0;
+  });
+
   const indexOfLastContact = currentPage * itemsPerPage;
   const indexOfFirstContact = indexOfLastContact - itemsPerPage;
-  const currentContacts = filteredContacts.slice(
+  const currentContacts = sortedContact.slice(
     indexOfFirstContact,
     indexOfLastContact
   );
@@ -154,6 +166,17 @@ function Index() {
                             )}
                         </form>
                       </div>
+                      <div className="col-md-3">
+                      <select
+                        className="form-select border-0 z-index-9"
+                        value={sortOption}
+                        onChange={(e) => setSortOption(e.target.value)}
+                      >
+                        <option value="">Sort by</option>
+                        <option value="Newest">Newest</option>
+                        <option value="Oldest">Oldest</option>
+                      </select>
+                    </div>
                     </div>
                     {/* Search and select END */}
                   </div>

@@ -3,7 +3,7 @@ import SideBarTeacher from 'components/SideBarTeacher';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import FooterClient from "components/FooterClient";
+import Footer from "components/Footer";
 import NavBar from "components/NavBar";
 
 const Index = () => {
@@ -39,7 +39,7 @@ const Index = () => {
                         <div className="row">
                             <SideBarTeacher />
                             <div className="col-xl-9">
-                                <div className="card border bg-transparent rounded-3">
+                                <div className="card border-2 bg-transparent rounded-3">
                                     <div className="card card-body shadow h-100 d-flex justify-content-center align-items-center  ">
                                         <div className="card-header bg-transparent border-bottom">
                                             <div className="row justify-content-between align-middle">
@@ -70,7 +70,7 @@ const Index = () => {
                     </div>
                 </section>
                 {/* Page content END */}
-                <FooterClient />
+                <Footer />
             </main>
             {/* MAIN CONTENT END */}
         </div>
