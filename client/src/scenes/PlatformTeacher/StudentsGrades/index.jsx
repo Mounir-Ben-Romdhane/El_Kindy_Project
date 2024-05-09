@@ -261,7 +261,7 @@ function Index() {
                     <div className="table-responsive border-0">
                       <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
                         <thead>
-                          <tr>
+                          <tr className='bg-blue'>
                             <th scope="col" className="border-0 rounded-start">Course Name</th>
                             <th scope="col" className="border-0">Show Classes and Students</th>
                           </tr>
@@ -288,7 +288,7 @@ function Index() {
                         <div key={courseId}>
                           <table className="table table-dark-gray align-middle p-4 mb-0 table-hover mt-3">
                             <thead>
-                              <tr>
+                              <tr className='bg-blue'>
                                 <th>Class Name</th>
                                 <th>Show Grades</th>
                                 <th>Edit</th>
@@ -300,7 +300,7 @@ function Index() {
                                   <>
                                     {classes.map((classItem) => (
                                       <React.Fragment key={classItem._id}>
-                                        <tr>
+                                        <tr >
                                           <td>Class : {classItem.className}</td>
                                           <td>Show Students</td>
                                           <td>
@@ -321,7 +321,7 @@ function Index() {
                                               {showStudents[classItem._id][courseId].length > 0 ? (
                                                 <table className="table table-striped">
                                                   <thead>
-                                                    <tr>
+                                                    <tr className='bg-blue'>
                                                       <th>First Name</th>
                                                       <th>Last Name</th>
                                                       <th>Semester Grade</th>
@@ -418,7 +418,7 @@ function Index() {
                                             <div className="modal fade" id={`addGrade-${student._id}`} tabIndex={-1} aria-labelledby={`addQuestionLabel-${student._id}`} aria-hidden="true" data-bs-backdrop="false">
                                               <div className="modal-dialog">
                                                 <div className="modal-content">
-                                                  <div className="modal-header bg-dark">
+                                                  <div className="modal-header bg-blue">
                                                     <h5 className="modal-title text-white" id={`addQuestionLabel-${student._id}`}>Add Student Grade</h5>
                                                     <button type="button" className="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i className="bi bi-x-lg" /></button>
                                                   </div>

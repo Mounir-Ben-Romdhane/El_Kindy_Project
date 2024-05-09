@@ -9,8 +9,9 @@ import { getUserById } from "services/usersService/api";
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
 import { setAccessToken, setLogout } from "../../../state";
-
-
+import { ToastContainer, toast } from "react-toastify";
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
 
 
 function EditProfile() {
@@ -23,13 +24,16 @@ function EditProfile() {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [passwordsMatch, setPasswordsMatch] = useState(true); // State to track password match
   const [twoFAActivatedSuccess, set2FAActivatedSuccess] = useState(false);
+  let [color, setColor] = useState("#399ebf");
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   //refresh token
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-
 
 
   const [user, setUser] = useState({
@@ -47,37 +51,43 @@ function EditProfile() {
     experienceYears: 0,
   });
 
+  const getUser = async () => {
+    setOpen(true);
+    try {
+      const response = await getUserById(tokenUser.id, axiosPrivate);
+      setUserData(response.data.user);
+      setCurrentPassword(response.data.user.passwordDecoded);
+      setUser({
+        firstName: response.data.user.firstName || "",
+        lastName: response.data.user.lastName || "",
+        email: response.data.user.email || "",
+        password: response.data.user.passwordDecoded || "",
+        picturePath: response.data.user.picturePath,
+        dateOfBirth: response.data.user.dateOfBirth.split("T")[0] || "",
+        address: response.data.user.address || "",
+        gender: response.data.user.gender || "",
+        phoneNumber1: response.data.user.phoneNumber1 || "",
+        phoneNumber2: response.data.user.phoneNumber2 || "",
+        qualifications: response.data.user.teacherInfo.qualifications || "",
+        experienceYears: response.data.user.teacherInfo.experienceYears || 0,
+      });
+      setOpen(false);
+    } catch (err) {
+      setOpen(false);
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    const getUser = async () => {
-      try {
-        const response = await getUserById(tokenUser.id, axiosPrivate);
-        setUserData(response.data.user);
-        setCurrentPassword(response.data.user.passwordDecoded);
-        setUser({
-          firstName: response.data.user.firstName || "",
-          lastName: response.data.user.lastName || "",
-          email: response.data.user.email || "",
-          password: response.data.user.passwordDecoded || "",
-          picturePath: response.data.user.picturePath,
-          dateOfBirth: response.data.user.dateOfBirth.split("T")[0] || "",
-          address: response.data.user.address || "",
-          gender: response.data.user.gender || "",
-          phoneNumber1: response.data.user.phoneNumber1 || "",
-          phoneNumber2: response.data.user.phoneNumber2 || "",
-          qualifications: response.data.user.teacherInfo.qualifications || "",
-          experienceYears: response.data.user.teacherInfo.experienceYears || 0,
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    };
+   
 
     getUser();
-  }, [accessToken]);
+  }, []);
 
   const handleEmailUpdate = async (e) => {
     e.preventDefault();
     try {
+      setOpen2(true);
       //await updateEmail(newEmail);
       // Make HTTP request to update email
       const response = await axiosPrivate.put(
@@ -86,15 +96,17 @@ function EditProfile() {
       );
       if (response.status === 200) {
         // Email updated successfully
-        alert("Email updated successfully!");
+        setOpen2(false);
         dispatch(setAccessToken({ accessToken: response.data.accessToken }));
       } else {
         // Handle other response statuses if needed
         console.error("Failed to update email:", response.data.message);
-        alert("Failed to update email. Please try again later.");
+        setOpen2(false);
       }
-      alert("Email updated successfully!");
+      //alert("Email updated successfully!");
     } catch (error) {
+      setOpen2(false);
+
       console.error("Error updating email:", error);
       alert("Failed to update email. Please try again later.");
     }
@@ -107,6 +119,7 @@ function EditProfile() {
       return; // Do not proceed further if passwords don't match
     }
     try {
+      setOpen2(true);
       // Make HTTP request to update password
       const response = await axiosPrivate.put(
         `/auth/updatePassword/${tokenUser.id}`,
@@ -116,15 +129,18 @@ function EditProfile() {
         }
       );
       if (response.status === 200) {
+        setOpen2(false);
         // Password updated successfully
-        alert("Password updated successfully!");
+        //alert("Password updated successfully!");
       } else {
         console.error("Failed to update password:", response.data.message);
-        alert("Failed to update password. Please try again later.");
+        //alert("Failed to update password. Please try again later.");
+        setOpen2(false);
       }
     } catch (error) {
       console.error("Error updating password:", error);
-      alert("Failed to update password. Please try again later.");
+     // alert("Failed to update password. Please try again later.");
+     setOpen2(false);
     }
   };
 
@@ -132,16 +148,21 @@ function EditProfile() {
   const handleAjout2FA = async (e) => {
     e.preventDefault();
     try {
+      setOpen2(true);
       const response = await axiosPrivate.post(
         `/auth/ajouter2FA/${user.email}`
       );
 
       if (response.status === 200) {
         set2FAActivatedSuccess(true);
+        setOpen2(false);
+        getUser();
       } else {
+        setOpen2(false);
         console.error("2FA Activated failed with status:", response.status);
       }
     } catch (error) {
+      setOpen2(false);
       console.error("Error 2FA Activated:", error);
     }
   };
@@ -221,6 +242,7 @@ function EditProfile() {
     //console.log("not changed");
 
     try {
+      setOpen2(true);
       //console.log("formData", formData);
       const response = await axiosPrivate.patch(
         `/user/edit/${userId}`,
@@ -230,9 +252,11 @@ function EditProfile() {
         // Navigate to the desired path
         dispatch(setAccessToken({ accessToken: response.data.accessToken }));
         //navigate("/dashboard-teacher");
+        setOpen2(false);
       }
       return response.data;
     } catch (error) {
+      setOpen2(false);
       console.error("Error updating user:", error);
       throw error;
     }
@@ -263,11 +287,29 @@ function EditProfile() {
           <div className="container">
             <div className="row">
               <SideBarTeacher />
-              {/* Main content START */}
+              {open ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={open}
+            >
+              <GridLoader color={color} loading={loading} size={20} />
+            </Backdrop>
+          ) : (
               <div className="col-xl-9">
+                 <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={open2}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
+          
                 <div>
                   {/* Edit profile START */}
                   <div className="card bg-transparent border rounded-3">
+                  <ToastContainer />
                     {/* Card header */}
                     <div className="card-header bg-transparent border-bottom">
                       <h3 className="card-header-title mb-0">Edit Profile</h3>
@@ -619,6 +661,7 @@ function EditProfile() {
                   {/* Main content END */}
                 </div>
               </div>
+          )}
             </div>
           </div>
         </section>

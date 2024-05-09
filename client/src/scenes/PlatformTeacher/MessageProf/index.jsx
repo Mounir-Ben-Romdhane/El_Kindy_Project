@@ -128,7 +128,7 @@ function Index() {
               <h2>Error: {error}</h2>
             ) : (
               <>
-                <div className="card border-2 bg-transparent rounded-3">
+                <div className="card border-2 p-3 bg-transparent rounded-3">
                   <div className="row">
                     {users.filter(chat => chat.otherUser).map((chat) => (
                       <div className="col-lg-6" key={chat._id}>

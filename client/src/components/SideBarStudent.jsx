@@ -63,7 +63,7 @@ import { useTranslation } from "react-i18next";
               </div>
               {/* Offcanvas body */}
               <div className="offcanvas-body p-3 p-xl-0">
-                <div className="bg-dark border rounded-3 pb-0 p-3 w-100">
+                <div className="bg-blue border rounded-3 pb-0 p-3 w-100">
                   {/* Dashboard menu */}
                   <div className="list-group list-group-dark list-group-borderless">
                     <Link
@@ -93,7 +93,6 @@ import { useTranslation } from "react-i18next";
                       <i className="bi bi-basket fa-fw me-2" />
                       {t("sidebarStudent.Planning")}
                     </Link>
-                    <Link className="list-group-item" to="/assignmentStudent"><i className="bi bi-basket fa-fw me-2" />Assignment</Link>
 
                     <Link
                       className={`list-group-item ${activeNavItem === "/assignmentStudent" || activeNavItem.startsWith("/assignments") ? "active" : ""}`}
@@ -108,7 +107,7 @@ import { useTranslation } from "react-i18next";
                       to="/TeachersList"
                       onClick={() => handleNavItemClick("/TeachersList")}
                     >
-                      <i className="bi bi-people fa-fw me-2" />
+                      <i className="bi bi-chat-dots-fill fa-fw me-2" />
                       {t("sidebarStudent.Teachers")}
                     </Link>
                     <Link
@@ -139,15 +138,7 @@ import { useTranslation } from "react-i18next";
                       GradeStudent
                     </Link>
 
-                    <Link
-                      className={`list-group-item ${activeNavItem === "/TeachersList" ? "active" : ""
-                        }`}
-                      to="/TeachersList"
-                      onClick={() => handleNavItemClick("/TeachersList")}
-                    >
-                      <i className="bi bi-people fa-fw me-2" />
-                      Teachers
-                    </Link>
+                   
 
 
                     <a className="list-group-item" href="instructor-edit-profile.html"><i className="bi bi-pencil-square fa-fw me-2" />Edit Profile</a>

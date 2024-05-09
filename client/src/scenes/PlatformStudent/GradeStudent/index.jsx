@@ -5,27 +5,40 @@ import axios from 'axios';
 import NavBar from 'components/NavBar';
 import SideBarStudent from 'components/SideBarStudent';
 import TopBarTeacherStudent from 'components/TopBarTeacherStudent';
-import FooterClient from 'components/FooterClient';
+import FooterClient from 'components/Footer';
+import Backdrop from "@mui/material/Backdrop";
+import GridLoader from "react-spinners/GridLoader";
+import useAxiosPrivate from "hooks/useAxiosPrivate";
 
 function Index() {
   const accessToken = useSelector((state) => state.accessToken);
   const [showCourses, setShowCourses] = useState({});
   const [showGrades, setShowGrades] = useState({});
+  const [soloStudentGrade, setSoloStudentGrade] = useState({});
+  let [color, setColor] = useState("#399ebf");
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const axiosPrivate = useAxiosPrivate();
 
   const studentId = accessToken ? jwtDecode(accessToken).id : '';
 
   const fetchCourses = async (studentId) => {
     try {
-      const response = await axios.get(`http://localhost:3001/auth/getCoursesByStudent/${studentId}`);
+      setOpen(true);
+      const response = await axiosPrivate.get(`http://localhost:3001/auth/getCoursesByStudent/${studentId}`);
       setShowCourses((prevCourses) => ({ ...prevCourses, [studentId]: response.data }));
+      setOpen(false);
     } catch (error) {
       console.error('Error fetching courses:', error);
+      setOpen(false);
     }
   };
 
   const fetchGrades = async (studentId, courseId) => {
     try {
-      const response = await axios.get(`http://localhost:3001/grades/getGradesByStudentAndCourse/${studentId}/${courseId}`);
+      const response = await axiosPrivate.get(`http://localhost:3001/grades/getGradesByStudentAndCourse/${studentId}/${courseId}`);
       setShowGrades((prevGrades) => ({ ...prevGrades, [courseId]: response.data }));
     } catch (error) {
       console.error('Error fetching grades:', error);
@@ -45,73 +58,103 @@ function Index() {
   }, [accessToken]);
 
   useEffect(() => {
+    console.log("showCourses:", showCourses);
+    console.log("showGrades:", showGrades);
     // Fetch grades for each course
     Object.keys(showCourses).forEach((studentId) => {
-      showCourses[studentId].forEach((course) => {
-        fetchGrades(studentId, course._id);
-      });
+      console.log("studentId:", studentId);
+      const courses = showCourses[studentId];
+      console.log("courses:", courses);
+      if (Array.isArray(courses)) {
+        courses.forEach((course) => {
+          fetchGrades(studentId, course._id);
+        });
+      } else {
+        console.error(`Invalid data for studentId ${studentId}: ${JSON.stringify(courses)}`);
+      }
     });
   }, [showCourses]); // Update grades when showCourses changes
 
   return (
     <div>
-      {/* **************** MAIN CONTENT START **************** */}
-      <main>
-        <NavBar />
-        <TopBarTeacherStudent />
-        {/* =======================
-                    Page content START */}
-        <section className="pt-0">
-          <div className="container">
-            <div className="row">
-              <SideBarStudent />
-              <div className="container col-md-8 mt-3">
-                <div className="col-xl-9">
-                  <div className="card border bg-transparent rounded-3">
-                    <div className="card-header bg-transparent border-bottom">
-                      <h3 className="mb-0">Student Grade Dashboard</h3>
-                      <div className="table-responsive border-0">
-                        <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
-<tbody>
-  <tr>
-    <th>Course</th>
-    <th>Grade</th>
-  </tr>
-  {Object.keys(showCourses).map((studentId) =>
-    showCourses[studentId] ? (
-      showCourses[studentId].map((course) => (
-        <tr key={course._id}>
-          <td>{course.title}</td>
-          <td>
-            {showGrades[course._id] && showGrades[course._id].length > 0 ? (
-              showGrades[course._id].map((grade) => (
-                <span key={grade._id}>{grade.grade}</span>
-              ))
-            ) : (
-              <span>Grade not available</span>
-            )}
-          </td>
-        </tr>
-      ))
-    ) : null
-  )}
-</tbody>
+      <NavBar />
+      <TopBarTeacherStudent />
 
-                        </table>
-                      </div>
+      <div className='container'>
+        <div className="row">
+          <SideBarStudent />
+          <div className="col-xl-9">
+            {open ? (
+              <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={open}
+              >
+                <GridLoader color={color} loading={loading} size={20} />
+              </Backdrop>
+            ) : error ? (
+              <h2>Error: {error}</h2>
+            ) : (
+              <>
+                {/* Backdrop with GridLoader */}
+                <Backdrop
+                  sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                  open={open2}
+                >
+                  <GridLoader color={color} loading={loading} size={20} />
+                </Backdrop>
+                <div className="card border-2 bg-transparent rounded-3">
+                  <div className="card-header bg-transparent border-bottom">
+                    <h3 className="mb-0">Student Grade Dashboard</h3>
+                    <div className="table-responsive border-0">
+                      <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
+                        <tbody>
+                          <tr>
+                            <th>Course</th>
+                            <th>Grade</th>
+                          </tr>
+                          {Object.keys(showCourses).map((studentId) => {
+                            const courses = showCourses[studentId];
+                            if (Array.isArray(courses)) {
+                              return courses.map((course) => (
+                                <tr key={course._id}>
+                                  <td>{course.title}</td>
+                                  <td>
+                                    {showGrades[course._id] && showGrades[course._id].length > 0 ? (
+                                      showGrades[course._id].map((grade) => (
+                                        <span key={grade._id}>{grade.grade}</span>
+                                      ))
+                                    ) : (
+                                      <span>Grade not available</span>
+                                    )}
+                                  </td>
+                                </tr>
+                              ));
+                            } else {
+                              console.error(`Invalid data for studentId ${studentId}: ${JSON.stringify(courses)}`);
+                              return null; // Return null for invalid data
+                            }
+                          })}
+
+
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
           </div>
-        </section>   <br></br>    <FooterClient />
+        </div>
+      </div>
 
-        {/* Page content END */}
-      </main>
-      {/* **************** MAIN CONTENT END **************** */}
+      <section>
+        <br />
+      </section>
+      <FooterClient />
+
     </div>
   );
+
 }
 
 export default Index;

@@ -9,6 +9,7 @@ import FooterClient from 'components/Footer';
 import useAxiosPrivate from "hooks/useAxiosPrivate";
 import Backdrop from "@mui/material/Backdrop";
 import GridLoader from "react-spinners/GridLoader";
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
 
 function Index() {
@@ -230,14 +231,13 @@ function Index() {
                   <GridLoader color={color} loading={loading} size={20} />
                 </Backdrop>
                 <div className="card border-2 bg-transparent rounded-3">
-                  
                   <div className="card-header bg-transparent border-bottom">
                     <h3 className="mb-0">Student Sheet Dashboard</h3>
                     <div className="table-responsive border-0">
                       <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
-                        <thead>
-                          <tr>
-                            <th scope="col" className="border-0 rounded-start">Class Name </th>
+                        <thead >
+                          <tr className='bg-blue'>
+                            <th scope="col" className="border-0 rounded-start ">Class Name </th>
                             <th scope="col" className="border-0 rounded-end">Show Courses</th>
                           </tr>
                         </thead>
@@ -264,7 +264,7 @@ function Index() {
                         <div key={classId}>
                           <table className="table table-dark-gray align-middle p-4 mb-0 table-hover mt-2">
                             <thead>
-                              <tr>
+                              <tr className='bg-blue'>
                                 <th className="border-0 rounded-start">Course Name</th>
                                 <th className="border-0 rounded-end">Show Students</th>
                               </tr>
@@ -291,7 +291,7 @@ function Index() {
                                       <td colSpan="3">
                                         <table className="table table-dark-gray align-middle p-4 mb-0 table-hover mt-3">
                                           <thead>
-                                            <tr>
+                                            <tr className='bg-blue'>
                                               <th className="border-0 rounded-start">Course Name</th>
                                               <th className="border-0 ">First Name</th>
                                               <th className="border-0 ">Last Name</th>
@@ -322,7 +322,7 @@ function Index() {
                                                     <div className="modal fade" id="addQuestion" tabIndex={-1} aria-labelledby="addQuestionLabel" aria-hidden="true" data-bs-backdrop="false">
                                                       <div className="modal-dialog">
                                                         <div className="modal-content">
-                                                          <div className="modal-header bg-dark">
+                                                          <div className="modal-header bg-blue">
                                                             <h5 className="modal-title text-white" id="addQuestionLabel">Add Student Sheet</h5>
                                                             <button type="button" className="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i className="bi bi-x-lg" /></button>
                                                           </div>
@@ -419,7 +419,7 @@ function Index() {
                                               <div className="card-body">
                                                 <table className="table table-striped">
                                                   <thead>
-                                                    <tr className="card-header-title mb-0">
+                                                    <tr className="card-header-title mb-0 bg-blue">
                                                       <th className="border-0 rounded-start">Date</th>
                                                       <th className="border-0 ">Duration</th>
                                                       <th className="border-0 ">Content</th>
@@ -484,7 +484,6 @@ function Index() {
           </div>
         </div>
       </div>
-      <br />
       <br />
       <FooterClient />
     </div>
